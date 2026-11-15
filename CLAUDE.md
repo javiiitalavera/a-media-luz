@@ -24,10 +24,12 @@ Todo lo demás (reglas, mecánicas, pantallas) está por decidir. No des por hec
 - No hagas preguntas innecesarias: si algo tiene una opción razonable por defecto, tómala y dilo. Pregunta lo que cambia el diseño del juego.
 - Prefiere el trabajo **de una vez y completo**, y comprobado antes de darlo por listo.
 
-## Reparto de trabajo (decidido por Javi)
-- **ChatGPT:** dirección artística, personajes, recursos gráficos, animaciones e integración visual.
-- **Claude:** diseño de mecánicas, lógica del juego y funcionalidades.
-- **Los dos:** respetar el trabajo del otro, no editar a la vez el mismo archivo y comprobar los cambios antes de publicarlos.
+## Reparto de trabajo y propiedad de archivos (decidido por Javi)
+**OBLIGATORIO: leer `docs/COORDINACION.md` antes de modificar o crear archivos.** Ese documento establece propietarios exclusivos de rutas, entregas de arte, ramas y publicación.
+
+- **ChatGPT:** dirección artística, personajes y recursos gráficos en `docs/arte/**` y `public/arte/**`; escribe `docs/direccion-artistica.md` y `docs/entregas-arte.md`. Entrega poses, capas y referencias visuales, **sin editar `src/**`**.
+- **Claude:** diseño del juego, código completo en `src/**`, animaciones programadas, interfaz, integración de assets, pruebas, despliegue y documentación técnica. Usa el arte aprobado **sin redibujarlo a ojo**.
+- **GitHub:** arte en ramas `arte/<tema>` con PR; Claude o el usuario integran los cambios. No publicar dos agentes a la vez en `main`; no sobrescribir trabajo del otro.
 - **No dibujes ni rediseñes personajes ni escenarios por tu cuenta** (ni «aproximaciones» en SVG): el arte lo produce ChatGPT siguiendo la lámina.
 
 ## Reglas de trabajo
