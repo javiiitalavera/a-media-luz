@@ -5,6 +5,15 @@
 ## Objetivo
 Desarrollar desde cero sin sobrescribir ni duplicar trabajos. La **lámina aprobada** `docs/arte/lamina-personajes.webp` manda sobre cualquier dibujo posterior. No recuperar el proyecto eliminado ni asumir las mecánicas antiguas.
 
+## Quién decide qué (decidido por Javi, 15/11/2026) — leer antes que nada
+
+Para no dar vueltas cambiando cada uno lo del otro:
+
+1. **Una sola persona decide cada cosa.** ChatGPT decide **cómo se ven los dibujos**. Claude decide **cómo se monta la pantalla** (composición, capas, código). **Javi decide** lo que se ve y lo que no, y resuelve cualquier desacuerdo.
+2. **Las propuestas sobre el terreno del otro van a Javi, no al otro.** Si ChatGPT quiere cambiar el montaje de una pantalla, o Claude quiere cambiar cómo se dibuja algo, se lo propone a Javi. Solo se aplica si Javi lo aprueba y lo pide expresamente. Sin esa aprobación, no se toca.
+3. **El montaje del Bosque está congelado** tal como lo describe `docs/capas-arte.md` hasta que llegue el primer rincón dibujado y aprobado (Claro del fuego + Nox). Entonces Javi lo revisa con arte real y decide si se cambia algo.
+4. **`docs/capas-arte.md` es el contrato entre el arte y el código.** ChatGPT dibuja según él. Si algo no le encaja para dibujar, lo dice a Javi; no cambia el plan por su cuenta ni lo rodea. Claude no lo cambia sin que Javi lo pida.
+
 ## Responsabilidades y propiedad de rutas
 
 | Área / archivos | Responsable de ESCRIBIR | El otro puede… |
