@@ -207,7 +207,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       </div>
 
       {celebra && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,env(safe-area-inset-top))+64px)] z-30 flex justify-center px-4">
+        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
           <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
         </div>
       )}
