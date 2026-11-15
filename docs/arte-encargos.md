@@ -11,6 +11,8 @@
 - **Fondos:** verticales (1080 × 1920 o proporción parecida), sin personajes, con el centro del suelo libre (ahí va el compañero) y el tercio de abajo sencillo (ahí va la interfaz).
 - **Objetos:** en láminas de cuadrícula (por ejemplo 3 × 2), cada uno centrado y separado en su casilla, con fondo transparente (o liso magenta #FF00FF). Mismo contorno marrón oscuro que la lámina y escala parecida entre ellos.
 - **Compañeros:** fondo transparente, cuerpo entero, pies abajo. Las 4 expresiones de una etapa, en una sola lámina de 2 × 2 (así salen coherentes entre sí) que se recorta con la herramienta.
+- **Que sigan siendo monos al crecer** (decidido por Javi): cabeza muy grande, ojos grandes y redondos, hocico corto, cuerpo redondito; crecen en esplendor, no en edad.
+- **Si ChatGPT dibuja el cuadriculado de transparencia** en vez de dejar el fondo transparente, no pasa nada: la herramienta lo quita (y el borde blanco de pegatina).
 - **No se piden capas que encajen al píxel.** Lo que se mueve (respirar, saltar, chispas, luces, luciérnagas, día y noche, objetos que aparecen) lo hace el código.
 
 ## Herramienta de recorte
@@ -23,4 +25,4 @@
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
-| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto (pendiente; mientras, se ve el joven) |
+| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones |

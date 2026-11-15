@@ -1,7 +1,7 @@
 // Arte en uso (archivos de public/arte/). Cómo se encarga y se integra: docs/arte-encargos.md.
 // No se dibujan sustitutos: si un recurso no está, la interfaz deja su hueco neutro.
 //
-// Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox cachorro y joven con 4 expresiones (falta el adulto).
+// Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox cachorro, joven y adulto con 4 expresiones cada uno.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
 export type Expresion = 'base' | 'contento' | 'enfurrunado' | 'dormido'
@@ -26,6 +26,10 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'companero/nox/joven/contento': '/arte/personajes/nox/joven/contento.webp',
   'companero/nox/joven/enfurrunado': '/arte/personajes/nox/joven/enfurrunado.webp',
   'companero/nox/joven/dormido': '/arte/personajes/nox/joven/dormido.webp',
+  'companero/nox/adulto/base': '/arte/personajes/nox/adulto/base.webp',
+  'companero/nox/adulto/contento': '/arte/personajes/nox/adulto/contento.webp',
+  'companero/nox/adulto/enfurrunado': '/arte/personajes/nox/adulto/enfurrunado.webp',
+  'companero/nox/adulto/dormido': '/arte/personajes/nox/adulto/dormido.webp',
 }
 
 export const rutaArte = (clave: ClaveArte): string | undefined => ARTE[clave]

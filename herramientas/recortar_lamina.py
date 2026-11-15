@@ -23,12 +23,19 @@ MARGEN = 8
 
 
 def quitar_fondo_liso(rgba: np.ndarray) -> np.ndarray:
-    """Si el fondo es opaco y liso, lo vuelve transparente rellenando desde los bordes."""
+    """Si el fondo es opaco, lo vuelve transparente rellenando desde los bordes.
+
+    Sirve para fondo liso (blanco o magenta) y para el falso «cuadriculado de transparencia» que a
+    veces DIBUJA el generador: blancos y grises claros sin color. También se lleva el borde blanco
+    tipo pegatina que suele rodear al personaje, y suaviza el canto para que no quede halo claro.
+    """
     alto, ancho = rgba.shape[:2]
     if rgba[:, :, 3].min() < 250:
         return rgba  # ya trae transparencia
-    fondo = rgba[0, 0, :3].astype(int)
-    parecido = np.abs(rgba[:, :, :3].astype(int) - fondo).sum(axis=2) < 60
+    rgb = rgba[:, :, :3].astype(int)
+    fondo = rgb[0, 0]
+    claro_neutro = (rgb.min(axis=2) >= 215) & (rgb.max(axis=2) - rgb.min(axis=2) <= 22)
+    parecido = (np.abs(rgb - fondo).sum(axis=2) < 60) | claro_neutro
     visto = np.zeros((alto, ancho), bool)
     cola = deque([(y, x) for x in range(ancho) for y in (0, alto - 1)] + [(y, x) for y in range(alto) for x in (0, ancho - 1)])
     while cola:
@@ -42,6 +49,16 @@ def quitar_fondo_liso(rgba: np.ndarray) -> np.ndarray:
                 cola.append((ny, nx))
     rgba = rgba.copy()
     rgba[visto, 3] = 0
+    # Canto: los píxeles claros pegados al fondo se vuelven semitransparentes según lo claros que son.
+    cerca = np.zeros_like(visto)
+    for dy in (-2, -1, 0, 1, 2):
+        for dx in (-2, -1, 0, 1, 2):
+            cerca |= np.roll(np.roll(visto, dy, 0), dx, 1)
+    canto = cerca & ~visto
+    # (el contorno de los dibujos es oscuro: lo claro que queda en el canto es resto del fondo)
+    claridad = rgb.min(axis=2)
+    a = np.clip((170 - claridad) / 50, 0, 1)
+    rgba[canto, 3] = np.minimum(rgba[canto, 3], (a[canto] * 255).astype(np.uint8))
     return rgba
 
 
