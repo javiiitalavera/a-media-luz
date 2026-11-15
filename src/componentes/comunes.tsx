@@ -15,7 +15,7 @@ export function useAhora(): Date {
 
 export function Pantalla({ children, titulo }: { children: ReactNode; titulo?: string }) {
   return (
-    <main className="mx-auto min-h-dvh max-w-[430px] px-4 pt-[max(20px,env(safe-area-inset-top))] pb-28">
+    <main className="mx-auto min-h-dvh max-w-[430px] px-4 pt-[max(20px,calc(env(safe-area-inset-top)+24px))] pb-28">
       {titulo && <h1 className="mb-4 px-1 text-[28px] leading-tight font-bold">{titulo}</h1>}
       {children}
     </main>
