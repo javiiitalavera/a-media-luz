@@ -93,7 +93,7 @@ Navegación inferior con 4 pestañas: **Bosque · Ofrendas · Semana · Álbum**
 | Pantalla | Qué hace | Qué se ve |
 |---|---|---|
 | **Inicio** (solo la primera vez) | Paso 1: elegir compañero por su humor. Paso 2: marcar las acciones habituales (si en un área no marcas ninguna, se ponen 2 de ejemplo) | Los cinco compañeros; el elegido dice algo con mala leche |
-| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros para que hablen; ir a un rincón | **Sendero vertical continuo**: una escena por rincón, pegadas y unidas por piezas de transición (sendero, vegetación, cambio de ambiente) para que se lea como un solo mundo (los de compañeros que no han llegado, dormidos), con su crecimiento y sus consecuencias (maleza, visitantes) montados por capas (`docs/capas-arte.md`). Lo principal es el paisaje y los compañeros: **al tocar a un compañero habla en un bocadillo** sobre su cabeza (se queja si su rincón está mal; si no, saluda según la hora) y se va solo a los 7 s. Cada rincón lleva un cartelito discreto abajo a la izquierda (nombre, estado y crecimiento) que lleva al rincón. **Sin botón de ofrenda**: para eso está la pestaña Ofrendas (decidido por Javi). **Mientras falte arte, solo se ven los rincones que ya tienen su fondo dibujado**; los demás aparecen al integrarse su entrega (decidido por Javi) |
+| **Casa** (principal) | Ver a Nox y su casa, hablar con él y construir | Ver la sección «Casa». Sustituye al antiguo Bosque de rincones |
 | **Rincón** (al tocar uno) | Detalle de un área | Primer plano del rincón y su compañero, lo que ha crecido, en qué fase está si se ha descuidado, qué hace falta para arreglarlo, su meta semanal y sus acciones |
 | **Ofrendas** | Contar lo que has hecho, en un toque (cada cosa buena es una ofrenda al bosque y por eso florece) | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer. Botón «Editar» por área: renombrar, cambiar la versión mínima, borrar (siempre queda al menos una) y recuperar las de ejemplo |
 | **Semana** | Metas semanales y resumen del domingo | Una meta por compañero llegado, su progreso y el resumen contado por ellos |
@@ -111,6 +111,15 @@ Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se
 6. **Venganzas de los compañeros:** nota pasivo-agresiva de Nox, etiquetas «VARIOS» de Tuerca…
 7. **Objetos de colección y sorpresas**, cada uno aislado.
 8. **Iconos de interfaz:** pestañas, áreas y acciones.
+
+## Casa (rumbo nuevo, en prueba)
+Primera pantalla del rumbo nuevo: la **casa de Nox**. Se prueba antes de rehacer el resto.
+- **Materiales:** cada ofrenda que cuenta (hasta 3 al día por área) da 1 material de su área: Cuerpo → ascuas, Mente → semillas, Calma → rocío, Vínculos → hilo, Orden → tornillos. Se calcula del historial: lo ganado menos lo construido.
+- **Construir:** 6 objetos para la casa de Nox (hoguera, cojín, banco, farolillo, seta luminosa, estantería). Todos piden ascuas y casi todos, algo de otra área, para premiar cuidar varias cosas. Cada objeto tiene su sitio en la escena y aparece con un rebote y chispas; Nox salta y lo comenta.
+- **Nox:** respira, salta al tocarlo y habla en un bocadillo (se queja si su área está descuidada; si no, comenta la hora). Contento si hoy has hecho algo suyo, enfurruñado si está descuidado, dormido de noche o si aún no ha llegado.
+- **Día y noche:** el dibujo es de día; el código lo tiñe al amanecer, al atardecer y de noche, y las luces (faroles, hoguera, seta, la llama de Nox) brillan más.
+- **Pestañas:** Casa · Registrar · Semana · Álbum. El botón de arriba («Casa de Nox») lleva al detalle de su área.
+- **Pendiente de decidir:** que los objetos hagan algo (efectos), crecimiento de Nox por etapas, excursiones, casas del resto de compañeros y colecciones.
 
 ## Reglas (aprobadas)
 - **Ofrenda:** cada vez que cuentas algo que has hecho. Se guarda con su fecha y hora.

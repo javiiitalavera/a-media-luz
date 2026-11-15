@@ -5,6 +5,8 @@ import type { CompaneroId } from '../contenido'
 import { crearPartida, type Partida } from '../logica/partida'
 import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
+import { construir as construirEnCasa } from '../logica/casa'
+import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
 
@@ -26,6 +28,8 @@ interface Juego {
   ponerDiaMalo: (v: boolean) => void
   /** Tocar a un compañero en el bosque: devuelve lo que dice. */
   tocar: (c: CompaneroId) => Frase | null
+  /** Construye un objeto en la casa; devuelve lo que dice el compañero (o null si no se pudo). */
+  construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   ajustar: (cambio: (p: Partida) => Partida) => void
   sustituir: (p: Partida) => void
   borrar: () => void
@@ -68,6 +72,14 @@ export const useJuego = create<Juego>()(
         const r = fraseAlTocar(p, c, new Date(), azarReal)
         set({ partida: { ...p, frasesRecientes: r.recientes } })
         return r.frase
+      },
+      construir: (objetoId, c) => {
+        const p = get().partida
+        const hecha = p && construirEnCasa(p, objetoId, new Date())
+        if (!hecha) return { ok: false, frase: null }
+        const r = elegirFrase(hecha, c, 'construir', azarReal)
+        set({ partida: { ...hecha, frasesRecientes: r.recientes } })
+        return { ok: true, frase: r.frase }
       },
       ajustar: (cambio) => {
         const p = get().partida

@@ -19,9 +19,11 @@ export function importarCopia(texto: string): Partida | null {
       p.ritmos && areas.every((a) => p.ritmos[a] in RITMOS) &&
       Array.isArray(p.ofrendas) && p.ofrendas.every((o: { id: unknown; area: string; fecha: string }) =>
         typeof o.id === 'string' && areas.includes(o.area) && !Number.isNaN(Date.parse(o.fecha))) &&
-      Array.isArray(p.hallazgos)
+      Array.isArray(p.hallazgos) &&
+      (p.construcciones === undefined || (Array.isArray(p.construcciones) && p.construcciones.every((c: { objetoId: unknown; fecha: string }) =>
+        typeof c.objetoId === 'string' && !Number.isNaN(Date.parse(c.fecha)))))
     if (!ok) return null
-    return { ...p, version: 1, frasesRecientes: Array.isArray(p.frasesRecientes) ? p.frasesRecientes : [] }
+    return { ...p, version: 1, frasesRecientes: Array.isArray(p.frasesRecientes) ? p.frasesRecientes : [], construcciones: p.construcciones ?? [] }
   } catch {
     return null
   }

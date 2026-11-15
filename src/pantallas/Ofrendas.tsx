@@ -1,6 +1,6 @@
 // Ofrendas: contar lo que has hecho, en un toque.
 import { useEffect, useState } from 'react'
-import { ACCIONES, AREAS, COMPANEROS, FRASES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, FRASES, MATERIALES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo, type ResultadoOfrenda } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
@@ -190,6 +190,12 @@ function Reaccion() {
         <div className="animate-entrar rounded-3xl bg-ambar px-4 py-3 font-semibold text-tinta">{UI.semana.cumplida} · {UI.semana.premio(resultado.premio.nombre)}</div>
       )}
       {resultado.sorpresa && <Sorpresa resultado={resultado} />}
+      {resultado.cuenta && (
+        <div className="animate-entrar flex items-center gap-2 self-start rounded-full bg-tarjeta px-3.5 py-1.5 text-[14px] font-bold shadow-sm">
+          <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: MATERIALES[resultado.ofrenda.area].color }} />
+          {UI.casa.gana(1, MATERIALES[resultado.ofrenda.area].singular)}
+        </div>
+      )}
       <div key={resultado.ofrenda.id} className="relative" role="status">
         {resultado.frase && <Bocadillo quien={COMPANEROS[resultado.frase.companero].nombre} texto={resultado.frase.texto} />}
         {puede && (

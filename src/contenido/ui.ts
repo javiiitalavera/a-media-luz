@@ -1,7 +1,7 @@
 // Textos de interfaz (no son frases de personaje). Propuestos por Claude.
 export const UI = {
   app: 'A media luz',
-  nav: { bosque: 'Bosque', ofrendas: 'Ofrendas', semana: 'Semana', album: 'Álbum' },
+  nav: { bosque: 'Casa', ofrendas: 'Registrar', semana: 'Semana', album: 'Álbum' },
   momentos: { amanecer: 'amanecer', mediodia: 'mediodía', atardecer: 'atardecer', noche: 'noche' },
   inicio: {
     titulo: '¿Con quién quieres empezar?',
@@ -11,6 +11,18 @@ export const UI = {
     atras: 'Atrás',
     habitualesTitulo: '¿Qué sueles hacer?',
     habitualesExplicacion: 'Marca lo que haces de vez en cuando. Luego podrás cambiarlo y crear lo tuyo.',
+  },
+  casa: {
+    de: (nombre: string) => `Casa de ${nombre}`,
+    construir: 'Construir',
+    catalogo: 'Construir en casa',
+    cerrar: 'Cerrar',
+    yaEsta: 'Ya está en casa',
+    faltan: 'Te falta',
+    puedes: (n: number) => (n === 1 ? '1 cosa lista para construir' : `${n} cosas listas para construir`),
+    gana: (n: number, material: string) => `+${n} ${material}`,
+    dormido: (nombre: string, n: number) => `${nombre} aún no ha llegado. ${n === 1 ? 'Falta 1 cosa' : `Faltan ${n} cosas`} de su área para despertarlo.`,
+    nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
   },
   bosque: {
     hacerOfrenda: 'Hacer una ofrenda',

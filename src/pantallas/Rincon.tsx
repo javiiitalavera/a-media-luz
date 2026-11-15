@@ -4,7 +4,6 @@ import type { Partida } from '../logica/partida'
 import { estadoRincon, metas } from '../logica/reglas'
 import { dia, lunes } from '../logica/fechas'
 import { BotonPrincipal, Pantalla, Tarjeta } from '../componentes/comunes'
-import { Escena } from '../componentes/Escena'
 
 export function Rincon({ partida, area, ahora, onVolver, onOfrenda }: {
   partida: Partida; area: AreaId; ahora: Date; onVolver: () => void; onOfrenda: () => void
@@ -16,8 +15,7 @@ export function Rincon({ partida, area, ahora, onVolver, onOfrenda }: {
   return (
     <Pantalla>
       <button type="button" onClick={onVolver} className="-ml-2 min-h-11 px-2 font-semibold text-texto-2">‹ {UI.rincon.volver}</button>
-      <Escena r={r} className="mt-2" />
-      <div className="mt-3 px-1">
+      <div className="mt-2 px-1">
         <h1 className="text-[26px] leading-tight font-bold">{info.rincon}</h1>
         <div className="text-texto-3">{c.nombre} · {info.nombre}</div>
       </div>

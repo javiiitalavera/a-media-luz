@@ -27,6 +27,13 @@ export interface Partida {
   /** Día (AAAA-MM-DD) con el modo día malo activo. */
   diaMalo?: string
   frasesRecientes: string[]
+  /** Cosas construidas en las casas (se añadió después: puede faltar en partidas antiguas). */
+  construcciones?: Construccion[]
+}
+
+export interface Construccion {
+  objetoId: string
+  fecha: string
 }
 
 /**
@@ -50,6 +57,7 @@ export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: s
     ofrendas: [],
     hallazgos: [],
     frasesRecientes: [],
+    construcciones: [],
   }
 }
 

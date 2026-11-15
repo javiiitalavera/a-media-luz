@@ -3,7 +3,8 @@
 import type { CompaneroId, Momento } from './tipos'
 
 export type TipoFrase =
-  | 'saludo' // al abrir el bosque, según el momento del día
+  | 'saludo' // al tocarlo en su casa, según el momento del día
+  | 'construir' // acabas de construir algo en su casa
   | 'ofrenda' // ofrenda de su propia área
   | 'otraArea' // ofrenda de un área cuyo compañero aún no ha llegado (comenta el principal)
   | 'tope' // ya van 3 ofrendas hoy en esa área
@@ -42,6 +43,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
     visitanteFuera: ['El cuervo se ha ido. Ha soltado lo tuyo al salir. Cobarde.'],
     llegada: ['Vale, ya estoy aquí. No hagas una fiesta. Bueno, una pequeña.'],
     sorpresa: ['He encontrado esto. No preguntes de dónde. De verdad, no preguntes.'],
+    construir: [
+      'Vaya. Ha quedado casi decente.',
+      'Lo pondré donde yo quiera. Que lo sepas.',
+      'Mi casa mejora. Tu vida, a ratos. Algo es algo.',
+      'No pienso darte las gracias. Pero lo uso.',
+    ],
   },
   tofu: {
     saludo: {

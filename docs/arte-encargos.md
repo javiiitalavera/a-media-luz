@@ -1,0 +1,24 @@
+# Cómo se hace el arte (decidido por Javi, 15/11/2026)
+
+**ChatGPT es una herramienta de dibujo, no un compañero de proyecto.** No escribe en el repositorio, no hace documentos ni opina sobre pantallas.
+
+1. **Claude** escribe el encargo, listo para copiar y pegar.
+2. **Javi** se lo pega a ChatGPT con la lámina (`docs/arte/lamina-personajes.webp`) adjunta como referencia de estilo, elige la versión que le gusta y se la sube a Claude en el chat.
+3. **Claude** recorta, limpia, monta, anima y enseña la pantalla funcionando (capturas y vídeo) en una rama aparte. Solo se fusiona en `main` cuando Javi dice «fusiona».
+
+## Reglas para los encargos
+- **Piezas sueltas, nunca pantallas.** Nada de botones, texto ni interfaz dentro de los dibujos.
+- **Fondos:** verticales (1080 × 1920 o proporción parecida), sin personajes, con el centro del suelo libre (ahí va el compañero) y el tercio de abajo sencillo (ahí va la interfaz).
+- **Objetos:** en láminas de cuadrícula (por ejemplo 3 × 2), cada uno centrado y separado en su casilla, con fondo transparente (o liso magenta #FF00FF). Mismo contorno marrón oscuro que la lámina y escala parecida entre ellos.
+- **Compañeros:** cuadrado con fondo transparente, cuerpo entero, pies abajo. Cada expresión, imagen aparte con el mismo encuadre.
+- **No se piden capas que encajen al píxel.** Lo que se mueve (respirar, saltar, chispas, luces, luciérnagas, día y noche, objetos que aparecen) lo hace el código.
+
+## Herramienta de recorte
+`python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA nombre1 nombre2 …` corta una lámina de objetos en archivos sueltos con fondo transparente (quita también el velo casi invisible que dejan los generadores).
+
+## Arte en uso
+| Archivo | Qué es |
+|---|---|
+| `public/arte/casa/nox/fondo.webp` | Casa de Nox: claro con madriguera y farol (941 × 1672) |
+| `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
+| `public/arte/personajes/nox/*.webp` | Nox: base, contento, enfurruñado, dormido (600 × 600) |

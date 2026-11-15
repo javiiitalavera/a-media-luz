@@ -3,10 +3,9 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Diseño aprobado** por Javi: `docs/diseno-juego.md` (reglas con números en «Reglas»).
-- **Base de la app construida** (15/11/2026): todas las reglas aprobadas con tests y las pantallas Inicio, Bosque, Rincón, Ofrendas, Semana, Álbum y Ajustes, con textos reales.
-- **Sin arte todavía:** la app solo muestra recursos APROBADOS de `docs/entregas-arte.md`. Donde irán ilustraciones hay huecos neutros (`HuecoArte`, `Escena`); nunca se dibujan sustitutos.
-- **Capas de arte:** el Bosque es un sendero vertical con una escena por rincón montada por capas. Formatos y claves para ChatGPT en `docs/capas-arte.md`.
+- **Rumbo nuevo (15/11/2026, en prueba en la rama `dev/casa-nox`):** una mascota que crece, construir y coleccionar, premiando lo que haces en la vida real. Los cinco compañeros de la lámina, empezando por Nox. Primera pantalla: la **casa de Nox** (ofrendas → materiales → construir objetos que aparecen en su casa).
+- **Método:** una pantalla terminada y bonita antes de pasar a la siguiente; nunca pantallas con huecos grises esperando arte.
+- **Reglas base aprobadas** en `docs/diseno-juego.md` (ofrendas, tope, día malo, consecuencias, metas). Lo nuevo de la casa está en su sección «Casa».
 - **Frases y catálogo de colección:** propuestas de Claude en `src/contenido/`, pendientes de revisión de Javi.
 
 ## Lo único que se conserva (decidido por Javi)
@@ -19,7 +18,6 @@ Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Mad
 - **No hacer cosas tiene consecuencias temporales, nivel 2:** el bosque se afea, se pausa lo bueno, los compañeros se enfurruñan y pueden llegar visitantes que se llevan objetos. **Todo se recupera** con pocas acciones; nada se pierde para siempre.
 - **Consecuencias sí, culpa no:** nada de «me has decepcionado», rachas que castigan ni avisos lacrimógenos. Volver tiene que sentar bien.
 
-Las reglas, mecánicas y pantallas del juego nuevo están **aprobadas** en `docs/diseno-juego.md`. No uses nada del juego anterior que no figure ahí.
 
 ## Sobre quien dirige el proyecto
 - Javi es médico, **no programador**. Diseña el juego y lo construye con ayuda de IA.
@@ -27,13 +25,11 @@ Las reglas, mecánicas y pantallas del juego nuevo están **aprobadas** en `docs
 - No hagas preguntas innecesarias: si algo tiene una opción razonable por defecto, tómala y dilo. Pregunta lo que cambia el diseño del juego.
 - Prefiere el trabajo **de una vez y completo**, y comprobado antes de darlo por listo.
 
-## Reparto de trabajo y propiedad de archivos (decidido por Javi)
-**OBLIGATORIO: leer `docs/COORDINACION.md` antes de modificar o crear archivos.** Ese documento establece propietarios exclusivos de rutas, entregas de arte, ramas y publicación.
-
-- **ChatGPT:** dirección artística, personajes y recursos gráficos en `docs/arte/**` y `public/arte/**`; escribe `docs/direccion-artistica.md` y `docs/entregas-arte.md`. Entrega poses, capas y referencias visuales, **sin editar `src/**`**.
-- **Claude:** diseño del juego, código completo en `src/**`, animaciones programadas, interfaz, integración de assets, pruebas, despliegue y documentación técnica. Usa el arte aprobado **sin redibujarlo a ojo**.
-- **GitHub:** arte en ramas `arte/<tema>` con PR; Claude o el usuario integran los cambios. No publicar dos agentes a la vez en `main`; no sobrescribir trabajo del otro.
-- **No dibujes ni rediseñes personajes ni escenarios por tu cuenta** (ni «aproximaciones» en SVG): el arte lo produce ChatGPT siguiendo la lámina.
+## Reparto de trabajo (decidido por Javi, sustituye al anterior)
+- **Javi** decide todo lo que se ve y hace de director de arte.
+- **ChatGPT es solo una herramienta de dibujo** que usa Javi con los encargos que escribe Claude. No toca el repositorio. Cómo se piden y se integran las imágenes: `docs/arte-encargos.md`.
+- **Claude** hace todo lo demás: diseño del juego, código, recorte y montaje del arte, animaciones por código, pruebas y documentación. Usa el arte tal como llega (puede recortarlo, encuadrarlo o teñirlo), pero **no dibuja personajes ni escenarios**.
+- Los cambios se enseñan funcionando (capturas y vídeo) en una rama `dev/<tema>`; se fusionan en `main` solo cuando Javi dice «fusiona».
 
 ## Reglas de trabajo
 - Interfaz y código en español.
@@ -46,6 +42,6 @@ Las reglas, mecánicas y pantallas del juego nuevo están **aprobadas** en `docs
 - `src/contenido/` — **todo el texto** del juego: áreas, compañeros, acciones de ejemplo, colección, frases e interfaz (`ui.ts`).
 - `src/logica/` — reglas como **funciones puras con tests** (`npm test`). `reglas.ts` calcula todo a partir del historial de ofrendas (crecimiento, fases, arreglo, visitante y robo, llegada, metas); `ofrendas.ts` hace y deshace ofrendas.
 - `src/estado/juego.ts` — partida guardada en el móvil (Zustand + localStorage).
-- `src/arte/manifiesto.ts` — rutas de los recursos **aprobados**. Se rellena solo con lo que figure como APROBADO en `docs/entregas-arte.md`. `src/arte/capas.ts` decide qué capas tocan según el estado; `src/componentes/Escena.tsx` las apila.
+- `src/arte/manifiesto.ts` — rutas del arte en uso. `src/pantallas/Casa.tsx` monta la casa (fondo, objetos, Nox, luces y animaciones); `src/contenido/casa.ts` tiene materiales y objetos (coste, sitio en la escena); `src/logica/casa.ts`, materiales y construir.
 - `src/pantallas/` y `src/componentes/` — interfaz. Colores de interfaz en `src/estilos/index.css` (de día crema, de noche ciruela), con contraste ≥ 4,5.
 - **Antes de publicar:** `npm run build`, `npm test` y prueba en iPhone simulado (Playwright) a 390, 375 y 360 px, de día y de noche.
