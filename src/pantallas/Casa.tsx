@@ -141,7 +141,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       </div>
 
       {/* Arriba: de quién es la casa y ajustes. */}
-      <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,env(safe-area-inset-top))]">
+      <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <button type="button" onClick={onDetalle} className="min-h-11 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
           <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
           <span className="block text-[13px] text-texto-3">{UI.momentos[momento]} · {UI.bosque.fases[r.fase]}</span>
