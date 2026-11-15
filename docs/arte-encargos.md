@@ -14,7 +14,7 @@
 - **No se piden capas que encajen al píxel.** Lo que se mueve (respirar, saltar, chispas, luces, luciérnagas, día y noche, objetos que aparecen) lo hace el código.
 
 ## Herramienta de recorte
-`python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA nombre1 nombre2 …` corta una lámina de objetos en archivos sueltos con fondo transparente (quita también el velo casi invisible que dejan los generadores).
+`python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA nombre1 nombre2 …` corta una lámina de objetos en archivos sueltos con fondo transparente (quita también el velo casi invisible que dejan los generadores). Con `--personaje` delante, recorta las expresiones de un personaje con el mismo encuadre (600 × 600, pies abajo) para que no se mueva al cambiar de cara.
 
 ## Arte en uso
 | Archivo | Qué es |
@@ -22,4 +22,5 @@
 | `public/arte/casa/nox/fondo.webp` | Casa de Nox: claro con madriguera y farol (941 × 1672) |
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
-| `public/arte/personajes/nox/joven/*.webp`, `…/adulto/*.webp` | Nox joven y adulto, mismas 4 expresiones (pendiente de encargo) |
+| `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
+| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto (pendiente; mientras, se ve el joven) |
