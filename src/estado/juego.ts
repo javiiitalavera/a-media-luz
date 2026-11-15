@@ -6,6 +6,7 @@ import { crearPartida, type Partida } from '../logica/partida'
 import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
 import { construir as construirEnCasa } from '../logica/casa'
+import { marcarEtapaVista, type Etapa } from '../logica/etapas'
 import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
@@ -30,6 +31,8 @@ interface Juego {
   tocar: (c: CompaneroId) => Frase | null
   /** Construye un objeto en la casa; devuelve lo que dice el compañero (o null si no se pudo). */
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
+  /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
+  verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
   ajustar: (cambio: (p: Partida) => Partida) => void
   sustituir: (p: Partida) => void
   borrar: () => void
@@ -80,6 +83,14 @@ export const useJuego = create<Juego>()(
         const r = elegirFrase(hecha, c, 'construir', azarReal)
         set({ partida: { ...hecha, frasesRecientes: r.recientes } })
         return { ok: true, frase: r.frase }
+      },
+      verEtapa: (c, etapa) => {
+        const p = get().partida
+        if (!p) return null
+        const vista = marcarEtapaVista(p, c, etapa)
+        const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
+        set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
+        return r?.frase ?? null
       },
       ajustar: (cambio) => {
         const p = get().partida

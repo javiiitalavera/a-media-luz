@@ -23,6 +23,9 @@ export const UI = {
     gana: (n: number, material: string) => `+${n} ${material}`,
     dormido: (nombre: string, n: number) => `${nombre} aún no ha llegado. ${n === 1 ? 'Falta 1 cosa' : `Faltan ${n} cosas`} de su área para despertarlo.`,
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
+    etapas: ['Cachorro', 'Joven', 'Adulto'],
+    haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
+    crecio: (nombre: string, etapa: string) => `${nombre} ya es ${etapa.toLowerCase()}`,
   },
   bosque: {
     hacerOfrenda: 'Hacer una ofrenda',

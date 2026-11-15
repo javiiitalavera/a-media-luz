@@ -5,6 +5,8 @@ import type { CompaneroId, Momento } from './tipos'
 export type TipoFrase =
   | 'saludo' // al tocarlo en su casa, según el momento del día
   | 'construir' // acabas de construir algo en su casa
+  | 'crecer1' // acaba de pasar de cachorro a joven
+  | 'crecer2' // acaba de hacerse adulto
   | 'ofrenda' // ofrenda de su propia área
   | 'otraArea' // ofrenda de un área cuyo compañero aún no ha llegado (comenta el principal)
   | 'tope' // ya van 3 ofrendas hoy en esa área
@@ -49,6 +51,8 @@ export const FRASES: Record<CompaneroId, Frases> = {
       'Mi casa mejora. Tu vida, a ratos. Algo es algo.',
       'No pienso darte las gracias. Pero lo uso.',
     ],
+    crecer1: ['Me he estirado. No digas nada. Ni una palabra.', 'Más alto, igual de sarcástico. Mejorado, en resumen.'],
+    crecer2: ['Adulto. Con facturas imaginarias y todo. Gracias por nada. Bueno, por todo.', 'Ya está. Ahora soy el zorro que tu fisioterapeuta querría que fueras.'],
   },
   tofu: {
     saludo: {

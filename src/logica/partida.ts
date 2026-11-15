@@ -29,6 +29,8 @@ export interface Partida {
   frasesRecientes: string[]
   /** Cosas construidas en las casas (se añadió después: puede faltar en partidas antiguas). */
   construcciones?: Construccion[]
+  /** Última etapa de crecimiento que se ha visto de cada compañero (para celebrarla una vez). */
+  etapasVistas?: Partial<Record<CompaneroId, 0 | 1 | 2>>
 }
 
 export interface Construccion {

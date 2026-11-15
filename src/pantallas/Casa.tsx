@@ -7,15 +7,17 @@ import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, puedeConstruir } from '../logica/casa'
-import { rutaArte, type Expresion } from '../arte/manifiesto'
+import { crecioSinVer, progreso } from '../logica/etapas'
+import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
 const DUENO: CompaneroId = 'nox'
 const AREA = COMPANEROS[DUENO].area
 /** Proporción del fondo (ancho / alto). */
 const PROPORCION_FONDO = 941 / 1672
-/** Nox: centro, pies (en % del fondo) y ancho (en % del ancho del fondo). */
-const NOX = { x: 50, y: 66, ancho: 40 }
+/** Nox: centro y pies (en % del fondo). Su ancho (en % del ancho del fondo) depende de la etapa. */
+const NOX = { x: 50, y: 66 }
+const ANCHO_NOX = [36, 42, 48]
 /** Luces que ya están dibujadas en el fondo (farol de la madriguera y del poste). */
 const LUCES_FONDO = [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }]
 const SEGUNDOS_BOCADILLO = 7
@@ -49,6 +51,27 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const [saltos, setSaltos] = useState(0)
   const [recien, setRecien] = useState<string | null>(null)
   const [hoja, setHoja] = useState(false)
+  const verEtapa = useJuego((s) => s.verEtapa)
+  const g = progreso(partida, DUENO, ahora)
+  const [celebra, setCelebra] = useState<number | null>(null)
+
+  // Ha crecido desde la última vez: celebración (una sola vez por etapa).
+  const pendiente = r.llegado && crecioSinVer(partida, DUENO, g.etapa)
+  useEffect(() => {
+    if (!pendiente) return
+    const t = setTimeout(() => {
+      const f = verEtapa(DUENO, g.etapa)
+      setCelebra(Date.now())
+      setSaltos((n) => n + 1)
+      if (f) setHabla({ texto: f.texto, n: Date.now(), contento: true })
+    }, 700)
+    return () => clearTimeout(t)
+  }, [pendiente, g.etapa, verEtapa])
+  useEffect(() => {
+    if (!celebra) return
+    const t = setTimeout(() => setCelebra(null), 4500)
+    return () => clearTimeout(t)
+  }, [celebra])
 
   useEffect(() => {
     if (!habla) return
@@ -90,7 +113,10 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const capas = [...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, o })), { y: NOX.y, o: null }].sort((a, b) => a.y - b.y)
   // Alto (en % del fondo) de algo que ocupa `ancho` % del ancho con esa proporción.
   const alto = (ancho: number, prop: number) => (ancho * prop * ew) / eh
-  const altoNox = alto(NOX.ancho, 1)
+  // Hasta que se celebra, se sigue viendo la etapa anterior.
+  const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
+  const anchoNox = ANCHO_NOX[etapaVista]
+  const altoNox = alto(anchoNox, 1)
 
   return (
     <main ref={ref} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
@@ -98,13 +124,13 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
         <img src={rutaArte('casa/nox/fondo')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} /> : (
-          <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${NOX.ancho}%`, transform: 'translate(-50%, -100%)' }}>
+          <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
             {/* sombra en el suelo */}
             <span aria-hidden className="absolute bottom-[1%] left-1/2 h-[9%] w-[62%] -translate-x-1/2 rounded-[50%] bg-[#4b5d3f]/30 blur-[2px]" />
             <button type="button" aria-label={UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
               onClick={(e) => { e.stopPropagation(); hablar() }} className="relative block w-full">
               <span key={saltos} className={`block ${saltos ? 'anim-saltar' : ''}`}>
-                <img src={rutaArte(`companero/nox/${expresion}`)} alt="" draggable={false} className="anim-respirar block w-full" />
+                <img key={etapaVista} src={rutaCompanero(DUENO, etapaVista, expresion)} alt="" draggable={false} className={`anim-respirar block w-full ${celebra ? 'anim-brotar' : ''}`} />
               </span>
             </button>
           </div>
@@ -124,10 +150,18 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
             return <Luz key={o.id} x={x} y={y} tam={noche ? 30 : 18} color={o.luz!.color} retraso={0.3} />
           })}
           {/* La llama de la cola de Nox */}
-          <Luz x={NOX.x - NOX.ancho * 0.28} y={NOX.y - altoNox * 0.36} tam={noche ? 22 : 14} color="#ffb347" retraso={0} />
+          <Luz x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.36} tam={noche ? 22 : 14} color="#ffb347" retraso={0} />
         </div>
-        <Chispas x={NOX.x - NOX.ancho * 0.28} y={NOX.y - altoNox * 0.45} />
+        <Chispas x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.45} />
         <Luciernagas cuantas={noche ? 14 : 7} />
+        {celebra && (
+          <>
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-screen">
+              <Luz x={NOX.x} y={NOX.y - altoNox / 2} tam={70} color="#ffd27a" retraso={0} />
+            </div>
+            <Estallido x={NOX.x} y={NOX.y - altoNox / 2} />
+          </>
+        )}
 
         {habla && (
           <div key={habla.n} role="status" className="absolute z-30"
@@ -144,7 +178,15 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,env(safe-area-inset-top))]">
         <button type="button" onClick={onDetalle} className="min-h-11 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
           <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
-          <span className="block text-[13px] text-texto-3">{UI.momentos[momento]} · {UI.bosque.fases[r.fase]}</span>
+          <span className="block text-[13px] text-texto-3">
+            {UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
+            {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
+          </span>
+          {g.siguiente && !pendiente && (
+            <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
+              <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((g.crecimiento - g.desde) / (g.siguiente - g.desde)) * 100}%` }} />
+            </span>
+          )}
         </button>
         <button type="button" onClick={onAjustes} className="min-h-11 rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
           {UI.bosque.ajustes}
@@ -163,6 +205,12 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
           </button>
         </div>
       </div>
+
+      {celebra && (
+        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,env(safe-area-inset-top))+64px)] z-30 flex justify-center px-4">
+          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
+        </div>
+      )}
 
       {hoja && <Catalogo partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
     </main>

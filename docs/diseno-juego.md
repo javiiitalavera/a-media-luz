@@ -119,7 +119,8 @@ Primera pantalla del rumbo nuevo: la **casa de Nox**. Se prueba antes de rehacer
 - **Nox:** respira, salta al tocarlo y habla en un bocadillo (se queja si su área está descuidada; si no, comenta la hora). Contento si hoy has hecho algo suyo, enfurruñado si está descuidado, dormido de noche o si aún no ha llegado.
 - **Día y noche:** el dibujo es de día; el código lo tiñe al amanecer, al atardecer y de noche, y las luces (faroles, hoguera, seta, la llama de Nox) brillan más.
 - **Pestañas:** Casa · Registrar · Semana · Álbum. El botón de arriba («Casa de Nox») lleva al detalle de su área.
-- **Pendiente de decidir:** que los objetos hagan algo (efectos), crecimiento de Nox por etapas, excursiones, casas del resto de compañeros y colecciones.
+- **Crecimiento por etapas:** el Nox de la lámina es el **cachorro**; pasa a **joven** con 15 de crecimiento y a **adulto** con 35 (los grados 2 y 3 de su área: ofrendas de Cuerpo que cuentan; se pausa si su área está descuidada y nunca baja). Cada etapa se ve más grande en la escena. Al crecer, la próxima vez que abres la casa hay celebración una sola vez: luz, chispas, aviso «Nox ya es joven» y su frase. Arriba se ve la etapa y cuánto falta para la siguiente.
+- **Pendiente de decidir:** que los objetos hagan algo (efectos), qué aprende al crecer, excursiones, casas del resto de compañeros y colecciones.
 
 ## Reglas (aprobadas)
 - **Ofrenda:** cada vez que cuentas algo que has hecho. Se guarda con su fecha y hora.
