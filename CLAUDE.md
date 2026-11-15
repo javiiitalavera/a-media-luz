@@ -4,12 +4,17 @@ Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Mad
 
 ## Estado
 - **Proyecto empezado de cero** (noviembre de 2026). No hay código. Lo anterior se borró a propósito; no intentes recuperarlo ni reconstruirlo.
-- **Siguiente paso:** diseñar el juego nuevo con Javi y escribirlo en `docs/diseno-juego.md` **antes de programar nada**.
+- **Siguiente paso:** cerrar con Javi el diseño en `docs/diseno-juego.md` (borrador 1 escrito) **antes de programar nada**.
 
 ## Lo único que se conserva (decidido por Javi)
 1. **La dirección artística** → `docs/direccion-artistica.md` y la lámina `docs/arte/lamina-personajes.webp` (referencia vinculante).
 2. **Los personajes:** aspecto, nombre, área y personalidad → `docs/personajes.md`. Sus frases, historias y encargos se escriben de nuevo para el juego nuevo.
-3. **El principio de juego:** la gamificación tiene que ser **divertida** y estar **basada en acciones positivas** (premiar lo que haces bien; nunca castigar, culpabilizar ni chantajear).
+3. **El principio de juego:** la gamificación tiene que ser **divertida** y estar **basada en acciones positivas** (se registra lo que haces, nunca lo que no haces).
+
+## Tono y consecuencias (decidido por Javi)
+- **Humor negro, nada ñoño.** Los compañeros pinchan, ironizan y se vengan a su manera. No escribas textos empalagosos ni excesivamente positivos.
+- **No hacer cosas tiene consecuencias temporales, nivel 2:** el bosque se afea, se pausa lo bueno, los compañeros se enfurruñan y pueden llegar visitantes que se llevan objetos. **Todo se recupera** con pocas acciones; nada se pierde para siempre.
+- **Consecuencias sí, culpa no:** nada de «me has decepcionado», rachas que castigan ni avisos lacrimógenos. Volver tiene que sentar bien.
 
 Todo lo demás (reglas, mecánicas, pantallas) está por decidir. No des por hecho nada del juego anterior.
 
