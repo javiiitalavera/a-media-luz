@@ -3,7 +3,7 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Rumbo nuevo (15/11/2026, en prueba en la rama `dev/casa-nox`):** una mascota que crece, construir y coleccionar, premiando lo que haces en la vida real. Los cinco compañeros de la lámina, empezando por Nox. Primera pantalla: la **casa de Nox** (ofrendas → materiales → construir objetos que aparecen en su casa).
+- **Rumbo nuevo (15/11/2026, en `main`):** una mascota que crece, construir y coleccionar, premiando lo que haces en la vida real. Los cinco compañeros de la lámina, empezando por Nox. Primera pantalla: la **casa de Nox** (ofrendas → materiales → construir objetos que aparecen en su casa).
 - **Método:** una pantalla terminada y bonita antes de pasar a la siguiente; nunca pantallas con huecos grises esperando arte.
 - **Reglas base aprobadas** en `docs/diseno-juego.md` (ofrendas, tope, día malo, consecuencias, metas). Lo nuevo de la casa está en su sección «Casa».
 - **Frases y catálogo de colección:** propuestas de Claude en `src/contenido/`, pendientes de revisión de Javi.
