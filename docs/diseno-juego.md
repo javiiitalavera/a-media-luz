@@ -1,6 +1,6 @@
-# Diseño del juego — borrador 1
+# Diseño del juego
 
-**Estado:** BORRADOR, pendiente de aprobación de Javi (ver `COORDINACION.md`: no se programan mecánicas definitivas hasta aprobarlo). Lo marcado con **[?]** está por decidir.
+**Estado:** **APROBADO por Javi el 15/11/2026** (respondió «sí a todas» a las preguntas abiertas). Los números concretos están en «Reglas»; cualquier cambio se apunta aquí.
 
 ## Qué es
 Un bosque ilustrado donde viven cinco compañeros con mala leche y buen corazón. El bosque refleja tu vida real: cuando haces cosas buenas florece, y cuando las dejas se asilvestra, se llena de niebla y aparecen visitantes indeseables. Nada se pierde para siempre, pero nada se te regala.
@@ -14,13 +14,13 @@ Un bosque ilustrado donde viven cinco compañeros con mala leche y buen corazón
 1. **Divertido y basado en acciones positivas.** Lo que haces es una **ofrenda** al bosque; nunca se registra lo que no haces.
 2. **Consecuencias temporales, nivel 2:** dejar de hacer cosas afea el bosque, pausa lo bueno y puede hacerte perder objetos, pero **todo se recupera**. Nada se pierde para siempre y ningún compañero se muere ni se va del todo.
 3. **Sin chantaje:** sin rachas que se rompen, sin avisos lacrimógenos y sin pagar por nada.
-4. **Equilibrio:** cuidar varias áreas cuenta más que hacer mucho de una. **[?]** Tope diario por área, para que no se pueda «comprar» el bosque en un día.
+4. **Equilibrio:** cuidar varias áreas cuenta más que hacer mucho de una. Tope diario por área: cuentan las 3 primeras ofrendas del día.
 5. **Sin verificación:** es una herramienta personal; si haces trampa, te la haces a ti.
 
 ## Las cinco áreas y sus rincones
 Cada compañero cuida un área de tu vida y tiene su **rincón del bosque**:
 
-| Rincón | Compañero | Área | Ritmo por defecto **[?]** |
+| Rincón | Compañero | Área | Ritmo por defecto |
 |---|---|---|---|
 | Claro del fuego | Nox | Cuerpo | cada día |
 | Huerto de musgo | Tofu | Mente | varias veces por semana |
@@ -40,7 +40,7 @@ El **ritmo** dice cuánto aguanta un rincón sin cuidados antes de empezar a est
 ## Consecuencias (si un rincón se descuida)
 Van por fases, según cuánto pase del ritmo de ese rincón:
 
-| Fase | Cuándo **[?]** | Qué pasa |
+| Fase | Cuándo | Qué pasa |
 |---|---|---|
 | **1. Asilvestrado** | pasado el ritmo | Maleza, hongos y niebla en el rincón; las flores se cierran; su farolillo se apaga. **Se pausa lo bueno**: ahí no crece nada, no hay sorpresas de esa área y su compañero no propone metas. |
 | **2. Enfurruñado** | el doble del ritmo | El compañero se venga a su manera: Nox esconde cosas y deja notas pasivo-agresivas; Tuerca reetiqueta todo como «VARIOS»; Madeja cotillea de ti con los demás; Bruma se va flotando y tienes que buscarla; Tofu finge que no existes. |
@@ -54,14 +54,14 @@ Van por fases, según cuánto pase del ritmo de ese rincón:
 ## Los compañeros
 - **Empiezas con uno**, el que elijas por su humor.
 - Los otros cuatro **se intuyen desde el primer día**: una casita a oscuras, una silueta dormida entre los árboles.
-- **Llegan pronto:** cuando haces tus primeras **[?] 3 acciones** de su área, se despiertan y se mudan. En una o dos semanas el bosque puede estar lleno.
+- **Llegan pronto:** cuando haces tus primeras **3 ofrendas** de su área, se despiertan y se mudan. En una o dos semanas el bosque puede estar lleno.
 - Cada uno tiene su personalidad (ver `personajes.md`) y comenta lo suyo. Entre ellos también hablan, y no siempre bien de ti.
 - Tocar a un compañero tiene premio: reacciona, a veces te contesta mal.
 
 ## Bucle semanal
 - Cada compañero te propone **una meta pequeña** para la semana. Por ejemplo, Nox: «Tres paseos. No te pido una maratón, te pido que salgas».
 - Si la cumples, te da un objeto especial para su rincón y un trozo de su historia.
-- Si no, no pasa nada grave: esa semana te quedas sin el objeto y lo comenta con sorna. **[?]** ¿Meta más fácil si vienes de una mala semana?
+- Si no, no pasa nada grave: esa semana te quedas sin el objeto y lo comenta con sorna. Si vienes de una mala semana, la meta siguiente es más fácil.
 - **Resumen del domingo:** cómo ha ido cada rincón, contado por los compañeros con su humor.
 
 ## Colección
@@ -112,9 +112,22 @@ Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se
 7. **Objetos de colección y sorpresas**, cada uno aislado.
 8. **Iconos de interfaz:** pestañas, áreas y acciones.
 
-## Preguntas abiertas
-1. ¿Tope diario por área? Propuesta: las 3 primeras acciones del día en un área cuentan; las demás se apuntan pero no hacen crecer más.
-2. Tiempos exactos de las fases de consecuencias (propuesta: 1×, 2× y 3× el ritmo del rincón).
-3. ¿Cuántas acciones para que llegue cada compañero? Propuesta: 3.
-4. ¿Un «modo día malo» para registrar versiones mínimas (un paseo de 5 minutos cuenta)?
-5. ¿El bosque cambia con la hora real del día (amanecer, mediodía, atardecer, noche)?
+## Reglas (aprobadas)
+- **Ofrenda:** cada vez que cuentas algo que has hecho. Se guarda con su fecha y hora.
+- **Tope diario:** en cada área cuentan las **3 primeras ofrendas del día** para crecer y para arreglar. Las demás se guardan, pero no suman.
+- **Ritmo y margen** de cada rincón: diario = 1 día · varias veces por semana = 2 · un par de veces por semana = 4 · semanal = 7. Se cambia en Ajustes.
+- **Fases de consecuencias:** cuentan los días completos desde la última ofrenda del área (el día de hoy no cuenta hasta que acaba).
+  - Más de 1 margen sin ofrendas: **fase 1, asilvestrado**.
+  - Más de 2 márgenes: **fase 2, enfurruñado**.
+  - Más de 3 márgenes: **fase 3, visitante**, que se lleva **un objeto de la colección de esa área**, si hay alguno.
+- **Arreglo:**
+  - Con **2 ofrendas** del área (seguidas o en días distintos) desaparecen niebla y enfado, y el rincón vuelve a estar bien.
+  - El visitante se va con la **3.ª**, y devuelve lo robado.
+  - Mientras dura el arreglo no se pierde nada más.
+- **Crecimiento:** permanente; el descuido lo tapa pero no lo borra. Grado 0 a 3 según las ofrendas que han contado en el área: **5 → grado 1, 15 → grado 2, 35 → grado 3**. Los rincones en fase 1 o más no crecen.
+- **Llegada de compañeros:** el elegido está desde el principio; los demás, con **3 ofrendas** de su área. Antes de llegar, su rincón duerme y no sufre consecuencias.
+- **Modo día malo:** se activa para hoy y se apaga solo al día siguiente. Las acciones muestran su versión mínima y **cuentan igual**.
+- **Sorpresas:** tras una ofrenda que cuenta, **15 %** de probabilidad, como mucho **una al día**. Dan un objeto de colección de esa área que aún no tengas.
+- **Hora del día** (real, del móvil): amanecer de 6:00 a 10:59 · mediodía de 11:00 a 17:59 · atardecer de 18:00 a 21:59 · noche de 22:00 a 5:59.
+- **Semana:** empieza el lunes. Cada compañero llegado propone una meta (número de ofrendas de su área). Si la semana anterior no cumpliste la meta de un compañero, la nueva es más fácil.
+- **Datos:** solo en el móvil, con copia de seguridad exportable.
