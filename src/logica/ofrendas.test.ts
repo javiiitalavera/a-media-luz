@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cambiarDiaMalo, deshacerOfrenda, fraseDelBosque, hacerOfrenda } from './ofrendas'
+import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda } from './ofrendas'
 import { exportarCopia, importarCopia } from './copia'
 import { momentoDelDia } from './momento'
 import { estadoRincon } from './reglas'
@@ -95,8 +95,8 @@ describe('deshacer', () => {
 
 describe('bosque, momento y copia', () => {
   it('el bocadillo habla del peor rincón; si todo va bien, saluda el principal', () => {
-    expect(fraseDelBosque(nueva(), en('2026-01-05', 8), azarFijo(0)).frase?.tipo).toBe('saludo')
-    expect(fraseDelBosque(nueva(), en('2026-01-10', 8), azarFijo(0)).frase).toMatchObject({ companero: 'nox', tipo: 'fase3' })
+    expect(fraseAlTocar(nueva(), 'nox', en('2026-01-05', 8), azarFijo(0)).frase?.tipo).toBe('saludo')
+    expect(fraseAlTocar(nueva(), 'nox', en('2026-01-10', 8), azarFijo(0)).frase).toMatchObject({ companero: 'nox', tipo: 'fase3' })
   })
   it('momentos del día', () => {
     expect([6, 10, 11, 17, 18, 21, 22, 5].map((h) => momentoDelDia(en('2026-01-05', h, 30)))).toEqual(

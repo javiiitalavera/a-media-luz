@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { CompaneroId } from '../contenido'
 import { crearPartida, type Partida } from '../logica/partida'
-import { cambiarDiaMalo, deshacerOfrenda, fraseDelBosque, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
+import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
 
 export const SEGUNDOS_DESHACER = 8
@@ -24,11 +24,8 @@ interface Juego {
   deshacer: () => void
   olvidarRecientes: () => void
   ponerDiaMalo: (v: boolean) => void
-  /** Frase del bocadillo del bosque y para qué situación se eligió (no se guardan). */
-  fraseBosque: Frase | null
-  claveFrase: string | null
-  nuevaFraseBosque: (clave: string) => void
-  fijarClaveFrase: (clave: string) => void
+  /** Tocar a un compañero en el bosque: devuelve lo que dice. */
+  tocar: (c: CompaneroId) => Frase | null
   ajustar: (cambio: (p: Partida) => Partida) => void
   sustituir: (p: Partida) => void
   borrar: () => void
@@ -38,7 +35,7 @@ export const useJuego = create<Juego>()(
   persist(
     (set, get) => ({
       partida: null,
-      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales), recientes: [], fraseBosque: null }),
+      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales), recientes: []}),
       recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida
@@ -48,8 +45,6 @@ export const useJuego = create<Juego>()(
         set({
           partida: resultado.partida,
           recientes: [...get().recientes, { resultado, hasta: ahora.getTime() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
-          fraseBosque: resultado.frase ?? get().fraseBosque,
-          claveFrase: null, // la reacción se queda hasta que cambie la situación (ver Bosque)
         })
         return resultado
       },
@@ -60,28 +55,26 @@ export const useJuego = create<Juego>()(
         const resto = recientes.slice(0, -1)
         const anterior = resto.at(-1)
         if (anterior) anterior.hasta = Date.now() + SEGUNDOS_DESHACER * 1000
-        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto], fraseBosque: null })
+        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto]})
       },
       olvidarRecientes: () => set({ recientes: [] }),
       ponerDiaMalo: (v) => {
         const p = get().partida
         if (p) set({ partida: cambiarDiaMalo(p, v, new Date()) })
       },
-      fraseBosque: null,
-      claveFrase: null,
-      fijarClaveFrase: (clave) => set({ claveFrase: clave }),
-      nuevaFraseBosque: (clave) => {
+      tocar: (c) => {
         const p = get().partida
-        if (!p) return
-        const r = fraseDelBosque(p, new Date(), azarReal)
-        set({ fraseBosque: r.frase, claveFrase: clave, partida: { ...p, frasesRecientes: r.recientes } })
+        if (!p) return null
+        const r = fraseAlTocar(p, c, new Date(), azarReal)
+        set({ partida: { ...p, frasesRecientes: r.recientes } })
+        return r.frase
       },
       ajustar: (cambio) => {
         const p = get().partida
         if (p) set({ partida: cambio(p) })
       },
-      sustituir: (p) => set({ partida: p, recientes: [], fraseBosque: null }),
-      borrar: () => set({ partida: null, recientes: [], fraseBosque: null }),
+      sustituir: (p) => set({ partida: p, recientes: []}),
+      borrar: () => set({ partida: null, recientes: []}),
     }),
     { name: 'a-media-luz', version: 1, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }) },
   ),

@@ -15,6 +15,8 @@ export const UI = {
   bosque: {
     hacerOfrenda: 'Hacer una ofrenda',
     ajustes: 'Ajustes',
+    hablar: (nombre: string) => `Hablar con ${nombre}`,
+    verRincon: (rincon: string) => `Ver ${rincon}`,
     dormido: 'Dormido',
     llegaCon: (n: number) => (n === 1 ? 'Llega con 1 ofrenda más' : `Llega con ${n} ofrendas más`),
     fases: { 0: 'Bien', 1: 'Asilvestrado', 2: 'Enfurruñado', 3: 'Visitante' } as Record<number, string>,

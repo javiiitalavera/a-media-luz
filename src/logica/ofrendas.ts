@@ -101,11 +101,12 @@ export function deshacerOfrenda(p: Partida, ofrendaId: string): Partida {
 
 export const cambiarDiaMalo = (p: Partida, activo: boolean, ahora: Date): Partida => ({ ...p, diaMalo: activo ? dia(ahora) : undefined })
 
-/** Frase del bocadillo del bosque: si algún rincón está mal, habla su compañero (el peor); si no, saluda el principal. */
-export function fraseDelBosque(p: Partida, ahora: Date, azar: Azar) {
-  const mal = estadoBosque(p, ahora).filter((r) => r.llegado && r.fase > 0).sort((a, b) => b.fase - a.fase)[0]
-  if (mal) return elegirFrase(p, AREAS[mal.area].companero, `fase${mal.fase}` as TipoFrase, azar)
-  return elegirFrase(p, p.principal, 'saludo', azar, momentoDelDia(ahora))
+/** Lo que dice un compañero al tocarlo en el bosque: si su rincón está mal, se queja; si no, saluda según la hora. */
+export function fraseAlTocar(p: Partida, companero: CompaneroId, ahora: Date, azar: Azar) {
+  const area = COMPANEROS[companero].area
+  const r = estadoBosque(p, ahora).find((x) => x.area === area)
+  if (r && r.llegado && r.fase > 0) return elegirFrase(p, companero, `fase${r.fase}` as TipoFrase, azar)
+  return elegirFrase(p, companero, 'saludo', azar, momentoDelDia(ahora))
 }
 
 export const nombreCompanero = (id: CompaneroId) => COMPANEROS[id].nombre

@@ -33,7 +33,7 @@ export default function App() {
   else if (pestana === 'bosque' && rincon)
     pantalla = <Rincon partida={partida} area={rincon} ahora={ahora} onVolver={() => setRincon(null)} onOfrenda={() => irA('ofrendas')} />
   else if (pestana === 'bosque')
-    pantalla = <Bosque partida={partida} ahora={ahora} onRincon={setRincon} onOfrenda={() => irA('ofrendas')} onAjustes={() => setAjustes(true)} />
+    pantalla = <Bosque partida={partida} ahora={ahora} onRincon={setRincon} onAjustes={() => setAjustes(true)} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} />
   else if (pestana === 'semana') pantalla = <Semana partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} />

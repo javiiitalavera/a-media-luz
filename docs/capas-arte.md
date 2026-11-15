@@ -12,7 +12,8 @@ La pantalla principal se desplaza hacia abajo y tiene que leerse como **un solo 
 **Continuidad (para que encajen):**
 - El **sendero entra por el borde superior y sale por el inferior, centrado** (entre el 40 % y el 60 % del ancho), en todas las escenas. Así el camino de una sigue en la siguiente.
 - La franja de arriba y la de abajo de cada fondo (unos 160 px de los 1080) quedarán **tapadas en parte por las transiciones**: no poner ahí nada importante.
-- Sobre la esquina superior izquierda de cada escena la app pone el **cartel del rincón** (nombre, compañero y estado), de unos 260 × 100 px en pantalla. Evitar ahí elementos clave.
+- En la **esquina inferior izquierda** de cada escena la app pone un cartelito del rincón (una línea, unos 44 px de alto y hasta 2/3 del ancho). Evitar ahí elementos clave.
+- Al tocar al compañero sale un **bocadillo encima de su cabeza** que ocupa el 78 % del ancho en la franja media-alta de la escena. Es pasajero, pero conviene que el cielo y las copas de esa zona no sean lo más importante.
 
 ## Capas de cada rincón (de abajo arriba)
 Todas las capas de un mismo rincón tienen **el mismo tamaño (1440 × 1080) y el mismo encuadre**, para apilarlas sin mover nada. Todas menos el fondo, con transparencia.
