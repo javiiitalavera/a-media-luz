@@ -40,11 +40,12 @@ describe('metas y deterioro', () => {
 
 describe('premios cuando se acaban los especiales', () => {
   it('tras los 2 especiales del área, da objetos normales que no tengas; si no queda nada, ninguno', () => {
-    // Orden (Tuerca, semanal): meta de 1 ofrenda por semana. 8 semanas seguidas cumpliéndola.
+    // Orden (Tuerca, semanal): meta de 2 ofrendas por semana. 8 semanas seguidas cumpliéndola (lunes y martes).
     let p = nueva('tuerca')
-    const lunes = ['05', '12', '19', '26'].map((d) => `2026-01-${d}`).concat(['02', '09', '16', '23'].map((d) => `2026-02-${d}`))
-    for (const d of lunes) p = con(p, 'orden', d)
-    const premios = metas(p, en('2026-02-23', 20)).filter((m) => m.area === 'orden').map((m) => m.premio?.id ?? null)
+    const dias = [5, 12, 19, 26, 33, 40, 47, 54].flatMap((n) => [n, n + 1])
+      .map((n) => new Date(2026, 0, n)).map((f) => `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`)
+    for (const d of dias) p = con(p, 'orden', d)
+    const premios = metas(p, en('2026-02-24', 20)).filter((m) => m.area === 'orden').map((m) => m.premio?.id ?? null)
     expect(premios.slice(0, 2)).toEqual(['etiquetadora', 'engranaje-dorado'])
     expect(premios.slice(2, 6).every((id) => id && !['etiquetadora', 'engranaje-dorado'].includes(id))).toBe(true)
     expect(new Set(premios.slice(0, 6)).size).toBe(6)

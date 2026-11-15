@@ -11,7 +11,7 @@ export const OFRENDAS_ECHAR_VISITANTE = 3
 export const GRADOS = [5, 15, 35] // ofrendas que cuentan para los grados 1, 2 y 3
 export const PROBABILIDAD_SORPRESA = 0.15
 /** Meta semanal por ritmo (ofrendas de su área en la semana). */
-export const META_POR_RITMO = { diario: 5, varias: 4, par: 2, semanal: 1 } as const
+export const META_POR_RITMO = { diario: 5, varias: 4, par: 2, semanal: 2 } as const
 
 const ofrendasDe = (p: Partida, area: AreaId, hasta: Date) =>
   p.ofrendas.filter((o) => o.area === area && new Date(o.fecha) <= hasta).sort((a, b) => a.fecha.localeCompare(b.fecha))

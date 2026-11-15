@@ -129,5 +129,5 @@ Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se
 - **Modo día malo:** se activa para hoy y se apaga solo al día siguiente. Las acciones muestran su versión mínima y **cuentan igual**.
 - **Sorpresas:** tras una ofrenda que cuenta, **15 %** de probabilidad, como mucho **una al día**. Dan un objeto de colección de esa área que aún no tengas.
 - **Hora del día** (real, del móvil): amanecer de 6:00 a 10:59 · mediodía de 11:00 a 17:59 · atardecer de 18:00 a 21:59 · noche de 22:00 a 5:59.
-- **Semana:** empieza el lunes. Cada compañero llegado propone una meta (número de ofrendas de su área). Si la semana anterior no cumpliste la meta de un compañero, la nueva es más fácil.
+- **Semana:** empieza el lunes. Cada compañero llegado propone una meta (número de ofrendas de su área) según su ritmo: diario 5 · varias veces 4 · un par de veces 2 · semanal 2 (Tuerca: decidido por Javi). Si la semana anterior no cumpliste la meta de un compañero, la nueva es 1 menos (mínimo 1).
 - **Datos:** solo en el móvil, con copia de seguridad exportable.
