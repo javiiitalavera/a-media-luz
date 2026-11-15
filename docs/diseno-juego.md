@@ -11,7 +11,7 @@ Un bosque ilustrado donde viven cinco compañeros con mala leche y buen corazón
 - **Volver sienta bien.** Con poco esfuerzo se arregla lo que dejaste. El regreso se recibe con un comentario ácido, no con un sermón.
 
 ## Principios
-1. **Divertido y basado en acciones positivas.** Se registra lo que haces, nunca lo que no haces.
+1. **Divertido y basado en acciones positivas.** Lo que haces es una **ofrenda** al bosque; nunca se registra lo que no haces.
 2. **Consecuencias temporales, nivel 2:** dejar de hacer cosas afea el bosque, pausa lo bueno y puede hacerte perder objetos, pero **todo se recupera**. Nada se pierde para siempre y ningún compañero se muere ni se va del todo.
 3. **Sin chantaje:** sin rachas que se rompen, sin avisos lacrimógenos y sin pagar por nada.
 4. **Equilibrio:** cuidar varias áreas cuenta más que hacer mucho de una. **[?]** Tope diario por área, para que no se pueda «comprar» el bosque en un día.
@@ -31,7 +31,7 @@ Cada compañero cuida un área de tu vida y tiene su **rincón del bosque**:
 El **ritmo** dice cuánto aguanta un rincón sin cuidados antes de empezar a estropearse. Se puede cambiar en ajustes.
 
 ## Bucle diario
-1. **Haces algo en tu vida** (andar, leer, llamar a alguien…) y lo apuntas en la app con un toque. Hay acciones de ejemplo y puedes crear las tuyas.
+1. **Haces algo en tu vida** (andar, leer, llamar a alguien…) y se lo ofreces al bosque en la app con un toque (pestaña **Ofrendas**). Hay acciones de ejemplo y puedes crear las tuyas.
 2. **Reacción inmediata:** el compañero de esa área comenta, con su humor.
 3. **El rincón crece:** brota una flor, se enciende un farolillo, aparece una seta luminosa… El progreso se ve en el bosque, no solo en números.
 4. **A veces, sorpresa:** un regalo, una criatura rara, un objeto para la colección.
@@ -75,7 +75,7 @@ Cada compañero tiene una historia corta por capítulos que se desbloquean cumpl
 ## Primera versión (lo mínimo para probarlo)
 **Entra:**
 - elegir compañero;
-- apuntar acciones (de ejemplo y propias);
+- hacer ofrendas (acciones de ejemplo y propias);
 - el bosque con los cinco rincones;
 - crecimiento visible;
 - las tres fases de consecuencias con su arreglo;
@@ -88,14 +88,14 @@ Cada compañero tiene una historia corta por capítulos que se desbloquean cumpl
 **Más adelante:** historias completas, conversaciones entre compañeros, temporadas (otoño, invierno…), decoración libre del bosque, avisos opcionales, música y sonidos.
 
 ## Mapa de pantallas (propuesta)
-Navegación inferior con 4 pestañas: **Bosque · Apuntar · Semana · Álbum**. Ajustes, con un icono desde el Bosque.
+Navegación inferior con 4 pestañas: **Bosque · Ofrendas · Semana · Álbum**. Ajustes, con un icono desde el Bosque.
 
 | Pantalla | Qué hace | Qué se ve |
 |---|---|---|
 | **Inicio** (solo la primera vez) | Elegir compañero por su humor y marcar un par de acciones habituales | Los cinco compañeros; el elegido dice algo con mala leche |
-| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros; ir a un rincón | Panorámica del bosque con los 5 rincones (los de compañeros que no han llegado, dormidos o a oscuras), su crecimiento y sus consecuencias (niebla, maleza, visitantes). Bocadillo del compañero. Botón «Apuntar» |
+| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros; ir a un rincón | Panorámica del bosque con los 5 rincones (los de compañeros que no han llegado, dormidos o a oscuras), su crecimiento y sus consecuencias (niebla, maleza, visitantes). Bocadillo del compañero. Botón «Hacer una ofrenda» |
 | **Rincón** (al tocar uno) | Detalle de un área | Primer plano del rincón y su compañero, lo que ha crecido, en qué fase está si se ha descuidado, qué hace falta para arreglarlo, su meta semanal y sus acciones |
-| **Apuntar** | Registrar lo que has hecho, en un toque | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer |
+| **Ofrendas** | Contar lo que has hecho, en un toque (cada cosa buena es una ofrenda al bosque y por eso florece) | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer |
 | **Semana** | Metas semanales y resumen del domingo | Una meta por compañero llegado, su progreso y el resumen contado por ellos |
 | **Álbum** | La colección | Flores, setas, objetos y criaturas encontradas; siluetas de lo que falta; lo robado, «en el nido del cuervo» |
 | **Historia** | Capítulos desbloqueados | Lector de capítulos de cada compañero |
