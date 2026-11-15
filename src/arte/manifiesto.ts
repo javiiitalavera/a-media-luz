@@ -4,7 +4,7 @@
 // si un recurso no está, la interfaz deja su hueco neutro.
 //
 // Las claves y cómo se montan las capas están explicadas en docs/capas-arte.md.
-// Estado a 15/11/2026: PACK 1 (Claro del fuego + Nox), pendiente del visto bueno de Javi.
+// Estado a 15/11/2026: PACK 1 (Claro del fuego + Nox) aprobado por Javi al verlo en la app.
 
 import type { AreaId as Area, CompaneroId as Id } from '../contenido/tipos'
 export type Expresion = 'base' | 'contento' | 'enfurrunado' | 'dormido'
