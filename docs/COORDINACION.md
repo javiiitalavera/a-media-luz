@@ -15,7 +15,7 @@ Desarrollar desde cero sin sobrescribir ni duplicar trabajos. La **lámina aprob
 | `docs/diseno-juego.md` | **Claude** | Leer, hacer observaciones al usuario; no reescribir |
 | `docs/personajes.md` | **Claude** | Leer. Aspecto, nombres, áreas y personalidades son canon; no rediseñar |
 | `src/**`, `package.json`, `index.html`, `vite.config.*`, tests, PWA y despliegue | **Claude** | ChatGPT revisa pantallas y propone mejoras visuales; **no edita el código** |
-| `README.md`, `CLAUDE.md` y esta coordinación | **Claude** desde esta configuración inicial | ChatGPT los lee y propone cambios; no edita en paralelo |
+| `README.md`, `CLAUDE.md`, `docs/capas-arte.md` y esta coordinación | **Claude** desde esta configuración inicial | ChatGPT los lee y propone cambios; no edita en paralelo |
 
 **Distinción:** ChatGPT diseña las expresiones y poses y entrega sus archivos gráficos; **Claude programa** las animaciones, componentes React y el montaje de los recursos, sin cambiar la identidad gráfica. No significa que Claude pueda reconstruir un personaje «a ojo» con SVG.
 
@@ -46,13 +46,14 @@ Desarrollar desde cero sin sobrescribir ni duplicar trabajos. La **lámina aprob
 - **Interfaz:** los textos son reales y controlados por Claude; ChatGPT puede aportar ejemplos, layout y colores, pero no introducir nuevos textos de diálogo como arte rasterizado.
 - **Rendimiento/accesibilidad:** recursos adecuados para móvil, optimizados, animaciones compatibles con reducir movimiento.
 
-## Estado inicial
+## Estado actual (15/11/2026)
 
-- `CLAUDE.md`, `docs/direccion-artistica.md`, `docs/personajes.md`, `docs/diseno-juego.md` y `docs/arte/lamina-personajes.webp` existen.
-- `docs/diseno-juego.md` es **borrador pendiente de decisión del usuario**; no convertirlo automáticamente en reglas aprobadas.
-- La lámina de los cinco personajes es **referencia aprobada**. Las imágenes adicionales generadas en conversaciones son **propuestas** hasta validación y entrega al repositorio.
-- No hay aplicación programada que mantener ni partida antigua que migrar.
+- `docs/diseno-juego.md` está **APROBADO** por el usuario, con las reglas numéricas en su sección «Reglas».
+- La app base está programada (React + Vite, PWA) con todas las pantallas y la lógica con tests. **No tiene arte**: muestra huecos neutros hasta que haya recursos APROBADOS en `docs/entregas-arte.md`.
+- El Bosque es un **sendero vertical con una escena por rincón** montada por capas. Las claves, tamaños y formatos que la app espera están en `docs/capas-arte.md` (lo escribe Claude; ChatGPT lo lee).
+- Faltan también los **iconos de la app** (PWA), detallados en `docs/capas-arte.md`.
+- La lámina de los cinco personajes es **referencia aprobada**. Las imágenes generadas en conversaciones son **propuestas** hasta validación y entrega al repositorio.
 
-## Entrega mínima sugerida para el próximo ciclo
+## Próximo ciclo
 
-**ChatGPT:** un Nox aislado fiel a la lámina + bosque sin UI/personaje en capas, con archivos y manifestación de dimensiones/transparencia. **Claude:** cerrar con el usuario mecánicas y mapa de pantallas, y preparar después el esqueleto React capaz de cargar los assets aprobados. Cada uno espera el arte o la especificación del otro solo donde esa dependencia exista.
+**ChatGPT:** el Claro del fuego en capas (fondo, crecimiento 1-3, maleza, visitante) y Nox con sus cuatro expresiones, según `docs/capas-arte.md`; después los iconos y los demás rincones. **Claude:** integrar cada entrega aprobada, programar sus animaciones y probarla en móvil.

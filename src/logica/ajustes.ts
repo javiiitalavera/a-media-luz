@@ -12,3 +12,12 @@ export function crearAccion(p: Partida, area: AreaId, nombre: string, minima: st
 export const borrarAccion = (p: Partida, id: string): Partida => ({ ...p, acciones: p.acciones.filter((a) => a.id !== id) })
 
 export const cambiarRitmo = (p: Partida, area: AreaId, ritmo: Ritmo): Partida => ({ ...p, ritmos: { ...p.ritmos, [area]: ritmo } })
+
+/** Cambia el nombre o la versión mínima de una acción. Un texto vacío no se guarda. */
+export function editarAccion(p: Partida, id: string, cambio: { nombre?: string; minima?: string }): Partida {
+  return {
+    ...p,
+    acciones: p.acciones.map((a) =>
+      a.id !== id ? a : { ...a, nombre: cambio.nombre?.trim() || a.nombre, minima: cambio.minima?.trim() || a.minima }),
+  }
+}

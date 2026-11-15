@@ -1,10 +1,10 @@
 // Ofrendas: contar lo que has hecho, en un toque.
 import { useEffect, useState } from 'react'
-import { AREAS, COMPANEROS, FRASES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, FRASES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo, type ResultadoOfrenda } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
-import { crearAccion } from '../logica/ajustes'
+import { borrarAccion, crearAccion, editarAccion } from '../logica/ajustes'
 import { dia } from '../logica/fechas'
 import { useJuego } from '../estado/juego'
 import { Bocadillo, BotonSecundario, Interruptor, Pantalla } from '../componentes/comunes'
@@ -20,6 +20,7 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   const hoy = dia(ahora)
   const veces = (id: string) => partida.ofrendas.filter((o) => o.accionId === id && dia(o.fecha) === hoy).length
 
+  const [editando, setEditando] = useState<AreaId | null>(null)
   // Al salir se olvidan las reacciones (y ya no se puede deshacer).
   useEffect(() => olvidar, [olvidar])
 
@@ -31,12 +32,25 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
           const r = estadoRincon(partida, area, ahora)
           return (
             <section key={area}>
-              <h2 className="mb-2 px-1 text-[15px] font-bold">
-                {AREAS[area].nombre}
-                <span className="ml-2 text-[13px] font-medium text-texto-3">
-                  {AREAS[area].rincon}{r.hoy >= 3 ? ` · ${UI.ofrendas.noCuenta}` : ''}
-                </span>
-              </h2>
+              <div className="mb-1 flex items-center justify-between">
+                <h2 className="px-1 text-[15px] font-bold">
+                  {AREAS[area].nombre}
+                  <span className="ml-2 text-[13px] font-medium text-texto-3">
+                    {AREAS[area].rincon}{r.hoy >= 3 ? ` · ${UI.ofrendas.noCuenta}` : ''}
+                  </span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setEditando(editando === area ? null : area)}
+                  aria-expanded={editando === area}
+                  className="min-h-11 px-2 text-[13px] font-semibold text-coral-texto"
+                >
+                  {editando === area ? UI.ofrendas.listo : UI.ofrendas.editar}
+                </button>
+              </div>
+              {editando === area ? (
+                <EditorArea partida={partida} area={area} />
+              ) : (
               <div className="flex flex-wrap gap-2">
                 {partida.acciones.filter((a) => a.area === area).map((a) => {
                   const n = veces(a.id)
@@ -55,12 +69,57 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
                 })}
                 <NuevaAccion area={area} />
               </div>
+              )}
             </section>
           )
         })}
       </div>
       {recientes.length > 0 && <Reaccion />}
     </Pantalla>
+  )
+}
+
+/** Editar las acciones de un área: nombre, mínima, borrar y recuperar las de ejemplo. */
+function EditorArea({ partida, area }: { partida: Partida; area: AreaId }) {
+  const ajustar = useJuego((s) => s.ajustar)
+  const acciones = partida.acciones.filter((a) => a.area === area)
+  const faltan = ACCIONES.filter((a) => a.area === area && !acciones.some((x) => x.id === a.id))
+  const campo = 'h-11 w-full rounded-2xl border-2 border-borde bg-fondo px-3 text-base focus:border-coral focus:outline-none'
+  return (
+    <div className="flex flex-col gap-2">
+      {acciones.map((a) => (
+        <div key={a.id} className="rounded-3xl bg-tarjeta p-3">
+          <label className="block text-[13px] font-semibold text-texto-3">{UI.ofrendas.nombre}
+            <input key={a.nombre} defaultValue={a.nombre} className={`${campo} mt-1`}
+              onBlur={(e) => e.target.value !== a.nombre && ajustar((p) => editarAccion(p, a.id, { nombre: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
+          </label>
+          <label className="mt-2 block text-[13px] font-semibold text-texto-3">{UI.ofrendas.minima}
+            <input key={a.minima} defaultValue={a.minima} className={`${campo} mt-1`}
+              onBlur={(e) => e.target.value !== a.minima && ajustar((p) => editarAccion(p, a.id, { minima: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
+          </label>
+          {acciones.length > 1 && (
+            <div className="mt-2 text-right">
+              <BotonSecundario peligro onClick={() => ajustar((p) => borrarAccion(p, a.id))}>{UI.ofrendas.borrar}</BotonSecundario>
+            </div>
+          )}
+        </div>
+      ))}
+      {faltan.length > 0 && (
+        <div>
+          <div className="mb-1 px-1 text-[13px] font-semibold text-texto-3">{UI.ofrendas.deEjemplo}</div>
+          <div className="flex flex-wrap gap-2">
+            {faltan.map((a) => (
+              <button key={a.id} type="button" onClick={() => ajustar((p) => ({ ...p, acciones: [...p.acciones, { ...a }] }))}
+                className="min-h-11 rounded-full border-2 border-dashed border-borde px-4 text-[15px] font-medium text-texto-2">
+                + {a.nombre}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

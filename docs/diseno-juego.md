@@ -87,15 +87,15 @@ Cada compañero tiene una historia corta por capítulos que se desbloquean cumpl
 
 **Más adelante:** historias completas, conversaciones entre compañeros, temporadas (otoño, invierno…), decoración libre del bosque, avisos opcionales, música y sonidos.
 
-## Mapa de pantallas (propuesta)
+## Mapa de pantallas
 Navegación inferior con 4 pestañas: **Bosque · Ofrendas · Semana · Álbum**. Ajustes, con un icono desde el Bosque.
 
 | Pantalla | Qué hace | Qué se ve |
 |---|---|---|
-| **Inicio** (solo la primera vez) | Elegir compañero por su humor y marcar un par de acciones habituales | Los cinco compañeros; el elegido dice algo con mala leche |
-| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros; ir a un rincón | Panorámica del bosque con los 5 rincones (los de compañeros que no han llegado, dormidos o a oscuras), su crecimiento y sus consecuencias (niebla, maleza, visitantes). Bocadillo del compañero. Botón «Hacer una ofrenda» |
+| **Inicio** (solo la primera vez) | Paso 1: elegir compañero por su humor. Paso 2: marcar las acciones habituales (si en un área no marcas ninguna, se ponen 2 de ejemplo) | Los cinco compañeros; el elegido dice algo con mala leche |
+| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros; ir a un rincón | **Sendero vertical**: una escena por rincón, una debajo de otra (los de compañeros que no han llegado, dormidos), con su crecimiento y sus consecuencias (maleza, visitantes) montados por capas (`docs/capas-arte.md`). Bocadillo del compañero arriba y botón «Hacer una ofrenda» |
 | **Rincón** (al tocar uno) | Detalle de un área | Primer plano del rincón y su compañero, lo que ha crecido, en qué fase está si se ha descuidado, qué hace falta para arreglarlo, su meta semanal y sus acciones |
-| **Ofrendas** | Contar lo que has hecho, en un toque (cada cosa buena es una ofrenda al bosque y por eso florece) | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer |
+| **Ofrendas** | Contar lo que has hecho, en un toque (cada cosa buena es una ofrenda al bosque y por eso florece) | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer. Botón «Editar» por área: renombrar, cambiar la versión mínima, borrar (siempre queda al menos una) y recuperar las de ejemplo |
 | **Semana** | Metas semanales y resumen del domingo | Una meta por compañero llegado, su progreso y el resumen contado por ellos |
 | **Álbum** | La colección | Flores, setas, objetos y criaturas encontradas; siluetas de lo que falta; lo robado, «en el nido del cuervo» |
 | **Historia** | Capítulos desbloqueados | Lector de capítulos de cada compañero |
@@ -103,7 +103,7 @@ Navegación inferior con 4 pestañas: **Bosque · Ofrendas · Semana · Álbum**
 
 ## Arte que necesitará el juego (para ChatGPT)
 Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se pide por orden de prioridad cuando se apruebe el diseño.
-1. **Bosque panorámico** sin personajes ni texto, en capas, con **5 rincones** reconocibles (claro del fuego, huerto de musgo, estanque de niebla, porche de las visitas, taller). Variantes de hora del día, si se aprueba la pregunta 5.
+1. **Una escena por rincón** (no una panorámica: el Bosque es un sendero vertical), sin personajes ni texto, en capas, con **5 rincones** reconocibles (claro del fuego, huerto de musgo, estanque de niebla, porche de las visitas, taller). Variantes de hora del día, si se aprueba la pregunta 5.
 2. **Los 5 compañeros** aislados y fieles a la lámina, con estas expresiones: reposo, contento, enfurruñado, dormido y sorprendido. También en su versión de «dormido o a oscuras antes de llegar».
 3. **Crecimiento por rincón:** elementos que aparecen al cuidar (flores, farolillos, setas luminosas…), en 3-4 grados.
 4. **Consecuencias por rincón:** capas de maleza, hongos, niebla y farolillo apagado.

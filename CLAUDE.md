@@ -5,7 +5,8 @@ Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Mad
 ## Estado
 - **Diseño aprobado** por Javi: `docs/diseno-juego.md` (reglas con números en «Reglas»).
 - **Base de la app construida** (15/11/2026): todas las reglas aprobadas con tests y las pantallas Inicio, Bosque, Rincón, Ofrendas, Semana, Álbum y Ajustes, con textos reales.
-- **Sin arte todavía:** la app solo muestra recursos APROBADOS de `docs/entregas-arte.md`. Donde irán ilustraciones hay huecos neutros (`HuecoArte`); nunca se dibujan sustitutos.
+- **Sin arte todavía:** la app solo muestra recursos APROBADOS de `docs/entregas-arte.md`. Donde irán ilustraciones hay huecos neutros (`HuecoArte`, `Escena`); nunca se dibujan sustitutos.
+- **Capas de arte:** el Bosque es un sendero vertical con una escena por rincón montada por capas. Formatos y claves para ChatGPT en `docs/capas-arte.md`.
 - **Frases y catálogo de colección:** propuestas de Claude en `src/contenido/`, pendientes de revisión de Javi.
 
 ## Lo único que se conserva (decidido por Javi)
@@ -18,7 +19,7 @@ Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Mad
 - **No hacer cosas tiene consecuencias temporales, nivel 2:** el bosque se afea, se pausa lo bueno, los compañeros se enfurruñan y pueden llegar visitantes que se llevan objetos. **Todo se recupera** con pocas acciones; nada se pierde para siempre.
 - **Consecuencias sí, culpa no:** nada de «me has decepcionado», rachas que castigan ni avisos lacrimógenos. Volver tiene que sentar bien.
 
-Todo lo demás (reglas, mecánicas, pantallas) está por decidir. No des por hecho nada del juego anterior.
+Las reglas, mecánicas y pantallas del juego nuevo están **aprobadas** en `docs/diseno-juego.md`. No uses nada del juego anterior que no figure ahí.
 
 ## Sobre quien dirige el proyecto
 - Javi es médico, **no programador**. Diseña el juego y lo construye con ayuda de IA.
@@ -45,6 +46,6 @@ Todo lo demás (reglas, mecánicas, pantallas) está por decidir. No des por hec
 - `src/contenido/` — **todo el texto** del juego: áreas, compañeros, acciones de ejemplo, colección, frases e interfaz (`ui.ts`).
 - `src/logica/` — reglas como **funciones puras con tests** (`npm test`). `reglas.ts` calcula todo a partir del historial de ofrendas (crecimiento, fases, arreglo, visitante y robo, llegada, metas); `ofrendas.ts` hace y deshace ofrendas.
 - `src/estado/juego.ts` — partida guardada en el móvil (Zustand + localStorage).
-- `src/arte/manifiesto.ts` — rutas de los recursos **aprobados**. Se rellena solo con lo que figure como APROBADO en `docs/entregas-arte.md`.
+- `src/arte/manifiesto.ts` — rutas de los recursos **aprobados**. Se rellena solo con lo que figure como APROBADO en `docs/entregas-arte.md`. `src/arte/capas.ts` decide qué capas tocan según el estado; `src/componentes/Escena.tsx` las apila.
 - `src/pantallas/` y `src/componentes/` — interfaz. Colores de interfaz en `src/estilos/index.css` (de día crema, de noche ciruela), con contraste ≥ 4,5.
 - **Antes de publicar:** `npm run build`, `npm test` y prueba en iPhone simulado (Playwright) a 390, 375 y 360 px, de día y de noche.

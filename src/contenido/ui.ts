@@ -7,6 +7,10 @@ export const UI = {
     titulo: '¿Con quién quieres empezar?',
     explicacion: 'Elige por su humor. Los demás llegarán al bosque cuando hagas cosas de lo suyo.',
     empezar: (nombre: string) => `Empezar con ${nombre}`,
+    siguiente: 'Siguiente',
+    atras: 'Atrás',
+    habitualesTitulo: '¿Qué sueles hacer?',
+    habitualesExplicacion: 'Marca lo que haces de vez en cuando. Luego podrás cambiarlo y crear lo tuyo.',
   },
   bosque: {
     hacerOfrenda: 'Hacer una ofrenda',
@@ -15,7 +19,6 @@ export const UI = {
     llegaCon: (n: number) => (n === 1 ? 'Llega con 1 ofrenda más' : `Llega con ${n} ofrendas más`),
     fases: { 0: 'Bien', 1: 'Asilvestrado', 2: 'Enfurruñado', 3: 'Visitante' } as Record<number, string>,
     crecimiento: (g: number) => `Crecimiento ${g} de 3`,
-    arteYaLlega: 'Aquí irá la ilustración del bosque',
   },
   rincon: {
     volver: 'Volver',
@@ -38,6 +41,10 @@ export const UI = {
     crear: 'Crear',
     cancelar: 'Cancelar',
     sorpresa: (quien: string) => `Sorpresa de ${quien}`,
+    editar: 'Editar',
+    listo: 'Listo',
+    borrar: 'Borrar',
+    deEjemplo: 'Añadir de ejemplo',
   },
   semana: {
     titulo: 'Esta semana',

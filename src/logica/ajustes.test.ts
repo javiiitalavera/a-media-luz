@@ -21,3 +21,21 @@ describe('ajustes', () => {
     expect(estadoRincon(cambiarRitmo(p, 'cuerpo', 'semanal'), 'cuerpo', en('2026-01-08')).fase).toBe(0)
   })
 })
+
+import { editarAccion } from './ajustes'
+import { crearPartida } from './partida'
+
+describe('editar acciones e inicio', () => {
+  it('editar nombre y mínima; vacío no se guarda', () => {
+    let p = editarAccion(nueva(), 'andar', { nombre: ' Andar al trabajo ', minima: 'Bajar una parada antes' })
+    expect(p.acciones.find((a) => a.id === 'andar')).toMatchObject({ nombre: 'Andar al trabajo', minima: 'Bajar una parada antes' })
+    p = editarAccion(p, 'andar', { nombre: '   ' })
+    expect(p.acciones.find((a) => a.id === 'andar')!.nombre).toBe('Andar al trabajo')
+  })
+  it('acciones habituales del inicio; las áreas sin elegir reciben dos de ejemplo', () => {
+    const p = crearPartida('nox', en('2026-01-05'), ['andar', 'agua', 'leer'])
+    expect(p.acciones.filter((a) => a.area === 'cuerpo').map((a) => a.id)).toEqual(['andar', 'agua'])
+    expect(p.acciones.filter((a) => a.area === 'mente').map((a) => a.id)).toEqual(['leer'])
+    expect(p.acciones.filter((a) => a.area === 'orden')).toHaveLength(2)
+  })
+})

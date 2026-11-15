@@ -29,12 +29,23 @@ export interface Partida {
   frasesRecientes: string[]
 }
 
-export function crearPartida(principal: CompaneroId, ahora: Date): Partida {
+/**
+ * Crea la partida. `habituales`: acciones de ejemplo elegidas en el inicio; en las áreas donde no se
+ * elige ninguna se ponen las dos primeras de ejemplo, para que todas tengan algo.
+ */
+export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: string[]): Partida {
+  const acciones = habituales?.length
+    ? (Object.keys(AREAS) as AreaId[]).flatMap((area) => {
+        const delArea = ACCIONES.filter((a) => a.area === area)
+        const elegidas = delArea.filter((a) => habituales.includes(a.id))
+        return (elegidas.length ? elegidas : delArea.slice(0, 2)).map((a) => ({ ...a }))
+      })
+    : ACCIONES.map((a) => ({ ...a }))
   return {
     version: 1,
     inicio: ahora.toISOString(),
     principal,
-    acciones: ACCIONES.map((a) => ({ ...a })),
+    acciones,
     ritmos: Object.fromEntries(Object.values(AREAS).map((a) => [a.id, a.ritmo])) as Record<AreaId, Ritmo>,
     ofrendas: [],
     hallazgos: [],

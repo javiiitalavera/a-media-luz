@@ -17,7 +17,7 @@ export interface Reciente {
 
 interface Juego {
   partida: Partida | null
-  empezar: (c: CompaneroId) => void
+  empezar: (c: CompaneroId, habituales?: string[]) => void
   /** Ofrendas recientes que aún se pueden deshacer (no se guarda). */
   recientes: Reciente[]
   ofrecer: (accionId: string) => ResultadoOfrenda | null
@@ -38,7 +38,7 @@ export const useJuego = create<Juego>()(
   persist(
     (set, get) => ({
       partida: null,
-      empezar: (c) => set({ partida: crearPartida(c, new Date()), recientes: [], fraseBosque: null }),
+      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales), recientes: [], fraseBosque: null }),
       recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida
