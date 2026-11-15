@@ -1,6 +1,6 @@
 # Diseño del juego — borrador 1
 
-**Estado:** borrador para que Javi lo corrija. Lo marcado con **[?]** está por decidir.
+**Estado:** BORRADOR, pendiente de aprobación de Javi (ver `COORDINACION.md`: no se programan mecánicas definitivas hasta aprobarlo). Lo marcado con **[?]** está por decidir.
 
 ## Qué es
 Un bosque ilustrado donde viven cinco compañeros con mala leche y buen corazón. El bosque refleja tu vida real: cuando haces cosas buenas florece, y cuando las dejas se asilvestra, se llena de niebla y aparecen visitantes indeseables. Nada se pierde para siempre, pero nada se te regala.
@@ -86,6 +86,31 @@ Cada compañero tiene una historia corta por capítulos que se desbloquean cumpl
 - funciona sin conexión y se instala en el móvil.
 
 **Más adelante:** historias completas, conversaciones entre compañeros, temporadas (otoño, invierno…), decoración libre del bosque, avisos opcionales, música y sonidos.
+
+## Mapa de pantallas (propuesta)
+Navegación inferior con 4 pestañas: **Bosque · Apuntar · Semana · Álbum**. Ajustes, con un icono desde el Bosque.
+
+| Pantalla | Qué hace | Qué se ve |
+|---|---|---|
+| **Inicio** (solo la primera vez) | Elegir compañero por su humor y marcar un par de acciones habituales | Los cinco compañeros; el elegido dice algo con mala leche |
+| **Bosque** (principal) | Ver el estado de tu vida de un vistazo; tocar compañeros; ir a un rincón | Panorámica del bosque con los 5 rincones (los de compañeros que no han llegado, dormidos o a oscuras), su crecimiento y sus consecuencias (niebla, maleza, visitantes). Bocadillo del compañero. Botón «Apuntar» |
+| **Rincón** (al tocar uno) | Detalle de un área | Primer plano del rincón y su compañero, lo que ha crecido, en qué fase está si se ha descuidado, qué hace falta para arreglarlo, su meta semanal y sus acciones |
+| **Apuntar** | Registrar lo que has hecho, en un toque | Acciones por área (de ejemplo y propias), modo día malo, reacción del compañero y animación de crecimiento; deshacer |
+| **Semana** | Metas semanales y resumen del domingo | Una meta por compañero llegado, su progreso y el resumen contado por ellos |
+| **Álbum** | La colección | Flores, setas, objetos y criaturas encontradas; siluetas de lo que falta; lo robado, «en el nido del cuervo» |
+| **Historia** | Capítulos desbloqueados | Lector de capítulos de cada compañero |
+| **Ajustes** | Acciones, ritmos, sonido y copia de seguridad | Listas y controles |
+
+## Arte que necesitará el juego (para ChatGPT)
+Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se pide por orden de prioridad cuando se apruebe el diseño.
+1. **Bosque panorámico** sin personajes ni texto, en capas, con **5 rincones** reconocibles (claro del fuego, huerto de musgo, estanque de niebla, porche de las visitas, taller). Variantes de hora del día, si se aprueba la pregunta 5.
+2. **Los 5 compañeros** aislados y fieles a la lámina, con estas expresiones: reposo, contento, enfurruñado, dormido y sorprendido. También en su versión de «dormido o a oscuras antes de llegar».
+3. **Crecimiento por rincón:** elementos que aparecen al cuidar (flores, farolillos, setas luminosas…), en 3-4 grados.
+4. **Consecuencias por rincón:** capas de maleza, hongos, niebla y farolillo apagado.
+5. **Visitantes indeseables:** cuervo (y su nido con objetos), polilla grande y caracol.
+6. **Venganzas de los compañeros:** nota pasivo-agresiva de Nox, etiquetas «VARIOS» de Tuerca…
+7. **Objetos de colección y sorpresas**, cada uno aislado.
+8. **Iconos de interfaz:** pestañas, áreas y acciones.
 
 ## Preguntas abiertas
 1. ¿Tope diario por área? Propuesta: las 3 primeras acciones del día en un área cuentan; las demás se apuntan pero no hacen crecer más.
