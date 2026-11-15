@@ -102,9 +102,10 @@ describe('metas semanales', () => {
     expect(m.premio?.especial).toBe(true)
   })
   it('si no se cumple, la de la semana siguiente es más fácil', () => {
-    const p = nueva()
+    let p = nueva()
+    for (const d of ['05', '07', '09', '11']) p = con(p, 'cuerpo', `2026-01-${d}`) // 4 de 5, en días alternos (no se estropea)
     const ms = metas(p, en('2026-01-13'))
-    expect(ms.map((m) => m.meta)).toEqual([5, 4])
+    expect(ms.map((m) => [m.meta, m.cumplida])).toEqual([[5, false], [4, false]])
   })
   it('los premios semanales entran en la colección', () => {
     let p = nueva()
