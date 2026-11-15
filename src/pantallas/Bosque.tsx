@@ -18,7 +18,11 @@ export function Bosque({ partida, ahora, onRincon, onAjustes }: {
   partida: Partida; ahora: Date; onRincon: (a: AreaId) => void; onAjustes: () => void
 }) {
   const tocar = useJuego((s) => s.tocar)
-  const rincones = estadoBosque(partida, ahora)
+  // Solo se enseñan los rincones que ya tienen su fondo dibujado (aprobado); los demás
+  // irán apareciendo según llegue el arte. Si no hubiera ninguno, se enseñan todos.
+  const todos = estadoBosque(partida, ahora)
+  const conArte = todos.filter((r) => rutaArte(`rincon/${r.area}/fondo`))
+  const rincones = conArte.length ? conArte : todos
   const transiciones = transicionesDe(rincones.map((r) => r.area))
   const [habla, setHabla] = useState<{ area: AreaId; texto: string; n: number } | null>(null)
   useEffect(() => {

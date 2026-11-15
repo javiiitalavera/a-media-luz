@@ -36,7 +36,7 @@ Todas las capas de un mismo rincón tienen **el mismo tamaño (1440 × 1080) y e
 | `sendero/vinculos-orden` | Entre el Porche de las visitas y el Taller |
 | `sendero/final` | Cierre bajo el Taller (el bosque se pierde hacia abajo) |
 
-Formato: **1440 × 360 px (4:1), con transparencia**. La app la centra sobre la costura: la mitad superior pisa los últimos 180 px de la escena de arriba y la inferior, los primeros 180 px de la de abajo (`sendero/final` se apoya entera sobre el final del Taller). Contenido: el tramo de sendero que une las dos, vegetación que cruza de un lado a otro y el **cambio de ambiente** (luz, color, niebla) de un rincón al siguiente. Se dibuja por encima de las escenas pero **por debajo de los compañeros y del cartel**. Si falta una transición, las escenas simplemente quedan pegadas.
+Formato: **1440 × 360 px (4:1), con transparencia**. La app la centra sobre la costura: la mitad superior pisa los últimos 180 px de la escena de arriba y la inferior, los primeros 180 px de la de abajo (`sendero/final` se apoya entera sobre el final del Taller). Contenido: el tramo de sendero que une las dos, vegetación que cruza de un lado a otro y el **cambio de ambiente** (luz, color, niebla) de un rincón al siguiente. Se dibuja por encima de las escenas pero **por debajo de los compañeros y del cartel**. Si falta una transición, las escenas simplemente quedan pegadas. Un rincón **no aparece en el Bosque hasta que su `fondo` está aprobado**.
 
 ## Compañeros
 | Clave | Cuándo |
