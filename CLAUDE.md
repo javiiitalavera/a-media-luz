@@ -3,8 +3,10 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Proyecto empezado de cero** (noviembre de 2026). No hay código. Lo anterior se borró a propósito; no intentes recuperarlo ni reconstruirlo.
-- **Siguiente paso:** cerrar con Javi el diseño en `docs/diseno-juego.md` (borrador 1 escrito) **antes de programar nada**.
+- **Diseño aprobado** por Javi: `docs/diseno-juego.md` (reglas con números en «Reglas»).
+- **Base de la app construida** (15/11/2026): todas las reglas aprobadas con tests y las pantallas Inicio, Bosque, Rincón, Ofrendas, Semana, Álbum y Ajustes, con textos reales.
+- **Sin arte todavía:** la app solo muestra recursos APROBADOS de `docs/entregas-arte.md`. Donde irán ilustraciones hay huecos neutros (`HuecoArte`); nunca se dibujan sustitutos.
+- **Frases y catálogo de colección:** propuestas de Claude en `src/contenido/`, pendientes de revisión de Javi.
 
 ## Lo único que se conserva (decidido por Javi)
 1. **La dirección artística** → `docs/direccion-artistica.md` y la lámina `docs/arte/lamina-personajes.webp` (referencia vinculante).
@@ -38,3 +40,11 @@ Todo lo demás (reglas, mecánicas, pantallas) está por decidir. No des por hec
 - Ningún texto dentro de las imágenes: todo el texto de la app sale del contenido del juego.
 - Cada decisión de diseño se apunta en los documentos de `docs/`.
 - Cuando haya código: la lógica del juego en funciones con tests, y antes de publicar, compilar, pasar los tests y probarlo en un móvil simulado.
+
+## Código (cuando trabajes en él)
+- `src/contenido/` — **todo el texto** del juego: áreas, compañeros, acciones de ejemplo, colección, frases e interfaz (`ui.ts`).
+- `src/logica/` — reglas como **funciones puras con tests** (`npm test`). `reglas.ts` calcula todo a partir del historial de ofrendas (crecimiento, fases, arreglo, visitante y robo, llegada, metas); `ofrendas.ts` hace y deshace ofrendas.
+- `src/estado/juego.ts` — partida guardada en el móvil (Zustand + localStorage).
+- `src/arte/manifiesto.ts` — rutas de los recursos **aprobados**. Se rellena solo con lo que figure como APROBADO en `docs/entregas-arte.md`.
+- `src/pantallas/` y `src/componentes/` — interfaz. Colores de interfaz en `src/estilos/index.css` (de día crema, de noche ciruela), con contraste ≥ 4,5.
+- **Antes de publicar:** `npm run build`, `npm test` y prueba en iPhone simulado (Playwright) a 390, 375 y 360 px, de día y de noche.

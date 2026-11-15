@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+@import '@fontsource/fredoka/500.css';
+@import '@fontsource/fredoka/600.css';
+@import '@fontsource/fredoka/700.css';
+
+/* Colores de interfaz a partir de la paleta aprobada (docs/direccion-artistica.md).
+   Contraste de textos comprobado (WCAG ≥ 4,5). */
+@theme {
+  --font-sans: 'Fredoka', ui-rounded, system-ui, sans-serif;
+  --color-fondo: #f9ebdd;     /* crema cálida */
+  --color-tarjeta: #fff8f1;
+  --color-hundido: #f1dccb;
+  --color-borde: #e2c5b2;
+  --color-texto: #3f2a3a;     /* ciruela oscuro */
+  --color-texto-2: #5f4459;
+  --color-texto-3: #6f5268;
+  --color-coral: #e58b91;
+  --color-coral-texto: #a8424c;
+  --color-salvia: #a1af8d;
+  --color-salvia-texto: #4b5d3f;
+  --color-ambar: #ffc145;
+  --color-tinta: #3f2a3a;     /* texto sobre colores */
+  --color-peligro: #b23a3a;
+}
+
+/* Noche: ciruela profundo, sin perder coral y salvia. */
+:root[data-noche='si'] {
+  color-scheme: dark;
+  --color-fondo: #2e2030;
+  --color-tarjeta: #3d2b3e;
+  --color-hundido: #352638;
+  --color-borde: #5a4258;
+  --color-texto: #f9ebdd;
+  --color-texto-2: #e8d3cf;
+  --color-texto-3: #cdb5b8;
+  --color-coral-texto: #f4b2a1;
+  --color-salvia-texto: #c4d1ad;
+  --color-peligro: #ff9a8f;
+}
+
+html, body, #root { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.5s, color 0.5s;
+}
+
+@keyframes entrar { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.animate-entrar { animation: entrar 0.28s ease-out both; }
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+.animate-aparecer { animation: aparecer 0.2s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-entrar, .animate-aparecer { animation: none; }
+}
