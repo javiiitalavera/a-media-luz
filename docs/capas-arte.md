@@ -4,10 +4,15 @@
 
 La app ya está preparada para estas capas: en cuanto una figure como **APROBADO** en `entregas-arte.md` y esté en `public/arte/`, Claude añade su ruta a `src/arte/manifiesto.ts` y aparece sola. Mientras tanto se ve un hueco neutro (nunca un dibujo provisional).
 
-## El Bosque es un sendero vertical
-La pantalla principal se desplaza hacia abajo: **una escena por rincón**, en este orden: Claro del fuego (Nox) → Huerto de musgo (Tofu) → Estanque de niebla (Bruma) → Porche de las visitas (Madeja) → Taller (Tuerca). Cada escena se muestra también, más grande, en la pantalla de Rincón.
+## El Bosque es un sendero vertical continuo
+La pantalla principal se desplaza hacia abajo y tiene que leerse como **un solo mundo que se recorre**, no como cinco tarjetas. Las escenas van **pegadas, a todo el ancho y sin esquinas ni separación** entre ellas, en este orden: Claro del fuego (Nox) → Huerto de musgo (Tofu) → Estanque de niebla (Bruma) → Porche de las visitas (Madeja) → Taller (Tuerca). Entre cada dos escenas se monta una **pieza de transición** que pisa el borde de ambas. Cada escena se muestra también sola, más grande y con esquinas redondeadas, en la pantalla de Rincón.
 
-**Formato de cada escena:** **4:3 horizontal**, se pinta a todo el ancho del móvil (unos 360 px de ancho en pantalla). Entregar a **1440 × 1080 px** (sirve para pantallas de densidad ×3 con margen). WebP.
+**Formato de cada escena:** **4:3 horizontal**, a todo el ancho del móvil (unos 360-430 px en pantalla). Entregar a **1440 × 1080 px**. WebP.
+
+**Continuidad (para que encajen):**
+- El **sendero entra por el borde superior y sale por el inferior, centrado** (entre el 40 % y el 60 % del ancho), en todas las escenas. Así el camino de una sigue en la siguiente.
+- La franja de arriba y la de abajo de cada fondo (unos 160 px de los 1080) quedarán **tapadas en parte por las transiciones**: no poner ahí nada importante.
+- Sobre la esquina superior izquierda de cada escena la app pone el **cartel del rincón** (nombre, compañero y estado), de unos 260 × 100 px en pantalla. Evitar ahí elementos clave.
 
 ## Capas de cada rincón (de abajo arriba)
 Todas las capas de un mismo rincón tienen **el mismo tamaño (1440 × 1080) y el mismo encuadre**, para apilarlas sin mover nada. Todas menos el fondo, con transparencia.
@@ -21,6 +26,17 @@ Todas las capas de un mismo rincón tienen **el mismo tamaño (1440 × 1080) y e
 
 `<area>` es: `cuerpo`, `mente`, `calma`, `vinculos` u `orden`.
 
+## Transiciones del sendero
+| Clave | Dónde va |
+|---|---|
+| `sendero/cuerpo-mente` | Entre el Claro del fuego y el Huerto de musgo |
+| `sendero/mente-calma` | Entre el Huerto de musgo y el Estanque de niebla |
+| `sendero/calma-vinculos` | Entre el Estanque de niebla y el Porche de las visitas |
+| `sendero/vinculos-orden` | Entre el Porche de las visitas y el Taller |
+| `sendero/final` | Cierre bajo el Taller (el bosque se pierde hacia abajo) |
+
+Formato: **1440 × 360 px (4:1), con transparencia**. La app la centra sobre la costura: la mitad superior pisa los últimos 180 px de la escena de arriba y la inferior, los primeros 180 px de la de abajo (`sendero/final` se apoya entera sobre el final del Taller). Contenido: el tramo de sendero que une las dos, vegetación que cruza de un lado a otro y el **cambio de ambiente** (luz, color, niebla) de un rincón al siguiente. Se dibuja por encima de las escenas pero **por debajo de los compañeros y del cartel**. Si falta una transición, las escenas simplemente quedan pegadas.
+
 ## Compañeros
 | Clave | Cuándo |
 |---|---|
@@ -29,7 +45,7 @@ Todas las capas de un mismo rincón tienen **el mismo tamaño (1440 × 1080) y e
 | `companero/<id>/enfurrunado` | Su rincón está enfurruñado o con visitante (fase 2 o 3) |
 | `companero/<id>/dormido` | Todavía no ha llegado al bosque |
 
-`<id>` es: `nox`, `tofu`, `bruma`, `madeja` o `tuerca`. Formato: **cuadrado, 600 × 600 px, fondo transparente**, el personaje centrado y con los pies tocando el borde inferior (todos con la misma escala que en la lámina). La app lo coloca abajo en el centro de la escena ocupando un 34 % del ancho, y también suelto en Inicio, Semana y Ofrendas.
+`<id>` es: `nox`, `tofu`, `bruma`, `madeja` o `tuerca`. Formato: **cuadrado, 600 × 600 px, fondo transparente**, el personaje centrado y con los pies tocando el borde inferior (todos con la misma escala que en la lámina). La app lo coloca en el centro de la escena, con los pies al 80 % de la altura (por encima de la franja de transición), ocupando un 34 % del ancho, y también suelto en Inicio, Semana y Ofrendas.
 
 ## Objetos de colección
 `objeto/<id>` con el `id` de `src/contenido/coleccion.ts`. Cuadrado, 300 × 300 px, transparente, sin texto.

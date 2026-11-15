@@ -19,3 +19,8 @@ export function capasDe(r: EstadoRincon): ClaveArte[] {
   return capas
 }
 
+
+/** Piezas que unen una escena con la siguiente en el sendero del Bosque. */
+export function transicionesDe(orden: readonly EstadoRincon['area'][]): ClaveArte[] {
+  return orden.slice(1).map((a, i) => `sendero/${orden[i]}-${a}` as ClaveArte)
+}

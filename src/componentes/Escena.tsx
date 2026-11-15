@@ -12,16 +12,17 @@ function Capa({ clave }: { clave: ClaveArte }) {
   return <img src={ruta} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-cover" draggable={false} />
 }
 
-export function Escena({ r, className = '' }: { r: EstadoRincon; className?: string }) {
+/** `continua`: sin esquinas redondeadas, para encadenarla con las vecinas en el sendero. */
+export function Escena({ r, className = '', continua = false }: { r: EstadoRincon; className?: string; continua?: boolean }) {
   const area = AREAS[r.area]
   const c = COMPANEROS[area.companero]
   const exp = expresionDe(r)
   const ruta = rutaArte(`companero/${c.id}/${exp}`) ?? rutaArte(`companero/${c.id}/base`)
   return (
-    <div role="img" aria-label={`${area.rincon} · ${c.nombre}`} className={`relative aspect-[4/3] w-full overflow-hidden rounded-3xl bg-hundido ${className}`}>
+    <div role="img" aria-label={`${area.rincon} · ${c.nombre}`} className={`relative aspect-[4/3] w-full overflow-hidden bg-hundido ${continua ? '' : 'rounded-3xl'} ${className}`}>
       {capasDe(r).map((k) => <Capa key={k} clave={k} />)}
       {/* Compañero anclado abajo en el centro; hueco neutro si no hay arte aprobado. */}
-      <div className="absolute bottom-[8%] left-1/2 w-[34%] -translate-x-1/2">
+      <div className="absolute bottom-[20%] left-1/2 z-20 w-[34%] -translate-x-1/2">
         {ruta ? (
           <img src={ruta} alt="" aria-hidden className={`w-full object-contain ${exp === 'dormido' ? 'opacity-80' : ''}`} draggable={false} />
         ) : (

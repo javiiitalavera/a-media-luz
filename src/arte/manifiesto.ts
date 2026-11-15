@@ -14,6 +14,8 @@ export type ClaveArte =
   | `rincon/${Area}/crecimiento-${1 | 2 | 3}`
   | `rincon/${Area}/maleza`
   | `rincon/${Area}/visitante`
+  | `sendero/${Area}-${Area}`
+  | 'sendero/final'
   | `companero/${Id}/${Expresion}`
   | `objeto/${string}`
 

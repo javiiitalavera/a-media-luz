@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { capasDe, expresionDe } from './capas'
+import { capasDe, expresionDe, transicionesDe } from './capas'
 import type { EstadoRincon } from '../logica/reglas'
 
 const base: EstadoRincon = {
@@ -24,5 +24,11 @@ describe('capas de un rincón', () => {
     expect(expresionDe(base)).toBe('base')
     expect(expresionDe({ ...base, hoy: 1 })).toBe('contento')
     expect(expresionDe({ ...base, hoy: 1, fase: 2 })).toBe('enfurrunado')
+  })
+})
+
+describe('sendero del bosque', () => {
+  it('una transición entre cada par de rincones seguidos', () => {
+    expect(transicionesDe(['cuerpo', 'mente', 'calma'])).toEqual(['sendero/cuerpo-mente', 'sendero/mente-calma'])
   })
 })
