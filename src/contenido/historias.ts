@@ -10,6 +10,8 @@ export interface Historia {
   despedida: string
   /** Su última frase en el informe del mes, según la etapa a la que llegó (cachorro, joven, adulto). */
   cierre: [string, string, string]
+  /** Lo que pone bajo su nombre cuando lo visitas en el bosque, según la etapa en que se quedó. */
+  vecino: [string, string, string]
 }
 
 export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
@@ -23,6 +25,7 @@ export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
       'Un mes. Has andado más que el año pasado entero, lo cual dice poco del año pasado.',
       'Adulto, con casa y con la cola en su punto. Ha sido un placer. No te acostumbres a que lo diga.',
     ],
+    vecino: ['Cachorro vitalicio. Lo lleva con dignidad', 'Joven para siempre, como los de Instagram', 'Jubilado con la cola encendida'],
   },
   tuerca: {
     especie: 'Robot de taller',
@@ -34,5 +37,6 @@ export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
       'Mes cerrado y archivado. En la carpeta VARIOS, por supuesto.',
       'Totalmente operativo. Mi trabajo aquí ha terminado. El tuyo, nunca.',
     ],
+    vecino: ['Versión beta permanente', 'Funciona. No preguntes cómo', 'Operativo, ordenado e insufrible'],
   },
 }

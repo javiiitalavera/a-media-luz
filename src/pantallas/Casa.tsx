@@ -246,7 +246,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
           {conHuevo ? (
             <>
               <span className="block text-[18px] leading-tight font-bold">{UI.casa.huevo}</span>
-              <span className="block text-[13px] text-texto-3">{UI.casa.diaCorto(diaMes)} · {UI.casa.huevoFaltan(faltaHuevo).toLowerCase()}</span>
+              <span className="block text-[13px] text-texto-3">{UI.casa.diaCorto(diaMes)}</span>
               <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
                 <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((OFRENDAS_ECLOSION - faltaHuevo) / OFRENDAS_ECLOSION) * 100}%` }} />
               </span>
@@ -254,7 +254,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
           ) : (<>
           <span className="block text-[18px] leading-tight font-bold">{COMPANEROS[DUENO].nombre}</span>
           <span className="block text-[13px] text-texto-3">
-            {!visita && `${UI.casa.diaCorto(diaMes)} · `}{UI.casa.etapas[etapaVista].toLowerCase()}
+            {visita ? HISTORIAS[DUENO]?.vecino[etapaVista] ?? UI.casa.etapas[etapaVista] : `${UI.casa.diaCorto(diaMes)} · ${UI.casa.etapas[etapaVista].toLowerCase()}`}
             {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
           </span>
           {g.siguiente && !pendiente && !visita && (

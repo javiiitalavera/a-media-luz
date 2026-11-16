@@ -35,7 +35,7 @@ export const UI = {
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
     etapas: ['Cachorro', 'Joven', 'Adulto'],
     encontrado: (que: string) => `Encontrado: ${que}`,
-    huevo: 'Un huevo sospechoso',
+    huevo: 'Huevo sospechoso',
     huevoFaltan: (n: number) => (n <= 0 ? 'Eclosión en curso. No toques nada.'
       : n === 1 ? 'Le falta 1 cosa. Se nota la impaciencia'
       : `Se abre con ${n} cosas tuyas`),
