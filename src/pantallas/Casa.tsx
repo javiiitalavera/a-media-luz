@@ -12,6 +12,8 @@ import { crecioSinVer, progreso } from '../logica/etapas'
 import { diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
+import { premiosGanados, progresoRetos } from '../logica/retos'
+import { HojaRetos } from './Retos'
 
 const ANCHO_HUEVO = 30
 const SEGUNDOS_BOCADILLO = 7
@@ -67,6 +69,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
   const faltaHuevo = faltanParaEclosion(partida, ahora)
   const [toques, setToques] = useState(0)
   const [nacer, setNacer] = useState<'rompiendo' | 'salio' | 'ficha' | null>(null)
+  const [eligiendo, setEligiendo] = useState(false)
   useEffect(() => {
     if (estado !== 'naciendo') return
     const pasos = [
@@ -155,7 +158,11 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
     setTimeout(() => { setSaltos((n) => n + 1); if (res.frase) setHabla({ texto: res.frase.texto, n: Date.now(), contento: true }) }, 650)
   }
 
-  const objetos = OBJETOS_CASA.filter((o) => o.companero === DUENO && construido(partida, o.id))
+  // Lo construido y los premios de retos ganados (estos, solo cuando ya tienen su dibujo).
+  const objetos = [
+    ...OBJETOS_CASA.filter((o) => o.companero === DUENO && o.premio === undefined && construido(partida, o.id)),
+    ...premiosGanados(partida, DUENO, ahora).filter((o) => rutaArte(`casa/${DUENO}/objeto/${o.id}`)),
+  ]
   const mat = disponibles(partida, DUENO, ahora)
   const listos = OBJETOS_CASA.filter((o) => o.companero === DUENO && puedeConstruir(partida, o, ahora)).length
   // Lo de abajo se pinta delante: se ordena por la altura de los pies.
@@ -289,14 +296,19 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
       )}
       {celebra && (
         <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
+          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
         </div>
       )}
 
       {!visita && finDeMes && (
         <Informe partida={partida} ahora={ahora} dueno={DUENO} etapa={g.etapa} onSiguiente={pasarMes} />
       )}
-      {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar() }} />}
+      {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar(); if (!mes.retos?.length) setEligiendo(true) }} />}
+      {eligiendo && <HojaRetos partida={partida} ahora={ahora} onLuego={() => setEligiendo(false)} onListo={() => {
+        setEligiendo(false)
+        const noticia = contar()
+        if (noticia?.frase) { setSaltos((n) => n + 1); setHabla({ texto: noticia.frase.texto, n: Date.now() }) }
+      }} />}
 
       {hoja && <Catalogo dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
     </main>
@@ -309,7 +321,8 @@ function Informe({ partida, ahora, dueno, etapa, onSiguiente }: {
 }) {
   const comp = COMPANEROS[dueno]
   const i = informe(partida, mesActual(partida), ahora)
-  const suyos = OBJETOS_CASA.filter((o) => o.companero === dueno)
+  const suyos = OBJETOS_CASA.filter((o) => o.companero === dueno && o.premio === undefined)
+  const retos = progresoRetos(partida, mesActual(partida), ahora)
   const hechos = suyos.filter((o) => construido(partida, o.id)).length
   const cierre = HISTORIAS[dueno]?.cierre[etapa]
   return createPortal(
@@ -334,6 +347,7 @@ function Informe({ partida, ahora, dueno, etapa, onSiguiente }: {
             ))}
           </ul>
           <div className="mt-2 text-texto-2">{UI.casa.informe.construido(hechos, suyos.length)}</div>
+          {retos.length > 0 && <div className="mt-1 font-semibold">{UI.casa.informe.retos(retos.filter((r) => r.cumplido).length, retos.length)}</div>}
         </dl>
         {cierre && <p className="mt-4 text-[16px] leading-snug italic">«{cierre}»</p>}
         <p className="mt-3 text-[14px] leading-snug text-texto-3">{UI.casa.informe.seQueda(comp.nombre)}</p>
@@ -472,7 +486,7 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
         </div>
         <div className="mt-2 rounded-2xl bg-tarjeta p-2.5"><Materiales mat={mat} /></div>
         <ul className="mt-3 flex flex-col gap-2.5">
-          {OBJETOS_CASA.filter((o) => o.companero === DUENO).map((o) => {
+          {OBJETOS_CASA.filter((o) => o.companero === DUENO && o.premio === undefined).map((o) => {
             const hecho = construido(partida, o.id)
             const f = faltan(partida, o, ahora)
             const puede = !hecho && Object.keys(f).length === 0

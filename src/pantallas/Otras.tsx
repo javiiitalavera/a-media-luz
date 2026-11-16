@@ -1,43 +1,13 @@
-// Semana, Álbum y Ajustes.
+// Álbum y Ajustes.
 import { useRef, useState } from 'react'
-import { AREAS, COLECCION, COMPANEROS, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
+import { AREAS, COLECCION, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
 import type { Partida } from '../logica/partida'
-import { metas, objetosConseguidos, robados } from '../logica/reglas'
-import { dia, lunes } from '../logica/fechas'
+import { objetosConseguidos, robados } from '../logica/reglas'
+import { dia } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
 import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
 import { BotonSecundario, HuecoArte, Pantalla, Tarjeta } from '../componentes/comunes'
-
-export function Semana({ partida, ahora }: { partida: Partida; ahora: Date }) {
-  const esta = metas(partida, ahora).filter((m) => m.semana === lunes(dia(ahora)))
-  return (
-    <Pantalla titulo={UI.semana.titulo}>
-      {esta.length === 0 && <p className="px-1 text-texto-2">{UI.semana.sinCompaneros}</p>}
-      <div className="flex flex-col gap-3">
-        {esta.map((m) => {
-          const c = COMPANEROS[AREAS[m.area].companero]
-          return (
-            <Tarjeta key={m.area}>
-              <div className="flex items-center gap-3">
-                <HuecoArte clave={`companero/${c.id}/base`} alt={c.nombre} className="h-12 w-12 shrink-0" />
-                <div className="flex-1">
-                  <div className="font-bold">{c.nombre} · {AREAS[m.area].nombre}</div>
-                  <div className="text-[15px] text-texto-2">{UI.semana.meta(m.meta)}</div>
-                </div>
-                <div className={`text-lg font-bold ${m.cumplida ? 'text-salvia-texto' : ''}`}>{Math.min(m.hechas, m.meta)}/{m.meta}</div>
-              </div>
-              <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-hundido">
-                <div className="h-full rounded-full bg-salvia transition-[width] duration-700" style={{ width: `${Math.min(100, (m.hechas / m.meta) * 100)}%` }} />
-              </div>
-              {m.cumplida && <p className="mt-2 text-[15px] font-semibold text-salvia-texto">{UI.semana.cumplida}{m.premio ? ` · ${UI.semana.premio(m.premio.nombre)}` : ''}</p>}
-            </Tarjeta>
-          )
-        })}
-      </div>
-    </Pantalla>
-  )
-}
 
 export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const tengo = new Set(objetosConseguidos(partida, ahora).map((x) => x.objeto.id))

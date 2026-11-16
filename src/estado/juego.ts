@@ -8,7 +8,8 @@ import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
-import { empezarMesSiguiente, marcarPresentado } from '../logica/meses'
+import { empezarMesSiguiente, marcarPresentado, mesActual, type Reto } from '../logica/meses'
+import { elegirRetos, premioDeReto, progresoRetos, usarComodin } from '../logica/retos'
 import { tieneMes } from '../arte/manifiesto'
 import { elegirFrase } from '../logica/ofrendas'
 
@@ -44,6 +45,12 @@ interface Juego {
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
   verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
+  /** Lo que suelta el compañero del mes al elegir un reto (para picarte). */
+  picar: (tipo: 'retoSuave' | 'retoNormal' | 'retoValiente') => Frase | null
+  /** Fija los retos del mes; devuelve si se pudo (y deja su frase para casa). */
+  fijarRetos: (retos: Reto[]) => boolean
+  /** Cambia un reto con el comodín; devuelve su frase (o null si no se pudo). */
+  gastarComodin: (i: number, reto: Reto) => Frase | null
   /** Tras el informe: cierra el mes y llega el huevo siguiente (de los que tienen su arte). */
   pasarMes: () => boolean
   /** Ya se ha visto nacer y presentarse al compañero del mes. */
@@ -64,12 +71,26 @@ export const useJuego = create<Juego>()(
         if (!p) return null
         const ahora = new Date()
         const resultado = hacerOfrenda(p, accionId, ahora, azarReal, nuevoId())
+        // ¿Ha cumplido un reto con esta hazaña? Lo celebra en casa, con su premio.
+        const mes = mesActual(p)
+        const antes = progresoRetos(p, mes, ahora)
+        const despues = progresoRetos(resultado.partida, mesActual(resultado.partida), ahora)
+        const cumplido = despues.findIndex((r, i) => r.cumplido && !antes[i]?.cumplido)
+        let partida = resultado.partida
+        let frase = resultado.frase
+        const premios = [resultado.sorpresa, resultado.premio].filter((x) => x !== null).map((x) => x!.nombre)
+        if (cumplido >= 0) {
+          const r = elegirFrase(partida, mes.companero, 'retoCumplido', azarReal)
+          if (r.frase) { frase = r.frase; partida = { ...partida, frasesRecientes: r.recientes } }
+          const premio = premioDeReto(mes.companero, cumplido)
+          if (premio) premios.push(premio.nombre)
+        }
         set({
-          partida: resultado.partida,
+          partida,
           recientes: [...get().recientes, { resultado, hasta: ahora.getTime() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
           porContar: {
-            frase: resultado.frase ?? get().porContar?.frase ?? null,
-            hallazgos: [...(get().porContar?.hallazgos ?? []), ...[resultado.sorpresa, resultado.premio].filter((x) => x !== null).map((x) => x!.nombre)],
+            frase: frase ?? get().porContar?.frase ?? null,
+            hallazgos: [...(get().porContar?.hallazgos ?? []), ...premios],
           },
         })
         return resultado
@@ -123,6 +144,29 @@ export const useJuego = create<Juego>()(
         const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
         set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
         return r?.frase ?? null
+      },
+      picar: (tipo) => {
+        const p = get().partida
+        if (!p) return null
+        const r = elegirFrase(p, mesActual(p).companero, tipo, azarReal)
+        set({ partida: { ...p, frasesRecientes: r.recientes } })
+        return r.frase
+      },
+      fijarRetos: (retos) => {
+        const p = get().partida
+        const hecha = p && elegirRetos(p, retos)
+        if (!hecha) return false
+        const r = elegirFrase(hecha, mesActual(hecha).companero, 'retosListos', azarReal)
+        set({ partida: { ...hecha, frasesRecientes: r.recientes }, porContar: { frase: r.frase, hallazgos: [] } })
+        return true
+      },
+      gastarComodin: (i, reto) => {
+        const p = get().partida
+        const hecha = p && usarComodin(p, i, reto)
+        if (!hecha) return null
+        const r = elegirFrase(hecha, mesActual(hecha).companero, 'comodin', azarReal)
+        set({ partida: { ...hecha, frasesRecientes: r.recientes } })
+        return r.frase
       },
       pasarMes: () => {
         const p = get().partida

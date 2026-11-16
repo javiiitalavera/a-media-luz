@@ -11,7 +11,8 @@ import { mesActual } from './logica/meses'
 import { COMPANEROS, type CompaneroId } from './contenido'
 import { Rincon } from './pantallas/Rincon'
 import { Ofrendas } from './pantallas/Ofrendas'
-import { Ajustes, Album, Semana } from './pantallas/Otras'
+import { Ajustes, Album } from './pantallas/Otras'
+import { Retos } from './pantallas/Retos'
 
 export default function App() {
   const partida = useJuego((s) => s.partida)
@@ -43,7 +44,7 @@ export default function App() {
   else if (pestana === 'casa')
     pantalla = <Casa key={dueno} partida={partida} ahora={ahora} dueno={dueno} onDetalle={() => setRincon(COMPANEROS[dueno].area)} onBosque={() => setBosque(true)} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} />
-  else if (pestana === 'semana') pantalla = <Semana partida={partida} ahora={ahora} />
+  else if (pestana === 'semana') pantalla = <Retos partida={partida} ahora={ahora} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} />
   else pantalla = <Album partida={partida} ahora={ahora} />
 

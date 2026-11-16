@@ -7,6 +7,10 @@ export type TipoFrase =
   | 'construir' // acabas de construir algo en su casa
   | 'crecer1' // acaba de pasar de cachorro a joven
   | 'crecer2' // acaba de hacerse adulto
+  | 'retoSuave' | 'retoNormal' | 'retoValiente' // al elegir un reto, según cuántas veces
+  | 'retosListos' // al terminar de elegir los retos del mes
+  | 'comodin' // al gastar el comodín
+  | 'retoCumplido' // al cumplir un reto (lo dice en casa)
   | 'ofrenda' // ofrenda de su propia área
   | 'otraArea' // ofrenda de un área cuyo compañero aún no ha llegado (comenta el principal)
   | 'tope' // ya van 3 ofrendas hoy en esa área
@@ -45,6 +49,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
     visitanteFuera: ['El cuervo se ha ido. Ha soltado lo tuyo al salir. Cobarde.'],
     llegada: ['Vale, ya estoy aquí. No hagas una fiesta. Bueno, una pequeña.'],
     sorpresa: ['He encontrado esto. No preguntes de dónde. De verdad, no preguntes.'],
+    retoSuave: ['¿8 veces en un mes? Ambicioso. Para una piedra.', 'Suave. Como tu compromiso con el gimnasio en febrero.', 'Vale. Ponemos el listón donde se pueda pasar por debajo sin agacharse.'],
+    retoNormal: ['12. Ni mucho ni poco. Muy de funcionario.', 'Razonable. Qué aburrido. Bien.', 'Un número sensato. No te reconozco.'],
+    retoValiente: ['¿20? Vale, campeón. Te lo apunto para reírnos el día 28.', 'Valiente. O inconsciente. Lo sabremos pronto.', 'Me encanta esa confianza. Es preciosa. Y frágil.'],
+    retosListos: ['Apuntado. No lo pienso olvidar. Tú sí, pero yo no.', 'Hecho. Esto queda entre tú, yo y mi memoria rencorosa.'],
+    comodin: ['Comodín gastado. Ya no hay más vidas, como en los videojuegos de antes.', 'Cambiado. Haremos como que el anterior nunca existió.'],
+    retoCumplido: ['Reto cumplido. Lo he visto con mis propios ojos y aun así me cuesta creerlo.', 'Cumplido. Toma tu premio antes de que me arrepienta.'],
     construir: [
       'Vaya. Ha quedado casi decente.',
       'Lo pondré donde yo quiera. Que lo sepas.',
@@ -129,6 +139,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
     visitanteFuera: ['El caracol ha abandonado el taller. Ha devuelto la pieza. Estaba en «VARIOS».'],
     llegada: ['Atención. Procedo a mudarme. Paso dos: no sé qué va en el paso dos.'],
     sorpresa: ['He encontrado esto en una caja. La caja ponía «Tuyo». No sé quién la etiquetó.'],
+    retoSuave: ['8. Objetivo modesto, archivado en «por algo se empieza».', 'Suave. Lo guardo junto a tus propósitos de enero.', 'Bajo riesgo, bajo rendimiento. Muy de cuenta de ahorro.'],
+    retoNormal: ['12. Equilibrado. Me pone nervioso lo equilibrado que es.', 'Cifra correcta. Te pongo un tick verde. Mentalmente.', 'Normal. Por fin algo en esta casa que encaja.'],
+    retoValiente: ['¿20? He calculado tus probabilidades. No te las voy a decir.', 'Objetivo agresivo detectado. Activando modo espectador.', 'Valiente. Lo etiqueto como «PROYECTO». Ya sabes lo que pasa con los proyectos.'],
+    retosListos: ['Retos guardados, indexados y con copia de seguridad. Sin escapatoria.', 'Plan del mes cerrado. Lo he plastificado.'],
+    comodin: ['Comodín consumido. Queda en el historial. Para siempre.', 'Cambio aceptado. Procedimiento irregular, pero aceptado.'],
+    retoCumplido: ['Reto cumplido. Inventario actualizado: una cosa buena más.', 'Completado. Estoy orgulloso. Eso no lo he dicho yo.'],
     construir: [
       'Instalado. Nivelado. Catalogado. Ya puedo morir tranquilo. Es una forma de hablar.',
       'Otra cosa en su sitio. Te lo agradecería, pero no tengo ese módulo.',

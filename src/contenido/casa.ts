@@ -51,6 +51,8 @@ export interface ObjetoCasa {
   sitio: { x: number; y: number; ancho: number; colgado?: boolean }
   /** Alto/ancho de su imagen, para colocar su luz. */
   proporcion: number
+  /** Si es el premio de un reto (0, 1 o 2): no se construye, aparece al cumplirlo. */
+  premio?: 0 | 1 | 2
   /** Si da luz: dónde, en % de su imagen. */
   luz?: { x: number; y: number; color: string }
 }
@@ -85,4 +87,19 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
     coste: { orden: 4, vinculos: 2 }, sitio: { x: 14, y: 62, ancho: 17 }, proporcion: 1.05 },
   { id: 'reloj', companero: 'tuerca', nombre: 'Reloj de engranajes', descripcion: 'Marca la hora exacta en que lo ibas a hacer. Hace tres semanas.',
     coste: { orden: 5, mente: 2, calma: 1 }, sitio: { x: 20, y: 24, ancho: 11 }, proporcion: 0.92 },
+
+  // Premios de los retos: no se construyen; aparecen al cumplir cada reto. Solo se ven en la casa
+  // cuando llega su dibujo (sitio y proporción se ajustan entonces).
+  { id: 'zapatillas', companero: 'nox', premio: 0, nombre: 'Zapatillas de brasa', descripcion: 'Para correr detrás de ti. O delante, depende del día.',
+    coste: {}, sitio: { x: 66, y: 72, ancho: 14 }, proporcion: 1 },
+  { id: 'bufanda', companero: 'nox', premio: 1, nombre: 'Bufanda coral', descripcion: 'Abriga. Y queda bien en las fotos que no te vas a hacer.',
+    coste: {}, sitio: { x: 36, y: 72, ancho: 14 }, proporcion: 1 },
+  { id: 'farol-luna', companero: 'nox', premio: 2, nombre: 'Farol de luna', descripcion: 'Solo brilla cuando cumples. Es decir, poco. Pero brilla.',
+    coste: {}, sitio: { x: 88, y: 50, ancho: 10 }, proporcion: 1.4 },
+  { id: 'medalla', companero: 'tuerca', premio: 0, nombre: 'Medalla de engranaje', descripcion: 'Al mérito en la gestión de pendientes. Hay pocas.',
+    coste: {}, sitio: { x: 60, y: 30, ancho: 10 }, proporcion: 1 },
+  { id: 'tablon', companero: 'tuerca', premio: 1, nombre: 'Tablón de planificación', descripcion: 'Todo planificado. Lo imprevisto, en la columna VARIOS.',
+    coste: {}, sitio: { x: 40, y: 32, ancho: 14 }, proporcion: 1 },
+  { id: 'tuerquita', companero: 'tuerca', premio: 2, nombre: 'Tuerquita', descripcion: 'Una versión pequeña de mí. Igual de insufrible, la mitad de alta.',
+    coste: {}, sitio: { x: 60, y: 74, ancho: 12 }, proporcion: 1 },
 ]

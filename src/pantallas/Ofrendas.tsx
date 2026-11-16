@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { ACCIONES, AREAS, COMPANEROS, ORDEN_AREAS, UI, type AreaId } from '../contenido'
 import { DIAS_MES, diaDelMes, estadoDelMes, mesActual } from '../logica/meses'
+import { accionesConReto } from '../logica/retos'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
@@ -19,6 +20,7 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   const olvidar = useJuego((s) => s.olvidarRecientes)
   const diaMalo = diaMaloActivo(partida, ahora)
   const mes = mesActual(partida)
+  const conReto = accionesConReto(mes)
   const hoy = dia(ahora)
   const veces = (id: string) => partida.ofrendas.filter((o) => o.accionId === id && dia(o.fecha) === hoy).length
 
@@ -65,6 +67,7 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
                       <button type="button" onClick={() => ofrecer(a.id)}
                         className={`min-h-11 rounded-full px-4 text-[15px] transition active:scale-95 ${n ? 'pr-2 font-semibold' : 'font-medium'}`}>
                         {n > 0 && '✓ '}{nombre}
+                        {conReto.has(a.id) && <span className="ml-1.5 rounded-full bg-ambar px-1.5 py-0.5 text-[11px] font-bold text-tinta">{UI.retos.doble}</span>}
                         {n > 1 && <span className="ml-1 text-[13px] opacity-70">×{n}</span>}
                       </button>
                       {n > 0 && (

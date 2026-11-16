@@ -17,6 +17,16 @@ export interface Mes {
   presentado?: string
   /** Fecha ISO en que se vio el informe final (y se cerró el mes). */
   cerrado?: string
+  /** Los 3 retos del mes, elegidos al nacer el compañero (fijos, salvo un comodín). */
+  retos?: Reto[]
+  /** Si ya se usó el comodín para cambiar un reto. */
+  comodinUsado?: boolean
+}
+
+export interface Reto {
+  accionId: string
+  /** Veces que hay que hacerla a lo largo del mes. */
+  veces: number
 }
 
 /** Los meses jugados (las partidas antiguas tienen uno implícito: su compañero principal desde el inicio). */

@@ -8,11 +8,14 @@ import { mesesDe, ofrendasDelMes, queCuentan } from './meses'
 export type Materiales = Record<AreaId, number>
 const ceros = (): Materiales => Object.fromEntries(Object.keys(AREAS).map((a) => [a, 0])) as Materiales
 
-/** Materiales ganados en la casa de un compañero: lo ganado durante su mes (o meses). */
+/** Materiales ganados en la casa de un compañero: lo ganado durante su mes (o meses). Las hazañas que
+ *  son uno de los retos del mes dan el doble. */
 export function ganados(p: Partida, c: CompaneroId, ahora: Date): Materiales {
   const m = ceros()
-  for (const mes of mesesDe(p).filter((x) => x.companero === c))
-    for (const o of queCuentan(ofrendasDelMes(p, mes, ahora))) m[o.area]++
+  for (const mes of mesesDe(p).filter((x) => x.companero === c)) {
+    const conReto = new Set((mes.retos ?? []).map((r) => r.accionId))
+    for (const o of queCuentan(ofrendasDelMes(p, mes, ahora))) m[o.area] += conReto.has(o.accionId) ? 2 : 1
+  }
   return m
 }
 
@@ -43,7 +46,7 @@ export function faltan(p: Partida, o: ObjetoCasa, ahora: Date): Partial<Material
 }
 
 export const puedeConstruir = (p: Partida, o: ObjetoCasa, ahora: Date) =>
-  !construido(p, o.id) && Object.keys(faltan(p, o, ahora)).length === 0
+  o.premio === undefined && !construido(p, o.id) && Object.keys(faltan(p, o, ahora)).length === 0
 
 /** Construye si se puede; si no, devuelve null. */
 export function construir(p: Partida, id: string, ahora: Date): Partida | null {
