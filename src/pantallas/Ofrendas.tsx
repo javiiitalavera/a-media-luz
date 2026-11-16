@@ -1,13 +1,13 @@
 // Ofrendas: contar lo que has hecho, en un toque.
 import { useEffect, useState } from 'react'
-import { ACCIONES, AREAS, COMPANEROS, FRASES, MATERIALES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, DUENO_CASA, MATERIALES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo, type ResultadoOfrenda } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
 import { borrarAccion, crearAccion, editarAccion } from '../logica/ajustes'
 import { dia } from '../logica/fechas'
 import { useJuego } from '../estado/juego'
-import { Bocadillo, BotonSecundario, Interruptor, Pantalla } from '../componentes/comunes'
+import { BotonSecundario, Interruptor, Pantalla } from '../componentes/comunes'
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 
@@ -159,12 +159,10 @@ function NuevaAccion({ area }: { area: AreaId }) {
 
 function Sorpresa({ resultado }: { resultado: ResultadoOfrenda }) {
   const quien = AREAS[resultado.ofrenda.area].companero
-  const frase = FRASES[quien].sorpresa?.[0]
   return (
     <div className="animate-entrar rounded-3xl border-2 border-ambar bg-tarjeta px-4 py-3">
       <div className="text-[13px] font-semibold text-coral-texto">{UI.ofrendas.sorpresa(COMPANEROS[quien].nombre)}</div>
-      {frase && <div className="mt-0.5 leading-snug">{frase}</div>}
-      <div className="mt-1 font-bold">{resultado.sorpresa!.nombre}</div>
+      <div className="mt-0.5 font-bold">{resultado.sorpresa!.nombre}</div>
     </div>
   )
 }
@@ -190,16 +188,21 @@ function Reaccion() {
         <div className="animate-entrar rounded-3xl bg-ambar px-4 py-3 font-semibold text-tinta">{UI.semana.cumplida} · {UI.semana.premio(resultado.premio.nombre)}</div>
       )}
       {resultado.sorpresa && <Sorpresa resultado={resultado} />}
-      {resultado.cuenta && (
-        <div className="animate-entrar flex items-center gap-2 self-start rounded-full bg-tarjeta px-3.5 py-1.5 text-[14px] font-bold shadow-sm">
-          <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: MATERIALES[resultado.ofrenda.area].color }} />
-          {UI.casa.gana(1, MATERIALES[resultado.ofrenda.area].singular)}
-        </div>
-      )}
-      <div key={resultado.ofrenda.id} className="relative" role="status">
-        {resultado.frase && <Bocadillo quien={COMPANEROS[resultado.frase.companero].nombre} texto={resultado.frase.texto} />}
+      {/* Aquí solo lo que ganas; lo que opina el compañero te lo dice en casa. */}
+      <div key={resultado.ofrenda.id} role="status" className="animate-entrar flex min-h-14 items-center justify-between gap-2 rounded-3xl bg-tarjeta py-1.5 pr-1.5 pl-4 shadow-md">
+        <span className="min-w-0">
+          <span className="flex items-center gap-2 text-[15px] font-bold">
+            {resultado.cuenta ? (
+              <>
+                <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: MATERIALES[resultado.ofrenda.area].color }} />
+                {UI.casa.gana(1, MATERIALES[resultado.ofrenda.area].singular)}
+              </>
+            ) : UI.ofrendas.noCuenta}
+          </span>
+          {resultado.frase?.companero === DUENO_CASA && <span className="block text-[13px] text-texto-3">{UI.ofrendas.teLoCuenta(COMPANEROS[resultado.frase.companero].nombre)}</span>}
+        </span>
         {puede && (
-          <button type="button" onClick={deshacer} className="absolute top-2 right-2 min-h-11 rounded-full px-3 text-sm font-semibold text-coral-texto underline underline-offset-2">
+          <button type="button" onClick={deshacer} className="min-h-11 shrink-0 rounded-full px-3 text-sm font-semibold text-coral-texto underline underline-offset-2">
             {UI.ofrendas.deshacer}
           </button>
         )}

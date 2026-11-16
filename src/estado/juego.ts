@@ -24,6 +24,9 @@ interface Juego {
   /** Ofrendas recientes que aún se pueden deshacer (no se guarda). */
   recientes: Reciente[]
   ofrecer: (accionId: string) => ResultadoOfrenda | null
+  /** Lo que el compañero quiere comentar de lo último que hiciste: lo dice en casa (no se guarda). */
+  porContar: Frase | null
+  contar: () => Frase | null
   deshacer: () => void
   olvidarRecientes: () => void
   ponerDiaMalo: (v: boolean) => void
@@ -52,6 +55,7 @@ export const useJuego = create<Juego>()(
         set({
           partida: resultado.partida,
           recientes: [...get().recientes, { resultado, hasta: ahora.getTime() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
+          porContar: resultado.frase ?? get().porContar,
         })
         return resultado
       },
@@ -62,9 +66,15 @@ export const useJuego = create<Juego>()(
         const resto = recientes.slice(0, -1)
         const anterior = resto.at(-1)
         if (anterior) anterior.hasta = Date.now() + SEGUNDOS_DESHACER * 1000
-        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto]})
+        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto], porContar: anterior?.resultado.frase ?? null })
       },
       olvidarRecientes: () => set({ recientes: [] }),
+      porContar: null,
+      contar: () => {
+        const f = get().porContar
+        if (f) set({ porContar: null })
+        return f
+      },
       ponerDiaMalo: (v) => {
         const p = get().partida
         if (p) set({ partida: cambiarDiaMalo(p, v, new Date()) })

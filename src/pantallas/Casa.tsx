@@ -2,7 +2,7 @@
 // la interfaz va encima, arriba y abajo, sin tapar el centro. Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { COMPANEROS, DUENO_CASA, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
@@ -11,7 +11,7 @@ import { crecioSinVer, progreso } from '../logica/etapas'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
-const DUENO: CompaneroId = 'nox'
+const DUENO: CompaneroId = DUENO_CASA
 const AREA = COMPANEROS[DUENO].area
 /** Proporción del fondo (ancho / alto). */
 const PROPORCION_FONDO = 941 / 1672
@@ -91,6 +91,17 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
     : r.fase >= 2 ? 'enfurrunado'
     : r.hoy > 0 ? 'contento'
     : 'base'
+
+  // Al volver a casa, Nox comenta lo último que hiciste (si no hay celebración de crecer, que va antes).
+  const contar = useJuego((s) => s.contar)
+  useEffect(() => {
+    if (pendiente) return
+    const t = setTimeout(() => {
+      const f = contar()
+      if (f && f.companero === DUENO) { setSaltos((n) => n + 1); setHabla({ texto: f.texto, n: Date.now(), contento: true }) }
+    }, 600)
+    return () => clearTimeout(t)
+  }, [pendiente, contar])
 
   const hablar = () => {
     setSaltos((n) => n + 1)

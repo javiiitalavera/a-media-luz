@@ -1,7 +1,7 @@
 // Textos de interfaz (no son frases de personaje). Propuestos por Claude.
 export const UI = {
   app: 'A media luz',
-  nav: { bosque: 'Casa', ofrendas: 'Registrar', semana: 'Semana', album: 'Álbum' },
+  nav: { bosque: 'Casa', ofrendas: 'Hazañas', semana: 'Semana', album: 'Álbum' },
   momentos: { amanecer: 'amanecer', mediodia: 'mediodía', atardecer: 'atardecer', noche: 'noche' },
   inicio: {
     titulo: '¿Con quién quieres empezar?',
@@ -47,7 +47,8 @@ export const UI = {
     ritmo: 'Ritmo',
   },
   ofrendas: {
-    titulo: '¿Qué ofreces hoy?',
+    titulo: 'Hazañas de hoy',
+    teLoCuenta: (nombre: string) => `${nombre} tiene algo que decirte en casa`,
     diaMalo: 'Modo día malo',
     diaMaloExplicacion: 'Versiones mínimas. Hoy cuentan igual.',
     deshacer: 'Deshacer',
