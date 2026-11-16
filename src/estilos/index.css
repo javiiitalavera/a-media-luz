@@ -94,3 +94,7 @@ body {
   .anim-mecer, .anim-temblar, .anim-eclosionar { animation: none; }
   .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
+
+/* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */
+.sin-barras { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.sin-barras::-webkit-scrollbar { display: none; }
