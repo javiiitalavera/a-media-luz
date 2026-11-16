@@ -28,6 +28,7 @@
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca y sus 6 objetos |
 | `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
 | `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
+| `public/arte/bosque/mapa.webp` | Mapa del bosque con 12 claros (1024 × 1536) |
 
 Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus caras** (`tieneMes` en `src/arte/manifiesto.ts`).
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |

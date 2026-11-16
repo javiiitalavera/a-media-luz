@@ -57,4 +57,5 @@ Ya hay: Nox (3 etapas, escenario y 6 objetos), y los escenarios de Bruma (estanq
 - **Bosque** (botón arriba en casa): una casita por mes, en orden. La del mes en curso lleva a casa (si aún es huevo, se ve el huevo y «?»). Las demás se visitan: el vecino solo saluda (ni se descuida ni crece) y se puede seguir construyendo con lo que le sobró.
 - Pestañas: Casa · Hazañas · Semana · Álbum · Ajustes (decidido por Javi). Al bosque se va con el botón «Bosque ›» de arriba en casa.
 - **Día del ciclo** (decidido por Javi): «Día 5 · cachorro» y una barra de crecimiento bajo el nombre del compañero en casa (decidido por Javi) y bajo el título en Hazañas («Mes de Tuerca» o «Mes del huevo»).
-- Pendiente: hallazgos de los vecinos y un mapa dibujado del bosque (ahora es una cuadrícula de casitas).
+- **Mapa del bosque** (`public/arte/bosque/mapa.webp`): 12 claros a lo largo de un camino; el mes 1 abajo y el 12 arriba, alternando lados (posiciones en `src/contenido/bosque.ts`). Cada compañero criado tiene su casita en su claro con su nombre; el del mes en curso, con el nombre en ámbar (o su huevo y «?» si no ha nacido). Los claros vacíos esperan a los meses que vienen.
+- Pendiente: hallazgos de los vecinos.

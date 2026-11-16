@@ -14,6 +14,7 @@ export type ClaveArte =
   | `objeto/${string}`
   | `huevo/${Id}/${'cerrado' | 'agrietado'}`
   | `casita/${Id}`
+  | 'bosque/mapa'
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
 /** Las 3 etapas × 4 expresiones de un compañero, recortadas con la herramienta (mismo encuadre). */
@@ -32,6 +33,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj']),
   'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
+  'bosque/mapa': '/arte/bosque/mapa.webp',
   'casita/nox': '/arte/casitas/nox.webp',
   'casita/tuerca': '/arte/casitas/tuerca.webp',
   ...personaje('tuerca'),
