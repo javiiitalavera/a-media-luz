@@ -24,6 +24,7 @@ export const UI = {
     dormido: (nombre: string, n: number) => `${nombre} aún no ha llegado. ${n === 1 ? 'Falta 1 cosa' : `Faltan ${n} cosas`} de su área para despertarlo.`,
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
     etapas: ['Cachorro', 'Joven', 'Adulto'],
+    encontrado: (que: string) => `Encontrado: ${que}`,
     haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
     crecio: (nombre: string, etapa: string) => `${nombre} ya es ${etapa.toLowerCase()}`,
   },
@@ -48,7 +49,6 @@ export const UI = {
   },
   ofrendas: {
     titulo: 'Hazañas de hoy',
-    teLoCuenta: (nombre: string) => `${nombre} tiene algo que decirte en casa`,
     diaMalo: 'Modo día malo',
     diaMaloExplicacion: 'Versiones mínimas. Hoy cuentan igual.',
     deshacer: 'Deshacer',

@@ -1,8 +1,8 @@
 // Ofrendas: contar lo que has hecho, en un toque.
 import { useEffect, useState } from 'react'
-import { ACCIONES, AREAS, COMPANEROS, DUENO_CASA, MATERIALES, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, ORDEN_AREAS, UI, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
-import { diaMaloActivo, type ResultadoOfrenda } from '../logica/ofrendas'
+import { diaMaloActivo } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
 import { borrarAccion, crearAccion, editarAccion } from '../logica/ajustes'
 import { dia } from '../logica/fechas'
@@ -14,7 +14,6 @@ const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).sl
 export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const ofrecer = useJuego((s) => s.ofrecer)
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
-  const recientes = useJuego((s) => s.recientes)
   const olvidar = useJuego((s) => s.olvidarRecientes)
   const diaMalo = diaMaloActivo(partida, ahora)
   const hoy = dia(ahora)
@@ -27,7 +26,7 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   return (
     <Pantalla titulo={UI.ofrendas.titulo}>
       <Interruptor titulo={UI.ofrendas.diaMalo} explicacion={UI.ofrendas.diaMaloExplicacion} activo={diaMalo} onCambiar={ponerDiaMalo} />
-      <div className={`mt-4 flex flex-col gap-5 ${recientes.length ? 'pb-56' : ''}`}>
+      <div className="mt-4 flex flex-col gap-5">
         {ORDEN_AREAS.map((area) => {
           const r = estadoRincon(partida, area, ahora)
           return (
@@ -74,7 +73,6 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
           )
         })}
       </div>
-      {recientes.length > 0 && <Reaccion />}
     </Pantalla>
   )
 }
@@ -152,60 +150,6 @@ function NuevaAccion({ area }: { area: AreaId }) {
       <div className="mt-2 grid grid-cols-2 gap-2">
         <BotonSecundario onClick={() => setAbierta(false)}>{UI.ofrendas.cancelar}</BotonSecundario>
         <button type="button" disabled={!nombre.trim()} onClick={crear} className="min-h-11 rounded-full bg-ambar text-sm font-bold text-tinta disabled:opacity-40">{UI.ofrendas.crear}</button>
-      </div>
-    </div>
-  )
-}
-
-function Sorpresa({ resultado }: { resultado: ResultadoOfrenda }) {
-  const quien = AREAS[resultado.ofrenda.area].companero
-  return (
-    <div className="animate-entrar rounded-3xl border-2 border-ambar bg-tarjeta px-4 py-3">
-      <div className="text-[13px] font-semibold text-coral-texto">{UI.ofrendas.sorpresa(COMPANEROS[quien].nombre)}</div>
-      <div className="mt-0.5 font-bold">{resultado.sorpresa!.nombre}</div>
-    </div>
-  )
-}
-
-function Reaccion() {
-  const recientes = useJuego((s) => s.recientes)
-  const deshacer = useJuego((s) => s.deshacer)
-  const olvidar = useJuego((s) => s.olvidarRecientes)
-  const u = recientes.at(-1)!
-  const { resultado } = u
-  const [puede, setPuede] = useState(true)
-  useEffect(() => {
-    setPuede(true)
-    const t = setTimeout(() => setPuede(false), Math.max(0, u.hasta - Date.now()))
-    return () => clearTimeout(t)
-  }, [u])
-  return (
-    <div
-      onClick={(e) => !(e.target as HTMLElement).closest('button') && olvidar()}
-      className="fixed inset-x-0 bottom-[calc(72px+env(safe-area-inset-bottom))] z-10 mx-auto flex max-w-[430px] flex-col gap-2 px-4 pb-3"
-    >
-      {resultado.premio && (
-        <div className="animate-entrar rounded-3xl bg-ambar px-4 py-3 font-semibold text-tinta">{UI.semana.cumplida} · {UI.semana.premio(resultado.premio.nombre)}</div>
-      )}
-      {resultado.sorpresa && <Sorpresa resultado={resultado} />}
-      {/* Aquí solo lo que ganas; lo que opina el compañero te lo dice en casa. */}
-      <div key={resultado.ofrenda.id} role="status" className="animate-entrar flex min-h-14 items-center justify-between gap-2 rounded-3xl bg-tarjeta py-1.5 pr-1.5 pl-4 shadow-md">
-        <span className="min-w-0">
-          <span className="flex items-center gap-2 text-[15px] font-bold">
-            {resultado.cuenta ? (
-              <>
-                <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: MATERIALES[resultado.ofrenda.area].color }} />
-                {UI.casa.gana(1, MATERIALES[resultado.ofrenda.area].singular)}
-              </>
-            ) : UI.ofrendas.noCuenta}
-          </span>
-          {resultado.frase?.companero === DUENO_CASA && <span className="block text-[13px] text-texto-3">{UI.ofrendas.teLoCuenta(COMPANEROS[resultado.frase.companero].nombre)}</span>}
-        </span>
-        {puede && (
-          <button type="button" onClick={deshacer} className="min-h-11 shrink-0 rounded-full px-3 text-sm font-semibold text-coral-texto underline underline-offset-2">
-            {UI.ofrendas.deshacer}
-          </button>
-        )}
       </div>
     </div>
   )

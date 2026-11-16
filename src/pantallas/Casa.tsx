@@ -54,6 +54,12 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const verEtapa = useJuego((s) => s.verEtapa)
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
+  const [hallazgo, setHallazgo] = useState<string | null>(null)
+  useEffect(() => {
+    if (!hallazgo) return
+    const t = setTimeout(() => setHallazgo(null), 5000)
+    return () => clearTimeout(t)
+  }, [hallazgo])
 
   // Ha crecido desde la última vez: celebración (una sola vez por etapa).
   const pendiente = r.llegado && crecioSinVer(partida, DUENO, g.etapa)
@@ -97,8 +103,10 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   useEffect(() => {
     if (pendiente) return
     const t = setTimeout(() => {
-      const f = contar()
+      const noticia = contar()
+      const f = noticia?.frase
       if (f && f.companero === DUENO) { setSaltos((n) => n + 1); setHabla({ texto: f.texto, n: Date.now(), contento: true }) }
+      if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
   }, [pendiente, contar])
@@ -217,6 +225,11 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
         </div>
       </div>
 
+      {hallazgo && !celebra && (
+        <div className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
+          <span className="rounded-full bg-ambar px-5 py-2.5 text-center text-[15px] font-bold text-tinta shadow-lg">{UI.casa.encontrado(hallazgo)}</span>
+        </div>
+      )}
       {celebra && (
         <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
           <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
