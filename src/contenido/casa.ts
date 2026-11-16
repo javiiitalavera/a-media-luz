@@ -20,7 +20,7 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
   nox: { proporcion: 941 / 1672, pies: { x: 50, y: 66 }, anchos: [36, 42, 48],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
   tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 68 }, anchos: [34, 40, 44],
-    luces: [{ x: 25.3, y: 22.7 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
+    luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
 }
 
 export interface Material {
@@ -74,15 +74,15 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
 
   // Taller de Tuerca: casi todo pide tornillos (Orden).
   { id: 'caja', companero: 'tuerca', nombre: 'Caja de herramientas', descripcion: 'Para arreglar cosas. Las tuyas no, que no tienen arreglo.',
-    coste: { orden: 3 }, sitio: { x: 24, y: 72, ancho: 20 }, proporcion: 0.91 },
+    coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',
-    coste: { orden: 3, cuerpo: 1 }, sitio: { x: 76, y: 73, ancho: 18 }, proporcion: 0.87 },
+    coste: { orden: 3, cuerpo: 1 }, sitio: { x: 75, y: 72, ancho: 17 }, proporcion: 0.87 },
   { id: 'flexo', companero: 'tuerca', nombre: 'Flexo', descripcion: 'Luz de trabajo. Para ver mejor lo que no has hecho.',
-    coste: { orden: 3, mente: 2 }, sitio: { x: 31, y: 46.5, ancho: 12 }, proporcion: 1.1, luz: { x: 70, y: 68, color: '#ffd27a' } },
+    coste: { orden: 3, mente: 2 }, sitio: { x: 52, y: 44.2, ancho: 11 }, proporcion: 1.1, luz: { x: 70, y: 68, color: '#ffd27a' } },
   { id: 'cajonera', companero: 'tuerca', nombre: 'Cajonera', descripcion: 'Tres cajones. Uno pone VARIOS. Los otros dos, también.',
-    coste: { orden: 4, calma: 1 }, sitio: { x: 84, y: 62, ancho: 15 }, proporcion: 1.22 },
+    coste: { orden: 4, calma: 1 }, sitio: { x: 84, y: 63, ancho: 15 }, proporcion: 1.22 },
   { id: 'estanteria-tarros', companero: 'tuerca', nombre: 'Estante de tarros', descripcion: 'Tornillos clasificados por tamaño, color y rencor.',
-    coste: { orden: 4, vinculos: 2 }, sitio: { x: 15, y: 61, ancho: 18 }, proporcion: 1.05 },
+    coste: { orden: 4, vinculos: 2 }, sitio: { x: 14, y: 62, ancho: 17 }, proporcion: 1.05 },
   { id: 'reloj', companero: 'tuerca', nombre: 'Reloj de engranajes', descripcion: 'Marca la hora exacta en que lo ibas a hacer. Hace tres semanas.',
-    coste: { orden: 5, mente: 2, calma: 1 }, sitio: { x: 76, y: 25.6, ancho: 12 }, proporcion: 0.92 },
+    coste: { orden: 5, mente: 2, calma: 1 }, sitio: { x: 20, y: 24, ancho: 11 }, proporcion: 0.92 },
 ]
