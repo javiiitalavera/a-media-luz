@@ -113,6 +113,7 @@ Lista orientativa para planificar entregas; el formato, en `COORDINACION.md`. Se
 8. **Iconos de interfaz:** pestañas, áreas y acciones.
 
 ## Casa (rumbo nuevo, en prueba)
+> **16/11/2026:** Javi propone un rumbo nuevo, «un compañero al mes», en `docs/diseno-meses.md`. Si se aprueba, sustituye a materiales y construir.
 Primera pantalla del rumbo nuevo: la **casa de Nox**. Se prueba antes de rehacer el resto.
 - **Materiales:** cada ofrenda que cuenta (hasta 3 al día por área) da 1 material de su área: Cuerpo → ascuas, Mente → semillas, Calma → rocío, Vínculos → hilo, Orden → tornillos. Se calcula del historial: lo ganado menos lo construido.
 - **Construir:** 6 objetos para la casa de Nox (hoguera, cojín, banco, farolillo, seta luminosa, estantería). Todos piden ascuas y casi todos, algo de otra área, para premiar cuidar varias cosas. Cada objeto tiene su sitio en la escena y aparece con un rebote y chispas; Nox salta y lo comenta.
