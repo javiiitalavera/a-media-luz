@@ -26,7 +26,7 @@ describe('un compañero al mes', () => {
   it('el mes siguiente empieza de cero: los materiales son de cada casa', () => {
     let p = con(nueva(), 'cuerpo', '2026-01-05', 3)
     expect(disponibles(p, 'nox', en('2026-01-05', 20)).cuerpo).toBe(3)
-    p = empezarMesSiguiente(p, en('2026-02-02', 9), azarFijo(0))
+    p = empezarMesSiguiente(p, en('2026-02-02', 9), azarFijo(0))!
     const otro = mesActual(p).companero
     expect(otro).not.toBe('nox')
     p = con(p, 'cuerpo', '2026-02-03', 2)
@@ -41,21 +41,28 @@ describe('un compañero al mes', () => {
     let p: Partida = nueva()
     for (let d = 5; d < 13; d++) p = con(p, 'cuerpo', `2026-01-${String(d).padStart(2, '0')}`, 2)
     expect(progreso(p, 'nox', en('2026-01-12', 20)).etapa).toBe(1)
-    p = empezarMesSiguiente(p, en('2026-02-02', 9), azarFijo(0))
+    p = empezarMesSiguiente(p, en('2026-02-02', 9), azarFijo(0))!
     for (let d = 3; d < 20; d++) p = con(p, 'cuerpo', `2026-02-${String(d).padStart(2, '0')}`, 3)
     // fuera de su mes ya no crece: se queda como estaba
     expect(progreso(p, 'nox', en('2026-02-20', 20)).crecimiento).toBe(16)
+  })
+
+  it('solo llegan compañeros con su arte listo', () => {
+    const p = empezarMesSiguiente(nueva('nox'), en('2026-02-02', 9), azarFijo(0), ['nox', 'tuerca'])!
+    expect(mesActual(p).companero).toBe('tuerca')
+    expect(empezarMesSiguiente(p, en('2026-03-02', 9), azarFijo(0), ['nox', 'tuerca'])).toBeNull()
   })
 
   it('no repite compañero hasta que han salido todos', () => {
     let p = nueva('nox')
     const vistos = new Set(['nox'])
     for (let i = 0; i < 4; i++) {
-      p = empezarMesSiguiente(p, en('2026-02-02', 9 + i), azarFijo(0.99))
+      p = empezarMesSiguiente(p, en('2026-02-02', 9 + i), azarFijo(0.99))!
       vistos.add(mesActual(p).companero)
     }
     expect(vistos.size).toBe(5)
-    expect(siguienteCompanero(p, azarFijo(0))).toBeDefined()
+    expect(siguienteCompanero(p, azarFijo(0))).toBeNull()
+    expect(empezarMesSiguiente(p, en('2026-03-02'), azarFijo(0))).toBeNull()
   })
 
   it('mientras no llega el huevo siguiente, el mes sigue abierto: no se pierde nada', () => {

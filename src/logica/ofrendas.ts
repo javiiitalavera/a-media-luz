@@ -102,10 +102,10 @@ export function deshacerOfrenda(p: Partida, ofrendaId: string): Partida {
 export const cambiarDiaMalo = (p: Partida, activo: boolean, ahora: Date): Partida => ({ ...p, diaMalo: activo ? dia(ahora) : undefined })
 
 /** Lo que dice un compañero al tocarlo en el bosque: si su rincón está mal, se queja; si no, saluda según la hora. */
-export function fraseAlTocar(p: Partida, companero: CompaneroId, ahora: Date, azar: Azar) {
+export function fraseAlTocar(p: Partida, companero: CompaneroId, ahora: Date, azar: Azar, soloSaludo = false) {
   const area = COMPANEROS[companero].area
   const r = estadoBosque(p, ahora).find((x) => x.area === area)
-  if (r && r.llegado && r.fase > 0) return elegirFrase(p, companero, `fase${r.fase}` as TipoFrase, azar)
+  if (!soloSaludo && r && r.llegado && r.fase > 0) return elegirFrase(p, companero, `fase${r.fase}` as TipoFrase, azar)
   return elegirFrase(p, companero, 'saludo', azar, momentoDelDia(ahora))
 }
 

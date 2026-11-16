@@ -13,6 +13,7 @@ export type ClaveArte =
   | `companero/${Id}/${'joven' | 'adulto'}/${Expresion}`
   | `objeto/${string}`
   | `huevo/${Id}/${'cerrado' | 'agrietado'}`
+  | `casita/${Id}`
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
 /** Las 3 etapas × 4 expresiones de un compañero, recortadas con la herramienta (mismo encuadre). */
@@ -27,6 +28,12 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta']),
   'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
   'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
+  'casa/tuerca/fondo': '/arte/casa/tuerca/fondo.webp',
+  ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj']),
+  'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
+  'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
+  'casita/nox': '/arte/casitas/nox.webp',
+  'casita/tuerca': '/arte/casitas/tuerca.webp',
   ...personaje('tuerca'),
   'companero/nox/base': '/arte/personajes/nox/base.webp',
   'companero/nox/contento': '/arte/personajes/nox/contento.webp',
@@ -43,6 +50,10 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
 }
 
 export const rutaArte = (clave: ClaveArte): string | undefined => ARTE[clave]
+
+/** ¿Tiene ya todo lo necesario para vivir su mes? (huevo, casa y casita; sus etapas se completan solas). */
+export const tieneMes = (c: Id) =>
+  Boolean(ARTE[`huevo/${c}/cerrado`] && ARTE[`casa/${c}/fondo`] && ARTE[`casita/${c}`] && ARTE[`companero/${c}/base`])
 
 const NOMBRE_ETAPA = ['', 'joven/', 'adulto/'] as const
 /**

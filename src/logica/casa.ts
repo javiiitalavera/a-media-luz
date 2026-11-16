@@ -28,7 +28,8 @@ export function gastados(p: Partida, c: CompaneroId): Materiales {
 /** Materiales que quedan en la casa de un compañero (cada casa tiene los suyos). */
 export function disponibles(p: Partida, c: CompaneroId, ahora: Date): Materiales {
   const g = ganados(p, c, ahora), s = gastados(p, c)
-  return Object.fromEntries(Object.keys(g).map((a) => [a, g[a as AreaId] - s[a as AreaId]])) as Materiales
+  // Nunca por debajo de 0 (por si una copia antigua trae algo construido antes de los meses).
+  return Object.fromEntries(Object.keys(g).map((a) => [a, Math.max(0, g[a as AreaId] - s[a as AreaId])])) as Materiales
 }
 
 export const construido = (p: Partida, id: string) => (p.construcciones ?? []).some((c) => c.objetoId === id)

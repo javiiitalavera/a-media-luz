@@ -1,7 +1,14 @@
 // Textos de interfaz (no son frases de personaje). Propuestos por Claude.
 export const UI = {
   app: 'A media luz',
-  nav: { bosque: 'Casa', ofrendas: 'Hazañas', semana: 'Semana', album: 'Álbum' },
+  nav: { casa: 'Casa', ofrendas: 'Hazañas', bosque: 'Bosque', semana: 'Semana', album: 'Álbum' },
+  vecinos: {
+    titulo: 'Tu bosque',
+    explicacion: 'Cada casa es un mes. Entra a ver a quien quieras: sus materiales siguen ahí.',
+    esteMes: 'Este mes',
+    huevo: 'Aún en el huevo',
+    mes: (n: number) => `Mes ${n}`,
+  },
   momentos: { amanecer: 'amanecer', mediodia: 'mediodía', atardecer: 'atardecer', noche: 'noche' },
   inicio: {
     titulo: '¿Con quién quieres empezar?',
@@ -53,6 +60,16 @@ export const UI = {
     } as Record<1 | 2 | 3, string[]>,
     nacio: (nombre: string) => `¡Ha salido ${nombre}!`,
     necesita: 'Lo que necesita',
+    alBosque: 'Bosque',
+    informe: {
+      titulo: (nombre: string) => `Informe de ${nombre}`,
+      dias: (n: number, de: number) => `${n} de ${de} días haciendo algo`,
+      hazanas: (n: number) => (n === 1 ? '1 hazaña' : `${n} hazañas`),
+      construido: (n: number, de: number) => `Casa: ${n} de ${de} cosas construidas`,
+      acaba: (etapa: string) => `Se queda como ${etapa.toLowerCase()}`,
+      seQueda: (nombre: string) => `${nombre} se queda en su casa del bosque. Puedes ir a verle cuando quieras y seguir construyendo con lo que le sobró.`,
+      siguiente: 'Que pase el siguiente',
+    },
     haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
     crecio: (nombre: string, etapa: string) => `${nombre} ya es ${etapa.toLowerCase()}`,
   },

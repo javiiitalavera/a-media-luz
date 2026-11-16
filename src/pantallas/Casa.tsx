@@ -1,27 +1,19 @@
-// Pantalla principal: la casa de Nox. Lo que manda es la escena (fondo, objetos construidos y Nox);
+// Pantalla principal: la casa del compañero del mes (o la de un vecino, de visita). Lo que manda es la
+// escena (fondo, objetos construidos y el compañero);
 // la interfaz va encima, arriba y abajo, sin tapar el centro. Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, DUENO_CASA, HISTORIAS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, progreso } from '../logica/etapas'
-import { estadoDelMes, faltanParaEclosion, OFRENDAS_ECLOSION } from '../logica/meses'
-import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
+import { diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
+import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
-const DUENO: CompaneroId = DUENO_CASA
-const AREA = COMPANEROS[DUENO].area
-/** Proporción del fondo (ancho / alto). */
-const PROPORCION_FONDO = 941 / 1672
-/** Nox: centro y pies (en % del fondo). Su ancho (en % del ancho del fondo) depende de la etapa. */
-const NOX = { x: 50, y: 66 }
-const ANCHO_NOX = [36, 42, 48]
 const ANCHO_HUEVO = 30
-/** Luces que ya están dibujadas en el fondo (farol de la madriguera y del poste). */
-const LUCES_FONDO = [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }]
 const SEGUNDOS_BOCADILLO = 7
 
 /** Tamaño de un elemento, actualizado al girar o cambiar la ventana. */
@@ -40,13 +32,24 @@ function useTamano() {
   return [ref, t] as const
 }
 
-export function Casa({ partida, ahora, onAjustes, onDetalle }: {
-  partida: Partida; ahora: Date; onAjustes: () => void; onDetalle: () => void
+export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetalle, onVolver }: {
+  partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
+  onAjustes: () => void; onDetalle: () => void; onVolver?: () => void
 }) {
+  const DUENO = dueno
+  const AREA = COMPANEROS[DUENO].area
+  const esc = ESCENAS[DUENO]!
+  const PROPORCION_FONDO = esc.proporcion
+  const NOX = esc.pies
+  const ANCHO_NOX = esc.anchos
+  const LUCES_FONDO = esc.luces
+  const pasarMes = useJuego((s) => s.pasarMes)
   const tocar = useJuego((s) => s.tocar)
   const construirObjeto = useJuego((s) => s.construir)
   const [ref, { w, h }] = useTamano()
-  const r = estadoRincon(partida, AREA, ahora)
+  // De visita, su mes ya pasó: ni se descuida ni crece; solo está en su casa.
+  const rReal = estadoRincon(partida, AREA, ahora)
+  const r = visita ? { ...rReal, fase: 0 as const, hoy: 0 } : rReal
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
@@ -59,7 +62,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const [hallazgo, setHallazgo] = useState<string | null>(null)
   const presentar = useJuego((s) => s.presentar)
   // Compañero del mes: aún en el huevo, naciendo (se enseña la eclosión una vez) o ya en casa.
-  const estado = estadoDelMes(partida, ahora)
+  const estado = visita ? 'vivo' : estadoDelMes(partida, ahora)
   const vivo = estado === 'vivo'
   const faltaHuevo = faltanParaEclosion(partida, ahora)
   const [toques, setToques] = useState(0)
@@ -120,7 +123,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   // Al volver a casa, Nox comenta lo último que hiciste (si no hay celebración de crecer, que va antes).
   const contar = useJuego((s) => s.contar)
   useEffect(() => {
-    if (pendiente || !vivo) return
+    if (pendiente || !vivo || visita) return
     const t = setTimeout(() => {
       const noticia = contar()
       const f = noticia?.frase
@@ -128,7 +131,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
-  }, [pendiente, vivo, contar])
+  }, [pendiente, vivo, visita, contar, DUENO])
 
   const hablar = () => {
     if (estado === 'huevo') {
@@ -141,7 +144,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
     if (estado === 'naciendo') return
     setSaltos((n) => n + 1)
     if (!r.llegado) { setHabla({ texto: UI.casa.dormido(COMPANEROS[DUENO].nombre, r.faltanParaLlegar), n: Date.now() }); return }
-    const f = tocar(DUENO)
+    const f = tocar(DUENO, visita)
     if (f) setHabla({ texto: f.texto, n: Date.now() })
   }
   const alConstruir = (id: string) => {
@@ -161,6 +164,11 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const alto = (ancho: number, prop: number) => (ancho * prop * ew) / eh
   // Hasta que se celebra, se sigue viendo la etapa anterior.
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
+  // Acaba su mes: informe (solo si ya hay otro compañero listo para llegar; si no, el mes sigue).
+  const mes = mesActual(partida)
+  const finDeMes = vivo && !mes.cerrado && diaDelMes(mes, ahora).terminado &&
+    ORDEN_COMPANEROS.filter(tieneMes).some((c) => !mesesDe(partida).some((m) => m.companero === c))
+
   // Mientras no ha salido, en su sitio está el huevo.
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
@@ -169,7 +177,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   return (
     <main ref={ref} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
-        <img src={rutaArte('casa/nox/fondo')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+        <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} /> : (
           <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
@@ -207,9 +215,9 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
           {/* La llama de la cola de Nox */}
           {conHuevo
             ? <Luz x={NOX.x} y={NOX.y - altoNox * 0.5} tam={(noche ? 34 : 26) + (faltaHuevo <= 1 ? 10 : 0)} color="#ffb347" retraso={0} />
-            : <Luz x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.36} tam={noche ? 22 : 14} color="#ffb347" retraso={0} />}
+            : esc.luzPropia && <Luz x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * esc.luzPropia.y} tam={esc.luzPropia.tam * (noche ? 1.6 : 1)} color="#ffb347" retraso={0} />}
         </div>
-        {!conHuevo && <Chispas x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.45} />}
+        {!conHuevo && esc.luzPropia?.chispas && <Chispas x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * (esc.luzPropia.y + 0.09)} />}
         <Luciernagas cuantas={noche ? 14 : 7} />
         {celebra && (
           <>
@@ -245,18 +253,18 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
           ) : (<>
           <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
           <span className="block text-[13px] text-texto-3">
-            {UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
+            {UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente && !visita ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
             {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
           </span>
-          {g.siguiente && !pendiente && (
+          {g.siguiente && !pendiente && !visita && (
             <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
               <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((g.crecimiento - g.desde) / (g.siguiente - g.desde)) * 100}%` }} />
             </span>
           )}
           </>)}
         </button>
-        <button type="button" onClick={onAjustes} className="min-h-11 rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
-          {UI.bosque.ajustes}
+        <button type="button" onClick={visita ? onVolver : onAjustes} className="min-h-11 rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
+          {visita ? `‹ ${UI.casa.alBosque}` : UI.bosque.ajustes}
         </button>
       </header>
 
@@ -284,10 +292,56 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
         </div>
       )}
 
+      {!visita && finDeMes && (
+        <Informe partida={partida} ahora={ahora} dueno={DUENO} etapa={g.etapa} onSiguiente={pasarMes} />
+      )}
       {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar() }} />}
 
-      {hoja && <Catalogo partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
+      {hoja && <Catalogo dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
     </main>
+  )
+}
+
+/** Informe del mes: sobrio, con números y la última frase del compañero. */
+function Informe({ partida, ahora, dueno, etapa, onSiguiente }: {
+  partida: Partida; ahora: Date; dueno: CompaneroId; etapa: 0 | 1 | 2; onSiguiente: () => void
+}) {
+  const comp = COMPANEROS[dueno]
+  const i = informe(partida, mesActual(partida), ahora)
+  const suyos = OBJETOS_CASA.filter((o) => o.companero === dueno)
+  const hechos = suyos.filter((o) => construido(partida, o.id)).length
+  const cierre = HISTORIAS[dueno]?.cierre[etapa]
+  return createPortal(
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-end bg-[#2e2030]/55 px-3 pb-[max(16px,env(safe-area-inset-bottom))]">
+      <section role="dialog" aria-label={UI.casa.informe.titulo(comp.nombre)} className="anim-hoja max-h-[90dvh] w-full overflow-y-auto rounded-[28px] bg-fondo p-5 shadow-xl">
+        <div className="flex items-center gap-3">
+          <img src={rutaCompanero(dueno, etapa, 'base')} alt="" className="h-16 w-16 shrink-0" />
+          <div>
+            <h2 className="text-[24px] leading-tight font-bold">{UI.casa.informe.titulo(comp.nombre)}</h2>
+            <div className="text-[14px] text-texto-3">{UI.casa.informe.acaba(UI.casa.etapas[etapa])}</div>
+          </div>
+        </div>
+        <dl className="mt-4 rounded-2xl bg-tarjeta p-3 text-[15px]">
+          <div className="font-semibold">{UI.casa.informe.dias(i.diasConAlgo, i.dias)}</div>
+          <div className="mt-1 text-texto-2">{UI.casa.informe.hazanas(i.total)}</div>
+          <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[14px]">
+            {ORDEN_AREAS.map((a) => (
+              <li key={a} className="flex items-center gap-1.5">
+                <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: MATERIALES[a].color }} />
+                {AREAS[a].nombre}: <span className="font-semibold">{i.porArea[a]}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-2 text-texto-2">{UI.casa.informe.construido(hechos, suyos.length)}</div>
+        </dl>
+        {cierre && <p className="mt-4 text-[16px] leading-snug italic">«{cierre}»</p>}
+        <p className="mt-3 text-[14px] leading-snug text-texto-3">{UI.casa.informe.seQueda(comp.nombre)}</p>
+        <button type="button" onClick={onSiguiente} className="mt-4 min-h-12 w-full rounded-2xl bg-ambar text-[16px] font-bold text-tinta">
+          {UI.casa.informe.siguiente}
+        </button>
+      </section>
+    </div>,
+    document.body,
   )
 }
 
@@ -362,7 +416,7 @@ function Objeto({ o, nuevo, ew, eh }: { o: ObjetoCasa; nuevo: boolean; ew: numbe
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
       <div className="absolute" style={estilo}>
         <div className={s.colgado ? 'anim-balanceo' : ''}>
-          <img src={rutaArte(`casa/nox/objeto/${o.id}`)} alt={o.nombre} draggable={false} className={`block w-full ${nuevo ? 'anim-brotar' : ''}`} />
+          <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt={o.nombre} draggable={false} className={`block w-full ${nuevo ? 'anim-brotar' : ''}`} />
         </div>
       </div>
       {nuevo && <Estallido x={s.x} y={centroY} />}
@@ -400,7 +454,8 @@ function Materiales({ mat, falta }: { mat: Record<AreaId, number>; falta?: Parti
   )
 }
 
-function Catalogo({ partida, ahora, onCerrar, onConstruir }: {
+function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
+  dueno: CompaneroId
   partida: Partida; ahora: Date; onCerrar: () => void; onConstruir: (id: string) => void
 }) {
   const mat = disponibles(partida, DUENO, ahora)
@@ -422,7 +477,7 @@ function Catalogo({ partida, ahora, onCerrar, onConstruir }: {
             const puede = !hecho && Object.keys(f).length === 0
             return (
               <li key={o.id} className="flex items-center gap-3 rounded-3xl bg-tarjeta p-3">
-                <img src={rutaArte(`casa/nox/objeto/${o.id}`)} alt="" className="h-16 w-16 shrink-0 object-contain" />
+                <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" className="h-16 w-16 shrink-0 object-contain" />
                 <div className="min-w-0 flex-1">
                   <div className="font-bold">{o.nombre}</div>
                   <div className="text-[13px] leading-snug text-texto-3 italic">«{o.descripcion}»</div>

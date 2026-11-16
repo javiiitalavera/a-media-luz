@@ -1,8 +1,27 @@
 // La casa de cada compañero: materiales que dan las ofrendas y cosas que se construyen con ellos.
 import type { AreaId, CompaneroId } from './tipos'
 
-/** De quién es la casa que se ve ahora (con «un compañero al mes» será el del mes en curso). */
-export const DUENO_CASA: CompaneroId = 'nox'
+/** Cómo se monta la escena de cada casa (posiciones en % del fondo). */
+export interface Escena {
+  /** Ancho / alto del fondo. */
+  proporcion: number
+  /** Dónde apoya los pies el compañero (centro horizontal y altura). */
+  pies: { x: number; y: number }
+  /** Ancho del compañero (en % del ancho del fondo) en cada etapa. */
+  anchos: [number, number, number]
+  /** Luces ya dibujadas en el fondo, para hacerlas latir. */
+  luces: { x: number; y: number }[]
+  /** Luz del propio compañero (la llama de Nox, la luz del pecho de Tuerca), relativa a su figura:
+   *  x desde su centro y y desde sus pies, en fracciones de su ancho y alto. */
+  luzPropia?: { x: number; y: number; tam: number; chispas?: boolean }
+}
+
+export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
+  nox: { proporcion: 941 / 1672, pies: { x: 50, y: 66 }, anchos: [36, 42, 48],
+    luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 68 }, anchos: [34, 40, 44],
+    luces: [{ x: 25.3, y: 22.7 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
+}
 
 export interface Material {
   area: AreaId
@@ -52,4 +71,18 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
     coste: { cuerpo: 2, mente: 3 }, sitio: { x: 20, y: 68, ancho: 12 }, proporcion: 1.0, luz: { x: 50, y: 62, color: '#ffe08a' } },
   { id: 'estanteria', companero: 'nox', nombre: 'Estantería', descripcion: 'Para los libros que dices que vas a leer.',
     coste: { cuerpo: 5, mente: 3 }, sitio: { x: 65, y: 47, ancho: 17 }, proporcion: 0.97 },
+
+  // Taller de Tuerca: casi todo pide tornillos (Orden).
+  { id: 'caja', companero: 'tuerca', nombre: 'Caja de herramientas', descripcion: 'Para arreglar cosas. Las tuyas no, que no tienen arreglo.',
+    coste: { orden: 3 }, sitio: { x: 24, y: 72, ancho: 20 }, proporcion: 0.91 },
+  { id: 'aspiradora', companero: 'tuerca', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',
+    coste: { orden: 3, cuerpo: 1 }, sitio: { x: 76, y: 73, ancho: 18 }, proporcion: 0.87 },
+  { id: 'flexo', companero: 'tuerca', nombre: 'Flexo', descripcion: 'Luz de trabajo. Para ver mejor lo que no has hecho.',
+    coste: { orden: 3, mente: 2 }, sitio: { x: 31, y: 46.5, ancho: 12 }, proporcion: 1.1, luz: { x: 70, y: 68, color: '#ffd27a' } },
+  { id: 'cajonera', companero: 'tuerca', nombre: 'Cajonera', descripcion: 'Tres cajones. Uno pone VARIOS. Los otros dos, también.',
+    coste: { orden: 4, calma: 1 }, sitio: { x: 84, y: 62, ancho: 15 }, proporcion: 1.22 },
+  { id: 'estanteria-tarros', companero: 'tuerca', nombre: 'Estante de tarros', descripcion: 'Tornillos clasificados por tamaño, color y rencor.',
+    coste: { orden: 4, vinculos: 2 }, sitio: { x: 15, y: 61, ancho: 18 }, proporcion: 1.05 },
+  { id: 'reloj', companero: 'tuerca', nombre: 'Reloj de engranajes', descripcion: 'Marca la hora exacta en que lo ibas a hacer. Hace tres semanas.',
+    coste: { orden: 5, mente: 2, calma: 1 }, sitio: { x: 76, y: 25.6, ancho: 12 }, proporcion: 0.92 },
 ]

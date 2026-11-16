@@ -129,5 +129,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
     visitanteFuera: ['El caracol ha abandonado el taller. Ha devuelto la pieza. Estaba en «VARIOS».'],
     llegada: ['Atención. Procedo a mudarme. Paso dos: no sé qué va en el paso dos.'],
     sorpresa: ['He encontrado esto en una caja. La caja ponía «Tuyo». No sé quién la etiquetó.'],
+    construir: [
+      'Instalado. Nivelado. Catalogado. Ya puedo morir tranquilo. Es una forma de hablar.',
+      'Otra cosa en su sitio. Te lo agradecería, pero no tengo ese módulo.',
+      'Perfecto. Ahora solo falta que el resto de tu vida esté igual de ordenada. Sin prisa. Bueno, con algo de prisa.',
+    ],
+    crecer1: ['Actualización instalada. Me han salido brazos con articulaciones. Ahora puedo señalarte.', 'Versión 2.0. Mismos bugs, más carisma.'],
+    crecer2: ['Adulto. Totalmente operativo. Lo cual es más de lo que se puede decir de tu bandeja de entrada.', 'Montaje final completado. Me sobraron dos tornillos. Los he guardado por si acaso. Por si acaso qué, no lo sé.'],
   },
 }

@@ -25,6 +25,11 @@
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
 | `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno |
+| `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca y sus 6 objetos |
+| `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
+| `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
+
+Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus caras** (`tieneMes` en `src/arte/manifiesto.ts`).
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |
 | `public/arte/casa/bruma/fondo.webp`, `public/arte/casa/madeja/fondo.webp` | Escenarios de Bruma (estanque) y Madeja (madriguera de lana), aún sin usar |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |

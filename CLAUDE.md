@@ -3,8 +3,8 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Rumbo (16/11/2026, en `main`): un compañero al mes** (`docs/diseno-meses.md`). Cada mes llega un huevo; lo que haces lo abre, da materiales para construir en la casa de ese compañero y lo hace crecer (cachorro → joven → adulto). Hecho: huevo, eclosión y ficha, casa de Nox, materiales por casa, crecer. Pendiente: informe y cambio de mes, bosque y hallazgos.
-- **Pestañas:** Casa · Hazañas · Semana · Álbum. Las frases del compañero solo salen en casa.
+- **Rumbo (16/11/2026, en `main`): un compañero al mes** (`docs/diseno-meses.md`). Cada mes llega un huevo; lo que haces lo abre, da materiales para construir en la casa de ese compañero y lo hace crecer (cachorro → joven → adulto). Hecho: huevo, eclosión y ficha, casas de Nox y Tuerca, materiales por casa, crecer, informe y cambio de mes, bosque con visitas. Pendiente: hallazgos y mapa dibujado del bosque.
+- **Pestañas:** Casa · Hazañas · Bosque · Semana · Álbum. Las frases del compañero solo salen en casa.
 - **Método:** una pantalla terminada y bonita antes de pasar a la siguiente; nunca pantallas con huecos grises esperando arte.
 - **Reglas base aprobadas** en `docs/diseno-juego.md` (ofrendas, tope, día malo, consecuencias, metas). Lo nuevo de la casa está en su sección «Casa».
 - **Frases y catálogo de colección:** propuestas de Claude en `src/contenido/`, pendientes de revisión de Javi.
@@ -43,6 +43,6 @@ Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Mad
 - `src/contenido/` — **todo el texto** del juego: áreas, compañeros, acciones de ejemplo, colección, frases e interfaz (`ui.ts`).
 - `src/logica/` — reglas como **funciones puras con tests** (`npm test`). `reglas.ts` calcula todo a partir del historial de ofrendas (crecimiento, fases, arreglo, visitante y robo, llegada, metas); `ofrendas.ts` hace y deshace ofrendas.
 - `src/estado/juego.ts` — partida guardada en el móvil (Zustand + localStorage).
-- `src/arte/manifiesto.ts` — rutas del arte en uso. `src/pantallas/Casa.tsx` monta la casa (fondo, objetos, Nox, luces y animaciones); `src/contenido/casa.ts` tiene materiales y objetos (coste, sitio en la escena); `src/logica/casa.ts`, materiales y construir.
+- `src/arte/manifiesto.ts` — rutas del arte en uso. `src/pantallas/Casa.tsx` monta la casa de cualquier compañero (fondo, objetos, compañero, huevo, luces, animaciones, informe); `src/contenido/casa.ts` tiene materiales, escenas y objetos (coste, sitio); `src/logica/casa.ts`, materiales y construir; `src/logica/meses.ts`, el mes (huevo, eclosión, informe, cambio); `src/pantallas/Bosque.tsx`, las casitas.
 - `src/pantallas/` y `src/componentes/` — interfaz. Colores de interfaz en `src/estilos/index.css` (de día crema, de noche ciruela), con contraste ≥ 4,5.
 - **Antes de publicar:** `npm run build`, `npm test` y prueba en iPhone simulado (Playwright) a 390, 375 y 360 px, de día y de noche.

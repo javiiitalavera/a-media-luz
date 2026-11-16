@@ -52,5 +52,8 @@ Ya hay: Nox (3 etapas, escenario y 6 objetos), y los escenarios de Bruma (estanq
 - En casa, el huevo se mece en el sitio del compañero; al tocarlo tiembla y dice cuánto le falta; con 2 de 3 se ve agrietado.
 - Con la tercera ofrenda, al volver a casa: el huevo tiembla fuerte y se rompe, sale el compañero con luz y chispas («¡Ha salido Nox!») y se presenta con su ficha (historia y lo que necesita). Se ve una sola vez.
 - Las partidas de antes de los meses siguen igual (su compañero ya vivía en casa).
-- Arte de Tuerca (3 etapas × 4 caras) ya integrado; le faltan huevo, escenario, objetos y casita.
-- Pendiente: informe y cambio de mes (cuando haya arte del segundo compañero), bosque y hallazgos.
+- Tuerca completo: 3 etapas × 4 caras, huevo, taller, 6 objetos (sobre todo tornillos) e historia.
+- **Informe y cambio de mes** (rama `dev/tuerca`): pasados los 28 días, al abrir la casa sale el informe del compañero (días con algo, hazañas por área, lo construido, en qué etapa se queda y su última frase según la etapa). «Que pase el siguiente» cierra el mes y llega el huevo de otro compañero **de los que ya tienen su arte** (huevo, casa y casita). Si no hay ninguno listo, el mes sigue abierto sin informe.
+- **Bosque** (pestaña nueva): una casita por mes, en orden. La del mes en curso lleva a casa (si aún es huevo, se ve el huevo y «?»). Las demás se visitan: el vecino solo saluda (ni se descuida ni crece) y se puede seguir construyendo con lo que le sobró.
+- Pestañas: Casa · Hazañas · Bosque · Semana · Álbum.
+- Pendiente: hallazgos de los vecinos y un mapa dibujado del bosque (ahora es una cuadrícula de casitas).

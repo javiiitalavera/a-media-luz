@@ -71,18 +71,22 @@ export function crecimientoDelMes(p: Partida, m: Mes, ahora: Date, area: AreaId)
   return queCuentan(ofrendasDelMes(p, m, ahora)).filter((o) => o.area === area).length
 }
 
-/** El siguiente compañero: uno de los que aún no han salido, al azar; si ya salieron todos, cualquiera. */
-export function siguienteCompanero(p: Partida, azar: Azar): CompaneroId {
+/**
+ * El siguiente compañero: uno de los que aún no han salido, al azar. `posibles` limita a los que ya
+ * tienen su arte. Devuelve null si no queda ninguno nuevo (de momento no se repiten).
+ */
+export function siguienteCompanero(p: Partida, azar: Azar, posibles: readonly CompaneroId[] = ORDEN_COMPANEROS): CompaneroId | null {
   const usados = new Set(mesesDe(p).map((m) => m.companero))
-  const libres = ORDEN_COMPANEROS.filter((c) => !usados.has(c))
-  return elegir(libres.length ? libres : [...ORDEN_COMPANEROS], azar)!
+  return elegir(posibles.filter((c) => !usados.has(c)), azar) ?? null
 }
 
-/** Cierra el mes actual (tras ver el informe) y llega el huevo siguiente. */
-export function empezarMesSiguiente(p: Partida, ahora: Date, azar: Azar): Partida {
+/** Cierra el mes actual (tras ver el informe) y llega el huevo siguiente. Null si no hay siguiente. */
+export function empezarMesSiguiente(p: Partida, ahora: Date, azar: Azar, posibles?: readonly CompaneroId[]): Partida | null {
+  const c = siguienteCompanero(p, azar, posibles)
+  if (!c) return null
   const meses = mesesDe(p)
   const cerrados = meses.map((m, i) => (i === meses.length - 1 ? { ...m, cerrado: ahora.toISOString() } : m))
-  return { ...p, meses: [...cerrados, { companero: siguienteCompanero({ ...p, meses: cerrados }, azar), inicio: ahora.toISOString() }] }
+  return { ...p, meses: [...cerrados, { companero: c, inicio: ahora.toISOString() }] }
 }
 
 export interface Informe {

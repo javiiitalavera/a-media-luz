@@ -1,14 +1,15 @@
 // Estado guardado en el móvil (localStorage) con Zustand.
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { CompaneroId } from '../contenido'
+import { ORDEN_COMPANEROS, type CompaneroId } from '../contenido'
 import { crearPartida, type Partida } from '../logica/partida'
 import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
-import { marcarPresentado } from '../logica/meses'
+import { empezarMesSiguiente, marcarPresentado } from '../logica/meses'
+import { tieneMes } from '../arte/manifiesto'
 import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
@@ -38,11 +39,13 @@ interface Juego {
   quitarUna: (accionId: string) => void
   ponerDiaMalo: (v: boolean) => void
   /** Tocar a un compañero en el bosque: devuelve lo que dice. */
-  tocar: (c: CompaneroId) => Frase | null
+  tocar: (c: CompaneroId, soloSaludo?: boolean) => Frase | null
   /** Construye un objeto en la casa; devuelve lo que dice el compañero (o null si no se pudo). */
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
   verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
+  /** Tras el informe: cierra el mes y llega el huevo siguiente (de los que tienen su arte). */
+  pasarMes: () => boolean
   /** Ya se ha visto nacer y presentarse al compañero del mes. */
   presentar: () => void
   ajustar: (cambio: (p: Partida) => Partida) => void
@@ -98,10 +101,10 @@ export const useJuego = create<Juego>()(
         const p = get().partida
         if (p) set({ partida: cambiarDiaMalo(p, v, new Date()) })
       },
-      tocar: (c) => {
+      tocar: (c, soloSaludo) => {
         const p = get().partida
         if (!p) return null
-        const r = fraseAlTocar(p, c, new Date(), azarReal)
+        const r = fraseAlTocar(p, c, new Date(), azarReal, soloSaludo)
         set({ partida: { ...p, frasesRecientes: r.recientes } })
         return r.frase
       },
@@ -120,6 +123,13 @@ export const useJuego = create<Juego>()(
         const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
         set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
         return r?.frase ?? null
+      },
+      pasarMes: () => {
+        const p = get().partida
+        const siguiente = p && empezarMesSiguiente(p, new Date(), azarReal, ORDEN_COMPANEROS.filter(tieneMes))
+        if (!siguiente) return false
+        set({ partida: siguiente, porContar: null, recientes: [] })
+        return true
       },
       presentar: () => {
         const p = get().partida
