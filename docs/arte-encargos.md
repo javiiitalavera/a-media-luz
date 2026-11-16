@@ -28,6 +28,7 @@
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca y sus 6 objetos |
 | `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
 | `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
+| `public/iconos/*.png` | Icono de la app (iPhone 180, Android 192/512, favicon 64). Esquinas rellenadas prolongando el fondo |
 | `public/arte/bosque/mapa.webp` | Mapa del bosque con 12 claros (1024 × 1536) |
 
 Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus caras** (`tieneMes` en `src/arte/manifiesto.ts`).

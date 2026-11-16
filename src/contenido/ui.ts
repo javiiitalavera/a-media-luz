@@ -4,7 +4,6 @@ export const UI = {
   nav: { casa: 'Casa', ofrendas: 'Hazañas', semana: 'Semana', album: 'Álbum', ajustes: 'Ajustes' },
   vecinos: {
     titulo: 'Tu bosque',
-    explicacion: 'Cada casa es un mes. Entra a ver a quien quieras: sus materiales siguen ahí.',
     esteMes: 'Este mes',
     huevo: 'Aún en el huevo',
     mes: (n: number) => `Mes ${n}`,

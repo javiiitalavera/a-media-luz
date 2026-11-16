@@ -15,8 +15,7 @@ export function Bosque({ partida, ahora, onVisitar, onCasa }: {
   return (
     <Pantalla>
       <button type="button" onClick={onCasa} className="-ml-2 min-h-11 px-2 font-semibold text-texto-2">‹ {UI.casa.alaCasa}</button>
-      <h1 className="mt-1 mb-1 px-1 text-[28px] leading-tight font-bold">{UI.vecinos.titulo}</h1>
-      <p className="mb-3 px-1 text-texto-2">{UI.vecinos.explicacion}</p>
+      <h1 className="mt-1 mb-3 px-1 text-[28px] leading-tight font-bold">{UI.vecinos.titulo}</h1>
       <div className="relative -mx-4 overflow-hidden" style={{ aspectRatio: String(PROPORCION_MAPA) }}>
         <img src={rutaArte('bosque/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
         {meses.map((m, i) => {

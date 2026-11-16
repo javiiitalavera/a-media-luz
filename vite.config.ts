@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'A media luz',
         short_name: 'A media luz',
-        description: 'Un bosque que florece con lo que haces en tu vida real.',
+        description: 'Un compañero al mes que crece con lo que haces en tu vida real.',
         lang: 'es',
         start_url: '/',
         scope: '/',
@@ -21,8 +21,11 @@ export default defineConfig({
         orientation: 'portrait',
         background_color: '#F9EBDD',
         theme_color: '#F9EBDD',
-        // Iconos: pendientes de la entrega de arte (docs/entregas-arte.md).
-        icons: [],
+        icons: [
+          { src: '/iconos/icono-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/iconos/icono-512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/iconos/icono-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
       },
       workbox: { globPatterns: ['**/*.{js,css,html,webp,png,svg,woff2}'] },
     }),
