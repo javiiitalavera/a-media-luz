@@ -56,5 +56,5 @@ Ya hay: Nox (3 etapas, escenario y 6 objetos), y los escenarios de Bruma (estanq
 - **Informe y cambio de mes** (rama `dev/tuerca`): pasados los 28 días, al abrir la casa sale el informe del compañero (días con algo, hazañas por área, lo construido, en qué etapa se queda y su última frase según la etapa). «Que pase el siguiente» cierra el mes y llega el huevo de otro compañero **de los que ya tienen su arte** (huevo, casa y casita). Si no hay ninguno listo, el mes sigue abierto sin informe.
 - **Bosque** (botón arriba en casa): una casita por mes, en orden. La del mes en curso lleva a casa (si aún es huevo, se ve el huevo y «?»). Las demás se visitan: el vecino solo saluda (ni se descuida ni crece) y se puede seguir construyendo con lo que le sobró.
 - Pestañas: Casa · Hazañas · Semana · Álbum · Ajustes (decidido por Javi). Al bosque se va con el botón «Bosque ›» de arriba en casa.
-- **Día del ciclo** (decidido por Javi): «Día 5 de 28» bajo el nombre en casa y bajo el título en Hazañas («Mes de Tuerca» o «Mes del huevo»).
+- **Día del ciclo** (decidido por Javi): «Día 5 · cachorro» y una barra de crecimiento bajo el nombre del compañero en casa (decidido por Javi) y bajo el título en Hazañas («Mes de Tuerca» o «Mes del huevo»).
 - Pendiente: hallazgos de los vecinos y un mapa dibujado del bosque (ahora es una cuadrícula de casitas).

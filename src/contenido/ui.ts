@@ -63,6 +63,7 @@ export const UI = {
     alBosque: 'Bosque',
     alaCasa: 'Casa',
     dia: (n: number, de: number) => `Día ${n} de ${de}`,
+    diaCorto: (n: number) => `Día ${n}`,
     mesDe: (nombre: string) => `Mes de ${nombre}`,
     mesDelHuevo: 'Mes del huevo',
     informe: {

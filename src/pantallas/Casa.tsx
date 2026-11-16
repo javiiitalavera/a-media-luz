@@ -9,7 +9,7 @@ import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, progreso } from '../logica/etapas'
-import { DIAS_MES, diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
+import { diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -242,19 +242,19 @@ export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetall
 
       {/* Arriba: de quién es la casa y ajustes. */}
       <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <button type="button" onClick={onDetalle} className="min-h-11 min-w-0 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
+        <button type="button" onClick={onDetalle} className="min-h-11 min-w-[150px] rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
           {conHuevo ? (
             <>
               <span className="block text-[18px] leading-tight font-bold">{UI.casa.huevo}</span>
-              <span className="block text-[13px] text-texto-3">{UI.casa.dia(diaMes, DIAS_MES)} · {UI.casa.huevoFaltan(faltaHuevo)}</span>
+              <span className="block text-[13px] text-texto-3">{UI.casa.diaCorto(diaMes)} · {UI.casa.huevoFaltan(faltaHuevo).toLowerCase()}</span>
               <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
                 <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((OFRENDAS_ECLOSION - faltaHuevo) / OFRENDAS_ECLOSION) * 100}%` }} />
               </span>
             </>
           ) : (<>
-          <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
+          <span className="block text-[18px] leading-tight font-bold">{COMPANEROS[DUENO].nombre}</span>
           <span className="block text-[13px] text-texto-3">
-            {!visita && `${UI.casa.dia(diaMes, DIAS_MES)} · `}{UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente && !visita ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
+            {!visita && `${UI.casa.diaCorto(diaMes)} · `}{UI.casa.etapas[etapaVista].toLowerCase()}
             {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
           </span>
           {g.siguiente && !pendiente && !visita && (
