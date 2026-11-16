@@ -26,11 +26,11 @@ const objetos = (c: Id, ids: string[]) => Object.fromEntries(ids.map((i) => [`ca
 
 export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casa/nox/fondo': '/arte/casa/nox/fondo.webp',
-  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta']),
+  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta', 'zapatillas', 'bufanda', 'farol-luna']),
   'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
   'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
   'casa/tuerca/fondo': '/arte/casa/tuerca/fondo.webp',
-  ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj']),
+  ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj', 'medalla', 'tablon', 'tuerquita']),
   'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
   'bosque/mapa': '/arte/bosque/mapa.webp',

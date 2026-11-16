@@ -3,6 +3,7 @@
 Uso:
   python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA_SALIDA nombre1 nombre2 ...
   python3 herramientas/recortar_lamina.py --personaje LAMINA.png COLUMNAS FILAS CARPETA_SALIDA nombre1 ...
+  python3 herramientas/recortar_lamina.py --sin-halo LAMINA.png ...   (quita el resplandor que rodea los objetos)
 
 Con --personaje (expresiones de un mismo personaje) todas se recortan con el MISMO encuadre y se
 guardan en un cuadrado de 600 × 600 con los pies abajo, como las del cachorro, para que al cambiar
@@ -62,9 +63,32 @@ def quitar_fondo_liso(rgba: np.ndarray) -> np.ndarray:
     return rgba
 
 
-def limpiar_alfa(rgba: np.ndarray) -> np.ndarray:
+def quitar_halo(rgba: np.ndarray) -> np.ndarray:
+    """Quita el resplandor crema que rodea a los objetos: avanza desde lo transparente por píxeles claros
+    (o semitransparentes) hasta toparse con el contorno oscuro. Lo de dentro del contorno no se toca."""
+    alto, ancho = rgba.shape[:2]
+    rgb = rgba[:, :, :3].astype(int)
+    claro = (rgb.min(axis=2) >= 170) & (rgb.max(axis=2) - rgb.min(axis=2) <= 90)
+    pasable = (rgba[:, :, 3] < 250) | claro
+    visto = rgba[:, :, 3] < 8
+    cola = deque(zip(*np.nonzero(visto)))
+    while cola:
+        y, x = cola.popleft()
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < alto and 0 <= nx < ancho and not visto[ny, nx] and pasable[ny, nx]:
+                visto[ny, nx] = True
+                cola.append((ny, nx))
+    rgba = rgba.copy()
+    rgba[visto, 3] = 0
+    return rgba
+
+
+def limpiar_alfa(rgba: np.ndarray, desde: int = 16) -> np.ndarray:
+    """Fuera el velo (alfa por debajo de `desde`), dentro opaco. Con --sin-halo, `desde` sube y se va
+    también el resplandor semitransparente que a veces rodea los objetos."""
     a = rgba[:, :, 3].astype(float)
-    a = np.clip((a - 16) / (240 - 16), 0, 1) * 255  # fuera el velo, dentro opaco
+    a = np.clip((a - desde) / (240 - desde), 0, 1) * 255
     rgba = rgba.copy()
     rgba[:, :, 3] = a.astype(np.uint8)
     return rgba
@@ -77,12 +101,14 @@ PIES = 0.972  # y apoya los pies a esta altura
 
 def main() -> None:
     args = sys.argv[1:]
-    personaje = args[0] == '--personaje'
-    if personaje:
-        args = args[1:]
+    personaje = '--personaje' in args
+    sin_halo = '--sin-halo' in args
+    args = [x for x in args if x not in ('--personaje', '--sin-halo')]
     lamina, cols, filas, salida, *nombres = args
     cols, filas = int(cols), int(filas)
     rgba = limpiar_alfa(quitar_fondo_liso(np.array(Image.open(lamina).convert('RGBA'))))
+    if sin_halo:
+        rgba = quitar_halo(rgba)
     alto, ancho = rgba.shape[:2]
     Path(salida).mkdir(parents=True, exist_ok=True)
     celdas = []

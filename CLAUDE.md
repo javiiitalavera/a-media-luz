@@ -3,7 +3,7 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Rumbo (16/11/2026, en `main`): un compañero al mes** (`docs/diseno-meses.md`). Cada mes llega un huevo; lo que haces lo abre, da materiales para construir en la casa de ese compañero y lo hace crecer (cachorro → joven → adulto). Hecho: huevo, eclosión y ficha, casas de Nox y Tuerca, materiales por casa, crecer, informe y cambio de mes, bosque con mapa dibujado y visitas, retos del mes. Pendiente: hallazgos y dibujos de los premios de los retos.
+- **Rumbo (16/11/2026, en `main`): un compañero al mes** (`docs/diseno-meses.md`). Cada mes llega un huevo; lo que haces lo abre, da materiales para construir en la casa de ese compañero y lo hace crecer (cachorro → joven → adulto). Hecho: huevo, eclosión y ficha, casas de Nox y Tuerca, materiales por casa, crecer, informe y cambio de mes, bosque con mapa dibujado y visitas, retos del mes. Pendiente: hallazgos.
 - **Pestañas:** Casa · Hazañas · Retos · Álbum · Ajustes. Al bosque se va desde casa (botón arriba). El día del ciclo («Día 5 de 28») se ve en casa y en Hazañas. Las frases del compañero solo salen en casa.
 - **Método:** una pantalla terminada y bonita antes de pasar a la siguiente; nunca pantallas con huecos grises esperando arte.
 - **Reglas base aprobadas** en `docs/diseno-juego.md` (ofrendas, tope, día malo, consecuencias, metas). Lo nuevo de la casa está en su sección «Casa».

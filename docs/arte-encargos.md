@@ -16,7 +16,7 @@
 - **No se piden capas que encajen al píxel.** Lo que se mueve (respirar, saltar, chispas, luces, luciérnagas, día y noche, objetos que aparecen) lo hace el código.
 
 ## Herramienta de recorte
-`python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA nombre1 nombre2 …` corta una lámina de objetos en archivos sueltos con fondo transparente (quita también el velo casi invisible que dejan los generadores). Con `--personaje` delante, recorta las expresiones de un personaje con el mismo encuadre (600 × 600, pies abajo) para que no se mueva al cambiar de cara.
+`python3 herramientas/recortar_lamina.py LAMINA.png COLUMNAS FILAS CARPETA nombre1 nombre2 …` corta una lámina de objetos en archivos sueltos con fondo transparente (quita también el velo casi invisible que dejan los generadores). Con `--sin-halo` quita además el resplandor crema que a veces rodea los objetos. Con `--personaje` delante, recorta las expresiones de un personaje con el mismo encuadre (600 × 600, pies abajo) para que no se mueva al cambiar de cara.
 
 ## Arte en uso
 | Archivo | Qué es |
@@ -25,7 +25,8 @@
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
 | `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno |
-| `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca y sus 6 objetos |
+| `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca, sus 6 objetos y sus 3 premios de retos |
+| `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los retos de Nox |
 | `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
 | `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
 | `public/iconos/*.png` | Icono de la app (iPhone 180, Android 192/512, favicon 64). Esquinas rellenadas prolongando el fondo |
