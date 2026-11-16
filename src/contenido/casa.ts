@@ -1,6 +1,9 @@
 // La casa de cada compañero: materiales que dan las ofrendas y cosas que se construyen con ellos.
 import type { AreaId, CompaneroId } from './tipos'
 
+/** De quién es la casa que se ve ahora (con «un compañero al mes» será el del mes en curso). */
+export const DUENO_CASA: CompaneroId = 'nox'
+
 export interface Material {
   area: AreaId
   nombre: string

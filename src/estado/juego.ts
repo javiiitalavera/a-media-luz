@@ -13,6 +13,9 @@ export const SEGUNDOS_DESHACER = 8
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
 
+/** Lo que hay que contar al volver a casa: la frase del compañero y lo que se ha encontrado. */
+export interface Noticia { frase: Frase | null; hallazgos: string[] }
+
 export interface Reciente {
   resultado: ResultadoOfrenda
   hasta: number
@@ -24,6 +27,9 @@ interface Juego {
   /** Ofrendas recientes que aún se pueden deshacer (no se guarda). */
   recientes: Reciente[]
   ofrecer: (accionId: string) => ResultadoOfrenda | null
+  /** Lo que el compañero quiere contar de lo último que hiciste: lo dice en casa (no se guarda). */
+  porContar: Noticia | null
+  contar: () => Noticia | null
   deshacer: () => void
   olvidarRecientes: () => void
   ponerDiaMalo: (v: boolean) => void
@@ -52,6 +58,10 @@ export const useJuego = create<Juego>()(
         set({
           partida: resultado.partida,
           recientes: [...get().recientes, { resultado, hasta: ahora.getTime() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
+          porContar: {
+            frase: resultado.frase ?? get().porContar?.frase ?? null,
+            hallazgos: [...(get().porContar?.hallazgos ?? []), ...[resultado.sorpresa, resultado.premio].filter((x) => x !== null).map((x) => x!.nombre)],
+          },
         })
         return resultado
       },
@@ -62,9 +72,15 @@ export const useJuego = create<Juego>()(
         const resto = recientes.slice(0, -1)
         const anterior = resto.at(-1)
         if (anterior) anterior.hasta = Date.now() + SEGUNDOS_DESHACER * 1000
-        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto]})
+        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto], porContar: anterior ? { frase: anterior.resultado.frase, hallazgos: [] } : null })
       },
       olvidarRecientes: () => set({ recientes: [] }),
+      porContar: null,
+      contar: () => {
+        const f = get().porContar
+        if (f) set({ porContar: null })
+        return f
+      },
       ponerDiaMalo: (v) => {
         const p = get().partida
         if (p) set({ partida: cambiarDiaMalo(p, v, new Date()) })
