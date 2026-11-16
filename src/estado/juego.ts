@@ -5,6 +5,7 @@ import type { CompaneroId } from '../contenido'
 import { crearPartida, type Partida } from '../logica/partida'
 import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
+import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
 import { marcarPresentado } from '../logica/meses'
@@ -33,6 +34,8 @@ interface Juego {
   contar: () => Noticia | null
   deshacer: () => void
   olvidarRecientes: () => void
+  /** Quita la última vez de hoy de una acción (para cuando se toca sin querer). */
+  quitarUna: (accionId: string) => void
   ponerDiaMalo: (v: boolean) => void
   /** Tocar a un compañero en el bosque: devuelve lo que dice. */
   tocar: (c: CompaneroId) => Frase | null
@@ -78,6 +81,13 @@ export const useJuego = create<Juego>()(
         set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto], porContar: anterior ? { frase: anterior.resultado.frase, hallazgos: [] } : null })
       },
       olvidarRecientes: () => set({ recientes: [] }),
+      quitarUna: (accionId) => {
+        const p = get().partida
+        if (!p) return
+        const hoy = dia(new Date().toISOString())
+        const ultima = [...p.ofrendas].reverse().find((o) => o.accionId === accionId && dia(o.fecha) === hoy)
+        if (ultima) set({ partida: deshacerOfrenda(p, ultima.id), recientes: get().recientes.filter((r) => r.resultado.ofrenda.id !== ultima.id), porContar: null })
+      },
       porContar: null,
       contar: () => {
         const f = get().porContar

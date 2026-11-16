@@ -1,7 +1,7 @@
 // Arte en uso (archivos de public/arte/). Cómo se encarga y se integra: docs/arte-encargos.md.
 // No se dibujan sustitutos: si un recurso no está, la interfaz deja su hueco neutro.
 //
-// Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox cachorro, joven y adulto con 4 expresiones cada uno.
+// Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox y Tuerca: cachorro, joven y adulto con 4 expresiones cada uno; huevo de Nox.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
 export type Expresion = 'base' | 'contento' | 'enfurrunado' | 'dormido'
@@ -14,6 +14,12 @@ export type ClaveArte =
   | `objeto/${string}`
   | `huevo/${Id}/${'cerrado' | 'agrietado'}`
 
+const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
+/** Las 3 etapas × 4 expresiones de un compañero, recortadas con la herramienta (mismo encuadre). */
+const personaje = (c: Id) => Object.fromEntries(
+  (['', 'joven/', 'adulto/'] as const).flatMap((e) => EXPRESIONES.map((x) => [`companero/${c}/${e}${x}`, `/arte/personajes/${c}/${e}${x}.webp`])),
+)
+
 const objetos = (c: Id, ids: string[]) => Object.fromEntries(ids.map((i) => [`casa/${c}/objeto/${i}`, `/arte/casa/${c}/objetos/${i}.webp`]))
 
 export const ARTE: Partial<Record<ClaveArte, string>> = {
@@ -21,6 +27,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta']),
   'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
   'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
+  ...personaje('tuerca'),
   'companero/nox/base': '/arte/personajes/nox/base.webp',
   'companero/nox/contento': '/arte/personajes/nox/contento.webp',
   'companero/nox/enfurrunado': '/arte/personajes/nox/enfurrunado.webp',

@@ -131,7 +131,13 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   }, [pendiente, vivo, contar])
 
   const hablar = () => {
-    if (estado === 'huevo') { setToques((n) => n + 1); setHabla({ texto: UI.casa.huevoToque(faltaHuevo), n: Date.now() }); return }
+    if (estado === 'huevo') {
+      // Va rotando las frases para no repetir seguidas.
+      const lista = UI.casa.huevoToques[Math.min(3, Math.max(1, faltaHuevo)) as 1 | 2 | 3]
+      setToques((n) => n + 1)
+      setHabla({ texto: lista[toques % lista.length], n: Date.now() })
+      return
+    }
     if (estado === 'naciendo') return
     setSaltos((n) => n + 1)
     if (!r.llegado) { setHabla({ texto: UI.casa.dormido(COMPANEROS[DUENO].nombre, r.faltanParaLlegar), n: Date.now() }); return }

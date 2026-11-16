@@ -6,9 +6,9 @@ export const UI = {
   inicio: {
     titulo: '¿Con quién quieres empezar?',
     explicacion: 'Elige por su humor. Los demás llegarán al bosque cuando hagas cosas de lo suyo.',
-    huevoTitulo: 'Te ha llegado un huevo',
-    huevoExplicacion: 'Nadie sabe qué hay dentro. Cada cosa buena que hagas en tu vida lo calienta; con tres, se abre. Lo que salga será tu compañero este mes.',
-    empezarHuevo: 'Quedármelo',
+    huevoTitulo: 'Te han dejado un huevo en la puerta',
+    huevoExplicacion: 'Sin remitente, sin instrucciones y sin devolución. Lo que hay dentro sale cuando hagas tres cosas buenas por ti. Hasta entonces, ni tú sabes qué has adoptado ni él sabe con quién se ha metido.',
+    empezarHuevo: 'Asumir la responsabilidad',
     empezar: (nombre: string) => `Empezar con ${nombre}`,
     siguiente: 'Siguiente',
     atras: 'Atrás',
@@ -28,11 +28,29 @@ export const UI = {
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
     etapas: ['Cachorro', 'Joven', 'Adulto'],
     encontrado: (que: string) => `Encontrado: ${que}`,
-    huevo: 'Un huevo',
-    huevoFaltan: (n: number) => (n <= 0 ? 'Se está abriendo…' : n === 1 ? 'Se abre con 1 cosa más' : `Se abre con ${n} cosas más`),
-    huevoToque: (n: number) => (n >= 3 ? 'Algo se mueve dentro. Sin prisa, pero sin pausa: haz algo de lo tuyo.'
-      : n === 2 ? 'Se ha movido. Ha sido él, no tú. Le faltan 2 cosas.'
-      : 'Está caliente y cruje. Una cosa más y sale.'),
+    huevo: 'Un huevo sospechoso',
+    huevoFaltan: (n: number) => (n <= 0 ? 'Eclosión en curso. No toques nada.'
+      : n === 1 ? 'Le falta 1 cosa. Se nota la impaciencia'
+      : `Se abre con ${n} cosas tuyas`),
+    /** Lo que se oye al tocar el huevo, según lo que le falta (se elige una al azar). */
+    huevoToques: {
+      3: [
+        'Toc, toc. Nadie contesta. Dentro tampoco saben qué haces aquí.',
+        'Es un huevo. No hace nada. Como tú hoy, de momento.',
+        'Lo agitas y suena a «haz algo útil».',
+        'Está templado. Tus planes para hoy, menos.',
+      ],
+      2: [
+        'Algo se ha movido dentro. Ha sido de pura sorpresa.',
+        'Tibio y con ganas. Dos cosas más y te enteras de quién es.',
+        'Se oye un suspiro dentro. Tiene paciencia, pero es finita.',
+      ],
+      1: [
+        'Cruje. Una cosa más y esto se pone serio.',
+        'Hay una grieta y alguien mirando por ella. Te juzga un poco.',
+        'Está caliente y protesta. Una más, por favor, que aquí dentro no hay wifi.',
+      ],
+    } as Record<1 | 2 | 3, string[]>,
     nacio: (nombre: string) => `¡Ha salido ${nombre}!`,
     necesita: 'Lo que necesita',
     haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
@@ -59,6 +77,7 @@ export const UI = {
   },
   ofrendas: {
     titulo: 'Hazañas de hoy',
+    quitar: (accion: string) => `Quitar una vez: ${accion}`,
     diaMalo: 'Modo día malo',
     diaMaloExplicacion: 'Versiones mínimas. Hoy cuentan igual.',
     deshacer: 'Deshacer',

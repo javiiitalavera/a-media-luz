@@ -13,6 +13,7 @@ const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).sl
 
 export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const ofrecer = useJuego((s) => s.ofrecer)
+  const quitarUna = useJuego((s) => s.quitarUna)
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
   const olvidar = useJuego((s) => s.olvidarRecientes)
   const diaMalo = diaMaloActivo(partida, ahora)
@@ -53,17 +54,21 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
               <div className="flex flex-wrap gap-2">
                 {partida.acciones.filter((a) => a.area === area).map((a) => {
                   const n = veces(a.id)
+                  const nombre = diaMalo ? a.minima : a.nombre
                   return (
-                    <button
-                      key={a.id}
-                      type="button"
-                      onClick={() => ofrecer(a.id)}
-                      className={`min-h-11 rounded-full border-2 px-4 text-[15px] transition active:scale-95 ${n ? 'border-salvia bg-salvia font-semibold text-tinta' : 'border-borde bg-tarjeta font-medium'}`}
-                    >
-                      {n > 0 && '✓ '}
-                      {diaMalo ? a.minima : a.nombre}
-                      {n > 1 && <span className="ml-1 text-[13px] opacity-70">×{n}</span>}
-                    </button>
+                    <span key={a.id} className={`flex rounded-full border-2 transition ${n ? 'border-salvia bg-salvia text-tinta' : 'border-borde bg-tarjeta'}`}>
+                      <button type="button" onClick={() => ofrecer(a.id)}
+                        className={`min-h-11 rounded-full px-4 text-[15px] transition active:scale-95 ${n ? 'pr-2 font-semibold' : 'font-medium'}`}>
+                        {n > 0 && '✓ '}{nombre}
+                        {n > 1 && <span className="ml-1 text-[13px] opacity-70">×{n}</span>}
+                      </button>
+                      {n > 0 && (
+                        <button type="button" onClick={() => quitarUna(a.id)} aria-label={UI.ofrendas.quitar(nombre)}
+                          className="min-h-11 min-w-11 rounded-full border-l border-tinta/20 text-[20px] leading-none font-bold active:scale-90">
+                          −
+                        </button>
+                      )}
+                    </span>
                   )
                 })}
                 <NuevaAccion area={area} />
