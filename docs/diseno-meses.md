@@ -1,4 +1,4 @@
-# Un compañero al mes (diseño, borrador para Javi)
+# Un compañero al mes (diseño aprobado por Javi, 16/11/2026)
 
 Idea de Javi (16/11/2026). Mantiene materiales y construir como núcleo (decidido por Javi). Las reglas de base de `docs/diseno-juego.md` (ofrendas, tope de 3 al día por área, día malo, consecuencias con humor y sin culpa) siguen valiendo.
 
@@ -15,7 +15,7 @@ Cada mes llega un **huevo**. Lo que haces en tu vida real lo abre, hace crecer a
 - Cada compañero tiene **su catálogo** de cosas para construir en su casa. Lo de cada uno pide sobre todo el material de **su área principal**, más algo de otras. Así cada mes priorizas un área sin dejar las demás: a Nox le hacen falta sobre todo ascuas; a Tofu, semillas…
 - **Crece con su área:** las ofrendas de su área principal lo hacen pasar de cachorro a joven y a adulto, como Nox ahora. Los números se ajustan para que con una o dos cosas al día llegue a adulto en el mes.
 - **Si lo descuidas:** se enfurruña, hace trastadas y suelta frases con mala leche. Se le pasa con un poco de atención. Nunca enferma ni se pierde nada.
-- **Los materiales no caducan.** Lo que sobra un mes se usa al siguiente o en las casas de los vecinos (ver el bosque).
+- **Los materiales son de cada casa** (decidido por Javi): lo que ganas durante el mes de un compañero solo sirve para construir en **su** casa. Lo que sobra se queda allí, para cuando lo visites. Cada mes nuevo empieza con 0: no se puede llegar a un compañero nuevo y construirlo todo de golpe.
 
 ## El cierre del mes
 - **Sin ceremonias.** El día 28 el compañero te da su **informe del mes**, escrito con su humor: días en que hiciste algo, ofrendas por área, lo que construiste, en qué etapa acaba y una última frase. Por ejemplo, Nox: «Un mes. Has andado más que el año pasado entero, lo cual dice poco del año pasado».
@@ -25,7 +25,7 @@ Cada mes llega un **huevo**. Lo que haces en tu vida real lo abre, hace crecer a
 ## El bosque (vecindario)
 - **Un mapa** con la casa de cada compañero que has criado, en el orden en que llegaron. Es tu año a la vista.
 - **Visitar:** tocas una casa y entras en su escenario, con él dentro, lo construido y sus frases.
-- **Seguir construyendo:** el catálogo de cada vecino sigue abierto, así que los materiales siempre tienen en qué gastarse.
+- **Seguir construyendo:** el catálogo de cada vecino sigue abierto para gastar lo que le sobró de su mes (y lo que dejen los hallazgos).
 - **Hallazgos de vez en cuando:** los vecinos encuentran cosas al azar (objetos raros para su casa, piezas de colección) y te las guardan; siempre apetece pasarse. Nada caduca ni se pierde por no visitar.
 
 ## Los compañeros

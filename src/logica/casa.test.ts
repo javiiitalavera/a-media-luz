@@ -9,14 +9,14 @@ describe('materiales', () => {
   it('cada ofrenda da 1 material de su área, como mucho 3 al día', () => {
     let p = con(nueva(), 'cuerpo', '2026-01-05', 5)
     p = con(p, 'mente', '2026-01-06', 2)
-    const g = ganados(p, en('2026-01-06', 20))
+    const g = ganados(p, 'nox', en('2026-01-06', 20))
     expect(g.cuerpo).toBe(3)
     expect(g.mente).toBe(2)
     expect(g.calma).toBe(0)
   })
   it('no cuenta lo que aún no ha pasado', () => {
     const p = con(nueva(), 'cuerpo', '2026-01-07')
-    expect(ganados(p, en('2026-01-06')).cuerpo).toBe(0)
+    expect(ganados(p, 'nox', en('2026-01-06')).cuerpo).toBe(0)
   })
 })
 
@@ -26,7 +26,7 @@ describe('construir', () => {
     const ahora = en('2026-01-06', 20)
     expect(puedeConstruir(p, objeto('hoguera'), ahora)).toBe(true)
     p = construir(p, 'hoguera', ahora)!
-    expect(disponibles(p, ahora).cuerpo).toBe(1)
+    expect(disponibles(p, 'nox', ahora).cuerpo).toBe(1)
     expect(construir(p, 'hoguera', ahora)).toBeNull()
   })
   it('dice lo que falta y no construye sin materiales', () => {

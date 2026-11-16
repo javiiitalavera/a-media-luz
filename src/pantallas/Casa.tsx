@@ -107,7 +107,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   }
 
   const objetos = OBJETOS_CASA.filter((o) => o.companero === DUENO && construido(partida, o.id))
-  const mat = disponibles(partida, ahora)
+  const mat = disponibles(partida, DUENO, ahora)
   const listos = OBJETOS_CASA.filter((o) => o.companero === DUENO && puedeConstruir(partida, o, ahora)).length
   // Lo de abajo se pinta delante: se ordena por la altura de los pies.
   const capas = [...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, o })), { y: NOX.y, o: null }].sort((a, b) => a.y - b.y)
@@ -303,7 +303,7 @@ function Materiales({ mat, falta }: { mat: Record<AreaId, number>; falta?: Parti
 function Catalogo({ partida, ahora, onCerrar, onConstruir }: {
   partida: Partida; ahora: Date; onCerrar: () => void; onConstruir: (id: string) => void
 }) {
-  const mat = disponibles(partida, ahora)
+  const mat = disponibles(partida, DUENO, ahora)
   // Se pinta directamente en el documento para quedar por encima de la navegación.
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>

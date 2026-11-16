@@ -1,9 +1,9 @@
 // Etapas de crecimiento de los compañeros: cachorro → joven → adulto.
-// Suben con el crecimiento de su área (ofrendas que cuentan; se pausa si el área está descuidada)
-// y nunca bajan: lo crecido no se pierde.
+// Suben con las ofrendas de su área principal hechas durante su mes (como mucho 3 al día) y nunca
+// bajan: lo crecido no se pierde. Al acabar su mes, se queda en la etapa a la que haya llegado.
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { Partida } from './partida'
-import { estadoRincon } from './reglas'
+import { crecimientoDelMes, mesesDe } from './meses'
 
 export type Etapa = 0 | 1 | 2
 /** Crecimiento necesario para cada etapa (coincide con los grados 2 y 3 del rincón). */
@@ -23,7 +23,8 @@ export interface Progreso {
 }
 
 export function progreso(p: Partida, c: CompaneroId, ahora: Date): Progreso {
-  const { crecimiento } = estadoRincon(p, COMPANEROS[c].area, ahora)
+  const crecimiento = mesesDe(p).filter((m) => m.companero === c)
+    .reduce((n, m) => n + crecimientoDelMes(p, m, ahora, COMPANEROS[c].area), 0)
   const etapa = etapaPorCrecimiento(crecimiento)
   return { etapa, crecimiento, siguiente: etapa < 2 ? UMBRALES_ETAPA[etapa + 1] : null, desde: UMBRALES_ETAPA[etapa] }
 }

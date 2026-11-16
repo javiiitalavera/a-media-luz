@@ -1,4 +1,5 @@
 // La partida guardada en el móvil.
+import type { Mes } from './meses'
 import { ACCIONES, AREAS, COMPANEROS, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
 
 export interface Ofrenda {
@@ -31,6 +32,8 @@ export interface Partida {
   construcciones?: Construccion[]
   /** Última etapa de crecimiento que se ha visto de cada compañero (para celebrarla una vez). */
   etapasVistas?: Partial<Record<CompaneroId, 0 | 1 | 2>>
+  /** Un compañero al mes (se añadió después: si falta, hay un mes implícito con el principal). */
+  meses?: Mes[]
 }
 
 export interface Construccion {
