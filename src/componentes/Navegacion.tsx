@@ -1,7 +1,7 @@
 import { UI } from '../contenido'
 
-export type Pestana = 'casa' | 'ofrendas' | 'bosque' | 'semana' | 'album'
-const PESTANAS: Pestana[] = ['casa', 'ofrendas', 'bosque', 'semana', 'album']
+export type Pestana = 'casa' | 'ofrendas' | 'semana' | 'album' | 'ajustes'
+const PESTANAS: Pestana[] = ['casa', 'ofrendas', 'semana', 'album', 'ajustes']
 
 export function Navegacion({ actual, onCambiar }: { actual: Pestana; onCambiar: (p: Pestana) => void }) {
   return (

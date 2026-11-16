@@ -1,7 +1,7 @@
 // Textos de interfaz (no son frases de personaje). Propuestos por Claude.
 export const UI = {
   app: 'A media luz',
-  nav: { casa: 'Casa', ofrendas: 'Hazañas', bosque: 'Bosque', semana: 'Semana', album: 'Álbum' },
+  nav: { casa: 'Casa', ofrendas: 'Hazañas', semana: 'Semana', album: 'Álbum', ajustes: 'Ajustes' },
   vecinos: {
     titulo: 'Tu bosque',
     explicacion: 'Cada casa es un mes. Entra a ver a quien quieras: sus materiales siguen ahí.',
@@ -61,6 +61,10 @@ export const UI = {
     nacio: (nombre: string) => `¡Ha salido ${nombre}!`,
     necesita: 'Lo que necesita',
     alBosque: 'Bosque',
+    alaCasa: 'Casa',
+    dia: (n: number, de: number) => `Día ${n} de ${de}`,
+    mesDe: (nombre: string) => `Mes de ${nombre}`,
+    mesDelHuevo: 'Mes del huevo',
     informe: {
       titulo: (nombre: string) => `Informe de ${nombre}`,
       dias: (n: number, de: number) => `${n} de ${de} días haciendo algo`,

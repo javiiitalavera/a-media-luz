@@ -68,7 +68,7 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   )
 }
 
-export function Ajustes({ partida, onVolver }: { partida: Partida; onVolver: () => void }) {
+export function Ajustes({ partida }: { partida: Partida }) {
   const ajustar = useJuego((s) => s.ajustar)
   const sustituir = useJuego((s) => s.sustituir)
   const borrar = useJuego((s) => s.borrar)
@@ -100,8 +100,7 @@ export function Ajustes({ partida, onVolver }: { partida: Partida; onVolver: () 
 
   return (
     <Pantalla>
-      <button type="button" onClick={onVolver} className="-ml-2 min-h-11 px-2 font-semibold text-texto-2">‹ {UI.volver}</button>
-      <h1 className="mt-1 mb-4 px-1 text-[28px] font-bold">{UI.ajustes.titulo}</h1>
+      <h1 className="mb-4 px-1 text-[28px] font-bold">{UI.ajustes.titulo}</h1>
 
       <h2 className="mb-1 px-1 font-bold">{UI.ajustes.ritmos}</h2>
       <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.ritmoExplicacion}</p>

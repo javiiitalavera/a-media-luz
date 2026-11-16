@@ -9,7 +9,7 @@ import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, progreso } from '../logica/etapas'
-import { diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
+import { DIAS_MES, diaDelMes, estadoDelMes, faltanParaEclosion, informe, mesActual, mesesDe, OFRENDAS_ECLOSION } from '../logica/meses'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -32,9 +32,9 @@ function useTamano() {
   return [ref, t] as const
 }
 
-export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetalle, onVolver }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBosque, onDetalle, onVolver }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
-  onAjustes: () => void; onDetalle: () => void; onVolver?: () => void
+  onBosque: () => void; onDetalle: () => void; onVolver?: () => void
 }) {
   const DUENO = dueno
   const AREA = COMPANEROS[DUENO].area
@@ -166,6 +166,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetal
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
   // Acaba su mes: informe (solo si ya hay otro compañero listo para llegar; si no, el mes sigue).
   const mes = mesActual(partida)
+  const diaMes = diaDelMes(mes, ahora).dia
   const finDeMes = vivo && !mes.cerrado && diaDelMes(mes, ahora).terminado &&
     ORDEN_COMPANEROS.filter(tieneMes).some((c) => !mesesDe(partida).some((m) => m.companero === c))
 
@@ -241,11 +242,11 @@ export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetal
 
       {/* Arriba: de quién es la casa y ajustes. */}
       <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <button type="button" onClick={onDetalle} className="min-h-11 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
+        <button type="button" onClick={onDetalle} className="min-h-11 min-w-0 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
           {conHuevo ? (
             <>
               <span className="block text-[18px] leading-tight font-bold">{UI.casa.huevo}</span>
-              <span className="block text-[13px] text-texto-3">{UI.casa.huevoFaltan(faltaHuevo)}</span>
+              <span className="block text-[13px] text-texto-3">{UI.casa.dia(diaMes, DIAS_MES)} · {UI.casa.huevoFaltan(faltaHuevo)}</span>
               <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
                 <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((OFRENDAS_ECLOSION - faltaHuevo) / OFRENDAS_ECLOSION) * 100}%` }} />
               </span>
@@ -253,7 +254,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetal
           ) : (<>
           <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
           <span className="block text-[13px] text-texto-3">
-            {UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente && !visita ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
+            {!visita && `${UI.casa.dia(diaMes, DIAS_MES)} · `}{UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente && !visita ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
             {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
           </span>
           {g.siguiente && !pendiente && !visita && (
@@ -263,8 +264,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onAjustes, onDetal
           )}
           </>)}
         </button>
-        <button type="button" onClick={visita ? onVolver : onAjustes} className="min-h-11 rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
-          {visita ? `‹ ${UI.casa.alBosque}` : UI.bosque.ajustes}
+        <button type="button" onClick={visita ? onVolver : onBosque} className="min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
+          {visita ? `‹ ${UI.casa.alBosque}` : `${UI.casa.alBosque} ›`}
         </button>
       </header>
 

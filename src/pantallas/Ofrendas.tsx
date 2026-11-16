@@ -1,6 +1,7 @@
 // Ofrendas: contar lo que has hecho, en un toque.
 import { useEffect, useState } from 'react'
-import { ACCIONES, AREAS, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, ORDEN_AREAS, UI, type AreaId } from '../contenido'
+import { DIAS_MES, diaDelMes, estadoDelMes, mesActual } from '../logica/meses'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
 import { estadoRincon } from '../logica/reglas'
@@ -17,6 +18,7 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
   const olvidar = useJuego((s) => s.olvidarRecientes)
   const diaMalo = diaMaloActivo(partida, ahora)
+  const mes = mesActual(partida)
   const hoy = dia(ahora)
   const veces = (id: string) => partida.ofrendas.filter((o) => o.accionId === id && dia(o.fecha) === hoy).length
 
@@ -26,6 +28,9 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
 
   return (
     <Pantalla titulo={UI.ofrendas.titulo}>
+      <p className="-mt-3 mb-3 px-1 text-[14px] font-semibold text-texto-3">
+        {UI.casa.dia(diaDelMes(mes, ahora).dia, DIAS_MES)} · {estadoDelMes(partida, ahora) === 'huevo' ? UI.casa.mesDelHuevo : UI.casa.mesDe(COMPANEROS[mes.companero].nombre)}
+      </p>
       <Interruptor titulo={UI.ofrendas.diaMalo} explicacion={UI.ofrendas.diaMaloExplicacion} activo={diaMalo} onCambiar={ponerDiaMalo} />
       <div className="mt-4 flex flex-col gap-5">
         {ORDEN_AREAS.map((area) => {

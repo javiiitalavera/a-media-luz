@@ -13,8 +13,10 @@ export function Bosque({ partida, ahora, onVisitar, onCasa }: {
   const meses = mesesDe(partida)
   const enHuevo = estadoDelMes(partida, ahora) === 'huevo'
   return (
-    <Pantalla titulo={UI.vecinos.titulo}>
-      <p className="-mt-2 mb-4 px-1 text-texto-2">{UI.vecinos.explicacion}</p>
+    <Pantalla>
+      <button type="button" onClick={onCasa} className="-ml-2 min-h-11 px-2 font-semibold text-texto-2">‹ {UI.casa.alaCasa}</button>
+      <h1 className="mt-1 mb-1 px-1 text-[28px] leading-tight font-bold">{UI.vecinos.titulo}</h1>
+      <p className="mb-4 px-1 text-texto-2">{UI.vecinos.explicacion}</p>
       <ul className="grid grid-cols-2 gap-3">
         {meses.map((m, i) => {
           const actual = i === meses.length - 1
