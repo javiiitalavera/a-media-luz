@@ -7,6 +7,7 @@ import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase
 import { azarReal } from '../logica/azar'
 import { construir as construirEnCasa } from '../logica/casa'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
+import { marcarPresentado } from '../logica/meses'
 import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
@@ -39,6 +40,8 @@ interface Juego {
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
   verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
+  /** Ya se ha visto nacer y presentarse al compañero del mes. */
+  presentar: () => void
   ajustar: (cambio: (p: Partida) => Partida) => void
   sustituir: (p: Partida) => void
   borrar: () => void
@@ -48,7 +51,7 @@ export const useJuego = create<Juego>()(
   persist(
     (set, get) => ({
       partida: null,
-      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales), recientes: []}),
+      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales, true), recientes: []}),
       recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida
@@ -107,6 +110,10 @@ export const useJuego = create<Juego>()(
         const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
         set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
         return r?.frase ?? null
+      },
+      presentar: () => {
+        const p = get().partida
+        if (p) set({ partida: marcarPresentado(p, new Date()) })
       },
       ajustar: (cambio) => {
         const p = get().partida

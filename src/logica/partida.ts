@@ -45,7 +45,7 @@ export interface Construccion {
  * Crea la partida. `habituales`: acciones de ejemplo elegidas en el inicio; en las áreas donde no se
  * elige ninguna se ponen las dos primeras de ejemplo, para que todas tengan algo.
  */
-export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: string[]): Partida {
+export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: string[], conHuevo = false): Partida {
   const acciones = habituales?.length
     ? (Object.keys(AREAS) as AreaId[]).flatMap((area) => {
         const delArea = ACCIONES.filter((a) => a.area === area)
@@ -63,6 +63,7 @@ export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: s
     hallazgos: [],
     frasesRecientes: [],
     construcciones: [],
+    ...(conHuevo ? { meses: [{ companero: principal, inicio: ahora.toISOString() }] } : {}),
   }
 }
 

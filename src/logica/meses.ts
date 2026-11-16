@@ -13,6 +13,8 @@ export interface Mes {
   companero: CompaneroId
   /** Fecha ISO en que llegó el huevo. */
   inicio: string
+  /** Fecha ISO en que se vio su eclosión y su presentación (para enseñarlas una sola vez). */
+  presentado?: string
   /** Fecha ISO en que se vio el informe final (y se cerró el mes). */
   cerrado?: string
 }
@@ -94,3 +96,21 @@ export function informe(p: Partida, m: Mes, ahora: Date): Informe {
   for (const o of lista) porArea[o.area]++
   return { dias: DIAS_MES, diasConAlgo: new Set(lista.map((o) => dia(o.fecha))).size, porArea, total: lista.length }
 }
+
+/** Estado del compañero del mes: aún en el huevo, recién nacido (falta enseñar su eclosión) o ya en casa. */
+export function estadoDelMes(p: Partida, ahora: Date): 'huevo' | 'naciendo' | 'vivo' {
+  if (!p.meses) return 'vivo' // partidas de antes de los meses: su compañero ya vivía en casa
+  const m = mesActual(p)
+  if (!eclosion(p, m, ahora)) return 'huevo'
+  return m.presentado ? 'vivo' : 'naciendo'
+}
+
+/** Marca como vista la eclosión y presentación del compañero del mes. */
+export function marcarPresentado(p: Partida, ahora: Date): Partida {
+  const meses = mesesDe(p)
+  return { ...p, meses: meses.map((m, i) => (i === meses.length - 1 ? { ...m, presentado: ahora.toISOString() } : m)) }
+}
+
+/** Ofrendas que le faltan al huevo para abrirse. */
+export const faltanParaEclosion = (p: Partida, ahora: Date) =>
+  Math.max(0, OFRENDAS_ECLOSION - ofrendasDelMes(p, mesActual(p), ahora).length)

@@ -46,3 +46,10 @@ Ya hay: Nox (3 etapas, escenario y 6 objetos), y los escenarios de Bruma (estanq
 1. **El mes de Nox completo:** huevo, eclosión, historia, su catálogo con costes de su área, crecer e informe del mes.
 2. **El bosque:** mapa, casas y visitas.
 3. **Hallazgos al azar y los siguientes compañeros.**
+
+## Hecho (rama `dev/huevo`)
+- Inicio: llega el primer huevo (siempre Nox, de momento) y se marcan las acciones habituales.
+- En casa, el huevo se mece en el sitio del compañero; al tocarlo tiembla y dice cuánto le falta; con 2 de 3 se ve agrietado.
+- Con la tercera ofrenda, al volver a casa: el huevo tiembla fuerte y se rompe, sale el compañero con luz y chispas («¡Ha salido Nox!») y se presenta con su ficha (historia y lo que necesita). Se ve una sola vez.
+- Las partidas de antes de los meses siguen igual (su compañero ya vivía en casa).
+- Pendiente: informe y cambio de mes (cuando haya arte del segundo compañero), bosque y hallazgos.

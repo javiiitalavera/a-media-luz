@@ -2,12 +2,13 @@
 // la interfaz va encima, arriba y abajo, sin tapar el centro. Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, DUENO_CASA, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { COMPANEROS, DUENO_CASA, HISTORIAS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, progreso } from '../logica/etapas'
+import { estadoDelMes, faltanParaEclosion, OFRENDAS_ECLOSION } from '../logica/meses'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -18,6 +19,7 @@ const PROPORCION_FONDO = 941 / 1672
 /** Nox: centro y pies (en % del fondo). Su ancho (en % del ancho del fondo) depende de la etapa. */
 const NOX = { x: 50, y: 66 }
 const ANCHO_NOX = [36, 42, 48]
+const ANCHO_HUEVO = 30
 /** Luces que ya están dibujadas en el fondo (farol de la madriguera y del poste). */
 const LUCES_FONDO = [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }]
 const SEGUNDOS_BOCADILLO = 7
@@ -55,6 +57,22 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
   const [hallazgo, setHallazgo] = useState<string | null>(null)
+  const presentar = useJuego((s) => s.presentar)
+  // Compañero del mes: aún en el huevo, naciendo (se enseña la eclosión una vez) o ya en casa.
+  const estado = estadoDelMes(partida, ahora)
+  const vivo = estado === 'vivo'
+  const faltaHuevo = faltanParaEclosion(partida, ahora)
+  const [toques, setToques] = useState(0)
+  const [nacer, setNacer] = useState<'rompiendo' | 'salio' | 'ficha' | null>(null)
+  useEffect(() => {
+    if (estado !== 'naciendo') return
+    const pasos = [
+      setTimeout(() => setNacer('rompiendo'), 500),
+      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 2100),
+      setTimeout(() => setNacer('ficha'), 3600),
+    ]
+    return () => pasos.forEach(clearTimeout)
+  }, [estado])
   useEffect(() => {
     if (!hallazgo) return
     const t = setTimeout(() => setHallazgo(null), 5000)
@@ -62,7 +80,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   }, [hallazgo])
 
   // Ha crecido desde la última vez: celebración (una sola vez por etapa).
-  const pendiente = r.llegado && crecioSinVer(partida, DUENO, g.etapa)
+  const pendiente = vivo && crecioSinVer(partida, DUENO, g.etapa)
   useEffect(() => {
     if (!pendiente) return
     const t = setTimeout(() => {
@@ -91,7 +109,8 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const eh = vertical ? h : w / PROPORCION_FONDO
   const escenario: CSSProperties = { width: ew, height: eh, left: (w - ew) / 2, top: (h - eh) / 2 }
 
-  const expresion: Expresion = !r.llegado ? 'dormido'
+  const expresion: Expresion = nacer === 'salio' || nacer === 'ficha' ? 'contento'
+    : !vivo ? 'dormido'
     : habla?.contento ? 'contento'
     : noche && !habla ? 'dormido'
     : r.fase >= 2 ? 'enfurrunado'
@@ -101,7 +120,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   // Al volver a casa, Nox comenta lo último que hiciste (si no hay celebración de crecer, que va antes).
   const contar = useJuego((s) => s.contar)
   useEffect(() => {
-    if (pendiente) return
+    if (pendiente || !vivo) return
     const t = setTimeout(() => {
       const noticia = contar()
       const f = noticia?.frase
@@ -109,9 +128,11 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
-  }, [pendiente, contar])
+  }, [pendiente, vivo, contar])
 
   const hablar = () => {
+    if (estado === 'huevo') { setToques((n) => n + 1); setHabla({ texto: UI.casa.huevoToque(faltaHuevo), n: Date.now() }); return }
+    if (estado === 'naciendo') return
     setSaltos((n) => n + 1)
     if (!r.llegado) { setHabla({ texto: UI.casa.dormido(COMPANEROS[DUENO].nombre, r.faltanParaLlegar), n: Date.now() }); return }
     const f = tocar(DUENO)
@@ -134,7 +155,9 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
   const alto = (ancho: number, prop: number) => (ancho * prop * ew) / eh
   // Hasta que se celebra, se sigue viendo la etapa anterior.
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
-  const anchoNox = ANCHO_NOX[etapaVista]
+  // Mientras no ha salido, en su sitio está el huevo.
+  const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
+  const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const altoNox = alto(anchoNox, 1)
 
   return (
@@ -148,9 +171,16 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
             <span aria-hidden className="absolute bottom-[1%] left-1/2 h-[9%] w-[62%] -translate-x-1/2 rounded-[50%] bg-[#4b5d3f]/30 blur-[2px]" />
             <button type="button" aria-label={UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
               onClick={(e) => { e.stopPropagation(); hablar() }} className="relative block w-full">
-              <span key={saltos} className={`block ${saltos ? 'anim-saltar' : ''}`}>
-                <img key={etapaVista} src={rutaCompanero(DUENO, etapaVista, expresion)} alt="" draggable={false} className={`anim-respirar block w-full ${celebra ? 'anim-brotar' : ''}`} />
-              </span>
+              {conHuevo ? (
+                <span key={`h${toques}`} className={`block ${toques ? 'anim-temblar' : ''}`}>
+                  <img src={rutaArte(`huevo/${DUENO}/${faltaHuevo <= 1 || estado === 'naciendo' ? 'agrietado' : 'cerrado'}`)} alt="" draggable={false}
+                    className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : 'anim-mecer'}`} />
+                </span>
+              ) : (
+                <span key={saltos} className={`block ${saltos ? 'anim-saltar' : ''}`}>
+                  <img key={etapaVista} src={rutaCompanero(DUENO, etapaVista, expresion)} alt="" draggable={false} className={`anim-respirar block w-full ${celebra ? 'anim-brotar' : ''}`} />
+                </span>
+              )}
             </button>
           </div>
         ))}
@@ -169,9 +199,11 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
             return <Luz key={o.id} x={x} y={y} tam={noche ? 30 : 18} color={o.luz!.color} retraso={0.3} />
           })}
           {/* La llama de la cola de Nox */}
-          <Luz x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.36} tam={noche ? 22 : 14} color="#ffb347" retraso={0} />
+          {conHuevo
+            ? <Luz x={NOX.x} y={NOX.y - altoNox * 0.5} tam={(noche ? 34 : 26) + (faltaHuevo <= 1 ? 10 : 0)} color="#ffb347" retraso={0} />
+            : <Luz x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.36} tam={noche ? 22 : 14} color="#ffb347" retraso={0} />}
         </div>
-        <Chispas x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.45} />
+        {!conHuevo && <Chispas x={NOX.x - anchoNox * 0.28} y={NOX.y - altoNox * 0.45} />}
         <Luciernagas cuantas={noche ? 14 : 7} />
         {celebra && (
           <>
@@ -196,6 +228,15 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       {/* Arriba: de quién es la casa y ajustes. */}
       <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <button type="button" onClick={onDetalle} className="min-h-11 rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
+          {conHuevo ? (
+            <>
+              <span className="block text-[18px] leading-tight font-bold">{UI.casa.huevo}</span>
+              <span className="block text-[13px] text-texto-3">{UI.casa.huevoFaltan(faltaHuevo)}</span>
+              <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
+                <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((OFRENDAS_ECLOSION - faltaHuevo) / OFRENDAS_ECLOSION) * 100}%` }} />
+              </span>
+            </>
+          ) : (<>
           <span className="block text-[18px] leading-tight font-bold">{UI.casa.de(COMPANEROS[DUENO].nombre)} <span aria-hidden className="text-texto-3">›</span></span>
           <span className="block text-[13px] text-texto-3">
             {UI.casa.etapas[etapaVista]}{g.siguiente && !pendiente ? ` · ${UI.casa.haciaEtapa(g.crecimiento - g.desde, g.siguiente - g.desde)}` : ''}
@@ -206,6 +247,7 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
               <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((g.crecimiento - g.desde) / (g.siguiente - g.desde)) * 100}%` }} />
             </span>
           )}
+          </>)}
         </button>
         <button type="button" onClick={onAjustes} className="min-h-11 rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
           {UI.bosque.ajustes}
@@ -232,12 +274,40 @@ export function Casa({ partida, ahora, onAjustes, onDetalle }: {
       )}
       {celebra && (
         <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
+          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
         </div>
       )}
 
+      {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar() }} />}
+
       {hoja && <Catalogo partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
     </main>
+  )
+}
+
+/** Presentación del compañero al salir del huevo: quién es y qué necesita. */
+function Ficha({ c, onCerrar }: { c: CompaneroId; onCerrar: () => void }) {
+  const h = HISTORIAS[c]
+  const comp = COMPANEROS[c]
+  return createPortal(
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-end bg-[#2e2030]/50 px-3 pb-[max(16px,env(safe-area-inset-bottom))]">
+      <section role="dialog" aria-label={comp.nombre} className="anim-hoja w-full rounded-[28px] bg-fondo p-5 shadow-xl">
+        <div className="text-[13px] font-semibold text-coral-texto">{UI.casa.nacio(comp.nombre)}</div>
+        <h2 className="mt-0.5 text-[28px] leading-tight font-bold">{comp.nombre}</h2>
+        {h && <div className="text-[14px] text-texto-3">{h.especie} · {comp.humor}</div>}
+        {h && <p className="mt-3 text-[16px] leading-snug">{h.historia}</p>}
+        {h && (
+          <div className="mt-4 rounded-2xl bg-tarjeta p-3">
+            <div className="text-[13px] font-semibold text-texto-3">{UI.casa.necesita}</div>
+            <p className="mt-0.5 text-[15px] leading-snug">{h.necesita}</p>
+          </div>
+        )}
+        <button type="button" onClick={onCerrar} className="mt-4 min-h-12 w-full rounded-2xl bg-ambar text-[16px] font-bold text-tinta">
+          {h?.despedida ?? UI.casa.cerrar}
+        </button>
+      </section>
+    </div>,
+    document.body,
   )
 }
 

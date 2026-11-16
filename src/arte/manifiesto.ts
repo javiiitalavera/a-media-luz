@@ -12,12 +12,15 @@ export type ClaveArte =
   | `companero/${Id}/${Expresion}`
   | `companero/${Id}/${'joven' | 'adulto'}/${Expresion}`
   | `objeto/${string}`
+  | `huevo/${Id}/${'cerrado' | 'agrietado'}`
 
 const objetos = (c: Id, ids: string[]) => Object.fromEntries(ids.map((i) => [`casa/${c}/objeto/${i}`, `/arte/casa/${c}/objetos/${i}.webp`]))
 
 export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casa/nox/fondo': '/arte/casa/nox/fondo.webp',
   ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta']),
+  'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
+  'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
   'companero/nox/base': '/arte/personajes/nox/base.webp',
   'companero/nox/contento': '/arte/personajes/nox/contento.webp',
   'companero/nox/enfurrunado': '/arte/personajes/nox/enfurrunado.webp',

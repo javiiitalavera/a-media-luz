@@ -6,6 +6,9 @@ export const UI = {
   inicio: {
     titulo: '¿Con quién quieres empezar?',
     explicacion: 'Elige por su humor. Los demás llegarán al bosque cuando hagas cosas de lo suyo.',
+    huevoTitulo: 'Te ha llegado un huevo',
+    huevoExplicacion: 'Nadie sabe qué hay dentro. Cada cosa buena que hagas en tu vida lo calienta; con tres, se abre. Lo que salga será tu compañero este mes.',
+    empezarHuevo: 'Quedármelo',
     empezar: (nombre: string) => `Empezar con ${nombre}`,
     siguiente: 'Siguiente',
     atras: 'Atrás',
@@ -25,6 +28,13 @@ export const UI = {
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
     etapas: ['Cachorro', 'Joven', 'Adulto'],
     encontrado: (que: string) => `Encontrado: ${que}`,
+    huevo: 'Un huevo',
+    huevoFaltan: (n: number) => (n <= 0 ? 'Se está abriendo…' : n === 1 ? 'Se abre con 1 cosa más' : `Se abre con ${n} cosas más`),
+    huevoToque: (n: number) => (n >= 3 ? 'Algo se mueve dentro. Sin prisa, pero sin pausa: haz algo de lo tuyo.'
+      : n === 2 ? 'Se ha movido. Ha sido él, no tú. Le faltan 2 cosas.'
+      : 'Está caliente y cruje. Una cosa más y sale.'),
+    nacio: (nombre: string) => `¡Ha salido ${nombre}!`,
+    necesita: 'Lo que necesita',
     haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
     crecio: (nombre: string, etapa: string) => `${nombre} ya es ${etapa.toLowerCase()}`,
   },
