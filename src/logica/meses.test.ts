@@ -58,6 +58,11 @@ describe('un compañero al mes', () => {
     expect(siguienteCompanero(p, azarFijo(0))).toBeDefined()
   })
 
+  it('mientras no llega el huevo siguiente, el mes sigue abierto: no se pierde nada', () => {
+    const p = con(nueva(), 'cuerpo', '2026-02-10', 2) // pasados los 28 días
+    expect(disponibles(p, 'nox', en('2026-02-10', 20)).cuerpo).toBe(2)
+  })
+
   it('informe del mes', () => {
     let p = con(con(nueva(), 'cuerpo', '2026-01-05', 2), 'mente', '2026-01-07')
     p = con(p, 'cuerpo', '2026-02-05') // fuera del mes: no cuenta

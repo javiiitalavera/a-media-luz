@@ -28,8 +28,11 @@ export function finDe(m: Mes): Date {
   return new Date(y, mo - 1, d)
 }
 
-/** Ventana de tiempo de un mes: desde que llega el huevo hasta que se cierra (o hasta su fin, si se cierra antes de ver el informe). */
-export const ventana = (m: Mes) => ({ desde: new Date(m.inicio), hasta: m.cerrado ? new Date(m.cerrado) : finDe(m) })
+/**
+ * Ventana de tiempo de un mes: desde que llega el huevo hasta que se cierra (al ver el informe y
+ * llegar el huevo siguiente). Mientras no se cierre, sigue abierto: nada de lo que hagas se pierde.
+ */
+export const ventana = (m: Mes) => ({ desde: new Date(m.inicio), hasta: m.cerrado ? new Date(m.cerrado) : new Date(8.64e15) })
 
 export const mesActual = (p: Partida): Mes => mesesDe(p).at(-1)!
 
@@ -91,7 +94,8 @@ export interface Informe {
 
 /** Resumen del mes para el informe final (los objetos construidos y la etapa los pone quien lo muestra). */
 export function informe(p: Partida, m: Mes, ahora: Date): Informe {
-  const lista = ofrendasDelMes(p, m, ahora)
+  const fin = finDe(m)
+  const lista = ofrendasDelMes(p, m, ahora).filter((o) => new Date(o.fecha) < fin)
   const porArea = Object.fromEntries(Object.keys(AREAS).map((a) => [a, 0])) as Record<AreaId, number>
   for (const o of lista) porArea[o.area]++
   return { dias: DIAS_MES, diasConAlgo: new Set(lista.map((o) => dia(o.fecha))).size, porArea, total: lista.length }
