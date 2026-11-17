@@ -1,0 +1,155 @@
+# A media luz — El vecindario (diseño, borrador 1 para Javi)
+
+17/11/2026. Sustituye a «un compañero al mes» (`docs/diseno-meses.md`). Siguen valiendo las reglas de base de `docs/diseno-juego.md`: hazañas, tope de 3 al día por área, modo día malo y consecuencias sin culpa.
+
+## 1. Qué es
+Un vecindario de cinco criaturas excéntricas que conviven, discuten y hacen estupideces. Lo que haces en tu vida real les da materiales para construir. Lo que construyen provoca situaciones, y las situaciones dejan huella en el escenario.
+
+**Tono (decidido por Javi):** comedia de personajes, en la línea de *The Office* o *What We Do in the Shadows*.
+- El humor sale de cómo son ellos y de cómo chocan entre sí, no de meterse con el jugador.
+- Nada de fantasía entrañable ni de una gran misión.
+- Puede haber misterios pequeños y algo de trasfondo, pero nunca un hilo que dirija el juego.
+
+**La pregunta que tiene que provocar al abrir la app:** «¿qué demonios han hecho hoy?».
+
+## 2. Los vecinos
+Los cinco de la lámina, **para siempre**. No se van, no caducan y no pierden lo crecido.
+
+| | Área | En el vecindario |
+|---|---|---|
+| **Nox** | Cuerpo | Impulsivo. Asa salchichas donde no debe y abre negocios absurdos. Sarcasmo cálido. |
+| **Tuerca** | Orden | Normativas, actas, expedientes y etiquetas. Lo clasifica todo y no encuentra nada. |
+| **Tofu** | Mente | Impasible. Hace cosas rarísimas con total seriedad; su brote le delata. |
+| **Bruma** | Calma | Melancólica, flota y se pierde. Dice verdades incómodas con ternura. |
+| **Madeja** | Vínculos | Cotilla y entusiasta. Se entera de todo y lo cuenta. |
+
+**Cómo llegan:**
+- **El primero es Nox:** llega en un huevo que se abre con tus 3 primeras hazañas, igual que ahora.
+- **Cuando el último en llegar se hace joven,** aparece un huevo nuevo en su puerta.
+- **El huevo se queda ahí todo el tiempo que quieras.** Lo incubas cuando decides tocarlo y elegir «Que pase». A partir de ahí, se abre con 3 hazañas.
+- **El orden es al azar** entre los que ya tienen su arte. Ni la llegada ni la eclosión tienen fecha.
+- **Ficha al nacer:** al salir, el vecino se presenta con su ficha, en tono de comedia.
+
+## 3. Pantallas
+| Pantalla | Qué es |
+|---|---|
+| **Casa** | La casa de un vecino, a pantalla completa, como ahora: le tocas, habla, construyes. Con un solo vecino, es la pantalla principal. |
+| **Barrio** | Aparece cuando hay 2 vecinos y pasa a ser la principal. Es el mapa con la zona de cada uno, las huellas de las situaciones y las noticias. Tocas una zona y entras en su casa. En Ajustes puedes elegir empezar en tu casa favorita. |
+| **Hazañas** | Igual que ahora: marcar lo que has hecho, con el − para deshacer. Sin mensajes. |
+| **Proyectos** | Sustituye a Retos. Los proyectos de cada vecino y los del barrio: qué piden, cuánto llevas y qué cambian. |
+| **Álbum** | La colección, más las **Crónicas**: las situaciones ya terminadas, para releerlas. |
+| **Ajustes** | Igual que ahora. |
+
+Pestañas: **Inicio** (Casa o Barrio) · **Hazañas** · **Proyectos** · **Álbum** · **Ajustes**.
+
+## 4. El día a día
+1. **Abres la app.** Si ha pasado algo desde tu última visita, sale **«Mientras no estabas…»** con 1 a 3 líneas («Tuerca ha clavado un cartel junto a la hoguera de Nox»). Si lo tocas, vas a donde ha pasado.
+2. **Miras el barrio o la casa.** Ahí están las huellas nuevas y el vecino que tiene algo que decir.
+3. **Si te apetece,** registras tus hazañas, ganas materiales y avanzas un proyecto.
+4. **Mañana habrá algo distinto.**
+
+No hay encargos diarios, ni obligaciones, ni nada que «se pierda» por no entrar.
+
+## 5. Hazañas y materiales
+- **Igual que ahora:** cada hazaña que cuenta (como mucho 3 al día por área) da 1 material de su área. Cuerpo da ascuas, Mente semillas, Calma rocío, Vínculos hilo y Orden tornillos.
+- **Los materiales van a una bolsa común.** Como los vecinos ya no se van, no hace falta separarlos por casa.
+- **Nada produce materiales solo.** Como mucho, alguna situación o visitante deja un hallazgo de vez en cuando.
+- **Las hazañas también hacen crecer** al vecino de su área (ver el apartado 7) y pueden **disparar situaciones** (ver el apartado 6).
+
+## 6. Situaciones (el corazón)
+Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos, que avanza a lo largo de varias visitas y deja huella en el escenario.
+
+**Cada situación tiene:**
+- **Quiénes:** los vecinos que tienen que vivir ya en el barrio.
+- **Cuándo empieza:**
+  - por un proyecto terminado («la normativa» empieza con la hoguera);
+  - por algo que haces («una racha de 3 cosas de Cuerpo en un día» dispara «el gimnasio»);
+  - por estar juntos (hacen falta 3 o más vecinos para «la reunión»);
+  - o al azar entre las disponibles.
+- **Fases:** cada fase lleva un texto corto de lo que ha pasado, lo que dice cada vecino si le tocas y una **huella**, es decir, un objeto que aparece, cambia o desaparece en el escenario.
+- **Cómo avanza:** una fase por visita, siempre que hayan pasado al menos 4 horas desde la anterior. Si no entras en una semana, la historia te espera donde la dejaste. No se pierde nada.
+- **A veces, una decisión tuya**, como en «el horno»: ¿le ayuda Tuerca o se apaña solo? Las dos ramas son graciosas y ninguna es «la mala». Como mucho, una decisión de cada tres o cuatro situaciones.
+- **Final:** la huella definitiva se queda para siempre (el extintor, el diploma, el nido) y la historia pasa a las Crónicas del Álbum.
+
+**El ritmo:**
+- Como mucho, 2 situaciones en marcha a la vez.
+- El objetivo son unas 3 o 4 novedades a la semana para alguien que entra a diario. Mejor pocas y buenas.
+- Cuando no hay nada en marcha, el escenario sigue vivo por sí solo: animaciones, día y noche, y frases sueltas al tocar a los vecinos.
+
+**Las frases cambian de foco.** Los vecinos hablan más entre ellos y de los demás («Tuerca ha vuelto a etiquetar mi piedra») que de ti. Te pinchan poco y con gracia.
+
+## 7. Crecer (por hitos, sin barra de cariño)
+| Etapa | Qué hace falta |
+|---|---|
+| Cachorro | Nace así |
+| **Joven** | 15 hazañas de su área **y** terminar su primer proyecto personal |
+| **Adulto** | 40 hazañas de su área **y** terminar 3 proyectos personales |
+
+- **Nunca baja.** Lo crecido no se pierde por no entrar.
+- **Celebración al crecer,** como ahora.
+- **De joven,** además, aparece el siguiente huevo (ver el apartado 2).
+- **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
+
+## 8. Proyectos (sustituyen a los retos y al catálogo)
+**Personales:** una cadena por vecino, de 4 a 6 proyectos, que transforma su casa. Cada uno pide sobre todo el material de su área, más algo de otras.
+
+**Comunitarios:** necesitan a dos o más vecinos y transforman el barrio. Abren caminos, lugares nuevos y relaciones.
+
+**Lo que hace un proyecto al terminarse** (nunca producir):
+- **Abre situaciones:** la hoguera dispara «la normativa».
+- **Cambia relaciones:** el puente une dos zonas, y esos dos vecinos empiezan a visitarse y a salir juntos en situaciones.
+- **Transforma el escenario:** farolillos que encienden la noche, un muelle, un tablón de anuncios del barrio.
+- **Atrae visitantes:** el cuervo, una polilla, un caracol comerciante. Traen algo o se llevan algo.
+
+**Algunos proyectos tienen fases con una decisión,** como el horno: reúnes los materiales, Nox lo enciende, sale carbón y eliges quién le ayuda.
+
+### Ejemplos (los números se ajustarán jugando)
+| Proyecto | Pide | Abre |
+|---|---|---|
+| **Nox · Hoguera** | 4 ascuas | «La normativa» |
+| **Nox · Gimnasio** | 6 ascuas, 2 tornillos | «El gimnasio», cuando haya llegado Tofu |
+| **Nox · Horno** | 8 ascuas, 3 tornillos, 2 semillas | «El horno», con decisión |
+| **Tuerca · Buzón de sugerencias** | 4 tornillos | «El buzón» |
+| **Tuerca · Aspiradora** | 6 tornillos, 1 ascua | «La aspiradora», cuando haya alguien que la adopte |
+| **Tuerca · Tablón de sospechosos** | 5 tornillos, 2 hilos | «Los robos», más adelante |
+| **Barrio · Puente** | 6 ascuas, 6 tornillos | Une sus zonas; empiezan a visitarse |
+| **Barrio · Sillas en círculo** | 4 de cada material | «La reunión», con 3 o más vecinos |
+
+Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, flexo, reloj…) pasan a ser proyectos con su efecto. Los premios de los retos (zapatillas, bufanda, medalla…) pasan a ser recompensas de situaciones.
+
+## 9. Consecuencias (más simples)
+- **Si descuidas el área de un vecino** (más días que su ritmo sin nada), se enfurruña: cambia de cara y de frases, y sus situaciones se pausan hasta que vuelves.
+- **Si lo descuidas mucho,** un visitante puede llevarse un objeto suyo al nido del cuervo, y se recupera con una o dos hazañas de esa área.
+- **Nunca** pierde crecimiento, proyectos ni huellas. Volver tiene que sentar bien, y al volver puede haber una situación de reencuentro.
+
+## 10. Lo que desaparece
+- **El ciclo de 28 días:** el informe de fin de mes y el «Día N».
+- **Los retos.**
+- **El mapa de 12 claros.**
+- **Los materiales separados por casa.**
+
+## 11. Arte que hará falta
+- **Barrio:** un mapa con 5 zonas, una por vecino, y sitio para huellas. Para el prototipo vale el mapa actual, usando 5 de sus claros.
+- **Paquetes de Tofu, Bruma y Madeja:** huevo, etapas, escenario, objetos y casita. De Bruma y Madeja ya hay escenario.
+- **Huellas de situaciones:** láminas de objetos (cartel, cartel chamuscado, extintor, buzón, tablón con hilo rojo, tronco con piedra, diploma, tumbona, micrófono, sillas, pizarra, nido…).
+- **Ningún texto dentro de los dibujos.** Los carteles («PROHIBIDO HACER FUEGO», «GIMNASIO», «VARIOS») se dibujan en blanco y el texto lo pone la app encima.
+
+## 12. Prototipo (lo primero que se programa)
+**Alcance:**
+- **Vecinos:** Nox y Tuerca.
+- **Proyectos:** 3 personales de cada uno y el puente.
+- **Situaciones:** unas 6 que se puedan dar solo con ellos dos, de las 10 ya aprobadas: la normativa, el buzón, la aspiradora, el horno, los robos (versión con dos vecinos) y una de reencuentro.
+- **Pantallas:** Casa y Barrio, con «Mientras no estabas…» y las Crónicas.
+
+**Lo que tiene que demostrar:**
+1. Que terminar un proyecto provoca algo que hace gracia.
+2. Que Nox y Tuerca juntos generan situaciones divertidas.
+3. Que apetece entrar dos o tres días seguidos aunque no registres nada.
+
+**Cómo lo probamos:** tú lo juegas unos días en el móvil. Para no esperar días reales, Ajustes tendrá un modo de prueba que «adelanta el reloj».
+
+## 13. Lo que necesito que decidas
+1. **¿Bolsa común de materiales?** Es mi recomendación.
+2. **Los hitos para crecer:** 15 + 1 proyecto para joven y 40 + 3 para adulto. ¿Te parecen razonables como punto de partida?
+3. **¿Una fase por visita, con al menos 4 horas entre fases?** ¿O prefieres una fase al día?
+4. **¿Te vale el prototipo así** (Nox, Tuerca, 6 situaciones y el puente) antes de seguir?
