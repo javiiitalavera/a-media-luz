@@ -8,6 +8,7 @@ import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { ahora } from '../logica/reloj'
+import { migrarHazanas } from '../logica/hazanas'
 import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
@@ -171,6 +172,13 @@ export const useJuego = create<Juego>()(
       sustituir: (p) => set({ partida: p, recientes: []}),
       borrar: () => set({ partida: null, recientes: []}),
     }),
-    { name: 'a-media-luz', version: 1, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }) },
+    {
+      name: 'a-media-luz', version: 2, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),
+      // v2: hazañas concretas (las acciones genéricas pasan a sus equivalentes).
+      migrate: (guardado) => {
+        const g = guardado as { partida: Partida | null }
+        return { ...g, partida: g.partida ? migrarHazanas(g.partida) : null } as Juego
+      },
+    },
   ),
 )

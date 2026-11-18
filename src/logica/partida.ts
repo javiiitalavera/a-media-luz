@@ -1,7 +1,7 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
 import type { Lugar } from '../contenido/situaciones'
-import { ACCIONES, AREAS, COMPANEROS, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, HAZANAS_INICIALES, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
 
 export interface Ofrenda {
   id: string
@@ -37,6 +37,8 @@ export interface Partida {
   meses?: Mes[]
   /** Cómo va cada situación del vecindario. */
   situaciones?: Record<string, EstadoSituacion>
+  /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */
+  hazanas?: 2
   /** Novedades del barrio que aún no se han visto («Mientras no estabas…»). */
   noticias?: NoticiaBarrio[]
 }
@@ -62,17 +64,12 @@ export interface Construccion {
 }
 
 /**
- * Crea la partida. `habituales`: acciones de ejemplo elegidas en el inicio; en las áreas donde no se
- * elige ninguna se ponen las dos primeras de ejemplo, para que todas tengan algo.
+ * Crea la partida. `habituales`: las hazañas del catálogo elegidas en el inicio; si no se elige
+ * ninguna, se ponen las iniciales.
  */
 export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: string[], conHuevo = false): Partida {
-  const acciones = habituales?.length
-    ? (Object.keys(AREAS) as AreaId[]).flatMap((area) => {
-        const delArea = ACCIONES.filter((a) => a.area === area)
-        const elegidas = delArea.filter((a) => habituales.includes(a.id))
-        return (elegidas.length ? elegidas : delArea.slice(0, 2)).map((a) => ({ ...a }))
-      })
-    : ACCIONES.map((a) => ({ ...a }))
+  const ids = habituales?.length ? habituales : HAZANAS_INICIALES
+  const acciones: Accion[] = ACCIONES.filter((a) => ids.includes(a.id)).map((a) => ({ id: a.id, area: a.area, nombre: a.nombre, ...(a.minima ? { minima: a.minima } : {}) }))
   return {
     version: 1,
     inicio: ahora.toISOString(),
@@ -83,6 +80,7 @@ export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: s
     hallazgos: [],
     frasesRecientes: [],
     construcciones: [],
+    hazanas: 2,
     ...(conHuevo ? { meses: [{ companero: principal, inicio: ahora.toISOString() }] } : {}),
   }
 }

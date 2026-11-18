@@ -1,27 +1,93 @@
-// Acciones de ejemplo por área (el jugador puede crear las suyas). Propuesta de Claude.
+// Catálogo de hazañas: concretas, con una meta por defecto que cada uno ajusta. Diarias: o la haces o no.
+// Propuesta de Claude (decidido por Javi, 18/11/2026). Las reacciones las dice el vecino del área,
+// con su voz, cuando cumples una de tus hazañas.
 import type { Accion } from './tipos'
 
-export const ACCIONES: Accion[] = [
-  { id: 'andar', area: 'cuerpo', nombre: 'Salir a andar', minima: 'Cinco minutos fuera' },
-  { id: 'dormir', area: 'cuerpo', nombre: 'Dormir siete horas', minima: 'Acostarme sin pantalla' },
-  { id: 'comer', area: 'cuerpo', nombre: 'Comer de verdad', minima: 'Comer sentado, sin prisa' },
-  { id: 'agua', area: 'cuerpo', nombre: 'Beber agua', minima: 'Un vaso al levantarme' },
-  { id: 'ejercicio', area: 'cuerpo', nombre: 'Hacer ejercicio', minima: 'Estirar cinco minutos' },
-  { id: 'leer', area: 'mente', nombre: 'Leer un rato', minima: 'Leer una página' },
-  { id: 'aprender', area: 'mente', nombre: 'Aprender algo', minima: 'Un vídeo o artículo que me enseñe algo' },
-  { id: 'concentrarme', area: 'mente', nombre: 'Una hora concentrado', minima: 'Quince minutos sin interrupciones' },
-  { id: 'crear', area: 'mente', nombre: 'Crear algo', minima: 'Diez minutos creando' },
-  { id: 'sinmovil', area: 'calma', nombre: 'Una hora sin móvil', minima: 'Quince minutos sin móvil' },
-  { id: 'naturaleza', area: 'calma', nombre: 'Salir a la naturaleza', minima: 'Mirar el cielo cinco minutos' },
-  { id: 'respirar', area: 'calma', nombre: 'Respirar con calma', minima: 'Tres respiraciones lentas' },
-  { id: 'nadahacer', area: 'calma', nombre: 'No hacer nada a propósito', minima: 'Cinco minutos en el sofá sin pantalla' },
-  { id: 'llamar', area: 'vinculos', nombre: 'Llamar a alguien', minima: 'Un audio a alguien que quiero' },
-  { id: 'quedar', area: 'vinculos', nombre: 'Quedar con alguien', minima: 'Proponer un plan' },
-  { id: 'pareja', area: 'vinculos', nombre: 'Tiempo con mi pareja', minima: 'Quince minutos de charla sin móvil' },
-  { id: 'mensaje', area: 'vinculos', nombre: 'Escribir a alguien olvidado', minima: 'Un mensaje corto' },
-  { id: 'pendiente', area: 'orden', nombre: 'Cerrar un pendiente', minima: 'Cerrar uno pequeño' },
-  { id: 'papeleo', area: 'orden', nombre: 'Hacer papeleo', minima: 'Abrir el sobre que llevo días evitando' },
-  { id: 'ordenar', area: 'orden', nombre: 'Ordenar algo', minima: 'Ordenar una balda' },
-  { id: 'cuentas', area: 'orden', nombre: 'Revisar las cuentas', minima: 'Mirar el saldo sin miedo' },
-  { id: 'planificar', area: 'orden', nombre: 'Planificar la semana', minima: 'Apuntar tres cosas para mañana' },
+export interface HazanaCatalogo extends Accion {
+  /** Lo que dice el vecino del área al cumplirla (si ya vive en el barrio). */
+  reacciones: string[]
+}
+
+export const ACCIONES: HazanaCatalogo[] = [
+  // Energía · Nox
+  { id: 'pasos', area: 'cuerpo', nombre: 'Andar 8000 pasos', minima: 'Andar 2000 pasos',
+    reacciones: ['¿8000 pasos? Yo he dado 8001. Por ganar.', 'Has andado. Yo he corrido detrás de una hoja. Empate técnico.'] },
+  { id: 'correr', area: 'cuerpo', nombre: 'Correr 30 minutos', minima: 'Correr 10 minutos',
+    reacciones: ['Media hora corriendo. ¿Huías de algo? No contestes.', 'Has corrido. Mi cola ha subido dos grados.'] },
+  { id: 'bici', area: 'cuerpo', nombre: 'Bici 30 minutos', minima: 'Bici 10 minutos',
+    reacciones: ['Bici. Dos ruedas y ninguna excusa. Me gusta.', 'Si te cruzas con una cuesta, salúdala de mi parte.'] },
+  { id: 'fuerza', area: 'cuerpo', nombre: 'Fuerza 20 minutos', minima: '10 sentadillas',
+    reacciones: ['Fuerza. Ahora podrás llevar más salchichas. Piénsalo.', 'Has levantado peso. Yo he levantado una ceja. Mismo esfuerzo.'] },
+  { id: 'estirar', area: 'cuerpo', nombre: 'Estirar 10 minutos', minima: 'Estirar 2 minutos',
+    reacciones: ['Estiramientos. Yo lo hago cada mañana. Se llama bostezar.'] },
+  { id: 'dormir', area: 'cuerpo', nombre: 'Dormir 7 horas', minima: 'Acostarme sin pantalla',
+    reacciones: ['Siete horas. Por fin alguien en esta casa duerme como un zorro.', 'Has dormido. Se nota. Bueno, no tanto. Pero se nota.'] },
+  { id: 'verdura', area: 'cuerpo', nombre: 'Verdura en 2 comidas', minima: 'Una pieza de fruta',
+    reacciones: ['Verdura. Respeto tu decisión. No la comparto.', 'Dos comidas con verdura. Yo me como la parte de la salchicha.'] },
+  { id: 'agua', area: 'cuerpo', nombre: 'Beber 2 litros de agua', minima: 'Un vaso al levantarme',
+    reacciones: ['Agua. Mantente lejos de mi hoguera, pero bien hecho.'] },
+  // Mente · Tofu
+  { id: 'leer', area: 'mente', nombre: 'Leer 15 páginas', minima: 'Leer 1 página',
+    reacciones: ['Quince páginas. Yo llevo tres horas con la portada.', 'Has leído. El brote se ha enterado antes que yo.'] },
+  { id: 'idioma', area: 'mente', nombre: 'Una lección de idioma', minima: 'Aprender 5 palabras',
+    reacciones: ['Otro idioma. Así podrás no hablar en dos.', 'Una lección. Correcto. En cualquier idioma.'] },
+  { id: 'concentrado', area: 'mente', nombre: 'Trabajar 25 minutos sin distracciones', minima: '10 minutos sin el móvil',
+    reacciones: ['Veinticinco minutos sin mirar el móvil. Lo anoto. Con asombro contenido.'] },
+  { id: 'curso', area: 'mente', nombre: 'Un curso 20 minutos', minima: 'Un vídeo que me enseñe algo',
+    reacciones: ['Has aprendido algo. No sé qué. Tú tampoco, todavía. Funciona así.'] },
+  { id: 'instrumento', area: 'mente', nombre: 'Tocar un instrumento 15 minutos', minima: 'Tocar una canción',
+    reacciones: ['Música. El brote ha llevado el ritmo. Yo no.'] },
+  { id: 'crear', area: 'mente', nombre: 'Escribir o dibujar 15 minutos', minima: 'Un boceto rápido',
+    reacciones: ['Has creado algo. No hace falta que me lo enseñes. Pero puedes.'] },
+  { id: 'podcast', area: 'mente', nombre: 'Escuchar un audiolibro 30 minutos', minima: 'Escuchar 10 minutos',
+    reacciones: ['Un libro con voz. Es leer con los ojos cerrados. Aprobado.'] },
+  // Calma · Bruma
+  { id: 'diario', area: 'calma', nombre: 'Escribir en mi diario', minima: 'Una frase en el diario',
+    reacciones: ['Has escrito en tu diario. No lo leeré. Lo intuiré.', 'Un día menos sin contarlo. Me gusta.'] },
+  { id: 'meditar', area: 'calma', nombre: 'Meditar 10 minutos', minima: 'Tres respiraciones lentas',
+    reacciones: ['Diez minutos sin hacer nada a propósito. Es más difícil de lo que parece.'] },
+  { id: 'paseo', area: 'calma', nombre: 'Pasear 20 minutos sin móvil', minima: 'Cinco minutos fuera sin móvil',
+    reacciones: ['Un paseo sin pantalla. El mundo seguía ahí. Lo sé, me sorprende siempre.'] },
+  { id: 'pantallas', area: 'calma', nombre: 'Sin pantallas la última hora', minima: 'Sin pantallas el último cuarto de hora',
+    reacciones: ['Una hora sin pantalla antes de dormir. La luna te lo agradece. Yo también.'] },
+  { id: 'aire', area: 'calma', nombre: 'Media hora al aire libre', minima: 'Cinco minutos mirando el cielo',
+    reacciones: ['Aire libre. Ahí fuera hay nubes como yo. Más grandes. Menos interesantes.'] },
+  { id: 'aficion', area: 'calma', nombre: 'Una afición tranquila 20 minutos', minima: 'Cinco minutos de algo que me guste',
+    reacciones: ['Algo que te gusta, sin prisa. Debería ser obligatorio. No lo es. Por eso vale.'] },
+  // Vínculos · Madeja
+  { id: 'padres', area: 'vinculos', nombre: 'Escribir a mis padres', minima: 'Un audio corto',
+    reacciones: ['¡Has escrito a tus padres! ¿Qué te han contestado? Cuéntamelo todo.', 'Tus padres ya saben que existes. Buen trabajo.'] },
+  { id: 'amigo', area: 'vinculos', nombre: 'Llamar a un amigo', minima: 'Un mensaje a un amigo',
+    reacciones: ['¡Una llamada! De voz. Como en las películas antiguas.'] },
+  { id: 'quedar', area: 'vinculos', nombre: 'Quedar con alguien', minima: 'Proponer un plan',
+    reacciones: ['¿Has quedado? ¿Con quién? No, da igual. Bueno, no da igual.'] },
+  { id: 'cena', area: 'vinculos', nombre: 'Cenar sin móviles', minima: 'Un rato de charla sin móvil',
+    reacciones: ['Una cena sin móviles. Habéis tenido que miraros. Valiente.'] },
+  { id: 'detalle', area: 'vinculos', nombre: 'Tener un detalle con alguien', minima: 'Un mensaje bonito',
+    reacciones: ['Un detalle. Pequeño, seguro. Los pequeños son los que se recuerdan.'] },
+  { id: 'gracias', area: 'vinculos', nombre: 'Dar las gracias a alguien', minima: 'Un «gracias» por mensaje',
+    reacciones: ['Has dado las gracias. Alguien hoy está un poco mejor. Y no sabe por qué.'] },
+  // Orden · Tuerca
+  { id: 'ordenar', area: 'orden', nombre: 'Ordenar 15 minutos', minima: 'Ordenar una balda',
+    reacciones: ['Quince minutos ordenando. He abierto un expediente de felicitación.', 'Orden. Mis tornillos te aplauden. En silencio, por orden de tamaño.'] },
+  { id: 'gestion', area: 'orden', nombre: 'Hacer una gestión pendiente', minima: 'Abrir el sobre que llevo días evitando',
+    reacciones: ['Gestión hecha. La archivo en RESUELTOS. Es una carpeta nueva. Está casi vacía.'] },
+  { id: 'gastos', area: 'orden', nombre: 'Revisar gastos 10 minutos', minima: 'Mirar el saldo sin miedo',
+    reacciones: ['Gastos revisados. He encontrado un café de 2019 sin justificar.', 'Cuentas al día. Me tiemblan los engranajes de la emoción.'] },
+  { id: 'planificar', area: 'orden', nombre: 'Planificar mañana', minima: 'Apuntar tres cosas',
+    reacciones: ['Mañana planificado. Ahora solo falta que mañana colabore.'] },
+  { id: 'cocina', area: 'orden', nombre: 'Dejar la cocina recogida', minima: 'Fregar lo de hoy',
+    reacciones: ['Cocina recogida. Mañana tu yo del desayuno te lo agradecerá.'] },
+  { id: 'correo', area: 'orden', nombre: 'Dejar el correo a cero', minima: 'Borrar 20 correos',
+    reacciones: ['Bandeja de entrada a cero. Es lo más bonito que he visto. Después de un tornillo nuevo.'] },
 ]
+
+/** Las que vienen marcadas al empezar (se pueden cambiar). */
+export const HAZANAS_INICIALES = ['pasos', 'leer', 'padres', 'diario']
+
+/** Equivalencias de las acciones antiguas (genéricas) con las hazañas nuevas, para las partidas de antes. */
+export const EQUIVALENCIAS_ANTIGUAS: Record<string, string> = {
+  andar: 'pasos', comer: 'verdura', ejercicio: 'fuerza', aprender: 'curso', concentrarme: 'concentrado',
+  sinmovil: 'pantallas', naturaleza: 'aire', respirar: 'meditar', nadahacer: 'aficion', llamar: 'amigo',
+  pareja: 'cena', mensaje: 'detalle', pendiente: 'gestion', papeleo: 'gestion', cuentas: 'gastos',
+}

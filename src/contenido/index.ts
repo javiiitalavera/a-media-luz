@@ -1,7 +1,7 @@
 export * from './tipos'
 export { AREAS, ORDEN_AREAS, RITMOS } from './areas'
 export { COMPANEROS, ORDEN_COMPANEROS } from './companeros'
-export { ACCIONES } from './acciones'
+export { ACCIONES, EQUIVALENCIAS_ANTIGUAS, HAZANAS_INICIALES, type HazanaCatalogo } from './acciones'
 export { COLECCION } from './coleccion'
 export { FRASES, type TipoFrase } from './frases'
 export { UI } from './ui'

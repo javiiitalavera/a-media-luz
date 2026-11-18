@@ -1,6 +1,6 @@
 // Hacer una ofrenda: un toque → reacción del compañero que toca, crecimiento o arreglo,
 // a veces una sorpresa, y la llegada de compañeros o premios semanales cuando corresponde.
-import { AREAS, COLECCION, COMPANEROS, FRASES, type AreaId, type CompaneroId, type ObjetoColeccion, type TipoFrase } from '../contenido'
+import { ACCIONES, AREAS, COLECCION, COMPANEROS, FRASES, type AreaId, type CompaneroId, type ObjetoColeccion, type TipoFrase } from '../contenido'
 import { elegir, type Azar } from './azar'
 import { dia } from './fechas'
 import { momentoDelDia } from './momento'
@@ -45,6 +45,11 @@ export function elegirFrase(
   }
 }
 
+function reaccionPropia(p: Partida, companero: CompaneroId, lista: string[], azar: Azar): { frase: Frase; recientes: string[] } {
+  const texto = elegir(lista, azar)!
+  return { frase: { companero, tipo: 'ofrenda', texto }, recientes: [...p.frasesRecientes.filter((t) => t !== texto), texto].slice(-RECIENTES) }
+}
+
 export function hacerOfrenda(p: Partida, accionId: string, ahora: Date, azar: Azar, id: string): ResultadoOfrenda {
   const accion = p.acciones.find((a) => a.id === accionId)
   if (!accion) throw new Error(`Acción desconocida: ${accionId}`)
@@ -73,7 +78,11 @@ export function hacerOfrenda(p: Partida, accionId: string, ahora: Date, azar: Az
     : !cuenta ? 'tope'
     : ofrenda.diaMalo ? 'diaMalo'
     : habla === AREAS[area].companero ? 'ofrenda' : 'otraArea'
-  const r = elegirFrase(nueva, habla, tipo, azar)
+  // Si es una de tus hazañas y la reconoce su vecino, la comenta con su frase propia.
+  // Cuando ya las ha dicho todas hace poco, vuelve a sus frases de siempre.
+  const propias = tipo === 'ofrenda' && accion.habitual !== false
+    ? (ACCIONES.find((c) => c.id === accion.id)?.reacciones ?? []).filter((t) => !nueva.frasesRecientes.includes(t)) : []
+  const r = propias.length ? reaccionPropia(nueva, habla, propias, azar) : elegirFrase(nueva, habla, tipo, azar)
   nueva = { ...nueva, frasesRecientes: r.recientes }
 
   // Sorpresa: 15 % tras una ofrenda que cuenta, una al día como mucho, si el rincón está bien.

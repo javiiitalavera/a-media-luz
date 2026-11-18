@@ -191,6 +191,12 @@ export const RECETAS = {
   rescate: () => ((c: BaseAudioContext, d: AudioNode, t: number) => { gorjeo(c, d, t, 220, 660, 0.6, 0.05); [69, 76, 81].forEach((n, i) => campana(c, d, n, t + 0.4 + i * 0.1, 0.07, 2.4)) }),
   /** Elegir un encargo o empezar. */
   elegir: () => ((c: BaseAudioContext, d: AudioNode, t: number) => { campana(c, d, 79, t, 0.07); campana(c, d, 84, t + 0.12, 0.07) }),
+  /** Tachar una hazaña: rayita de lápiz y una campanita limpia. */
+  tachar: () => ((c: BaseAudioContext, d: AudioNode, t: number) => {
+    ruido(c, d, t, 0.16, 2600, 0.07, 'bandpass', 5200)
+    campana(c, d, 84, t + 0.14, 0.08, 1.2)
+    campana(c, d, 91, t + 0.24, 0.06, 1.4)
+  }),
   /** Construir algo: golpes de martillo y campanita. */
   construir: () => ((c: BaseAudioContext, d: AudioNode, t: number) => {
     ;[0, 0.16, 0.32].forEach((x, i) => madera(c, d, t + x, 340 + i * 40, 0.14))

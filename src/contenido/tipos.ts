@@ -24,12 +24,16 @@ export interface Companero {
   presentacion: string
 }
 
+/** Una hazaña: algo concreto que se hace (o no) en el día. */
 export interface Accion {
   id: string
   area: AreaId
+  /** Con su meta: «Andar 8000 pasos». La meta la ajusta cada uno. */
   nombre: string
-  /** Versión mínima para el modo día malo. Cuenta igual. */
-  minima: string
+  /** Versión mínima para el modo día malo (opcional). Cuenta igual. */
+  minima?: string
+  /** false: no está en «Mis hazañas»; solo se apuntó alguna vez desde «Algo más». */
+  habitual?: boolean
 }
 
 export interface ObjetoColeccion {

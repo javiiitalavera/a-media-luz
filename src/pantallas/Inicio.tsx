@@ -1,6 +1,7 @@
-// Inicio (solo la primera vez): llega el primer huevo y se marcan las acciones habituales.
+// Inicio (solo la primera vez): llega el primer huevo y se eligen las hazañas de cada día.
 import { useEffect, useState } from 'react'
-import { ACCIONES, AREAS, ORDEN_AREAS, UI, type CompaneroId } from '../contenido'
+import { ACCIONES, AREAS, HAZANAS_INICIALES, ORDEN_AREAS, UI, type CompaneroId } from '../contenido'
+import { IconoArea } from '../componentes/IconoArea'
 import { rutaArte } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 import { BotonPrincipal, Pantalla } from '../componentes/comunes'
@@ -11,7 +12,7 @@ const PRIMERO: CompaneroId = 'nox'
 export function Inicio() {
   const empezar = useJuego((s) => s.empezar)
   const [paso, setPaso] = useState<1 | 2>(1)
-  const [habituales, setHabituales] = useState<string[]>([])
+  const [habituales, setHabituales] = useState<string[]>(HAZANAS_INICIALES)
   useEffect(() => { window.scrollTo(0, 0) }, [paso])
   const alternar = (id: string) => setHabituales((h) => (h.includes(id) ? h.filter((x) => x !== id) : [...h, id]))
 
@@ -33,7 +34,7 @@ export function Inicio() {
           <div className="mt-5 flex flex-col gap-5">
             {ORDEN_AREAS.map((area) => (
               <section key={area}>
-                <h2 className="mb-2 px-1 text-[15px] font-bold">{AREAS[area].nombre}</h2>
+                <h2 className="mb-2 flex items-center gap-1.5 px-1 text-[15px] font-bold"><IconoArea area={area} pequeno />{AREAS[area].nombre}</h2>
                 <div className="flex flex-wrap gap-2">
                   {ACCIONES.filter((a) => a.area === area).map((a) => {
                     const activa = habituales.includes(a.id)
