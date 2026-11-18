@@ -120,20 +120,19 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
       </div>
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <div className="flex items-center gap-2">
-          <h1 className="sr-only">{UI.barrio.titulo}</h1>
-          <button type="button" onClick={onNovedades} aria-label={UI.barrio.abrirNovedades(sinLeer)}
-            className="pointer-events-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-tarjeta/85 shadow-sm backdrop-blur-sm">
-            {sinLeer > 0 ? <Aviso tipo="sobre" tam={32} numero={sinLeer} /> : (
-              <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 text-texto-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 7.5h15v10h-15z M4.8 7.8 12 13l7.2-5.2" /></svg>
-            )}
-          </button>
-        </div>
-        {onVolver && (
+        <h1 className="sr-only">{UI.barrio.titulo}</h1>
+        {/* A la izquierda, volver a casa (si solo hay un vecino); el sobre, a la derecha para no tapar el farolillo. */}
+        {onVolver ? (
           <button type="button" onClick={onVolver} className="pointer-events-auto min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
             ‹ {UI.casa.alaCasa}
           </button>
-        )}
+        ) : <span />}
+        <button type="button" onClick={onNovedades} aria-label={UI.barrio.abrirNovedades(sinLeer)}
+          className="pointer-events-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-tarjeta/85 shadow-sm backdrop-blur-sm">
+          {sinLeer > 0 ? <Aviso tipo="sobre" tam={32} numero={sinLeer} /> : (
+            <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 text-texto-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 7.5h15v10h-15z M4.8 7.8 12 13l7.2-5.2" /></svg>
+          )}
+        </button>
       </header>
 
       {nota && (
