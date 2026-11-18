@@ -40,6 +40,7 @@ const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 31, y: 71, ancho: 13 }
 const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
   nox: { x: 82, y: 56, ancho: 22 },
   tuerca: { x: 75, y: 59, ancho: 21 },
+  tofu: { x: 76, y: 62, ancho: 20 },
 }
 
 export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetalle }: {
@@ -247,7 +248,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
         )}
         {otroHuevo && (
           <button type="button" aria-label={UI.casa.huevoEnPuerta} onClick={(e) => { e.stopPropagation(); setPreguntaHuevo(true) }}
-            className="absolute z-10" style={{ left: '86%', top: '72%', width: '11%', transform: 'translate(-50%, -100%)' }}>
+            className="absolute z-10" style={{ left: '81%', top: '71%', width: '12%', transform: 'translate(-50%, -100%)' }}>
             <img src={rutaArte(`huevo/${otroHuevo}/cerrado`)} alt="" draggable={false} className="anim-mecer block w-full" />
           </button>
         )}

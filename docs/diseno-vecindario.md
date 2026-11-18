@@ -175,3 +175,12 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 **Vida diaria:** la mitad de los días pasa una pequeña cosa en cada casa (micro), y tras el puente a veces el otro vecino está de visita. Todo sale de una semilla del día: no cambia al recargar.
 
 **Modo de prueba** (Ajustes): «Adelantar un día» y «Volver a hoy».
+
+### Tofu, el tercer vecino (18/11/2026, rama `dev/tofu`)
+- **Llega** cuando Tuerca es joven y tiene un proyecto: su huevo aparece en la puerta del taller. Vive en un invernadero-biblioteca. El día que llega no hay micro en su casa.
+- **Proyectos:** pila de libros (3 semillas; abre «el préstamo»), pizarra (4 semillas + 2 tornillos; abre «la fórmula») y maceta grande (5 semillas + 2 rocío; con la aspiradora, abre «la planta»).
+- **Historias:**
+  - *El préstamo* (Tofu y Nox): Tofu le presta «Paciencia» a Nox; aparece chamuscado junto a la hoguera; tú decides cómo paga Nox (leer otro libro entero o salchichas). El libro chamuscado acaba en el estante de Tofu.
+  - *La fórmula* (Tofu y Tuerca): Tuerca borra la pizarra para archivar la fórmula; Tofu escribe otra. Queda un archivador en el taller.
+  - *La planta* (Tofu y Tuerca): la planta se traga a Gregorio dos días, Tuerca la interroga con una lupa y lo devuelve limpio.
+- **Micros:** Tofu atascado en una página, la planta que «saluda», Tuerca corrigiendo la pizarra, Tofu «meditando», Tofu mirando la hoguera de Nox hasta ponerlo nervioso.

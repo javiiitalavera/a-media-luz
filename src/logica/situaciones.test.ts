@@ -12,6 +12,11 @@ function barrio(construido: string[]): Partida {
   const ofrendas = Array.from({ length: 6 }, (_, i) => ({ id: 'n' + i, accionId: a.id, area: a.area, fecha: en('2026-01-06', 9 + i).toISOString(), diaMalo: false }))
   return { ...p, ofrendas, construcciones: construido.map((objetoId) => ({ objetoId, fecha: en('2026-01-06').toISOString() })) }
 }
+/** Igual, con Tofu nacido también. */
+function conTofu(construido: string[]): Partida {
+  const p = barrio(construido)
+  return { ...p, meses: [...p.meses!, { companero: 'tofu', inicio: en('2026-01-06', 8).toISOString() }] }
+}
 const dia = (n: number, h = 10) => en(sumarDias('2026-01-07', n), h)
 
 describe('situaciones', () => {
@@ -90,5 +95,38 @@ describe('situaciones', () => {
     const micros = Array.from({ length: 30 }, (_, i) => microDeHoy(p, 'nox', dia(i))).filter(Boolean)
     expect(micros.length).toBeGreaterThan(0)
     expect(micros.every((m) => m!.casa === 'nox' && m!.requiere.every((r) => ['hoguera', 'tuerca', 'nox'].includes(r) || r === ''))).toBe(true)
+  })
+
+  it('Tofu: el préstamo quema un libro en casa de Nox y acaba según decidas', () => {
+    expect(avanzar(barrio(['libros']), dia(0)).nuevas).toHaveLength(0) // sin Tofu, nada
+    let p = avanzar(conTofu(['libros']), dia(0)).partida
+    p = avanzar(p, dia(1)).partida
+    expect(huellasEn(p, 'nox').map((h) => h.id)).toEqual(['libro-hoguera'])
+    p = avanzar(p, dia(2)).partida
+    expect(decisionPendiente(p, 'tofu')?.situacion).toBe('prestamo')
+    p = avanzar(decidir(p, 'prestamo', 'salchichas')!, dia(3)).partida
+    expect(p.noticias!.at(-1)!.texto).toMatch(/salchichas/)
+    expect(huellasEn(p, 'nox')).toHaveLength(0)
+    expect(huellasEn(p, 'tofu').map((h) => h.id)).toEqual(['libro-estante'])
+  })
+
+  it('Tofu: la planta se traga a Gregorio un par de días y lo devuelve', () => {
+    let p = avanzar(conTofu(['maceta', 'aspiradora']), dia(0)).partida
+    // Primero va Gregorio (está antes en la lista); se termina y luego llega la planta.
+    p = decidir(avanzar(avanzar(p, dia(1)).partida, dia(2)).partida, 'gregorio', 'nox')!
+    p = avanzar(p, dia(3)).partida
+    expect(dondeGregorio(p, dia(3))).toBe('nox')
+    p = avanzar(avanzar(p, dia(4)).partida, dia(5)).partida
+    expect(p.situaciones!.planta.fase).toBe(1)
+    expect(dondeGregorio(p, dia(5))).toBeNull()
+    p = avanzar(avanzar(p, dia(6)).partida, dia(7)).partida
+    expect(p.situaciones!.planta.fin).toBe(true)
+    expect(dondeGregorio(p, dia(7))).toBe('nox')
+  })
+
+  it('los micros que piden a Tofu solo salen si ha nacido', () => {
+    const casas = (p: Partida) => Array.from({ length: 40 }, (_, i) => microDeHoy(p, 'nox', dia(i))?.visita).filter(Boolean)
+    expect(casas(barrio(['hoguera']))).not.toContain('tofu')
+    expect(casas(conTofu(['hoguera']))).toContain('tofu')
   })
 })
