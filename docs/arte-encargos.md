@@ -26,7 +26,9 @@
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
 | `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno |
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca, sus 6 objetos y sus 3 premios de retos |
-| `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los retos de Nox |
+| `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los antiguos retos de Nox (sin uso de momento) |
+| `public/arte/barrio/mapa.webp` | Mapa del barrio: 5 parcelas, plaza y arroyo |
+| `public/arte/huellas/*.webp` | Huellas de las situaciones: cartel en blanco, cartel chamuscado, extintor, expediente y puente (el texto de los carteles lo pone la app) |
 | `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
 | `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
 | `public/iconos/*.png` | Icono de la app (iPhone 180, Android 192/512, favicon 64). Esquinas rellenadas prolongando el fondo |

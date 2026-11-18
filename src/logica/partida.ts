@@ -1,5 +1,6 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
+import type { Lugar } from '../contenido/situaciones'
 import { ACCIONES, AREAS, COMPANEROS, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
 
 export interface Ofrenda {
@@ -32,8 +33,27 @@ export interface Partida {
   construcciones?: Construccion[]
   /** Última etapa de crecimiento que se ha visto de cada compañero (para celebrarla una vez). */
   etapasVistas?: Partial<Record<CompaneroId, 0 | 1 | 2>>
-  /** Un compañero al mes (se añadió después: si falta, hay un mes implícito con el principal). */
+  /** Los vecinos, en orden de llegada (se guardan como «meses» por historia: si falta, el principal ya vivía en casa). */
   meses?: Mes[]
+  /** Cómo va cada situación del vecindario. */
+  situaciones?: Record<string, EstadoSituacion>
+  /** Novedades del barrio que aún no se han visto («Mientras no estabas…»). */
+  noticias?: NoticiaBarrio[]
+}
+
+export interface EstadoSituacion {
+  /** Última fase que ha ocurrido. */
+  fase: number
+  /** Día (AAAA-MM-DD) en que ocurrió. */
+  dia: string
+  decision?: string
+  fin?: boolean
+}
+
+export interface NoticiaBarrio {
+  texto: string
+  lugar: Lugar
+  fecha: string
 }
 
 export interface Construccion {

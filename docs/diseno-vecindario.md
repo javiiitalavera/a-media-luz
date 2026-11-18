@@ -1,6 +1,6 @@
-# A media luz — El vecindario (diseño, borrador 1 para Javi)
+# A media luz — El vecindario
 
-17/11/2026. Sustituye a «un compañero al mes» (`docs/diseno-meses.md`). Siguen valiendo las reglas de base de `docs/diseno-juego.md`: hazañas, tope de 3 al día por área, modo día malo y consecuencias sin culpa.
+17/11/2026 (borrador 1). **18/11/2026: Javi aprueba el «Diseño funcional v1.0» con las 4 correcciones de Claude; lo construido está en el apartado 14, que manda sobre lo anterior si se contradicen.** Sustituye a «un compañero al mes» (`docs/diseno-meses.md`). Siguen valiendo las reglas de base de `docs/diseno-juego.md`: hazañas, tope de 3 al día por área, modo día malo y consecuencias sin culpa.
 
 ## 1. Qué es
 Un vecindario de cinco criaturas excéntricas que conviven, discuten y hacen estupideces. Lo que haces en tu vida real les da materiales para construir. Lo que construyen provoca situaciones, y las situaciones dejan huella en el escenario.
@@ -153,3 +153,25 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 2. **Los hitos para crecer:** 15 + 1 proyecto para joven y 40 + 3 para adulto. ¿Te parecen razonables como punto de partida?
 3. **¿Una fase por visita, con al menos 4 horas entre fases?** ¿O prefieres una fase al día?
 4. **¿Te vale el prototipo así** (Nox, Tuerca, 6 situaciones y el puente) antes de seguir?
+
+## 14. Prototipo construido (rama `dev/prototipo`, 18/11/2026)
+**Decidido por Javi** (diseño v1.0 + correcciones de Claude):
+- **Bolsa común** de materiales. La partida antigua conserva lo construido y la bolsa nunca baja de 0.
+- **Crecer:** días activos con hazañas de su área **más** proyectos personales. Joven: umbral de días y 1 proyecto. Adulto: umbral mayor y 3 proyectos. Umbrales en `src/logica/etapas.ts`.
+- **El segundo huevo es siempre Tuerca.** Aparece en la puerta cuando el último vecino es joven y tiene un proyecto; se incuba solo si tocas «Que pase».
+- **El descuido solo afecta al último en llegar.** Los ritmos de Ajustes son los valores por defecto.
+- **Una fase de historia al día**, como mucho; primero se termina la que está en marcha, y si espera una decisión tuya, espera.
+- **Pantalla de inicio:** la casa con un vecino; el barrio con dos o más.
+
+**Proyectos:**
+| Vecino | 1 | 2 | 3 |
+|---|---|---|---|
+| Nox | Hoguera (abre «la normativa») | Banco (Tuerca viene a sentarse) | Horno (micro: sale «pan») |
+| Tuerca | Caja de herramientas | Tablón (abre «el tablón») | Aspiradora (abre «Gregorio») |
+| Barrio | Puente (abre «el puente» y las visitas); hace falta que los dos tengan al menos un proyecto | | |
+
+**Historias:** la normativa (cartel → cartel chamuscado, extintor y expediente), el tablón (expediente interno), Gregorio (la aspiradora se muda a casa de Nox; decides custodia compartida —alterna de casa cada día— o que se quede con Nox) y el puente (carteles de normas y de peaje). Al terminar, pasan a las **Crónicas** del Álbum.
+
+**Vida diaria:** la mitad de los días pasa una pequeña cosa en cada casa (micro), y tras el puente a veces el otro vecino está de visita. Todo sale de una semilla del día: no cambia al recargar.
+
+**Modo de prueba** (Ajustes): «Adelantar un día» y «Volver a hoy».

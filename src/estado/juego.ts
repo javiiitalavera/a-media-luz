@@ -1,16 +1,17 @@
 // Estado guardado en el móvil (localStorage) con Zustand.
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ORDEN_COMPANEROS, type CompaneroId } from '../contenido'
+import type { CompaneroId } from '../contenido'
 import { crearPartida, type Partida } from '../logica/partida'
 import { cambiarDiaMalo, deshacerOfrenda, fraseAlTocar, hacerOfrenda, type Frase, type ResultadoOfrenda } from '../logica/ofrendas'
 import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
+import { ahora } from '../logica/reloj'
+import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
+import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
-import { empezarMesSiguiente, marcarPresentado, mesActual, type Reto } from '../logica/meses'
-import { elegirRetos, premioDeReto, progresoRetos, usarComodin } from '../logica/retos'
-import { tieneMes } from '../arte/manifiesto'
+import { marcarPresentado } from '../logica/meses'
 import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
@@ -45,14 +46,16 @@ interface Juego {
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
   verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
-  /** Lo que suelta el compañero del mes al elegir un reto (para picarte). */
-  picar: (tipo: 'retoSuave' | 'retoNormal' | 'retoValiente') => Frase | null
-  /** Fija los retos del mes; devuelve si se pudo (y deja su frase para casa). */
-  fijarRetos: (retos: Reto[]) => boolean
-  /** Cambia un reto con el comodín; devuelve su frase (o null si no se pudo). */
-  gastarComodin: (i: number, reto: Reto) => Frase | null
-  /** Tras el informe: cierra el mes y llega el huevo siguiente (de los que tienen su arte). */
-  pasarMes: () => boolean
+  /** Avanza el barrio (como mucho una fase de historia al día). */
+  avanzarBarrio: () => void
+  /** Decide en una situación. Devuelve la respuesta que se cuenta en pantalla. */
+  decidir: (situacion: string, opcion: string, respuesta: string) => void
+  /** Incuba el huevo que espera en la puerta. */
+  incubar: (c: CompaneroId) => void
+  /** Marca como vistas las novedades del barrio. */
+  verNoticias: () => void
+  /** Construye un proyecto del barrio. */
+  construirBarrio: (id: string) => boolean
   /** Ya se ha visto nacer y presentarse al compañero del mes. */
   presentar: () => void
   ajustar: (cambio: (p: Partida) => Partida) => void
@@ -64,32 +67,19 @@ export const useJuego = create<Juego>()(
   persist(
     (set, get) => ({
       partida: null,
-      empezar: (c, habituales) => set({ partida: crearPartida(c, new Date(), habituales, true), recientes: []}),
+      empezar: (c, habituales) => set({ partida: crearPartida(c, ahora(), habituales, true), recientes: []}),
       recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida
         if (!p) return null
-        const ahora = new Date()
-        const resultado = hacerOfrenda(p, accionId, ahora, azarReal, nuevoId())
-        // ¿Ha cumplido un reto con esta hazaña? Lo celebra en casa, con su premio.
-        const mes = mesActual(p)
-        const antes = progresoRetos(p, mes, ahora)
-        const despues = progresoRetos(resultado.partida, mesActual(resultado.partida), ahora)
-        const cumplido = despues.findIndex((r, i) => r.cumplido && !antes[i]?.cumplido)
-        let partida = resultado.partida
-        let frase = resultado.frase
+        const momento = ahora()
+        const resultado = hacerOfrenda(p, accionId, momento, azarReal, nuevoId())
         const premios = [resultado.sorpresa, resultado.premio].filter((x) => x !== null).map((x) => x!.nombre)
-        if (cumplido >= 0) {
-          const r = elegirFrase(partida, mes.companero, 'retoCumplido', azarReal)
-          if (r.frase) { frase = r.frase; partida = { ...partida, frasesRecientes: r.recientes } }
-          const premio = premioDeReto(mes.companero, cumplido)
-          if (premio) premios.push(premio.nombre)
-        }
         set({
-          partida,
-          recientes: [...get().recientes, { resultado, hasta: ahora.getTime() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
+          partida: resultado.partida,
+          recientes: [...get().recientes, { resultado, hasta: Date.now() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
           porContar: {
-            frase: frase ?? get().porContar?.frase ?? null,
+            frase: resultado.frase ?? get().porContar?.frase ?? null,
             hallazgos: [...(get().porContar?.hallazgos ?? []), ...premios],
           },
         })
@@ -108,7 +98,7 @@ export const useJuego = create<Juego>()(
       quitarUna: (accionId) => {
         const p = get().partida
         if (!p) return
-        const hoy = dia(new Date().toISOString())
+        const hoy = dia(ahora().toISOString())
         const ultima = [...p.ofrendas].reverse().find((o) => o.accionId === accionId && dia(o.fecha) === hoy)
         if (ultima) set({ partida: deshacerOfrenda(p, ultima.id), recientes: get().recientes.filter((r) => r.resultado.ofrenda.id !== ultima.id), porContar: null })
       },
@@ -120,18 +110,18 @@ export const useJuego = create<Juego>()(
       },
       ponerDiaMalo: (v) => {
         const p = get().partida
-        if (p) set({ partida: cambiarDiaMalo(p, v, new Date()) })
+        if (p) set({ partida: cambiarDiaMalo(p, v, ahora()) })
       },
       tocar: (c, soloSaludo) => {
         const p = get().partida
         if (!p) return null
-        const r = fraseAlTocar(p, c, new Date(), azarReal, soloSaludo)
+        const r = fraseAlTocar(p, c, ahora(), azarReal, soloSaludo)
         set({ partida: { ...p, frasesRecientes: r.recientes } })
         return r.frase
       },
       construir: (objetoId, c) => {
         const p = get().partida
-        const hecha = p && construirEnCasa(p, objetoId, new Date())
+        const hecha = p && construirEnCasa(p, objetoId, ahora())
         if (!hecha) return { ok: false, frase: null }
         const r = elegirFrase(hecha, c, 'construir', azarReal)
         set({ partida: { ...hecha, frasesRecientes: r.recientes } })
@@ -145,39 +135,34 @@ export const useJuego = create<Juego>()(
         set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
         return r?.frase ?? null
       },
-      picar: (tipo) => {
+      avanzarBarrio: () => {
         const p = get().partida
-        if (!p) return null
-        const r = elegirFrase(p, mesActual(p).companero, tipo, azarReal)
-        set({ partida: { ...p, frasesRecientes: r.recientes } })
-        return r.frase
+        if (!p) return
+        const r = avanzar(p, ahora())
+        if (r.nuevas.length) set({ partida: r.partida })
       },
-      fijarRetos: (retos) => {
+      decidir: (situacion, opcion) => {
         const p = get().partida
-        const hecha = p && elegirRetos(p, retos)
-        if (!hecha) return false
-        const r = elegirFrase(hecha, mesActual(hecha).companero, 'retosListos', azarReal)
-        set({ partida: { ...hecha, frasesRecientes: r.recientes }, porContar: { frase: r.frase, hallazgos: [] } })
-        return true
+        const hecha = p && decidirSituacion(p, situacion, opcion)
+        if (hecha) set({ partida: hecha })
       },
-      gastarComodin: (i, reto) => {
+      incubar: (c) => {
         const p = get().partida
-        const hecha = p && usarComodin(p, i, reto)
-        if (!hecha) return null
-        const r = elegirFrase(hecha, mesActual(hecha).companero, 'comodin', azarReal)
-        set({ partida: { ...hecha, frasesRecientes: r.recientes } })
-        return r.frase
+        if (p) set({ partida: incubarHuevo(p, c, ahora()), porContar: null })
       },
-      pasarMes: () => {
+      verNoticias: () => {
         const p = get().partida
-        const siguiente = p && empezarMesSiguiente(p, new Date(), azarReal, ORDEN_COMPANEROS.filter(tieneMes))
-        if (!siguiente) return false
-        set({ partida: siguiente, porContar: null, recientes: [] })
-        return true
+        if (p?.noticias?.length) set({ partida: { ...p, noticias: [] } })
+      },
+      construirBarrio: (id) => {
+        const p = get().partida
+        const hecha = p && construirEnCasa(p, id, ahora(), true)
+        if (hecha) set({ partida: hecha })
+        return Boolean(hecha)
       },
       presentar: () => {
         const p = get().partida
-        if (p) set({ partida: marcarPresentado(p, new Date()) })
+        if (p) set({ partida: marcarPresentado(p, ahora()) })
       },
       ajustar: (cambio) => {
         const p = get().partida

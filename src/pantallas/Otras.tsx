@@ -7,6 +7,8 @@ import { dia } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
 import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
+import { cronicas } from '../logica/situaciones'
+import { desfaseDias, ponerDesfase } from '../logica/reloj'
 import { BotonSecundario, HuecoArte, Pantalla, Tarjeta } from '../componentes/comunes'
 
 export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
@@ -15,6 +17,23 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   return (
     <Pantalla titulo={UI.album.titulo}>
       <div className="flex flex-col gap-5">
+        <section>
+          <h2 className="mb-2 px-1 text-[15px] font-bold">{UI.barrio.cronicas}</h2>
+          {cronicas(partida).length === 0 ? (
+            <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.barrio.sinCronicas}</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {cronicas(partida).map((c) => (
+                <details key={c.id} className="rounded-3xl bg-tarjeta px-4 py-3">
+                  <summary className="flex min-h-11 cursor-pointer items-center font-bold">{c.titulo}</summary>
+                  <ol className="mt-1 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug text-texto-2">
+                    {c.fases.map((f, i) => <li key={i}>{f}</li>)}
+                  </ol>
+                </details>
+              ))}
+            </div>
+          )}
+        </section>
         {ORDEN_AREAS.map((area) => (
           <section key={area}>
             <h2 className="mb-2 px-1 text-[15px] font-bold">{AREAS[area].rincon}</h2>
@@ -102,6 +121,16 @@ export function Ajustes({ partida }: { partida: Partida }) {
           <Confirmar aviso={UI.ajustes.importarAviso} accion={UI.ajustes.sustituir}
             onSi={() => { sustituir(pendiente); setPendiente(null); setMensaje(UI.ajustes.importado) }} onNo={() => setPendiente(null)} />
         )}
+      </Tarjeta>
+
+      <h2 className="mt-6 mb-1 px-1 font-bold">{UI.prueba.titulo}</h2>
+      <Tarjeta>
+        <p className="text-[13px] text-texto-3">{UI.prueba.explicacion}</p>
+        <p className="mt-1 text-[14px] font-semibold">{UI.prueba.desfase(desfaseDias())}</p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <BotonSecundario onClick={() => { ponerDesfase(desfaseDias() + 1); location.reload() }}>{UI.prueba.adelantar}</BotonSecundario>
+          <BotonSecundario onClick={() => { ponerDesfase(0); location.reload() }}>{UI.prueba.volver}</BotonSecundario>
+        </div>
       </Tarjeta>
 
       <div className="mt-8">
