@@ -3,7 +3,7 @@
 Juego móvil acogedor para adultos: pequeños compañeros (Nox, Tofu, Bruma, Madeja y Tuerca) que crecen y se alegran con las cosas buenas que el jugador hace en su vida real.
 
 ## Estado
-- **Rumbo (18/11/2026, prototipo en `dev/prototipo`): el vecindario** (`docs/diseno-vecindario.md`, versión aprobada: el diseño funcional v1.0 con las 4 correcciones de Claude). Vecinos para siempre, bolsa común de materiales, proyectos personales y del barrio, y situaciones (historias cortas de comedia que avanzan una fase al día y dejan huellas en el escenario). Sin retos, sin ciclo de 28 días, sin encargos diarios. `docs/diseno-meses.md` queda como histórico.
+- **Rumbo (18/11/2026, prototipo en `dev/prototipo`): el vecindario** (`docs/diseno-vecindario.md`, versión aprobada: el diseño funcional v1.0 con las 4 correcciones de Claude). Vecinos: Nox, Tuerca y Tofu. Vecinos para siempre, bolsa común de materiales, proyectos personales y del barrio, y situaciones (historias cortas de comedia que avanzan una fase al día y dejan huellas en el escenario). Sin retos, sin ciclo de 28 días, sin encargos diarios. `docs/diseno-meses.md` queda como histórico.
 - **Pestañas:** Inicio · Hazañas · Álbum · Ajustes. Inicio es la casa del vecino mientras solo hay uno y el barrio desde que hay dos. Al abrir sale «Mientras no estabas…» si ha pasado algo. Ajustes tiene un modo de prueba que adelanta el reloj.
 - **Método:** una pantalla terminada y bonita antes de pasar a la siguiente; nunca pantallas con huecos grises esperando arte.
 - **Reglas base aprobadas** en `docs/diseno-juego.md` (ofrendas, tope, día malo, consecuencias, metas). Lo nuevo de la casa está en su sección «Casa».

@@ -4,7 +4,7 @@ import { FRASES_VISITA, HUELLAS, MICROS, SITUACIONES, type Huella, type Lugar, t
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
-import { nacido, nacidos } from './etapas'
+import { nacido, nacidos, vecinoDe } from './etapas'
 import { dia, diasEntre } from './fechas'
 
 const estados = (p: Partida) => p.situaciones ?? {}
@@ -129,6 +129,9 @@ export function visitante(p: Partida, casa: CompaneroId, ahora: Date): Companero
 export function microDeHoy(p: Partida, casa: CompaneroId, ahora: Date): Micro | null {
   const hoy = dia(ahora.toISOString())
   if (semilla(`${hoy}|micro|${casa}`) % 2) return null
+  // El día que llega, bastante tiene con salir del huevo.
+  const v = vecinoDe(p, casa)
+  if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) return null
   const posibles = MICROS.filter((m) => m.casa === casa && m.requiere.every((r) =>
     r in COMPANEROS ? nacido(p, r as CompaneroId, ahora) : construido(p, r)))
   return posibles.length ? posibles[semilla(`${hoy}|cual|${casa}`) % posibles.length] : null

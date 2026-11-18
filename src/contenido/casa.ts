@@ -21,6 +21,8 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
   tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 68 }, anchos: [34, 40, 44],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
+  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 66 }, anchos: [32, 38, 44],
+    luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }] },
 }
 
 export interface Material {
@@ -81,11 +83,11 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
 
   // Taller de Tuerca: casi todo pide tornillos (Orden).
   { id: 'libros', companero: 'tofu', orden: 1, abre: 'Una biblioteca. Y préstamos, que es donde empiezan los problemas.', nombre: 'Pila de libros', descripcion: 'Los he leído todos. Algunos, dos veces. Ninguno me ha cambiado.',
-    coste: { mente: 3 }, sitio: { x: 24, y: 64, ancho: 18 }, proporcion: 1.04 },
+    coste: { mente: 3 }, sitio: { x: 27, y: 58, ancho: 14 }, proporcion: 1.04 },
   { id: 'pizarra', companero: 'tofu', orden: 2, abre: 'Ciencia. Y un problema administrativo.', nombre: 'Pizarra', descripcion: 'Para escribir cosas importantes. O fórmulas. A veces coinciden.',
-    coste: { mente: 4, orden: 2 }, sitio: { x: 76, y: 60, ancho: 20 }, proporcion: 0.99 },
+    coste: { mente: 4, orden: 2 }, sitio: { x: 72, y: 58, ancho: 19 }, proporcion: 0.99 },
   { id: 'maceta', companero: 'tofu', orden: 3, abre: 'Una planta con apetito.', nombre: 'Maceta grande', descripcion: 'Es una planta. Come poco. Casi siempre.',
-    coste: { mente: 5, calma: 2 }, sitio: { x: 80, y: 74, ancho: 20 }, proporcion: 0.95 },
+    coste: { mente: 5, calma: 2 }, sitio: { x: 21, y: 72, ancho: 20 }, proporcion: 0.95 },
   { id: 'caja', companero: 'tuerca', orden: 1, abre: 'Las primeras reparaciones del taller. Y las primeras búsquedas de herramientas.', nombre: 'Caja de herramientas', descripcion: 'Para arreglar cosas. Las tuyas no, que no tienen arreglo.',
     coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', orden: 3, abre: 'Una aspiradora con ideas propias.', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',

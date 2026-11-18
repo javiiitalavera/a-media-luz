@@ -177,7 +177,7 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 **Modo de prueba** (Ajustes): «Adelantar un día» y «Volver a hoy».
 
 ### Tofu, el tercer vecino (18/11/2026, rama `dev/tofu`)
-- **Llega** cuando Tuerca es joven y tiene un proyecto, como siempre; el arte está listo salvo su escenario (invernadero-biblioteca), que falta para que pueda llegar.
+- **Llega** cuando Tuerca es joven y tiene un proyecto: su huevo aparece en la puerta del taller. Vive en un invernadero-biblioteca. El día que llega no hay micro en su casa.
 - **Proyectos:** pila de libros (3 semillas; abre «el préstamo»), pizarra (4 semillas + 2 tornillos; abre «la fórmula») y maceta grande (5 semillas + 2 rocío; con la aspiradora, abre «la planta»).
 - **Historias:**
   - *El préstamo* (Tofu y Nox): Tofu le presta «Paciencia» a Nox; aparece chamuscado junto a la hoguera; tú decides cómo paga Nox (leer otro libro entero o salchichas). El libro chamuscado acaba en el estante de Tofu.

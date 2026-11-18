@@ -338,14 +338,14 @@ export const HUELLAS: Huella[] = [
     texto: 'NORMAS\nDEL PUENTE', toque: 'Son veintitrés normas. La primera es «leer las normas».' },
   { id: 'cartel-peaje', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 63, y: 54, ancho: 9 }, proporcion: 1.1,
     texto: 'PEAJE:\n1 SALCHICHA', toque: 'Nox cobra en especie. Nadie ha pagado todavía.' },
-  // Tofu (posiciones en su casa pendientes de su escenario).
+  // Tofu.
   { id: 'libro-hoguera', situacion: 'prestamo', desde: 1, hasta: 2, lugar: 'nox', arte: 'libro-quemado', sitio: { x: 30, y: 61, ancho: 9 }, proporcion: 1.12,
     toque: '«Paciencia», capítulo 1. Del resto quedan cenizas.' },
-  { id: 'libro-estante', situacion: 'prestamo', desde: 3, lugar: 'tofu', arte: 'libro-quemado', sitio: { x: 24, y: 58, ancho: 8 }, proporcion: 1.12,
+  { id: 'libro-estante', situacion: 'prestamo', desde: 3, lugar: 'tofu', arte: 'libro-quemado', sitio: { x: 23, y: 36.3, ancho: 7 }, proporcion: 1.12,
     toque: 'Tofu lo ha devuelto a su sitio. Dice que ahora tiene más carácter.' },
   { id: 'archivador-formula', situacion: 'pizarra', desde: 1, lugar: 'tuerca', arte: 'archivador', sitio: { x: 28, y: 44.4, ancho: 8 }, proporcion: 1.06,
     toque: 'Archivador «VARIOS – Fórmulas». Dentro hay una pizarra pequeña. Entera.' },
-  { id: 'lupa-planta', situacion: 'planta', desde: 2, hasta: 2, lugar: 'tofu', arte: 'lupa', sitio: { x: 72, y: 66, ancho: 9 }, proporcion: 1.03,
+  { id: 'lupa-planta', situacion: 'planta', desde: 2, hasta: 2, lugar: 'tofu', arte: 'lupa', sitio: { x: 35, y: 72, ancho: 8 }, proporcion: 1.03,
     toque: 'La lupa de Tuerca. Huele un poco a planta.' },
 ]
 

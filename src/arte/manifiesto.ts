@@ -39,7 +39,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente', 'libro-quemado', 'archivador', 'lupa'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
   'casita/nox': '/arte/casitas/nox.webp',
   'casita/tuerca': '/arte/casitas/tuerca.webp',
-  // Tofu: todo menos su casa (escenario pendiente). Sin fondo, aún no puede llegar (tieneMes).
+  'casa/tofu/fondo': '/arte/casa/tofu/fondo.webp',
   ...personaje('tofu'),
   ...objetos('tofu', ['libros', 'pizarra', 'maceta']),
   'huevo/tofu/cerrado': '/arte/huevos/tofu/cerrado.webp',

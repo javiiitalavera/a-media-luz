@@ -248,7 +248,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
         )}
         {otroHuevo && (
           <button type="button" aria-label={UI.casa.huevoEnPuerta} onClick={(e) => { e.stopPropagation(); setPreguntaHuevo(true) }}
-            className="absolute z-10" style={{ left: '86%', top: '72%', width: '11%', transform: 'translate(-50%, -100%)' }}>
+            className="absolute z-10" style={{ left: '81%', top: '71%', width: '12%', transform: 'translate(-50%, -100%)' }}>
             <img src={rutaArte(`huevo/${otroHuevo}/cerrado`)} alt="" draggable={false} className="anim-mecer block w-full" />
           </button>
         )}
