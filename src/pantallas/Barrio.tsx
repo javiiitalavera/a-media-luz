@@ -1,6 +1,7 @@
 // El barrio (docs/diseno-vecindario.md): el mapa con la casita de cada vecino en su parcela, lo construido
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
-// El mapa ocupa todo el ancho; lo que sobra arriba y abajo se rellena con el propio mapa difuminado.
+// El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
+// los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
 import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, MATERIALES, ORDEN_AREAS, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
@@ -28,10 +29,17 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
-  // Todo el ancho; centrado en lo que queda libre encima de la barra de navegación.
-  const ancho = t.w
+  // Cubre la pantalla entera; en móviles (más altos que el mapa) se ajusta al alto y se centra.
+  const ancho = Math.max(t.w, t.h * PROPORCION_BARRIO)
   const alto = ancho / PROPORCION_BARRIO
-  const arriba = Math.max(0, (t.h - 78 - alto) / 2)
+  const arriba = (t.h - alto) / 2
+  const izquierda = (t.w - ancho) / 2
+  /** Posición horizontal (en % del mapa) para que algo de `anchoPct` % quepa entero en pantalla. */
+  const dentro = (x: number, anchoPct: number) => {
+    const mitad = (anchoPct / 100) * ancho / 2 + 4
+    const px = Math.min(Math.max((x / 100) * ancho, -izquierda + mitad), -izquierda + t.w - mitad)
+    return (px / ancho) * 100
+  }
   const vecinos = mesesDe(partida)
   const ultimoEnHuevo = estadoDelMes(partida, ahora) === 'huevo'
   const mat = disponibles(partida, ahora)
@@ -40,10 +48,8 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
 
   return (
     <main ref={caja} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
-      {/* Relleno: el propio mapa, difuminado y algo oscurecido. */}
-      <img src={rutaArte('barrio/mapa')} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover opacity-90 blur-xl brightness-75" />
-      <div className="absolute left-0" style={{ top: arriba, width: ancho, height: alto }}>
-        <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full shadow-[0_0_40px_20px_rgba(0,0,0,0.15)]" draggable={false} />
+      <div className="absolute" style={{ top: arriba, left: izquierda, width: ancho, height: alto }}>
+        <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
         {construido(partida, 'puente') && (
           <img src={rutaArte('huella/puente')} alt={UI.barrio.puente} className="anim-brotar absolute" draggable={false}
             style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, transform: 'translate(-50%, -60%)' }} />
@@ -62,10 +68,11 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
           const p = PARCELAS[i]
           const huevo = i === vecinos.length - 1 && ultimoEnHuevo && !nacido(partida, m.companero, ahora)
           const nombre = huevo ? '?' : COMPANEROS[m.companero].nombre
+          const anchoCasa = p.ancho * (huevo ? 0.45 : 0.82)
           return (
             <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={() => onCasa(m.companero)}
               className="absolute flex flex-col items-center transition active:scale-95"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.ancho * (huevo ? 0.45 : 0.82)}%`, transform: 'translate(-50%, -62%)' }}>
+              style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
               <img src={rutaArte(huevo ? `huevo/${m.companero}/cerrado` : `casita/${m.companero}`)} alt=""
                 className={`w-full drop-shadow-[0_3px_3px_rgba(63,42,58,0.35)] ${huevo ? 'anim-mecer' : ''}`} draggable={false} />
               <span className="-mt-1 rounded-full bg-tarjeta px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
@@ -90,10 +97,10 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
       )}
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 px-3">
-        <div className="rounded-3xl bg-tarjeta/92 p-3 shadow-lg backdrop-blur-sm">
+        <div className="rounded-3xl bg-tarjeta/92 px-3 py-2.5 shadow-lg backdrop-blur-sm">
           <Materiales mat={mat} />
           <button type="button" onClick={() => setHoja(true)}
-            className={`mt-2.5 flex min-h-11 w-full items-center justify-center rounded-2xl text-[15px] font-bold active:scale-[0.98] ${listos ? 'bg-ambar text-tinta' : 'border-2 border-borde text-texto-2'}`}>
+            className={`mt-2 flex min-h-11 w-full items-center justify-center rounded-2xl text-[15px] font-bold active:scale-[0.98] ${listos ? 'bg-ambar text-tinta' : 'border-2 border-borde text-texto-2'}`}>
             {UI.casa.proyectosBarrio}
           </button>
         </div>
