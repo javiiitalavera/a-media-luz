@@ -9,7 +9,8 @@ import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, ponerDesfase } from '../logica/reloj'
-import { BotonSecundario, HuecoArte, Pantalla, Tarjeta } from '../componentes/comunes'
+import { BotonSecundario, HuecoArte, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
+import { usePreferencias } from '../estado/preferencias'
 
 export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const tengo = new Set(objetosConseguidos(partida, ahora).map((x) => x.objeto.id))
@@ -65,6 +66,7 @@ export function Ajustes({ partida }: { partida: Partida }) {
   const [pendiente, setPendiente] = useState<Partida | null>(null)
   const [mensaje, setMensaje] = useState<string | null>(null)
   const [confirmarBorrado, setConfirmarBorrado] = useState(false)
+  const prefs = usePreferencias()
 
   const exportar = async () => {
     const ahora = new Date()
@@ -106,6 +108,12 @@ export function Ajustes({ partida }: { partida: Partida }) {
             </select>
           </label>
         ))}
+      </div>
+
+      <h2 className="mt-6 mb-2 px-1 font-bold">{UI.sonido.titulo}</h2>
+      <div className="flex flex-col gap-2">
+        <Interruptor titulo={UI.sonido.musica} explicacion={UI.sonido.musicaExplicacion} activo={prefs.musica} onCambiar={prefs.ponerMusica} />
+        <Interruptor titulo={UI.sonido.efectos} explicacion={UI.sonido.efectosExplicacion} activo={prefs.sonidos} onCambiar={prefs.ponerSonidos} />
       </div>
 
       <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.copia}</h2>

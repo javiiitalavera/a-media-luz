@@ -4,7 +4,7 @@
 // los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
 import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, MATERIALES, ORDEN_AREAS, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
+import { COMPANEROS, LUCES_BARRIO, MATERIALES, ORDEN_AREAS, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
@@ -12,6 +12,9 @@ import { nacido } from '../logica/etapas'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
 import { rutaArte } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
+import { momentoDelDia } from '../logica/momento'
+import { Luciernagas, Luz } from './Casa'
+import { sfx } from '../sonido'
 
 export function Barrio({ partida, ahora, onCasa, onVolver }: {
   partida: Partida; ahora: Date; onCasa: (c: CompaneroId) => void; onVolver?: () => void
@@ -40,6 +43,8 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
     const px = Math.min(Math.max((x / 100) * ancho, -izquierda + mitad), -izquierda + t.w - mitad)
     return (px / ancho) * 100
   }
+  const momento = momentoDelDia(ahora)
+  const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const ultimoEnHuevo = estadoDelMes(partida, ahora) === 'huevo'
   const mat = disponibles(partida, ahora)
@@ -79,6 +84,18 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
             </button>
           )
         })}
+
+        {/* Luz del momento del día (igual que en las casas): tiñe el mapa sin cambiarlo. */}
+        <div aria-hidden className={`pointer-events-none absolute inset-0 mix-blend-multiply transition-opacity duration-1000 ${
+          noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
+        <div aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen">
+          {LUCES_BARRIO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 16 : 9} color="#ffcf73" retraso={i * 0.5} />)}
+          {/* Ventanas encendidas de cada casita. */}
+          {(noche || momento === 'atardecer') && vecinos.slice(0, PARCELAS.length).map((m, i) => (
+            <Luz key={m.companero} x={dentro(PARCELAS[i].x, PARCELAS[i].ancho * 0.82)} y={PARCELAS[i].y - 4} tam={noche ? 20 : 14} color="#ffc56b" retraso={0.3 + i * 0.4} />
+          ))}
+        </div>
+        {noche && <Luciernagas cuantas={12} />}
       </div>
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
@@ -161,7 +178,7 @@ function HojaBarrio({ partida, ahora, abierto, onCerrar }: { partida: Partida; a
                 {hecho ? (
                   <span className="w-20 shrink-0 text-center text-[12px] font-semibold text-salvia-texto">{UI.barrio.hecho}</span>
                 ) : (
-                  <button type="button" disabled={!puede} onClick={() => { if (construirBarrio(b.id)) onCerrar() }}
+                  <button type="button" disabled={!puede} onClick={() => { if (construirBarrio(b.id)) { sfx.construir(); onCerrar() } }}
                     className="min-h-11 w-20 shrink-0 rounded-2xl bg-ambar text-[14px] font-bold text-tinta disabled:bg-hundido disabled:text-texto-3">{UI.casa.construir}</button>
                 )}
               </li>

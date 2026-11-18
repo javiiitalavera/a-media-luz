@@ -17,3 +17,8 @@ export const PASO_ARROYO = { x: 50, y: 58.5, ancho: 16 }
 
 /** La plaza del centro (para proyectos del barrio futuros). */
 export const PLAZA = { x: 52.7, y: 40.4 }
+
+/** Luces ya dibujadas en el mapa (farolillos, ventanas, setas), para que brillen de noche. */
+export const LUCES_BARRIO = [
+  { x: 33, y: 83.6 }, { x: 58.6, y: 83.6 }, { x: 21, y: 11 }, { x: 13, y: 23.5 }, { x: 77.3, y: 41.4 }, { x: 81, y: 76 },
+]

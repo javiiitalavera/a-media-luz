@@ -7,6 +7,7 @@ import { estadoRincon } from '../logica/reglas'
 import { borrarAccion, crearAccion, editarAccion } from '../logica/ajustes'
 import { dia } from '../logica/fechas'
 import { useJuego } from '../estado/juego'
+import { sfx } from '../sonido'
 import { BotonSecundario, Interruptor, Pantalla } from '../componentes/comunes'
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
@@ -57,13 +58,13 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
                   const nombre = diaMalo ? a.minima : a.nombre
                   return (
                     <span key={a.id} className={`flex rounded-full border-2 transition ${n ? 'border-salvia bg-salvia text-tinta' : 'border-borde bg-tarjeta'}`}>
-                      <button type="button" onClick={() => ofrecer(a.id)}
+                      <button type="button" onClick={() => { sfx.registrar(a.area); ofrecer(a.id) }}
                         className={`min-h-11 rounded-full px-4 text-[15px] transition active:scale-95 ${n ? 'pr-2 font-semibold' : 'font-medium'}`}>
                         {n > 0 && '✓ '}{nombre}
                         {n > 1 && <span className="ml-1 text-[13px] opacity-70">×{n}</span>}
                       </button>
                       {n > 0 && (
-                        <button type="button" onClick={() => quitarUna(a.id)} aria-label={UI.ofrendas.quitar(nombre)}
+                        <button type="button" onClick={() => { sfx.deshacer(); quitarUna(a.id) }} aria-label={UI.ofrendas.quitar(nombre)}
                           className="min-h-11 min-w-11 rounded-full border-l border-tinta/20 text-[20px] leading-none font-bold active:scale-90">
                           −
                         </button>

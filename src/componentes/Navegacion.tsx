@@ -1,4 +1,5 @@
 import { UI } from '../contenido'
+import { sfx } from '../sonido'
 
 export type Pestana = 'inicio' | 'ofrendas' | 'album' | 'ajustes'
 const PESTANAS: Pestana[] = ['inicio', 'ofrendas', 'album', 'ajustes']
@@ -11,7 +12,7 @@ export function Navegacion({ actual, onCambiar }: { actual: Pestana; onCambiar: 
           key={p}
           type="button"
           aria-current={p === actual ? 'page' : undefined}
-          onClick={() => onCambiar(p)}
+          onClick={() => { sfx.toque(); onCambiar(p) }}
           className={`min-h-11 rounded-2xl text-[14px] ${p === actual ? 'bg-hundido font-bold text-coral-texto' : 'font-medium text-texto-3'}`}
         >
           {UI.nav[p]}

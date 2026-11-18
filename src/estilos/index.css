@@ -89,7 +89,14 @@ body {
 }
 .anim-eclosionar { animation: eclosionar 1.6s ease-in both; transform-origin: 50% 90%; }
 
+/* Entrada: las nubes se apartan hacia su lado, crecen y se disipan; el velo se va antes. */
+@keyframes nube-fuera { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(calc(var(--lado) * 70vw), -4vh) scale(1.35); opacity: 0; } }
+.anim-nube { animation: nube-fuera 1.9s cubic-bezier(.55,.05,.35,1) both; }
+@keyframes velo-fuera { 0%, 15% { opacity: 1; } 100% { opacity: 0; } }
+.anim-velo { animation: velo-fuera 1.3s ease-out 0.2s both; }
+
 @media (prefers-reduced-motion: reduce) {
+  .anim-nube { animation: aparecer 0.6s ease-out reverse both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-eclosionar { animation: none; }
   .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }

@@ -12,6 +12,7 @@ import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeC
 import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, OFRENDAS_ECLOSION } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
+import { sfx } from '../sonido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -100,7 +101,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   useEffect(() => {
     if (estado !== 'naciendo') return
     const pasos = [
-      setTimeout(() => setNacer('rompiendo'), 500),
+      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion() }, 500),
       setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 2100),
       setTimeout(() => setNacer('ficha'), 3600),
     ]
@@ -118,6 +119,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
     if (!pendiente) return
     const t = setTimeout(() => {
       const f = verEtapa(DUENO, g.etapa)
+      sfx.cumplido()
       setCelebra(Date.now())
       setSaltos((n) => n + 1)
       if (f) setHabla({ texto: f.texto, n: Date.now(), contento: true })
@@ -173,6 +175,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
       return
     }
     if (estado === 'naciendo') return
+    sfx.personaje(DUENO)
     setSaltos((n) => n + 1)
     // Si está metido en una historia, habla de ella; si no, lo de siempre.
     const deHistoria = fraseDeSituacion(partida, DUENO, ahora)
@@ -184,6 +187,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const alConstruir = (id: string) => {
     const res = construirObjeto(id, DUENO)
     if (!res.ok) return
+    sfx.construir()
     setHoja(false)
     setRecien(id)
     setTimeout(() => { setSaltos((n) => n + 1); if (res.frase) setHabla({ texto: res.frase.texto, n: Date.now(), contento: true }) }, 650)
@@ -328,7 +332,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
             <div className="text-[15px] font-bold">{decision.pregunta}</div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {decision.opciones.map((o) => (
-                <button key={o.id} type="button" onClick={() => { decidir(decision.situacion, o.id, o.respuesta); setNota(o.respuesta) }}
+                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setNota(o.respuesta) }}
                   className="min-h-12 rounded-2xl bg-ambar px-2 text-[14px] leading-tight font-bold text-tinta">{o.texto}</button>
               ))}
             </div>
@@ -365,7 +369,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
       {preguntaHuevo && otroHuevo && (
         <Pregunta titulo={UI.casa.huevoEnPuerta} texto={UI.casa.huevoPregunta}
           si={UI.casa.queVenga} no={UI.casa.ahoraNo}
-          onSi={() => { setPreguntaHuevo(false); incubar(otroHuevo) }} onNo={() => setPreguntaHuevo(false)} />
+          onSi={() => { sfx.elegir(); setPreguntaHuevo(false); incubar(otroHuevo) }} onNo={() => setPreguntaHuevo(false)} />
       )}
 
       {hoja && <Catalogo dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir} />}
@@ -433,7 +437,7 @@ function Ficha({ c, onCerrar }: { c: CompaneroId; onCerrar: () => void }) {
   )
 }
 
-function Luz({ x, y, tam, color, retraso }: { x: number; y: number; tam: number; color: string; retraso: number }) {
+export function Luz({ x, y, tam, color, retraso }: { x: number; y: number; tam: number; color: string; retraso: number }) {
   return (
     <span className="anim-luz absolute rounded-full" style={{
       left: `${x}%`, top: `${y}%`, width: `${tam}%`, aspectRatio: '1',
@@ -456,7 +460,7 @@ function Chispas({ x, y }: { x: number; y: number }) {
 
 /** Luciérnagas en la mitad de arriba (posiciones fijas para que no salten al repintar). */
 const SITIOS_LUCIERNAGAS = [[12, 22], [30, 35], [44, 18], [58, 30], [70, 40], [86, 27], [22, 45], [36, 52], [64, 15], [80, 50], [8, 38], [50, 42], [92, 44], [26, 12]]
-function Luciernagas({ cuantas }: { cuantas: number }) {
+export function Luciernagas({ cuantas }: { cuantas: number }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
       {SITIOS_LUCIERNAGAS.slice(0, cuantas).map(([x, y], i) => (

@@ -11,6 +11,13 @@ export const UI = {
     cronicas: 'Crónicas del barrio',
     sinCronicas: 'Todavía no ha pasado nada digno de contarse. Dales tiempo.',
   },
+  sonido: {
+    titulo: 'Sonido',
+    musica: 'Música',
+    musicaExplicacion: 'Suave, cambia con la hora del día. Respeta el modo silencio del iPhone.',
+    efectos: 'Sonidos',
+    efectosExplicacion: 'Al marcar hazañas, construir y cuando pasan cosas.',
+  },
   prueba: {
     titulo: 'Modo de prueba',
     explicacion: 'Adelanta el reloj del juego para ver pasar los días sin esperar.',
