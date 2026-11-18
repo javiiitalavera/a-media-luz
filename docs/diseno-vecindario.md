@@ -246,3 +246,11 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Al terminar historias** (7): La normativa → cartel chamuscado · El puente → salchicha del peaje · El tablón → expediente · Gregorio → tuerca con lazo · El préstamo → libro chamuscado · La planta → lupa · La fórmula → archivador.
 - **Aviso:** punto en la pestaña Álbum cuando hay una foto o curiosidad nueva, hasta que lo abres.
 - Arte: dos láminas 3 × 2 de ChatGPT recortadas en `public/arte/curiosidades/`; las de historia reutilizan las huellas.
+
+### Ajustes (18/11/2026, rama `dev/ajustes`, decidido por Javi)
+- **Paciencia de los vecinos** (antes «Ritmo de cada rincón»): solo los vecinos que viven en el barrio, con su nombre («Quiere algo cada día»…). Se explica que solo el último en llegar se enfurruña.
+- **Tu día empieza a las…** medianoche, 3:00 o 5:00. El reloj del juego va esas horas por detrás (lo de madrugada cuenta para el día anterior); la luz de las escenas sigue la hora real (`src/logica/reloj.ts`).
+- **Aspecto:** automático, siempre de día o siempre de noche (solo los colores de los menús).
+- **Copia de seguridad** dice cuándo hiciste la última.
+- **Modo de prueba escondido:** aparece al tocar 5 veces la versión, al final (o si el reloj está adelantado).
+- Al final: «A media luz · versión 0.9» y créditos.

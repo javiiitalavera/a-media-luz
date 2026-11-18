@@ -1,6 +1,6 @@
 // Álbum y Ajustes.
 import { useEffect, useRef, useState } from 'react'
-import { AREAS, COMPANEROS, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
+import { AREAS, COMPANEROS, RITMOS, UI, type Ritmo } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
@@ -8,12 +8,13 @@ import { curiosidadesTenidas } from '../logica/curiosidades'
 import { verAlbum } from '../logica/avisos'
 import type { Curiosidad } from '../contenido/curiosidades'
 import type { Partida } from '../logica/partida'
-import { dia } from '../logica/fechas'
+import { dia, diasEntre } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
 import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
-import { desfaseDias, ponerDesfase } from '../logica/reloj'
+import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
+import { nacidos } from '../logica/etapas'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { usePreferencias } from '../estado/preferencias'
 
@@ -124,18 +125,21 @@ export function Ajustes({ partida }: { partida: Partida }) {
   const [mensaje, setMensaje] = useState<string | null>(null)
   const [confirmarBorrado, setConfirmarBorrado] = useState(false)
   const prefs = usePreferencias()
+  const [toquesVersion, setToquesVersion] = useState(0)
+  const ahora = new Date()
 
   const exportar = async () => {
     const ahora = new Date()
     const nombre = `a-media-luz-${dia(ahora)}.json`
     const f = new File([exportarCopia(partida, ahora)], nombre, { type: 'application/json' })
     if (navigator.canShare?.({ files: [f] })) {
-      try { await navigator.share({ files: [f], title: nombre }); return } catch (e) { if ((e as Error).name === 'AbortError') return }
+      try { await navigator.share({ files: [f], title: nombre }); prefs.copiaHecha(new Date().toISOString()); return } catch (e) { if ((e as Error).name === 'AbortError') return }
     }
     const url = URL.createObjectURL(f)
     const a = document.createElement('a')
     a.href = url; a.download = nombre; a.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
+    prefs.copiaHecha(new Date().toISOString())
   }
   const leer = async (f?: File) => {
     setMensaje(null)
@@ -150,22 +154,32 @@ export function Ajustes({ partida }: { partida: Partida }) {
     <Pantalla>
       <h1 className="mb-4 px-1 text-[28px] font-bold">{UI.ajustes.titulo}</h1>
 
-      <h2 className="mb-1 px-1 font-bold">{UI.ajustes.ritmos}</h2>
-      <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.ritmoExplicacion}</p>
+      <h2 className="mb-1 px-1 font-bold">{UI.ajustes.paciencia}</h2>
+      <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.pacienciaExplicacion}</p>
       <div className="flex flex-col gap-2">
-        {ORDEN_AREAS.map((area) => (
-          <label key={area} className="flex flex-col gap-1 rounded-3xl bg-tarjeta px-4 py-3">
-            <span className="font-semibold">{AREAS[area].rincon} <span className="text-[13px] font-medium text-texto-3">· {AREAS[area].nombre}</span></span>
-            <select
-              value={partida.ritmos[area]}
-              onChange={(e) => ajustar((p) => cambiarRitmo(p, area, e.target.value as Ritmo))}
-              className="min-h-11 rounded-2xl border-2 border-borde bg-fondo px-2 text-[15px]"
-            >
-              {(Object.keys(RITMOS) as Ritmo[]).map((r) => <option key={r} value={r}>{RITMOS[r].nombre}</option>)}
-            </select>
-          </label>
-        ))}
+        {nacidos(partida, ahora).map((c) => {
+          const area = COMPANEROS[c].area
+          return (
+            <label key={c} className="flex flex-col gap-1 rounded-3xl bg-tarjeta px-4 py-3">
+              <span className="font-semibold">{COMPANEROS[c].nombre} <span className="text-[13px] font-medium text-texto-3">· {AREAS[area].nombre}</span></span>
+              <select value={partida.ritmos[area]} onChange={(e) => ajustar((p) => cambiarRitmo(p, area, e.target.value as Ritmo))}
+                className="min-h-11 rounded-2xl border-2 border-borde bg-fondo px-2 text-[15px]">
+                {(Object.keys(RITMOS) as Ritmo[]).map((r) => <option key={r} value={r}>{UI.ajustes.aguanta(RITMOS[r].nombre)}</option>)}
+              </select>
+            </label>
+          )
+        })}
       </div>
+
+      <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.inicioDia}</h2>
+      <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.inicioDiaExplicacion}</p>
+      <Opciones valor={String(inicioDia())} opciones={[['0', UI.ajustes.medianoche], ['3', '3:00'], ['5', '5:00']]}
+        onCambiar={(v) => { ponerInicioDia(Number(v)); location.reload() }} />
+
+      <h2 className="mt-6 mb-2 px-1 font-bold">{UI.ajustes.aspecto}</h2>
+      <Opciones valor={prefs.aspecto} opciones={[['auto', UI.ajustes.automatico], ['dia', UI.ajustes.dia], ['noche', UI.ajustes.noche]]}
+        onCambiar={(v) => prefs.ponerAspecto(v as 'auto' | 'dia' | 'noche')} />
+      <p className="mt-1 px-1 text-[13px] text-texto-3">{UI.ajustes.aspectoExplicacion}</p>
 
       <h2 className="mt-6 mb-2 px-1 font-bold">{UI.sonido.titulo}</h2>
       <div className="flex flex-col gap-2">
@@ -176,6 +190,7 @@ export function Ajustes({ partida }: { partida: Partida }) {
       <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.copia}</h2>
       <Tarjeta>
         <p className="text-[13px] text-texto-3">{UI.ajustes.copiaExplicacion}</p>
+        <p className="mt-1 text-[14px] font-semibold">{UI.ajustes.ultimaCopia(prefs.ultimaCopia ? diasEntre(dia(prefs.ultimaCopia), dia(new Date())) : null)}</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <BotonSecundario onClick={exportar}>{UI.ajustes.exportar}</BotonSecundario>
           <BotonSecundario onClick={() => archivo.current?.click()}>{UI.ajustes.importar}</BotonSecundario>
@@ -188,15 +203,6 @@ export function Ajustes({ partida }: { partida: Partida }) {
         )}
       </Tarjeta>
 
-      <h2 className="mt-6 mb-1 px-1 font-bold">{UI.prueba.titulo}</h2>
-      <Tarjeta>
-        <p className="text-[13px] text-texto-3">{UI.prueba.explicacion}</p>
-        <p className="mt-1 text-[14px] font-semibold">{UI.prueba.desfase(desfaseDias())}</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <BotonSecundario onClick={() => { ponerDesfase(desfaseDias() + 1); location.reload() }}>{UI.prueba.adelantar}</BotonSecundario>
-          <BotonSecundario onClick={() => { ponerDesfase(0); location.reload() }}>{UI.prueba.volver}</BotonSecundario>
-        </div>
-      </Tarjeta>
 
       <div className="mt-8">
         {confirmarBorrado ? (
@@ -207,6 +213,25 @@ export function Ajustes({ partida }: { partida: Partida }) {
           </button>
         )}
       </div>
+
+      {(prefs.pruebas || desfaseDias() !== 0) && (
+        <div className="mt-6">
+        <h2 className="mt-6 mb-1 px-1 font-bold">{UI.prueba.titulo}</h2>
+        <Tarjeta>
+          <p className="text-[13px] text-texto-3">{UI.prueba.explicacion}</p>
+          <p className="mt-1 text-[14px] font-semibold">{UI.prueba.desfase(desfaseDias())}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <BotonSecundario onClick={() => { ponerDesfase(desfaseDias() + 1); location.reload() }}>{UI.prueba.adelantar}</BotonSecundario>
+            <BotonSecundario onClick={() => { ponerDesfase(0); location.reload() }}>{UI.prueba.volver}</BotonSecundario>
+          </div>
+        </Tarjeta>
+        </div>
+      )}
+
+      <button type="button" onClick={() => { const n = toquesVersion + 1; setToquesVersion(n); if (n >= 5) prefs.ponerPruebas(!prefs.pruebas) }}
+        className="mt-8 block min-h-11 w-full text-center text-[12px] leading-snug text-texto-3">
+        {UI.ajustes.version}<br />{UI.ajustes.creditos}
+      </button>
     </Pantalla>
   )
 }
@@ -219,6 +244,18 @@ function Confirmar({ aviso, accion, onSi, onNo }: { aviso: string; accion: strin
         <BotonSecundario onClick={onNo}>{UI.ajustes.cancelar}</BotonSecundario>
         <BotonSecundario peligro onClick={onSi}>{accion}</BotonSecundario>
       </div>
+    </div>
+  )
+}
+
+/** Botones de opción en una fila (como un selector segmentado). */
+function Opciones({ valor, opciones, onCambiar }: { valor: string; opciones: [string, string][]; onCambiar: (v: string) => void }) {
+  return (
+    <div role="radiogroup" className="grid gap-1 rounded-full bg-hundido p-1" style={{ gridTemplateColumns: `repeat(${opciones.length}, 1fr)` }}>
+      {opciones.map(([v, texto]) => (
+        <button key={v} type="button" role="radio" aria-checked={valor === v} onClick={() => valor !== v && onCambiar(v)}
+          className={`min-h-11 rounded-full text-[14px] font-semibold ${valor === v ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>{texto}</button>
+      ))}
     </div>
   )
 }
