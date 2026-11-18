@@ -15,6 +15,9 @@ import { Barrio } from './pantallas/Barrio'
 import { Rincon } from './pantallas/Rincon'
 import { Ofrendas } from './pantallas/Ofrendas'
 import { Ajustes, Album } from './pantallas/Otras'
+import { Entrada } from './componentes/Entrada'
+import { Sonido } from './componentes/Sonido'
+import { sfx } from './sonido'
 
 export default function App() {
   const partida = useJuego((s) => s.partida)
@@ -27,7 +30,8 @@ export default function App() {
   const [rincon, setRincon] = useState<AreaId | null>(null)
 
   // De noche, la interfaz pasa a su versión oscura (ciruela).
-  const noche = momentoDelDia(ahora) === 'noche'
+  const momento = momentoDelDia(ahora)
+  const noche = momento === 'noche'
   useEffect(() => {
     document.documentElement.dataset.noche = noche ? 'si' : 'no'
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', noche ? '#2E2030' : '#F9EBDD')
@@ -37,7 +41,7 @@ export default function App() {
   const hoy = dia(ahora.toISOString())
   useEffect(() => { if (partida) avanzarBarrio() }, [hoy, Boolean(partida), avanzarBarrio])
 
-  if (!partida) return <Inicio />
+  if (!partida) return <><Inicio /><Sonido momento={momento} apagada={false} /><Entrada noche={noche} /></>
 
   const irA = (p: Pestana) => { setRincon(null); setVerBarrio(false); setCasa(null); setPestana(p) }
   const ultimo = mesActual(partida).companero
@@ -62,6 +66,8 @@ export default function App() {
       <div key={`${pestana}-${rincon}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
       <Navegacion actual={pestana} onCambiar={irA} />
       {pestana === 'inicio' && !rincon && <Novedades onIr={irALugar} />}
+      <Sonido momento={momento} apagada={false} />
+      <Entrada noche={noche} />
     </>
   )
 }
@@ -70,6 +76,8 @@ export default function App() {
 function Novedades({ onIr }: { onIr: (l: Lugar) => void }) {
   const noticias = useJuego((s) => s.partida?.noticias)
   const verNoticias = useJuego((s) => s.verNoticias)
+  const hay = Boolean(noticias?.length)
+  useEffect(() => { if (hay) sfx.pagina() }, [hay])
   if (!noticias?.length) return null
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={verNoticias}>

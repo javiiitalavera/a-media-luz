@@ -184,3 +184,8 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
   - *La fórmula* (Tofu y Tuerca): Tuerca borra la pizarra para archivar la fórmula; Tofu escribe otra. Queda un archivador en el taller.
   - *La planta* (Tofu y Tuerca): la planta se traga a Gregorio dos días, Tuerca la interroga con una lupa y lo devuelve limpio.
 - **Micros:** Tofu atascado en una página, la planta que «saluda», Tuerca corrigiendo la pizarra, Tofu «meditando», Tofu mirando la hoguera de Nox hasta ponerlo nervioso.
+
+### Ambiente (18/11/2026, rama `dev/ambiente`)
+- **Entrada:** al abrir la app, nubes (hechas por código, color crema de día y ciruela de noche) tapan la pantalla y se apartan hacia los lados mientras se disipan (unos 2 s).
+- **Barrio con momento del día:** se tiñe igual que las casas (amanecer, atardecer y noche); de noche brillan farolillos y ventanas de las casitas y hay luciérnagas.
+- **Música y sonidos:** recuperados de la primera versión (generados en el móvil, sin archivos). Música suave que cambia con la hora; sonidos al marcar y deshacer hazañas, construir, nacer, crecer, decidir, tocar a un vecino (cada uno con su voz), noticias del barrio y pestañas. Interruptores en Ajustes; respeta el modo silencio del iPhone. Arranca con el primer toque (el móvil no deja sonar antes).
