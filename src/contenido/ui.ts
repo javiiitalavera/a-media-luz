@@ -49,7 +49,7 @@ export const UI = {
   },
   prueba: {
     titulo: 'Modo de prueba',
-    explicacion: 'Adelanta el reloj del juego para ver pasar los días sin esperar.',
+    explicacion: 'Adelanta el reloj del juego para ver pasar los días sin esperar. «Volver a hoy» trae tu partida de vuelta a la fecha real sin perder nada.',
     adelantar: 'Adelantar un día',
     volver: 'Volver a hoy',
     desfase: (n: number) => (n === 0 ? 'Reloj real' : n === 1 ? 'Adelantado 1 día' : `Adelantado ${n} días`),
@@ -246,7 +246,7 @@ export const UI = {
     aspectoExplicacion: 'Los colores de los menús. Las casas y el barrio siguen la luz real.',
     ultimaCopia: (dias: number | null) => (dias === null ? 'Aún no has hecho ninguna copia.' : dias <= 0 ? 'Última copia: hoy.' : dias === 1 ? 'Última copia: ayer.' : `Última copia: hace ${dias} días.`),
     version: 'A media luz · versión 0.9',
-    creditos: 'Diseño de Javi · dibujos con ChatGPT · montaje de Claude',
+    creditos: 'Creado por Javi, en ratos libres que no tenía.',
     copia: 'Copia de seguridad',
     copiaExplicacion: 'Tus datos solo están en este móvil.',
     exportar: 'Exportar copia',
