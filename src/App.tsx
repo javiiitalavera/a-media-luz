@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type AreaId, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -41,6 +41,16 @@ export default function App() {
   const hoy = dia(ahora.toISOString())
   useEffect(() => { if (partida) avanzarBarrio() }, [hoy, Boolean(partida), avanzarBarrio])
 
+  // Al pasar del barrio a una casa (o al revés) vuelven las nubes. Antes de pintar, para que no se vea un salto.
+  const lugar = !partida || pestana !== 'inicio' || rincon ? null
+    : casa ?? (nacidos(partida, ahora).length >= 2 || verBarrio ? 'barrio' : mesActual(partida).companero)
+  const lugarAnterior = useRef(lugar)
+  const [nubes, setNubes] = useState(0)
+  useLayoutEffect(() => {
+    if (lugar && lugarAnterior.current && lugar !== lugarAnterior.current) setNubes((n) => n + 1)
+    lugarAnterior.current = lugar
+  }, [lugar])
+
   if (!partida) return <><Inicio /><Sonido momento={momento} apagada={false} /><Entrada noche={noche} /></>
 
   const irA = (p: Pestana) => { setRincon(null); setVerBarrio(false); setCasa(null); setPestana(p) }
@@ -67,7 +77,7 @@ export default function App() {
       <Navegacion actual={pestana} onCambiar={irA} />
       {pestana === 'inicio' && !rincon && <Novedades onIr={irALugar} />}
       <Sonido momento={momento} apagada={false} />
-      <Entrada noche={noche} />
+      <Entrada key={nubes} noche={noche} />
     </>
   )
 }
