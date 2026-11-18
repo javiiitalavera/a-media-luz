@@ -17,7 +17,7 @@ import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
 
 export function Barrio({ partida, ahora, onCasa, onVolver }: {
-  partida: Partida; ahora: Date; onCasa: (c: CompaneroId) => void; onVolver?: () => void
+  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void
 }) {
   const caja = useRef<HTMLDivElement>(null)
   const [t, setT] = useState({ w: 390, h: 844 })
@@ -75,7 +75,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
           const nombre = huevo ? '?' : COMPANEROS[m.companero].nombre
           const anchoCasa = p.ancho * (huevo ? 0.45 : 0.82)
           return (
-            <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={() => onCasa(m.companero)}
+            <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
               className="absolute flex flex-col items-center transition active:scale-95"
               style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
               <img src={rutaArte(huevo ? `huevo/${m.companero}/cerrado` : `casita/${m.companero}`)} alt=""

@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { transicion } from './componentes/transicion'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type AreaId, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -41,15 +42,9 @@ export default function App() {
   const hoy = dia(ahora.toISOString())
   useEffect(() => { if (partida) avanzarBarrio() }, [hoy, Boolean(partida), avanzarBarrio])
 
-  // Al pasar del barrio a una casa (o al revés) vuelven las nubes. Antes de pintar, para que no se vea un salto.
-  const lugar = !partida || pestana !== 'inicio' || rincon ? null
-    : casa ?? (nacidos(partida, ahora).length >= 2 || verBarrio ? 'barrio' : mesActual(partida).companero)
-  const lugarAnterior = useRef(lugar)
-  const [nubes, setNubes] = useState(0)
-  useLayoutEffect(() => {
-    if (lugar && lugarAnterior.current && lugar !== lugarAnterior.current) setNubes((n) => n + 1)
-    lugarAnterior.current = lugar
-  }, [lugar])
+  // Al ir del barrio a una casa, el barrio se acerca a la casita y la casa sale de ella; al volver, al revés.
+  const puntos = useRef<Partial<Record<CompaneroId, { x: number; y: number }>>>({})
+  const punto = (c: CompaneroId) => puntos.current[c] ?? { x: innerWidth / 2, y: innerHeight * 0.55 }
 
   if (!partida) return <><Inicio /><Sonido momento={momento} apagada={false} /><Entrada noche={noche} /></>
 
@@ -62,11 +57,12 @@ export default function App() {
   if (rincon)
     pantalla = <Rincon partida={partida} area={rincon} ahora={ahora} onVolver={() => setRincon(null)} onOfrenda={() => irA('ofrendas')} />
   else if (pestana === 'inicio' && casa)
-    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onDetalle={() => setRincon(COMPANEROS[casa].area)} onBarrio={() => { setCasa(null); setVerBarrio(true) }} />
+    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onDetalle={() => setRincon(COMPANEROS[casa].area)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && (conBarrio || verBarrio))
-    pantalla = <Barrio partida={partida} ahora={ahora} onCasa={setCasa} onVolver={conBarrio ? undefined : () => setVerBarrio(false)} />
+    pantalla = <Barrio partida={partida} ahora={ahora} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
+      onVolver={conBarrio ? undefined : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
   else if (pestana === 'inicio')
-    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onDetalle={() => setRincon(COMPANEROS[ultimo].area)} onBarrio={() => setVerBarrio(true)} />
+    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onDetalle={() => setRincon(COMPANEROS[ultimo].area)} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} />
   else pantalla = <Album partida={partida} ahora={ahora} />
@@ -77,7 +73,7 @@ export default function App() {
       <Navegacion actual={pestana} onCambiar={irA} />
       {pestana === 'inicio' && !rincon && <Novedades onIr={irALugar} />}
       <Sonido momento={momento} apagada={false} />
-      <Entrada key={nubes} noche={noche} />
+      <Entrada noche={noche} />
     </>
   )
 }
