@@ -199,3 +199,15 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 ### Toques y espacio (18/11/2026, rama `dev/toques`, pedido por Javi)
 - **Todo se puede tocar:** los objetos de las casas, las huellas y los materiales de la barra muestran un globo pequeño **donde tocas**, con una frase con humor (rotan; textos en `src/contenido/toques.ts` y en `MATERIALES[].explicacion`). Un globo cada vez; se cierra solo o al tocar otra cosa.
 - **Personajes más cerca:** pies más abajo y algo más grandes, para no dejar un hueco vacío sobre la barra. Gregorio, en casa de Nox, pasa a la esquina de abajo a la derecha.
+
+### Hazañas concretas (18/11/2026, rama `dev/hazanas`, decidido por Javi tras comparar con ChatGPT)
+- **Una hazaña es concreta y diaria:** «Andar 8000 pasos», «Leer 15 páginas», «Escribir a mis padres». O la haces o no: sin contadores, temporizador, frecuencias, rachas ni día redondo.
+- **Las metas son por defecto:** cada uno las edita (nombre y cantidad). La **versión mínima es opcional** y se configura por hazaña; con el modo día malo se muestra la mínima si la tiene.
+- **Mis hazañas:** tu lista se queda a la vista hasta que la cambias. Cada mañana empiezan sin tachar (no hay que planificar cada día).
+- **Tachar:** un toque la tacha (raya que se dibuja, círculo con ✓ y sonido de lápiz con campanita); otro toque la desmarca.
+- **Algo más:** lo que has hecho fuera de tu lista, del catálogo o escrito a mano. Cuenta igual (sale en «Además, hoy») y no entra en tu lista.
+- **Hazañas propias** con nombre, área y mínima opcional. **Catálogo** de unas 6–8 por área (`src/contenido/acciones.ts`). Al empezar vienen marcadas: pasos, leer, escribir a mis padres y diario.
+- **Recompensa:** 1 material por hazaña, con el tope de 3 por área y día (sin inflar). Las de tu lista traen la **reacción propia** del vecino del área («¿8000 pasos? Yo he dado 8001. Por ganar.»).
+- **El área de Nox se llama Energía** (antes Cuerpo; el identificador interno sigue siendo `cuerpo`).
+- **Partidas antiguas:** las acciones genéricas pasan a su hazaña concreta equivalente; las propias y el historial se conservan.
+- **Segunda fase:** historias que nacen de tus hazañas (por ejemplo, si lees a menudo, Tofu encuentra un libro antiguo).
