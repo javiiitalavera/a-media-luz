@@ -11,12 +11,13 @@ import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
-import { estadoDelMes, faltanParaEclosion, mesActual, OFRENDAS_ECLOSION } from '../logica/meses'
+import { estadoDelMes, faltanParaEclosion, mesActual } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
+import { FichaVecino } from '../componentes/FichaVecino'
 import { huellaNueva, microSinVer, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
@@ -50,9 +51,9 @@ const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number 
   tofu: { x: 76, y: 62, ancho: 20 },
 }
 
-export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetalle }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
-  onBarrio: () => void; onDetalle: () => void
+  onBarrio: () => void
 }) {
   const DUENO = dueno
   const AREA = COMPANEROS[DUENO].area
@@ -107,6 +108,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const microVisible = Boolean(micro)
   const verCosita = () => { if (!micro) return; setNota(micro.texto); ajustar((p) => verMicro(p, DUENO, ahora)) }
   const [decisionAbierta, setDecisionAbierta] = useState(false)
+  const [ficha, setFicha] = useState(false)
   // Al entrar, se apagan los avisos de novedades de esta casa.
   useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO])
   useEffect(() => {
@@ -325,26 +327,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
 
       {/* Arriba: de quién es la casa y ajustes. */}
       <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <button type="button" onClick={onDetalle} className="min-h-11 min-w-[150px] rounded-2xl bg-tarjeta/85 px-3.5 py-1.5 text-left shadow-sm backdrop-blur-sm">
-          {conHuevo ? (
-            <>
-              <span className="block text-[18px] leading-tight font-bold">{UI.casa.huevo}</span>
-              <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
-                <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${((OFRENDAS_ECLOSION - faltaHuevo) / OFRENDAS_ECLOSION) * 100}%` }} />
-              </span>
-            </>
-          ) : (<>
-          <span className="block text-[18px] leading-tight font-bold">{COMPANEROS[DUENO].nombre}</span>
-          <span className="block text-[13px] text-texto-3">
-            {UI.casa.etapas[etapaVista].toLowerCase()}
-            {r.fase > 0 && <span className="font-semibold text-peligro"> · {UI.bosque.fases[r.fase]}</span>}
-          </span>
-          {g.siguiente && !pendiente && (
-            <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-hundido">
-              <span className="block h-full rounded-full bg-[#f08a3c] transition-[width] duration-700" style={{ width: `${g.fraccion * 100}%` }} />
-            </span>
-          )}
-          </>)}
+        <button type="button" onClick={() => setFicha(true)} aria-label={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)}
+          className="flex min-h-11 items-center rounded-2xl bg-tarjeta/85 px-3.5 text-[18px] leading-tight font-bold shadow-sm backdrop-blur-sm">
+          {conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre}
         </button>
         <button type="button" onClick={onBarrio} className="min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
           {visita ? `‹ ${UI.casa.alBarrio}` : `${UI.casa.alBarrio} ›`}
@@ -388,6 +373,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
         </div>
       )}
 
+      {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} fase={r.fase} faltanParaArreglar={r.faltanParaArreglar} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
       {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar() }} />}
       {preguntaHuevo && otroHuevo && (
         <Pregunta titulo={UI.casa.huevoEnPuerta} texto={UI.casa.huevoPregunta}

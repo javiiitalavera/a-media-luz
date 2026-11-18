@@ -227,3 +227,9 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **El sobre no borra:** guarda las 10 últimas novedades; las nuevas, resaltadas con un punto; las leídas, en gris. Cada una dice cuándo pasó (hoy, ayer, hace N días) y lleva a su sitio.
 - **Crónicas** (Álbum): también las historias en marcha («En marcha», hasta donde han llegado), arriba del todo; luego las terminadas.
 - No se guardan las cosas pequeñas del día, las reacciones ni las frases de los objetos: son de usar y tirar.
+
+### Ficha del vecino (18/11/2026, rama `dev/ficha`, decidido por Javi)
+- En casa, la tarjeta de arriba solo lleva el **nombre** (o «Huevo sospechoso»). Al tocarla se abre la **ficha**: especie y área, etapa, cuánto le falta para crecer (días con algo de su área y proyectos, con barras), cómo está si está descuidado y con cuántas hazañas se le pasa, su casa (lo construido y el siguiente proyecto), sus historias (en marcha y terminadas) y su presentación.
+- Con el huevo, la ficha dice cuántas hazañas le faltan para abrirse.
+- Desaparece la pantalla antigua del «rincón» (estado del rincón, metas semanales, crecimiento por grados).
+- En el barrio se quita la tarjeta «Barrio»: arriba solo queda el sobre.
