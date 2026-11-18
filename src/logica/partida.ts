@@ -60,6 +60,8 @@ export interface NoticiaBarrio {
   fecha: string
   /** Ya se ha leído en el sobre (el aviso de su casa sigue hasta que entras). */
   leida?: boolean
+  /** Ya has entrado en el sitio donde pasó (se apaga su «!»). */
+  visitada?: boolean
 }
 
 export interface Construccion {

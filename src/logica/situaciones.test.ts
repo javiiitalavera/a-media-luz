@@ -129,4 +129,11 @@ describe('situaciones', () => {
     expect(casas(barrio(['hoguera']))).not.toContain('tofu')
     expect(casas(conTofu(['hoguera']))).toContain('tofu')
   })
+
+  it('Crónicas: las que están en marcha primero, hasta donde han llegado', () => {
+    let p = avanzar(barrio(['hoguera', 'tablon']), dia(0)).partida
+    expect(cronicas(p)).toEqual([{ id: 'normativa', titulo: expect.any(String), fases: [expect.stringMatching(/cartel/)], enMarcha: true }])
+    p = avanzar(avanzar(avanzar(p, dia(1)).partida, dia(2)).partida, dia(3)).partida
+    expect(cronicas(p).map((c) => [c.id, c.enMarcha])).toEqual([['tablon', true], ['normativa', false]])
+  })
 })

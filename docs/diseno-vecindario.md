@@ -222,3 +222,8 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Huellas nuevas brillan** durante 3 días o hasta que las tocas.
 - Al volver a casa, el vecino ya no repite la reacción a tu hazaña (salió al tacharla); solo da un saltito.
 - Más adelante: notificaciones fuera de la app (exigen app instalada y un servidor).
+
+### Registro (18/11/2026, rama `dev/registro`, decidido por Javi)
+- **El sobre no borra:** guarda las 10 últimas novedades; las nuevas, resaltadas con un punto; las leídas, en gris. Cada una dice cuándo pasó (hoy, ayer, hace N días) y lleva a su sitio.
+- **Crónicas** (Álbum): también las historias en marcha («En marcha», hasta donde han llegado), arriba del todo; luego las terminadas.
+- No se guardan las cosas pequeñas del día, las reacciones ni las frases de los objetos: son de usar y tirar.

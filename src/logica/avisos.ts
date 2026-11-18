@@ -16,20 +16,21 @@ export const verHazanas = (p: Partida, ahora: Date): Partida =>
 
 /** Novedades sin leer (el número del sobre). */
 export const noticiasSinLeer = (p: Partida) => (p.noticias ?? []).filter((n) => !n.leida).length
-/** Abrir el sobre: se marcan como leídas; las del barrio ya no hacen falta, las de una casa esperan a que entres. */
+/** Abrir el sobre: se marcan como leídas; el «!» de su casa sigue hasta que entras. */
 export function leerNoticias(p: Partida): Partida {
   if (!noticiasSinLeer(p)) return p
   return { ...p, noticias: (p.noticias ?? []).map((n) => ({ ...n, leida: true })) }
 }
-/** Entrar en un sitio apaga sus avisos de novedades. */
+/** Entrar en un sitio apaga sus avisos (las novedades se quedan en el sobre, ya leídas). */
 export function visitarLugar(p: Partida, lugar: Lugar): Partida {
   const n = p.noticias ?? []
-  return n.some((x) => x.lugar === lugar) ? { ...p, noticias: n.filter((x) => x.lugar !== lugar) } : p
+  return n.some((x) => x.lugar === lugar && !x.visitada)
+    ? { ...p, noticias: n.map((x) => (x.lugar === lugar ? { ...x, leida: true, visitada: true } : x)) } : p
 }
 
 /** «!» sobre una casita: ha pasado algo allí o te espera una decisión. */
 export const avisoEnCasa = (p: Partida, c: CompaneroId) =>
-  (p.noticias ?? []).some((n) => n.lugar === c) || Boolean(decisionPendiente(p, c))
+  (p.noticias ?? []).some((n) => n.lugar === c && !n.visitada) || Boolean(decisionPendiente(p, c))
 
 /** La pequeña cosa de hoy en una casa, si aún no la has mirado. */
 export function microSinVer(p: Partida, c: CompaneroId, ahora: Date) {

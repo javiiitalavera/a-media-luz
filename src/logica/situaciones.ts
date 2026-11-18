@@ -9,6 +9,9 @@ import { dia, diasEntre } from './fechas'
 
 const estados = (p: Partida) => p.situaciones ?? {}
 
+/** Cuántas novedades se guardan en el sobre (las leídas se quedan en gris). */
+export const NOTICIAS_GUARDADAS = 10
+
 export function cumpleRequisitos(p: Partida, s: Situacion, ahora: Date): boolean {
   return s.requiere.vecinos.every((c) => nacido(p, c, ahora)) && s.requiere.construido.every((id) => construido(p, id))
 }
@@ -47,7 +50,7 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
   const f = faseDe(s, nuevo.fase, nuevo.decision)
   const noticia: NoticiaBarrio = { texto: f.noticia, lugar: f.lugar, fecha: ahora.toISOString() }
   return {
-    partida: { ...p, situaciones: { ...est, [s.id]: nuevo }, noticias: [...(p.noticias ?? []), noticia].slice(-5) },
+    partida: { ...p, situaciones: { ...est, [s.id]: nuevo }, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) },
     nuevas: [noticia],
   }
 }
@@ -137,12 +140,15 @@ export function microDeHoy(p: Partida, casa: CompaneroId, ahora: Date): Micro | 
   return posibles.length ? posibles[semilla(`${hoy}|cual|${casa}`) % posibles.length] : null
 }
 
-/** Situaciones terminadas, para las Crónicas del Álbum (con sus noticias en orden). */
+/** Situaciones empezadas, para las Crónicas del Álbum: primero las que están en marcha (con sus noticias en orden). */
 export function cronicas(p: Partida) {
-  return SITUACIONES.filter((s) => estados(p)[s.id]?.fin).map((s) => {
+  const lista = SITUACIONES.filter((s) => estados(p)[s.id]).map((s) => {
     const e = estados(p)[s.id]
-    return { id: s.id, titulo: s.titulo, fases: s.fases.map((_, i) => faseDe(s, i, e.decision).noticia).filter(Boolean) }
+    // Las que están en marcha, hasta donde han llegado.
+    const fases = s.fases.slice(0, e.fin ? s.fases.length : e.fase + 1).map((_, i) => faseDe(s, i, e.decision).noticia).filter(Boolean)
+    return { id: s.id, titulo: s.titulo, fases, enMarcha: !e.fin }
   })
+  return [...lista.filter((c) => c.enMarcha), ...lista.filter((c) => !c.enMarcha)]
 }
 
 /** ¿Se pueden construir ya los proyectos del barrio? (Nox y Tuerca nacidos, con un proyecto cada uno). */

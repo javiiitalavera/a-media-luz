@@ -30,6 +30,7 @@ describe('avisos', () => {
     expect(avisoEnCasa(p, 'nox')).toBe(true)
     p = visitarLugar(p, 'nox')
     expect(avisoEnCasa(p, 'nox')).toBe(false)
+    expect(p.noticias).toHaveLength(1) // se queda en el sobre, leída
   })
 
   it('las cosas pequeñas del día esperan a que las mires', () => {

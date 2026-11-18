@@ -26,7 +26,10 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
             <div className="flex flex-col gap-2">
               {cronicas(partida).map((c) => (
                 <details key={c.id} className="rounded-3xl bg-tarjeta px-4 py-3">
-                  <summary className="flex min-h-11 cursor-pointer items-center font-bold">{c.titulo}</summary>
+                  <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-bold">
+                    <span className="flex-1">{c.titulo}</span>
+                    {c.enMarcha && <span className="rounded-full bg-ambar px-2.5 py-0.5 text-[12px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
+                  </summary>
                   <ol className="mt-1 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug text-texto-2">
                     {c.fases.map((f, i) => <li key={i}>{f}</li>)}
                   </ol>
