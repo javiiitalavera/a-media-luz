@@ -10,6 +10,8 @@ export const UI = {
     hecho: 'Construido',
     novedades: 'Mientras no estabas…',
     nadaNuevo: 'Nada nuevo. Están tramando algo, seguro.',
+    cuando: (dias: number) => (dias <= 0 ? 'hoy' : dias === 1 ? 'ayer' : `hace ${dias} días`),
+    enMarcha: 'En marcha',
     abrirNovedades: (n: number) => (n ? `Novedades: ${n} sin leer` : 'Novedades'),
     hayAlgo: (nombre: string) => `Ha pasado algo en casa de ${nombre}`,
     cronicas: 'Crónicas del barrio',

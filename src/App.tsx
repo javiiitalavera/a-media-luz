@@ -8,7 +8,7 @@ import { useJuego } from './estado/juego'
 import { momentoDelDia } from './logica/momento'
 import { mesActual } from './logica/meses'
 import { nacidos } from './logica/etapas'
-import { dia } from './logica/fechas'
+import { dia, diasEntre } from './logica/fechas'
 import { useAhora } from './componentes/comunes'
 import { Navegacion, type Pestana } from './componentes/Navegacion'
 import { Inicio } from './pantallas/Inicio'
@@ -74,7 +74,7 @@ export default function App() {
     <>
       <div key={`${pestana}-${rincon}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
       <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora) }} />
-      {sobre && <Novedades onIr={irALugar} onCerrar={() => setSobre(false)} />}
+      {sobre && <Novedades ahora={ahora} onIr={irALugar} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />
       <GloboFlotante />
@@ -83,24 +83,31 @@ export default function App() {
 }
 
 /** «Mientras no estabas…»: se abre al tocar el sobre del barrio. Al abrirlo, las novedades quedan leídas. */
-function Novedades({ onIr, onCerrar }: { onIr: (l: Lugar) => void; onCerrar: () => void }) {
+function Novedades({ ahora, onIr, onCerrar }: { ahora: Date; onIr: (l: Lugar) => void; onCerrar: () => void }) {
   const noticias = useJuego((s) => s.partida?.noticias) ?? []
   const ajustar = useJuego((s) => s.ajustar)
+  // Lo que no estaba leído al abrir se ve resaltado mientras el sobre siga abierto.
+  const [nuevas] = useState(() => new Set(noticias.filter((n) => !n.leida).map((n) => n.fecha + n.texto)))
   useEffect(() => { sfx.pagina(); ajustar(leerNoticias) }, [ajustar])
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={onCerrar}>
-      <section role="dialog" aria-label={UI.barrio.novedades} onClick={(e) => e.stopPropagation()} className="animate-entrar w-full rounded-[28px] bg-fondo p-4 shadow-xl">
+      <section role="dialog" aria-label={UI.barrio.novedades} onClick={(e) => e.stopPropagation()} className="animate-entrar max-h-[80dvh] w-full overflow-y-auto rounded-[28px] bg-fondo p-4 shadow-xl">
         <h2 className="px-1 text-[20px] font-bold">{UI.barrio.novedades}</h2>
         {noticias.length === 0 && <p className="mt-2 px-1 text-[15px] text-texto-3">{UI.barrio.nadaNuevo}</p>}
         <ul className="mt-2 flex flex-col gap-2">
-          {[...noticias].reverse().map((n, i) => (
-            <li key={i}>
-              <button type="button" onClick={() => { onCerrar(); onIr(n.lugar) }}
-                className="flex min-h-11 w-full items-center gap-2 rounded-2xl bg-tarjeta px-3.5 py-2.5 text-left text-[15px] leading-snug">
-                <span className="flex-1">{n.texto}</span><span aria-hidden className="text-texto-3">›</span>
-              </button>
-            </li>
-          ))}
+          {[...noticias].reverse().map((n, i) => {
+            const nueva = nuevas.has(n.fecha + n.texto)
+            return (
+              <li key={i}>
+                <button type="button" onClick={() => { onCerrar(); onIr(n.lugar) }}
+                  className={`flex min-h-11 w-full items-center gap-2 rounded-2xl px-3.5 py-2.5 text-left text-[15px] leading-snug ${nueva ? 'bg-tarjeta font-semibold text-texto shadow-sm' : 'bg-hundido/60 text-texto-3'}`}>
+                  {nueva && <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-coral" />}
+                  <span className="flex-1">{n.texto}</span>
+                  <span className="shrink-0 text-[12px] font-medium text-texto-3">{UI.barrio.cuando(diasEntre(dia(n.fecha), dia(ahora)))}</span>
+                </button>
+              </li>
+            )
+          })}
         </ul>
         <button type="button" onClick={onCerrar} className="mt-2 min-h-11 w-full font-semibold text-texto-3">{UI.casa.cerrar}</button>
       </section>
