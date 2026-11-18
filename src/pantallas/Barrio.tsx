@@ -121,7 +121,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <div className="flex items-center gap-2">
-          <h1 className="flex min-h-11 items-center rounded-2xl bg-tarjeta/85 px-3.5 text-[18px] font-bold shadow-sm backdrop-blur-sm">{UI.barrio.titulo}</h1>
+          <h1 className="sr-only">{UI.barrio.titulo}</h1>
           <button type="button" onClick={onNovedades} aria-label={UI.barrio.abrirNovedades(sinLeer)}
             className="pointer-events-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-tarjeta/85 shadow-sm backdrop-blur-sm">
             {sinLeer > 0 ? <Aviso tipo="sobre" tam={32} numero={sinLeer} /> : (
