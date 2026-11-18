@@ -95,6 +95,20 @@ body {
 @keyframes velo-fuera { 0%, 15% { opacity: 1; } 100% { opacity: 0; } }
 .anim-velo { animation: velo-fuera 1.3s ease-out 0.2s both; }
 
+/* Paso entre barrio y casas (componentes/transicion.ts). La barra de abajo no se mueve. */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.75s; animation-timing-function: cubic-bezier(.55,0,.25,1); transform-origin: var(--vt-x, 50%) var(--vt-y, 55%);
+}
+::view-transition-group(navegacion) { animation: none; }
+:root[data-transicion='entrar']::view-transition-old(root) { animation-name: vt-sumergirse; }
+:root[data-transicion='entrar']::view-transition-new(root) { animation-name: vt-brotar; }
+:root[data-transicion='salir']::view-transition-old(root) { animation-name: vt-encoger; z-index: 2; }
+:root[data-transicion='salir']::view-transition-new(root) { animation-name: vt-emerger; }
+@keyframes vt-sumergirse { to { transform: scale(2.6); opacity: 0; filter: blur(6px); } }
+@keyframes vt-brotar { from { transform: scale(0.35); opacity: 0; border-radius: 50%; } 60% { opacity: 1; } }
+@keyframes vt-encoger { to { transform: scale(0.3); opacity: 0; } }
+@keyframes vt-emerger { from { transform: scale(2.6); opacity: 0; filter: blur(6px); } }
+
 @media (prefers-reduced-motion: reduce) {
   .anim-nube { animation: aparecer 0.6s ease-out reverse both; }
   .animate-entrar, .animate-aparecer { animation: none; }
