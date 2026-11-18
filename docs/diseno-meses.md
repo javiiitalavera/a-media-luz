@@ -1,5 +1,7 @@
 # Un compañero al mes (diseño aprobado por Javi, 16/11/2026)
 
+> **17/11/2026: sustituido por `docs/diseno-vecindario.md`.** Se queda como histórico.
+
 Idea de Javi (16/11/2026). Mantiene materiales y construir como núcleo (decidido por Javi). Las reglas de base de `docs/diseno-juego.md` (ofrendas, tope de 3 al día por área, día malo, consecuencias con humor y sin culpa) siguen valiendo.
 
 ## En una frase

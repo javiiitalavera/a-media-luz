@@ -1,42 +1,48 @@
 import { describe, expect, it } from 'vitest'
-import { construir, disponibles, faltan, ganados, puedeConstruir } from './casa'
+import { construir, disponibles, faltan, ganados, proyectosVisibles, queRecompensan } from './casa'
 import { OBJETOS_CASA } from '../contenido'
 import { con, en, nueva } from './test-utils'
+import type { Partida } from './partida'
 
 const objeto = (id: string) => OBJETOS_CASA.find((o) => o.id === id)!
 
-describe('materiales', () => {
-  it('cada ofrenda da 1 material de su área, como mucho 3 al día', () => {
-    let p = con(nueva(), 'cuerpo', '2026-01-05', 5)
-    p = con(p, 'mente', '2026-01-06', 2)
-    const g = ganados(p, 'nox', en('2026-01-06', 20))
-    expect(g.cuerpo).toBe(3)
-    expect(g.mente).toBe(2)
-    expect(g.calma).toBe(0)
+describe('materiales (bolsa común)', () => {
+  it('cada acción da recompensa una vez al día y como mucho 3 por área', () => {
+    let p = con(nueva(), 'cuerpo', '2026-01-05', 3) // la misma acción 3 veces: cuenta 1
+    expect(ganados(p, en('2026-01-05', 23)).cuerpo).toBe(1)
+    const ids = p.acciones.filter((a) => a.area === 'cuerpo').map((a) => a.id)
+    const mas = ids.map((accionId, i) => ({ id: 'm' + i, accionId, area: 'cuerpo' as const, fecha: en('2026-01-06', 10, i).toISOString(), diaMalo: false }))
+    p = { ...p, ofrendas: [...p.ofrendas, ...mas] }
+    expect(queRecompensan(mas)).toHaveLength(Math.min(3, ids.length))
   })
-  it('no cuenta lo que aún no ha pasado', () => {
-    const p = con(nueva(), 'cuerpo', '2026-01-07')
-    expect(ganados(p, 'nox', en('2026-01-06')).cuerpo).toBe(0)
+  it('lo construido se descuenta de la bolsa común y nunca baja de 0', () => {
+    let p: Partida = nueva()
+    const ids = p.acciones.filter((a) => a.area === 'cuerpo').map((a) => a.id)
+    for (let d = 5; d < 8; d++) p = { ...p, ofrendas: [...p.ofrendas, { id: 'x' + d, accionId: ids[0], area: 'cuerpo', fecha: en(`2026-01-0${d}`).toISOString(), diaMalo: false }] }
+    const ahora = en('2026-01-07', 23)
+    p = construir(p, 'hoguera', ahora)!
+    expect(disponibles(p, ahora).cuerpo).toBe(0)
+    expect(disponibles({ ...p, construcciones: [...p.construcciones!, { objetoId: 'horno', fecha: ahora.toISOString() }] }, ahora).cuerpo).toBe(0)
   })
 })
 
-describe('construir', () => {
-  it('gasta materiales y no deja construir dos veces lo mismo', () => {
-    let p = con(con(nueva(), 'cuerpo', '2026-01-05', 3), 'cuerpo', '2026-01-06', 1)
-    const ahora = en('2026-01-06', 20)
-    expect(puedeConstruir(p, objeto('hoguera'), ahora)).toBe(true)
+describe('proyectos', () => {
+  it('se desvelan de uno en uno y no se construye uno escondido', () => {
+    let p: Partida = nueva()
+    expect(proyectosVisibles(p, 'nox').map((o) => o.id)).toEqual(['hoguera'])
+    const ids = p.acciones.map((a) => a.id)
+    const muchas = Array.from({ length: 30 }, (_, i) => {
+      const a = p.acciones[i % ids.length]
+      return { id: 'r' + i, accionId: a.id, area: a.area, fecha: en('2026-01-05', 8).toISOString().replace('T08', `T${String(8 + (i % 10)).padStart(2, '0')}`), diaMalo: false }
+    })
+    p = { ...p, ofrendas: muchas.map((o, i) => ({ ...o, fecha: new Date(en('2026-01-05').getTime() + i * 86_400_000).toISOString() })) }
+    const ahora = en('2026-03-01')
+    expect(construir(p, 'banco', ahora)).toBeNull()
     p = construir(p, 'hoguera', ahora)!
-    expect(disponibles(p, 'nox', ahora).cuerpo).toBe(1)
-    expect(construir(p, 'hoguera', ahora)).toBeNull()
+    expect(proyectosVisibles(p, 'nox').map((o) => o.id)).toEqual(['hoguera', 'banco'])
   })
-  it('dice lo que falta y no construye sin materiales', () => {
-    const p = con(nueva(), 'cuerpo', '2026-01-05', 2)
-    const ahora = en('2026-01-05', 20)
-    expect(faltan(p, objeto('cojin'), ahora)).toEqual({ vinculos: 2 })
-    expect(construir(p, 'cojin', ahora)).toBeNull()
-  })
-  it('partidas antiguas sin construcciones funcionan', () => {
-    const p = { ...con(nueva(), 'cuerpo', '2026-01-05', 3), construcciones: undefined }
-    expect(construir(p, 'hoguera', en('2026-01-05', 20))?.construcciones).toHaveLength(1)
+  it('dice lo que falta', () => {
+    const p = con(nueva(), 'cuerpo', '2026-01-05')
+    expect(faltan(p, objeto('hoguera'), en('2026-01-05', 23))).toEqual({ cuerpo: 2 })
   })
 })

@@ -1,3 +1,4 @@
+import { ahora } from '../logica/reloj'
 // Piezas de interfaz comunes.
 import { useEffect, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { rutaArte, type ClaveArte } from '../arte/manifiesto'
@@ -10,7 +11,7 @@ export function useAhora(): Date {
     document.addEventListener('visibilitychange', tic)
     return () => { clearInterval(id); document.removeEventListener('visibilitychange', tic) }
   }, [])
-  return new Date()
+  return ahora()
 }
 
 export function Pantalla({ children, titulo }: { children: ReactNode; titulo?: string }) {

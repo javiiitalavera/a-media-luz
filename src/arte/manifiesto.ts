@@ -14,7 +14,8 @@ export type ClaveArte =
   | `objeto/${string}`
   | `huevo/${Id}/${'cerrado' | 'agrietado'}`
   | `casita/${Id}`
-  | 'bosque/mapa'
+  | 'barrio/mapa'
+  | `huella/${'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente'}`
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
 /** Las 3 etapas × 4 expresiones de un compañero, recortadas con la herramienta (mismo encuadre). */
@@ -26,14 +27,15 @@ const objetos = (c: Id, ids: string[]) => Object.fromEntries(ids.map((i) => [`ca
 
 export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casa/nox/fondo': '/arte/casa/nox/fondo.webp',
-  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta', 'zapatillas', 'bufanda', 'farol-luna']),
+  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta', 'zapatillas', 'bufanda', 'farol-luna', 'horno']),
   'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
   'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
   'casa/tuerca/fondo': '/arte/casa/tuerca/fondo.webp',
   ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj', 'medalla', 'tablon', 'tuerquita']),
   'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
-  'bosque/mapa': '/arte/bosque/mapa.webp',
+  'barrio/mapa': '/arte/barrio/mapa.webp',
+  ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
   'casita/nox': '/arte/casitas/nox.webp',
   'casita/tuerca': '/arte/casitas/tuerca.webp',
   ...personaje('tuerca'),
