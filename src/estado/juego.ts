@@ -12,7 +12,8 @@ import { migrarHazanas } from '../logica/hazanas'
 import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
-import { marcarPresentado } from '../logica/meses'
+import { marcarPresentado, mesActual } from '../logica/meses'
+import { momentoCrecer, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
 
 export const SEGUNDOS_DESHACER = 8
@@ -75,13 +76,12 @@ export const useJuego = create<Juego>()(
         if (!p) return null
         const momento = ahora()
         const resultado = hacerOfrenda(p, accionId, momento, azarReal, nuevoId())
-        const premios = [resultado.sorpresa, resultado.premio].filter((x) => x !== null).map((x) => x!.nombre)
         set({
           partida: resultado.partida,
           recientes: [...get().recientes, { resultado, hasta: Date.now() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
           porContar: {
             frase: resultado.frase ?? get().porContar?.frase ?? null,
-            hallazgos: [...(get().porContar?.hallazgos ?? []), ...premios],
+            hallazgos: get().porContar?.hallazgos ?? [],
           },
         })
         return resultado
@@ -133,14 +133,17 @@ export const useJuego = create<Juego>()(
         if (!p) return null
         const vista = marcarEtapaVista(p, c, etapa)
         const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
-        set({ partida: r ? { ...vista, frasesRecientes: r.recientes } : vista })
+        let nueva = r ? { ...vista, frasesRecientes: r.recientes } : vista
+        if (etapa > 0) nueva = momentoCrecer(nueva, c, etapa as 1 | 2, ahora(), r?.frase?.texto)
+        set({ partida: nueva })
         return r?.frase ?? null
       },
       avanzarBarrio: () => {
         const p = get().partida
         if (!p) return
-        const r = avanzar(p, ahora())
-        if (r.nuevas.length) set({ partida: r.partida })
+        const momento = ahora()
+        const r = avanzar(p, momento)
+        if (r.nuevas.length) set({ partida: momentosDeHistorias(p, r.partida, momento) })
       },
       decidir: (situacion, opcion) => {
         const p = get().partida
@@ -163,7 +166,7 @@ export const useJuego = create<Juego>()(
       },
       presentar: () => {
         const p = get().partida
-        if (p) set({ partida: marcarPresentado(p, ahora()) })
+        if (p) set({ partida: momentoNacimiento(marcarPresentado(p, ahora()), mesActual(p).companero, ahora()) })
       },
       ajustar: (cambio) => {
         const p = get().partida

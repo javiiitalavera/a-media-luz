@@ -131,3 +131,12 @@ export const PROYECTOS_BARRIO: ProyectoBarrio[] = [
   { id: 'puente', nombre: 'Puente', descripcion: 'Para cruzar el arroyo sin mojarse. Tuerca quiere inaugurarlo. Nox quiere cruzarlo.',
     abre: 'Une las dos orillas: empiezan las visitas.', coste: { cuerpo: 5, orden: 5, calma: 2 } },
 ]
+
+/** Dónde se pone Gregorio (la aspiradora) cuando está en casa de Nox. */
+export const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 80, y: 80, ancho: 13 }
+/** Dónde se pone un vecino de visita (o sentado en el banco). */
+export const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
+  nox: { x: 82, y: 56, ancho: 22 },
+  tuerca: { x: 75, y: 59, ancho: 21 },
+  tofu: { x: 76, y: 62, ancho: 20 },
+}

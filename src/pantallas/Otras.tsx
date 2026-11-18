@@ -1,62 +1,83 @@
 // Álbum y Ajustes.
 import { useRef, useState } from 'react'
-import { AREAS, COLECCION, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
+import { AREAS, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
+import { createPortal } from 'react-dom'
+import { FotoEscena } from '../componentes/FotoEscena'
+import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
 import type { Partida } from '../logica/partida'
-import { objetosConseguidos, robados } from '../logica/reglas'
 import { dia } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
 import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, ponerDesfase } from '../logica/reloj'
-import { BotonSecundario, HuecoArte, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
+import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { usePreferencias } from '../estado/preferencias'
 
-export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
-  const tengo = new Set(objetosConseguidos(partida, ahora).map((x) => x.objeto.id))
-  const nido = new Set(robados(partida, ahora).map((o) => o.id))
+export function Album({ partida }: { partida: Partida; ahora: Date }) {
+  const momentos = momentosRecientes(partida)
+  const lista = cronicas(partida)
+  const [seccion, setSeccion] = useState<'momentos' | 'cronicas'>(momentos.length || !lista.length ? 'momentos' : 'cronicas')
+  const [abierto, setAbierto] = useState<MomentoAlbum | null>(null)
   return (
     <Pantalla titulo={UI.album.titulo}>
-      <div className="flex flex-col gap-5">
-        <section>
-          <h2 className="mb-2 px-1 text-[15px] font-bold">{UI.barrio.cronicas}</h2>
-          {cronicas(partida).length === 0 ? (
-            <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.barrio.sinCronicas}</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {cronicas(partida).map((c) => (
-                <details key={c.id} className="rounded-3xl bg-tarjeta px-4 py-3">
-                  <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-bold">
-                    <span className="flex-1">{c.titulo}</span>
-                    {c.enMarcha && <span className="rounded-full bg-ambar px-2.5 py-0.5 text-[12px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
-                  </summary>
-                  <ol className="mt-1 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug text-texto-2">
-                    {c.fases.map((f, i) => <li key={i}>{f}</li>)}
-                  </ol>
-                </details>
-              ))}
-            </div>
-          )}
-        </section>
-        {ORDEN_AREAS.map((area) => (
-          <section key={area}>
-            <h2 className="mb-2 px-1 text-[15px] font-bold">{AREAS[area].rincon}</h2>
-            <div className="grid grid-cols-3 gap-2">
-              {COLECCION.filter((o) => o.area === area).map((o) => {
-                const visto = tengo.has(o.id)
-                return (
-                  <div key={o.id} className={`flex min-h-[110px] flex-col items-center gap-1 rounded-3xl p-2 text-center ${visto ? 'bg-tarjeta' : 'border-2 border-dashed border-borde'}`}>
-                    {visto && <HuecoArte clave={`objeto/${o.id}`} alt={o.nombre} className="h-12 w-12" />}
-                    <span className="text-[13px] leading-tight font-semibold">{visto ? o.nombre : UI.album.sinDescubrir}</span>
-                    {visto && nido.has(o.id) && <span className="text-[12px] font-semibold text-peligro">{UI.album.enElNido}</span>}
-                    {o.especial && <span className="text-[11px] text-texto-3">{UI.album.especial}</span>}
-                  </div>
-                )
-              })}
-            </div>
-          </section>
+      <p className="-mt-3 mb-3 px-1 text-[14px] text-texto-3">{UI.album2.subtitulo}</p>
+      <div role="tablist" className="mb-4 grid grid-cols-2 gap-1 rounded-full bg-hundido p-1">
+        {(['momentos', 'cronicas'] as const).map((s) => (
+          <button key={s} type="button" role="tab" aria-selected={seccion === s} onClick={() => setSeccion(s)}
+            className={`min-h-11 rounded-full text-[15px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
+            {UI.album2[s]}
+          </button>
         ))}
       </div>
+
+      {seccion === 'momentos' ? (
+        momentos.length === 0 ? (
+          <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.album2.sinMomentos}</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {momentos.map((m, i) => (
+              <button key={m.id} type="button" onClick={() => setAbierto(m)}
+                className="rounded-md bg-[#fffaf3] p-2 pb-3 text-left shadow-md transition active:scale-[0.98]"
+                style={{ transform: `rotate(${i % 2 ? 1.2 : -1.2}deg)` }}>
+                <FotoEscena e={m.escena} />
+                <span className="mt-2 block text-[13px] leading-tight font-bold text-[#3f2a3a]">{m.titulo}</span>
+                <span className="mt-0.5 block text-[11px] text-[#7a6670]">{UI.album2.fecha(m.fecha)}</span>
+              </button>
+            ))}
+          </div>
+        )
+      ) : lista.length === 0 ? (
+        <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.barrio.sinCronicas}</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {lista.map((c) => (
+            <details key={c.id} className="rounded-3xl bg-tarjeta px-4 py-3">
+              <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-bold">
+                <span className="flex-1">{c.titulo}</span>
+                {c.enMarcha && <span className="rounded-full bg-ambar px-2.5 py-0.5 text-[12px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
+              </summary>
+              <ol className="mt-1 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug text-texto-2">
+                {c.fases.map((f, i) => <li key={i}>{f}</li>)}
+              </ol>
+            </details>
+          ))}
+        </div>
+      )}
+
+      {abierto && createPortal(
+        <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setAbierto(null)}>
+          <figure role="dialog" aria-label={abierto.titulo} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
+            <FotoEscena e={abierto.escena} />
+            <figcaption className="mt-3 px-1">
+              <span className="block text-[17px] font-bold text-[#3f2a3a]">{abierto.titulo}</span>
+              {abierto.texto && <span className="mt-1 block text-[14px] leading-snug text-[#5e4a56] italic">{abierto.texto}</span>}
+              <span className="mt-2 block text-[12px] text-[#7a6670]">{UI.album2.fecha(abierto.fecha)}</span>
+            </figcaption>
+          </figure>
+        </div>,
+        document.body,
+      )}
     </Pantalla>
   )
 }

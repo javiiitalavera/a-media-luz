@@ -17,6 +17,14 @@ export const UI = {
     cronicas: 'Crónicas del barrio',
     sinCronicas: 'Todavía no ha pasado nada digno de contarse. Dales tiempo.',
   },
+  album2: {
+    nacio: (nombre: string) => `Ha llegado ${nombre}`,
+    momentos: 'Momentos',
+    cronicas: 'Crónicas',
+    subtitulo: 'Las cosas que el barrio no ha olvidado.',
+    sinMomentos: 'Todavía no hay fotos. Se hacen solas cuando pasa algo que merece la pena.',
+    fecha: (iso: string) => new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
+  },
   ficha: {
     huevo: (n: number) => (n <= 0 ? 'Se mueve. Está a punto.' : n === 1 ? 'Le falta 1 hazaña para abrirse. Cualquiera vale.' : `Le faltan ${n} hazañas para abrirse. Cualquiera vale.`),
     paraSer: (etapa: string) => `Para hacerse ${etapa}`,

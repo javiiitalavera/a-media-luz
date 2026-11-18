@@ -233,3 +233,9 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - Con el huevo, la ficha dice cuántas hazañas le faltan para abrirse.
 - Desaparece la pantalla antigua del «rincón» (estado del rincón, metas semanales, crecimiento por grados).
 - En el barrio se quita la tarjeta «Barrio»: arriba solo queda el sobre.
+
+### Álbum (18/11/2026, rama `dev/album`, decidido por Javi tras comparar con ChatGPT)
+- **Álbum = «Las cosas que el barrio no ha olvidado»**, con dos secciones (pestañas): **Momentos** y **Crónicas**. Más adelante, **Curiosidades** (objetos con historia; necesitan lámina de ChatGPT).
+- **Momentos:** fotos tipo polaroid que hace el propio juego en los hitos: nace un vecino, crece, termina una historia (el puente sale en el barrio). Se guarda cómo estaba la escena (casa, cara, visita, Gregorio, lo construido, las huellas, la hora del día) y se pinta con el arte de siempre, con un recorte cuadrado y algo acercado. Pie de foto, fecha y, al tocarla, la foto en grande con su texto. Lógica en `src/logica/momentos.ts`, dibujo en `src/componentes/FotoEscena.tsx`.
+- **Sin** porcentajes, siluetas ni premios por llenar páginas; lo más reciente arriba.
+- **Limpieza:** fuera la colección antigua (30 objetos), las metas semanales con premio, las sorpresas que daban objetos de esa colección y el robo del cuervo.

@@ -1,6 +1,6 @@
 // Casos señalados en la revisión de ChatGPT (15/11/2026).
 import { describe, expect, it } from 'vitest'
-import { estadoRincon, metas } from './reglas'
+import { estadoRincon } from './reglas'
 import { importarCopia } from './copia'
 import { con, en, nueva } from './test-utils'
 
@@ -22,34 +22,6 @@ describe('arreglo interrumpido', () => {
     expect(tras.faltanParaArreglar).toBe(1) // antes del arreglo volvía a 3
     p = con(p, 'cuerpo', '2026-01-20')
     expect(estadoRincon(p, 'cuerpo', en('2026-01-20', 20))).toMatchObject({ visitante: false, fase: 0 })
-  })
-})
-
-describe('metas y deterioro', () => {
-  it('un rincón estropeado al empezar la semana no tiene meta («se pausa lo bueno»)', () => {
-    const p = nueva() // sin ofrendas: el lunes 12 el claro está estropeado
-    expect(metas(p, en('2026-01-13')).map((m) => m.semana)).toEqual(['2026-01-05'])
-  })
-  it('las ofrendas de arreglo no cuentan para la meta', () => {
-    let p = con(nueva(), 'cuerpo', '2026-01-08', 2) // las 2 arreglan el claro (fase 1 desde el día 8)
-    expect(metas(p, en('2026-01-08', 20))[0].hechas).toBe(0)
-    p = con(p, 'cuerpo', '2026-01-09')
-    expect(metas(p, en('2026-01-09', 20))[0].hechas).toBe(1)
-  })
-})
-
-describe('premios cuando se acaban los especiales', () => {
-  it('tras los 2 especiales del área, da objetos normales que no tengas; si no queda nada, ninguno', () => {
-    // Orden (Tuerca, semanal): meta de 2 ofrendas por semana. 8 semanas seguidas cumpliéndola (lunes y martes).
-    let p = nueva('tuerca')
-    const dias = [5, 12, 19, 26, 33, 40, 47, 54].flatMap((n) => [n, n + 1])
-      .map((n) => new Date(2026, 0, n)).map((f) => `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`)
-    for (const d of dias) p = con(p, 'orden', d)
-    const premios = metas(p, en('2026-02-24', 20)).filter((m) => m.area === 'orden').map((m) => m.premio?.id ?? null)
-    expect(premios.slice(0, 2)).toEqual(['etiquetadora', 'engranaje-dorado'])
-    expect(premios.slice(2, 6).every((id) => id && !['etiquetadora', 'engranaje-dorado'].includes(id))).toBe(true)
-    expect(new Set(premios.slice(0, 6)).size).toBe(6)
-    expect(premios.slice(6)).toEqual([null, null])
   })
 })
 

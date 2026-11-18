@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { diaDeLlegada, estadoRincon, metas, objetosConseguidos, robados } from './reglas'
+import { diaDeLlegada, estadoRincon } from './reglas'
 import { con, en, nueva } from './test-utils'
 
 // 2026-01-05 es lunes. Nox (Cuerpo, ritmo diario = margen 1) es el principal.
@@ -62,22 +62,6 @@ describe('consecuencias por fases (Cuerpo: margen 1 día)', () => {
     p = con(p, 'cuerpo', '2026-01-08', 1, 18)
     expect(estadoRincon(p, 'cuerpo', en('2026-01-08', 20)).crecimiento).toBe(1)
   })
-  it('el visitante se lleva el último objeto del área y lo devuelve con la 3.ª ofrenda', () => {
-    let p = nueva()
-    p = { ...p, hallazgos: [{ objetoId: 'pina-chamuscada', fecha: en('2026-01-05', 11).toISOString() }] }
-    let e = estadoRincon(p, 'cuerpo', en('2026-01-10'))
-    expect(e.robado?.id).toBe('pina-chamuscada')
-    expect(robados(p, en('2026-01-10')).map((o) => o.id)).toEqual(['pina-chamuscada'])
-    p = con(p, 'cuerpo', '2026-01-10', 2)
-    e = estadoRincon(p, 'cuerpo', en('2026-01-10', 20))
-    expect(e.visitante).toBe(true) // sin niebla, pero el visitante sigue
-    expect(e.faltanParaArreglar).toBe(1)
-    p = con(p, 'cuerpo', '2026-01-11')
-    e = estadoRincon(p, 'cuerpo', en('2026-01-11', 20))
-    expect(e.visitante).toBe(false)
-    expect(e.robado).toBeNull()
-    expect(e.fase).toBe(0)
-  })
   it('el arreglo también vale en días distintos', () => {
     let p = con(nueva(), 'cuerpo', '2026-01-08') // 1 de 2
     p = con(p, 'cuerpo', '2026-01-09')
@@ -87,29 +71,5 @@ describe('consecuencias por fases (Cuerpo: margen 1 día)', () => {
     const p = { ...nueva('tuerca'), ritmos: { ...nueva().ritmos } }
     expect(estadoRincon(p, 'orden', en('2026-01-13')).fase).toBe(0)
     expect(estadoRincon(p, 'orden', en('2026-01-14')).fase).toBe(1)
-  })
-})
-
-describe('metas semanales', () => {
-  it('meta por ritmo; se cumple con las ofrendas que cuentan de la semana', () => {
-    let p = nueva()
-    for (const d of ['05', '06', '07', '08']) p = con(p, 'cuerpo', `2026-01-${d}`)
-    let m = metas(p, en('2026-01-08', 20))[0]
-    expect(m).toMatchObject({ area: 'cuerpo', meta: 5, hechas: 4, cumplida: false })
-    p = con(p, 'cuerpo', '2026-01-09')
-    m = metas(p, en('2026-01-09', 20))[0]
-    expect(m.cumplida).toBe(true)
-    expect(m.premio?.especial).toBe(true)
-  })
-  it('si no se cumple, la de la semana siguiente es más fácil', () => {
-    let p = nueva()
-    for (const d of ['05', '07', '09', '11']) p = con(p, 'cuerpo', `2026-01-${d}`) // 4 de 5, en días alternos (no se estropea)
-    const ms = metas(p, en('2026-01-13'))
-    expect(ms.map((m) => [m.meta, m.cumplida])).toEqual([[5, false], [4, false]])
-  })
-  it('los premios semanales entran en la colección', () => {
-    let p = nueva()
-    for (const d of ['05', '06', '07', '08', '09']) p = con(p, 'cuerpo', `2026-01-${d}`)
-    expect(objetosConseguidos(p, en('2026-01-10')).map((x) => x.objeto.id)).toEqual(['farol-de-nox'])
   })
 })

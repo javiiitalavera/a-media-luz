@@ -49,20 +49,6 @@ describe('hacer una ofrenda', () => {
     expect(r.eventos).toContain('arreglo')
     expect(r.frase?.tipo).toBe('arreglo')
   })
-  it('sorpresa: 15 %, una al día, un objeto del área que no tengas', () => {
-    const r = ofrecer(nueva(), 'pasos', en('2026-01-05'), azarFijo(0, 0.1, 0))
-    expect(r.sorpresa?.area).toBe('cuerpo')
-    expect(r.sorpresa?.especial).toBeFalsy()
-    expect(ofrecer(r.partida, 'pasos', en('2026-01-05', 15), azarFijo(0, 0)).sorpresa).toBeNull()
-    expect(ofrecer(nueva(), 'pasos', en('2026-01-05'), azarFijo(0, 0.2)).sorpresa).toBeNull()
-  })
-  it('cumplir la meta semanal da su premio', () => {
-    let p = nueva()
-    for (const d of ['05', '06', '07', '08']) p = con(p, 'cuerpo', `2026-01-${d}`)
-    const r = ofrecer(p, 'pasos', en('2026-01-09'))
-    expect(r.eventos).toContain('metaCumplida')
-    expect(r.premio?.id).toBe('farol-de-nox')
-  })
   it('no repite las frases recientes', () => {
     let p = nueva()
     const vistas: string[] = []
@@ -76,7 +62,7 @@ describe('hacer una ofrenda', () => {
 })
 
 describe('deshacer', () => {
-  it('quita la ofrenda y su sorpresa; se pueden deshacer varias seguidas', () => {
+  it('quita la ofrenda; se pueden deshacer varias seguidas', () => {
     let p = nueva()
     const r1 = ofrecer(p, 'pasos', en('2026-01-05', 10), azarFijo(0, 0.1, 0))
     const r2 = ofrecer(r1.partida, 'agua', en('2026-01-05', 11))
