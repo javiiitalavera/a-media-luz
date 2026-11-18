@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
-import { hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { hayAlbumNuevo, hayHazanasNuevas, leerNoticias } from './logica/avisos'
 import { createPortal } from 'react-dom'
 import { UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -19,6 +19,7 @@ import { Ajustes, Album } from './pantallas/Otras'
 import { Entrada } from './componentes/Entrada'
 import { GloboFlotante } from './componentes/Globo'
 import { Sonido } from './componentes/Sonido'
+import { usePreferencias } from './estado/preferencias'
 import { sfx } from './sonido'
 
 export default function App() {
@@ -33,7 +34,8 @@ export default function App() {
 
   // De noche, la interfaz pasa a su versión oscura (ciruela).
   const momento = momentoDelDia(ahora)
-  const noche = momento === 'noche'
+  const aspecto = usePreferencias((s) => s.aspecto)
+  const noche = aspecto === 'auto' ? momento === 'noche' : aspecto === 'noche'
   useEffect(() => {
     document.documentElement.dataset.noche = noche ? 'si' : 'no'
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', noche ? '#2E2030' : '#F9EBDD')
@@ -69,7 +71,7 @@ export default function App() {
   return (
     <>
       <div key={`${pestana}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
-      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora) }} />
+      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
       {sobre && <Novedades ahora={ahora} onIr={irALugar} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />

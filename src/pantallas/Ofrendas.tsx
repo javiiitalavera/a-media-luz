@@ -26,14 +26,14 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   const extras = extrasHoy(partida, ahora)
   const hechas = mias.filter((a) => hechaHoy(partida, a.id, ahora)).length
   const [hoja, setHoja] = useState<'editar' | 'algo' | null>(null)
-  const [reaccion, setReaccion] = useState<{ texto: string; n: number } | null>(null)
+  const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string } | null>(null)
   useEffect(() => olvidar, [olvidar])
   // Abrir Hazañas apaga el aviso del día nuevo.
   const ajustar = useJuego((s) => s.ajustar)
   useEffect(() => { ajustar((p) => verHazanas(p, ahora)) }, [ajustar, ahora])
   useEffect(() => {
     if (!reaccion) return
-    const t = setTimeout(() => setReaccion(null), 4500)
+    const t = setTimeout(() => setReaccion(null), reaccion.sorpresa ? 6500 : 4500)
     return () => clearTimeout(t)
   }, [reaccion])
 
@@ -41,7 +41,10 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
     if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); return }
     sfx.tachar()
     const r = ofrecer(a.id)
-    if (r?.frase) setReaccion({ texto: `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`, n: Date.now() })
+    if (r?.sorpresa) {
+      setTimeout(() => sfx.sorpresa(), 250)
+      setReaccion({ texto: `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`, n: Date.now(), sorpresa: r.sorpresa.arte })
+    } else if (r?.frase) setReaccion({ texto: `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`, n: Date.now() })
   }
 
   return (
@@ -84,7 +87,10 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
 
       {reaccion && (
         <div key={reaccion.n} role="status" className="animate-entrar pointer-events-none fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-[430px] justify-center px-4">
-          <span className="rounded-2xl bg-[#2e2030]/88 px-4 py-2.5 text-center text-[14px] leading-snug text-[#fbefe4] shadow-lg backdrop-blur-sm">{reaccion.texto}</span>
+          <span className="flex items-center gap-3 rounded-2xl bg-[#2e2030]/88 px-4 py-2.5 text-[14px] leading-snug text-[#fbefe4] shadow-lg backdrop-blur-sm">
+            {reaccion.sorpresa && <img src={reaccion.sorpresa} alt="" className="anim-brotar h-12 w-12 shrink-0 object-contain" />}
+            <span className={reaccion.sorpresa ? '' : 'text-center'}>{reaccion.texto}</span>
+          </span>
         </div>
       )}
 

@@ -5,6 +5,7 @@ import type { Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { dia, diasEntre } from './fechas'
 import { misHazanas } from './hazanas'
+import { curiosidadesTenidas } from './curiosidades'
 import { decisionPendiente, huellasEn, microDeHoy } from './situaciones'
 
 const vistos = (p: Partida) => p.vistos ?? {}
@@ -49,3 +50,12 @@ export function huellaNueva(p: Partida, id: string, ahora: Date): boolean {
 }
 export const verHuella = (p: Partida, id: string): Partida =>
   vistos(p).huellas?.includes(id) ? p : { ...p, vistos: { ...vistos(p), huellas: [...(vistos(p).huellas ?? []), id] } }
+
+/** Álbum: avisa si hay una foto o una curiosidad nueva desde la última vez que lo abriste. */
+export function hayAlbumNuevo(p: Partida): boolean {
+  const visto = vistos(p).album ?? ''
+  const fechas = [...(p.momentos ?? []).map((m) => m.fecha), ...curiosidadesTenidas(p).map((x) => x.fecha)]
+  return fechas.some((f) => f > visto)
+}
+export const verAlbum = (p: Partida, ahora: Date): Partida =>
+  hayAlbumNuevo(p) ? { ...p, vistos: { ...vistos(p), album: ahora.toISOString() } } : p

@@ -239,3 +239,18 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Momentos:** fotos tipo polaroid que hace el propio juego en los hitos: nace un vecino, crece, termina una historia (el puente sale en el barrio). Se guarda cómo estaba la escena (casa, cara, visita, Gregorio, lo construido, las huellas, la hora del día) y se pinta con el arte de siempre, con un recorte cuadrado y algo acercado. Pie de foto, fecha y, al tocarla, la foto en grande con su texto. Lógica en `src/logica/momentos.ts`, dibujo en `src/componentes/FotoEscena.tsx`.
 - **Sin** porcentajes, siluetas ni premios por llenar páginas; lo más reciente arriba.
 - **Limpieza:** fuera la colección antigua (30 objetos), las metas semanales con premio, las sorpresas que daban objetos de esa colección y el robo del cuervo.
+
+### Curiosidades (18/11/2026, rama `dev/curiosidades`)
+- Tercera pestaña del Álbum. 17 objetos con historia (`src/contenido/curiosidades.ts`), cada uno con su texto al tocarlo y de quién es.
+- **Por sorpresa** (10): al tachar una hazaña que cuenta, si el vecino de esa área ya vive en el barrio, 20 % de probabilidad, como mucho una al día. Lo dice el vecino («Nox ha encontrado algo…») con el dibujo y un sonido; deshacer la hazaña se la lleva.
+- **Al terminar historias** (7): La normativa → cartel chamuscado · El puente → salchicha del peaje · El tablón → expediente · Gregorio → tuerca con lazo · El préstamo → libro chamuscado · La planta → lupa · La fórmula → archivador.
+- **Aviso:** punto en la pestaña Álbum cuando hay una foto o curiosidad nueva, hasta que lo abres.
+- Arte: dos láminas 3 × 2 de ChatGPT recortadas en `public/arte/curiosidades/`; las de historia reutilizan las huellas.
+
+### Ajustes (18/11/2026, rama `dev/ajustes`, decidido por Javi)
+- **Paciencia de los vecinos** (antes «Ritmo de cada rincón»): solo los vecinos que viven en el barrio, con su nombre («Quiere algo cada día»…). Se explica que solo el último en llegar se enfurruña.
+- **Tu día empieza a las…** medianoche, 3:00 o 5:00. El reloj del juego va esas horas por detrás (lo de madrugada cuenta para el día anterior); la luz de las escenas sigue la hora real (`src/logica/reloj.ts`).
+- **Aspecto:** automático, siempre de día o siempre de noche (solo los colores de los menús).
+- **Copia de seguridad** dice cuándo hiciste la última.
+- **Modo de prueba escondido:** aparece al tocar 5 veces la versión, al final (o si el reloj está adelantado).
+- Al final: «A media luz · versión 0.9» y créditos.
