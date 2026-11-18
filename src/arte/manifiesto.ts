@@ -4,6 +4,7 @@
 // Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox y Tuerca: cachorro, joven y adulto con 4 expresiones cada uno; huevo de Nox.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
+import type { ArteHuella } from '../contenido/situaciones'
 export type Expresion = 'base' | 'contento' | 'enfurrunado' | 'dormido'
 
 export type ClaveArte =
@@ -15,7 +16,7 @@ export type ClaveArte =
   | `huevo/${Id}/${'cerrado' | 'agrietado'}`
   | `casita/${Id}`
   | 'barrio/mapa'
-  | `huella/${'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente'}`
+  | `huella/${ArteHuella}`
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
 /** Las 3 etapas × 4 expresiones de un compañero, recortadas con la herramienta (mismo encuadre). */
@@ -35,9 +36,15 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
   'barrio/mapa': '/arte/barrio/mapa.webp',
-  ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
+  ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente', 'libro-quemado', 'archivador', 'lupa'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
   'casita/nox': '/arte/casitas/nox.webp',
   'casita/tuerca': '/arte/casitas/tuerca.webp',
+  // Tofu: todo menos su casa (escenario pendiente). Sin fondo, aún no puede llegar (tieneMes).
+  ...personaje('tofu'),
+  ...objetos('tofu', ['libros', 'pizarra', 'maceta']),
+  'huevo/tofu/cerrado': '/arte/huevos/tofu/cerrado.webp',
+  'huevo/tofu/agrietado': '/arte/huevos/tofu/agrietado.webp',
+  'casita/tofu': '/arte/casitas/tofu.webp',
   ...personaje('tuerca'),
   'companero/nox/base': '/arte/personajes/nox/base.webp',
   'companero/nox/contento': '/arte/personajes/nox/contento.webp',

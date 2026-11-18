@@ -80,6 +80,12 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
     coste: { cuerpo: 7, mente: 2, orden: 2 }, sitio: { x: 66, y: 50, ancho: 15 }, proporcion: 1.01, luz: { x: 50, y: 52, color: '#ffb347' } },
 
   // Taller de Tuerca: casi todo pide tornillos (Orden).
+  { id: 'libros', companero: 'tofu', orden: 1, abre: 'Una biblioteca. Y préstamos, que es donde empiezan los problemas.', nombre: 'Pila de libros', descripcion: 'Los he leído todos. Algunos, dos veces. Ninguno me ha cambiado.',
+    coste: { mente: 3 }, sitio: { x: 24, y: 64, ancho: 18 }, proporcion: 1.04 },
+  { id: 'pizarra', companero: 'tofu', orden: 2, abre: 'Ciencia. Y un problema administrativo.', nombre: 'Pizarra', descripcion: 'Para escribir cosas importantes. O fórmulas. A veces coinciden.',
+    coste: { mente: 4, orden: 2 }, sitio: { x: 76, y: 60, ancho: 20 }, proporcion: 0.99 },
+  { id: 'maceta', companero: 'tofu', orden: 3, abre: 'Una planta con apetito.', nombre: 'Maceta grande', descripcion: 'Es una planta. Come poco. Casi siempre.',
+    coste: { mente: 5, calma: 2 }, sitio: { x: 80, y: 74, ancho: 20 }, proporcion: 0.95 },
   { id: 'caja', companero: 'tuerca', orden: 1, abre: 'Las primeras reparaciones del taller. Y las primeras búsquedas de herramientas.', nombre: 'Caja de herramientas', descripcion: 'Para arreglar cosas. Las tuyas no, que no tienen arreglo.',
     coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', orden: 3, abre: 'Una aspiradora con ideas propias.', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',

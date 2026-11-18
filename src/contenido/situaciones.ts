@@ -176,7 +176,134 @@ export const SITUACIONES: Situacion[] = [
       },
     ],
   },
+  {
+    id: 'prestamo',
+    titulo: 'El préstamo',
+    requiere: { vecinos: ['nox', 'tofu'], construido: ['libros'] },
+    fases: [
+      {
+        noticia: 'Tofu le ha prestado un libro a Nox. Se titula «Paciencia».',
+        lugar: 'tofu',
+        frases: {
+          tofu: ['Se lo he prestado. Tiene quince días. Yo no tengo prisa. El libro, sí.'],
+          nox: ['Me ha dejado un libro sin dibujos. Es una trampa.'],
+        },
+      },
+      {
+        noticia: 'El libro de Tofu ha aparecido junto a la hoguera de Nox. Chamuscado.',
+        lugar: 'nox',
+        frases: {
+          nox: ['Hacía frío. Y el libro hablaba de paciencia. No tenía.'],
+          tofu: ['Mi libro. En una hoguera. Lo anoto sin emoción.'],
+          tuerca: ['Incendio de material bibliográfico. Lo añado al expediente 001. Ya pesa más que yo.'],
+        },
+      },
+      {
+        noticia: 'Tofu exige una compensación. Nox dice que el libro ya estaba así.',
+        lugar: 'tofu',
+        frases: {
+          tofu: ['No estoy enfadado. El brote, sí.'],
+          nox: ['Estaba así. Bueno, estaba así después.'],
+        },
+        decision: {
+          pregunta: '¿Cómo paga Nox el libro?',
+          opciones: [
+            { id: 'leer', texto: 'Que lea otro entero', respuesta: 'Nox ha abierto un libro. Lleva tres páginas y dos siestas.' },
+            { id: 'salchichas', texto: 'Con salchichas', respuesta: 'Nox ha pagado en salchichas. Tofu no come salchichas. Las ha aceptado por principios.' },
+          ],
+        },
+      },
+      {
+        noticia: '',
+        lugar: 'tofu',
+        segun: {
+          leer: {
+            noticia: 'Nox ha terminado el libro. Dice que el final se veía venir. Era un libro de cocina.',
+            frases: {
+              nox: ['Me he leído un libro entero. Pregúntame lo que quieras. De salsas.'],
+              tofu: ['Ha leído un libro. No lo voy a celebrar. El brote ha florecido sin mi permiso.'],
+            },
+          },
+          salchichas: {
+            noticia: 'Tofu ha colocado las salchichas en su estantería, junto a los libros. Clasificadas por grosor.',
+            frases: {
+              tofu: ['Sección de embutidos. Toda biblioteca seria tiene una.'],
+              nox: ['Están ahí. Mirándome. Detrás de un cristal.'],
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
+    id: 'pizarra',
+    titulo: 'La fórmula',
+    requiere: { vecinos: ['tofu', 'tuerca'], construido: ['pizarra'] },
+    fases: [
+      {
+        noticia: 'Tofu ha escrito una fórmula en su pizarra. Nadie sabe qué calcula. Tofu tampoco.',
+        lugar: 'tofu',
+        frases: { tofu: ['Es una fórmula. Funciona. No sé para qué, pero funciona.'] },
+      },
+      {
+        noticia: 'Tuerca ha borrado la pizarra de Tofu para archivar la fórmula. En VARIOS.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Documento sin clasificar en vía pública. He actuado según protocolo.'],
+          tofu: ['Me han borrado la pizarra. Escribiré otra. Mejor. O igual.'],
+        },
+      },
+      {
+        noticia: 'Tofu ha vuelto a escribir la fórmula. Es distinta. Dice que la otra estaba mal. Tuerca ha abierto un segundo archivador.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Fórmula, versión 2. La 1 queda derogada. La archivo igual.'],
+          tofu: ['La primera estaba mal. Esta también, pero mejor.'],
+        },
+      },
+    ],
+  },
+  {
+    id: 'planta',
+    titulo: 'La planta',
+    requiere: { vecinos: ['tofu', 'tuerca'], construido: ['maceta', 'aspiradora'] },
+    fases: [
+      {
+        noticia: 'La planta de Tofu ha crecido. Tofu dice que es normal. La planta ha bostezado.',
+        lugar: 'tofu',
+        frases: { tofu: ['Crece. Las plantas crecen. No veo el problema.'] },
+      },
+      {
+        noticia: 'Gregorio ha vuelto a desaparecer. La planta de Tofu está sospechosamente quieta.',
+        lugar: 'tofu',
+        frases: {
+          tofu: ['No ha sido ella. Está haciendo la digestión, pero no ha sido ella.'],
+          tuerca: ['Electrodoméstico desaparecido. Otra vez. Empiezo a tomármelo como algo personal.'],
+          nox: ['Si alguien se ha comido a Gregorio, quiero saber cómo sabía.'],
+        },
+      },
+      {
+        noticia: 'Tuerca investiga la casa de Tofu con una lupa. Ha interrogado a la planta. La planta no ha colaborado.',
+        lugar: 'tofu',
+        frases: {
+          tuerca: ['Tengo una lupa y una sospechosa. Me falta una confesión.'],
+          tofu: ['Tuerca está interrogando a una maceta. Lo anoto.'],
+        },
+      },
+      {
+        noticia: 'La planta ha devuelto a Gregorio. Más limpio que nunca. Tofu dice que es simbiosis.',
+        lugar: 'tofu',
+        frases: {
+          tofu: ['Simbiosis. Ella se lo come, él sale limpio. Todos ganan.'],
+          tuerca: ['Caso cerrado. No pienso preguntar cómo.'],
+          nox: ['Gregorio huele a ensalada. Me gusta menos.'],
+        },
+      },
+    ],
+  },
 ]
+
+export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {
@@ -187,7 +314,7 @@ export interface Huella {
   hasta?: number
   decision?: string
   lugar: Lugar
-  arte: 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente'
+  arte: ArteHuella
   /** Centro horizontal y pies, en % del escenario; ancho en % del ancho. */
   sitio: { x: number; y: number; ancho: number }
   proporcion: number
@@ -211,12 +338,21 @@ export const HUELLAS: Huella[] = [
     texto: 'NORMAS\nDEL PUENTE', toque: 'Son veintitrés normas. La primera es «leer las normas».' },
   { id: 'cartel-peaje', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 63, y: 54, ancho: 9 }, proporcion: 1.1,
     texto: 'PEAJE:\n1 SALCHICHA', toque: 'Nox cobra en especie. Nadie ha pagado todavía.' },
+  // Tofu (posiciones en su casa pendientes de su escenario).
+  { id: 'libro-hoguera', situacion: 'prestamo', desde: 1, hasta: 2, lugar: 'nox', arte: 'libro-quemado', sitio: { x: 30, y: 61, ancho: 9 }, proporcion: 1.12,
+    toque: '«Paciencia», capítulo 1. Del resto quedan cenizas.' },
+  { id: 'libro-estante', situacion: 'prestamo', desde: 3, lugar: 'tofu', arte: 'libro-quemado', sitio: { x: 24, y: 58, ancho: 8 }, proporcion: 1.12,
+    toque: 'Tofu lo ha devuelto a su sitio. Dice que ahora tiene más carácter.' },
+  { id: 'archivador-formula', situacion: 'pizarra', desde: 1, lugar: 'tuerca', arte: 'archivador', sitio: { x: 28, y: 44.4, ancho: 8 }, proporcion: 1.06,
+    toque: 'Archivador «VARIOS – Fórmulas». Dentro hay una pizarra pequeña. Entera.' },
+  { id: 'lupa-planta', situacion: 'planta', desde: 2, hasta: 2, lugar: 'tofu', arte: 'lupa', sitio: { x: 72, y: 66, ancho: 9 }, proporcion: 1.03,
+    toque: 'La lupa de Tuerca. Huele un poco a planta.' },
 ]
 
 /** Pequeñas cosas que pasan en una casa sin historia detrás. Se ven de vez en cuando al entrar. */
 export interface Micro {
   casa: CompaneroId
-  /** Lo que tiene que estar construido (o «tuerca»/«nox» si tiene que haber nacido ese vecino). */
+  /** Lo que tiene que estar construido (o el nombre de un vecino si tiene que haber nacido). */
   requiere: string[]
   texto: string
   /** Si alguien está de visita durante el micro (por ejemplo, Tuerca en el banco de Nox). */
@@ -233,10 +369,16 @@ export const MICROS: Micro[] = [
   { casa: 'tuerca', requiere: ['caja'], texto: 'Tuerca busca el destornillador desde hace una hora. Lo tiene en la mano.' },
   { casa: 'tuerca', requiere: ['tablon'], texto: 'Tuerca ha colgado una nota nueva en el tablón. Pone «Ver nota anterior».' },
   { casa: 'tuerca', requiere: [], texto: 'Tuerca está ordenando sus tornillos por orden alfabético.' },
+  { casa: 'tofu', requiere: ['libros'], texto: 'Tofu lleva una hora en la misma página. Dice que la está pensando.' },
+  { casa: 'tofu', requiere: ['maceta'], texto: 'La planta de Tofu mira hacia la puerta. Tofu dice que es su forma de saludar.' },
+  { casa: 'tofu', requiere: ['pizarra', 'tuerca'], texto: 'Tuerca está corrigiendo la ortografía de la pizarra de Tofu. Era una fórmula.', visita: 'tuerca' },
+  { casa: 'tofu', requiere: [], texto: 'Tofu está mirando la pared desde el amanecer. Dice que medita. El brote dice que duerme.', cara: 'dormido' },
+  { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
 ]
 
 /** Lo que dice un vecino cuando está de visita en casa de otro (tras el puente, o en el banco). */
 export const FRASES_VISITA: Partial<Record<CompaneroId, string[]>> = {
-  tuerca: ['He venido a inspeccionar. No es una visita.', 'Tu hoguera sigue sin licencia. Pero huele bien.', 'Este banco no está homologado. Me siento igual.'],
-  nox: ['He venido a ver si tenías algo de comer. No tienes. Tienes tornillos.', 'Me he sentado en tu silla. Ahora es mía. Ponle una etiqueta.'],
+  tuerca: ['He venido a inspeccionar. No es una visita.', 'Nada de esto está homologado. Me quedo igual.', 'He traído etiquetas. Por si acaso.'],
+  nox: ['He venido a ver si tenías algo de comer. No tienes.', 'Me he sentado en tu silla. Ahora es mía. Ponle una etiqueta.'],
+  tofu: ['He venido a mirar. Ya he mirado.', 'Tu casa tiene muchas cosas. Pocas necesarias.'],
 }

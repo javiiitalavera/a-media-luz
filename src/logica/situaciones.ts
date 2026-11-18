@@ -1,7 +1,7 @@
 // Motor de situaciones (docs/diseno-vecindario.md). Todo es una función del estado guardado: qué fase
 // toca, qué huellas se ven, dónde está Gregorio, quién está de visita y qué pequeña cosa pasa hoy.
 import { FRASES_VISITA, HUELLAS, MICROS, SITUACIONES, type Huella, type Lugar, type Micro, type Situacion } from '../contenido/situaciones'
-import type { CompaneroId } from '../contenido'
+import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
 import { nacido, nacidos } from './etapas'
@@ -99,6 +99,9 @@ export function huellasEn(p: Partida, lugar: Lugar): Huella[] {
 /** Dónde está Gregorio, la aspiradora (null si no existe o ha desaparecido). */
 export function dondeGregorio(p: Partida, ahora: Date): CompaneroId | null {
   if (!construido(p, 'aspiradora')) return null
+  // La planta de Tofu se lo traga un par de días (y lo devuelve).
+  const planta = estados(p).planta
+  if (planta && (planta.fase === 1 || planta.fase === 2)) return null
   const e = estados(p).gregorio
   if (!e) return 'tuerca'
   if (e.fase === 0) return null
@@ -127,7 +130,7 @@ export function microDeHoy(p: Partida, casa: CompaneroId, ahora: Date): Micro | 
   const hoy = dia(ahora.toISOString())
   if (semilla(`${hoy}|micro|${casa}`) % 2) return null
   const posibles = MICROS.filter((m) => m.casa === casa && m.requiere.every((r) =>
-    r === 'nox' || r === 'tuerca' ? nacido(p, r, ahora) : construido(p, r)))
+    r in COMPANEROS ? nacido(p, r as CompaneroId, ahora) : construido(p, r)))
   return posibles.length ? posibles[semilla(`${hoy}|cual|${casa}`) % posibles.length] : null
 }
 

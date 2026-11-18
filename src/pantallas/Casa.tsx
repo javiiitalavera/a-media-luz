@@ -40,6 +40,7 @@ const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 31, y: 71, ancho: 13 }
 const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
   nox: { x: 82, y: 56, ancho: 22 },
   tuerca: { x: 75, y: 59, ancho: 21 },
+  tofu: { x: 76, y: 62, ancho: 20 },
 }
 
 export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetalle }: {

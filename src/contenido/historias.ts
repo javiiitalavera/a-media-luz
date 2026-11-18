@@ -27,6 +27,18 @@ export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
     ],
     vecino: ['Cachorro vitalicio. Lo lleva con dignidad', 'Joven para siempre, como los de Instagram', 'Jubilado con la cola encendida'],
   },
+  tofu: {
+    especie: 'Cubo de musgo',
+    historia: 'Apareció una mañana en un huerto, quieto, como si llevara ahí desde siempre. Igual llevaba. Su cara no cambia nunca; el brote de la cabeza sí, y es un chivato: florece cuando está contento y se mustia cuando no. Tofu lo niega todo.',
+    necesita: 'Vive de tu Mente: leer, aprender, concentrarte, crear. Cada cosa le da semillas para su casa y le hace crecer. No te lo va a pedir. El brote, sí.',
+    despedida: 'Presentado. Ya puedes seguir.',
+    cierre: [
+      'Sigo siendo pequeño. Las semillas también lo son. No me quejo.',
+      'He crecido. No lo voy a comentar.',
+      'Adulto, con árbol propio. Lo anoto sin emoción. Con un poco.',
+    ],
+    vecino: ['Brote con opiniones', 'Rama joven, cara seria', 'Árbol de cabecera'],
+  },
   tuerca: {
     especie: 'Robot de taller',
     historia: 'Lo montaron con piezas sobrantes y un engranaje que no encajaba en ningún sitio, así que se lo pusieron en la cabeza. Desde entonces ordena todo lo que toca, menos sus sentimientos, que tiene etiquetados como «VARIOS».',
