@@ -61,8 +61,10 @@ function crear(): Buses | null {
 /** Llamar en el primer toque: crea el audio y lo despierta. */
 export function desbloquear() {
   const b = crear()
-  if (b && b.ctx.state !== 'running') void b.ctx.resume()
-  if (musicaActiva) arrancarPlanificador()
+  if (!b) return
+  if (b.ctx.state !== 'running') void b.ctx.resume()
+  // Si la música estaba activada antes de poder sonar, se sube ahora (antes se quedaba en silencio).
+  if (musicaActiva && b.musica.gain.value < 0.01 && temporizador === null) ponerMusica(true)
 }
 
 /** Al salir de la app se pausa todo; al volver, sigue. */

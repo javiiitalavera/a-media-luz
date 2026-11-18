@@ -15,6 +15,7 @@ import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
 import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
+import { BarraBolsa } from '../componentes/Bolsa'
 
 export function Barrio({ partida, ahora, onCasa, onVolver }: {
   partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void
@@ -108,19 +109,13 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
       </header>
 
       {nota && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-4" onClick={() => setNota(null)}>
-          <span className="max-w-[340px] rounded-2xl bg-tarjeta/95 px-4 py-2.5 text-center text-[15px] leading-snug shadow-lg">{nota}</span>
+        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-5" onClick={() => setNota(null)}>
+          <span className="max-w-[320px] rounded-2xl bg-[#2e2030]/70 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">{nota}</span>
         </div>
       )}
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 px-3">
-        <div className="rounded-3xl bg-tarjeta/92 px-3 py-2.5 shadow-lg backdrop-blur-sm">
-          <Materiales mat={mat} />
-          <button type="button" onClick={() => setHoja(true)}
-            className={`mt-2 flex min-h-11 w-full items-center justify-center rounded-2xl text-[15px] font-bold active:scale-[0.98] ${listos ? 'bg-ambar text-tinta' : 'border-2 border-borde text-texto-2'}`}>
-            {UI.casa.proyectosBarrio}
-          </button>
-        </div>
+        <BarraBolsa mat={mat} boton={UI.barrio.proyectos} onBoton={() => setHoja(true)} resaltado={listos} />
       </div>
 
       {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onCerrar={() => setHoja(false)} />}
@@ -154,6 +149,7 @@ function HojaBarrio({ partida, ahora, abierto, onCerrar }: { partida: Partida; a
           <h2 className="text-[22px] font-bold">{UI.casa.proyectosBarrio}</h2>
           <button type="button" onClick={onCerrar} className="min-h-11 px-2 font-semibold text-texto-3">{UI.casa.cerrar}</button>
         </div>
+        <div className="mt-2 rounded-2xl bg-tarjeta px-2 py-2.5"><Materiales mat={disponibles(partida, ahora)} /></div>
         {!abierto && <p className="mt-1 text-[14px] text-texto-3">{UI.casa.barrioNecesita}</p>}
         <ul className="mt-3 flex flex-col gap-2.5">
           {PROYECTOS_BARRIO.map((b) => {
