@@ -15,6 +15,7 @@ import { estadoDelMes, faltanParaEclosion, mesActual } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
+import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
@@ -42,14 +43,6 @@ function useTamano() {
   return [ref, t] as const
 }
 
-/** Dónde se pone Gregorio (la aspiradora) cuando está en casa de Nox. */
-const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 80, y: 80, ancho: 13 }
-/** Dónde se pone un vecino de visita (o sentado en el banco). */
-const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
-  nox: { x: 82, y: 56, ancho: 22 },
-  tuerca: { x: 75, y: 59, ancho: 21 },
-  tofu: { x: 76, y: 62, ancho: 20 },
-}
 
 export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean

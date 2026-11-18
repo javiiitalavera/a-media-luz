@@ -1,5 +1,6 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
+import type { MomentoAlbum } from './momentos'
 import type { Lugar } from '../contenido/situaciones'
 import { ACCIONES, AREAS, COMPANEROS, HAZANAS_INICIALES, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
 
@@ -37,6 +38,8 @@ export interface Partida {
   meses?: Mes[]
   /** Cómo va cada situación del vecindario. */
   situaciones?: Record<string, EstadoSituacion>
+  /** Fotos del Álbum (hitos del barrio). */
+  momentos?: MomentoAlbum[]
   /** Lo que ya has mirado (para apagar los avisos). */
   vistos?: { hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[] }
   /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */

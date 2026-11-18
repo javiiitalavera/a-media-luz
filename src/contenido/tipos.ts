@@ -36,10 +36,3 @@ export interface Accion {
   habitual?: boolean
 }
 
-export interface ObjetoColeccion {
-  id: string
-  area: AreaId
-  nombre: string
-  /** Especial: se gana cumpliendo la meta semanal de su compañero, no por sorpresa. */
-  especial?: boolean
-}
