@@ -6,6 +6,8 @@ import { dia } from './fechas'
 import { momentoDelDia } from './momento'
 import type { Ofrenda, Partida } from './partida'
 import { estadoBosque, estadoRincon, TOPE_DIARIO } from './reglas'
+import { anadirCuriosidad, sorpresa } from './curiosidades'
+import type { Curiosidad } from '../contenido/curiosidades'
 
 export const RECIENTES = 8
 
@@ -24,6 +26,8 @@ export interface ResultadoOfrenda {
   cuenta: boolean
   frase: Frase | null
   eventos: Evento[]
+  /** Curiosidad que ha encontrado el vecino del área (de vez en cuando). */
+  sorpresa: Curiosidad | null
 }
 
 export const diaMaloActivo = (p: Partida, ahora: Date) => p.diaMalo === dia(ahora)
@@ -79,14 +83,23 @@ export function hacerOfrenda(p: Partida, accionId: string, ahora: Date, azar: Az
   const r = propias.length ? reaccionPropia(nueva, habla, propias, azar) : elegirFrase(nueva, habla, tipo, azar)
   nueva = { ...nueva, frasesRecientes: r.recientes }
 
-  return { partida: nueva, ofrenda, cuenta, frase: r.frase, eventos }
+  // Sorpresa: el vecino del área encuentra una curiosidad y lo dice él.
+  const hallada = cuenta ? sorpresa(nueva, area, ahora, azar) : null
+  let frase = r.frase
+  if (hallada) {
+    nueva = anadirCuriosidad(nueva, hallada.id, ofrenda.fecha)
+    const dicha = elegirFrase(nueva, hallada.vecino, 'sorpresa', azar)
+    if (dicha.frase) { frase = dicha.frase; nueva = { ...nueva, frasesRecientes: dicha.recientes } }
+  }
+  return { partida: nueva, ofrenda, cuenta, frase, eventos, sorpresa: hallada }
 }
 
 /** Deshace una ofrenda concreta. Lo demás se recalcula solo. */
 export function deshacerOfrenda(p: Partida, ofrendaId: string): Partida {
   const o = p.ofrendas.find((x) => x.id === ofrendaId)
   if (!o) return p
-  return { ...p, ofrendas: p.ofrendas.filter((x) => x.id !== ofrendaId) }
+  // Si esa hazaña trajo una sorpresa, se va con ella.
+  return { ...p, ofrendas: p.ofrendas.filter((x) => x.id !== ofrendaId), hallazgos: p.hallazgos.filter((h) => h.fecha !== o.fecha) }
 }
 
 export const cambiarDiaMalo = (p: Partida, activo: boolean, ahora: Date): Partida => ({ ...p, diaMalo: activo ? dia(ahora) : undefined })

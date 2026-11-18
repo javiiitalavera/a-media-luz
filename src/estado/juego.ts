@@ -13,6 +13,7 @@ import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
 import { marcarPresentado, mesActual } from '../logica/meses'
+import { curiosidadesDeHistorias } from '../logica/curiosidades'
 import { momentoCrecer, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
 
@@ -143,7 +144,7 @@ export const useJuego = create<Juego>()(
         if (!p) return
         const momento = ahora()
         const r = avanzar(p, momento)
-        if (r.nuevas.length) set({ partida: momentosDeHistorias(p, r.partida, momento) })
+        if (r.nuevas.length) set({ partida: curiosidadesDeHistorias(p, momentosDeHistorias(p, r.partida, momento), momento) })
       },
       decidir: (situacion, opcion) => {
         const p = get().partida

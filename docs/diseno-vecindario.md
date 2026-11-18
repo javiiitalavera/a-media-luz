@@ -239,3 +239,10 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Momentos:** fotos tipo polaroid que hace el propio juego en los hitos: nace un vecino, crece, termina una historia (el puente sale en el barrio). Se guarda cómo estaba la escena (casa, cara, visita, Gregorio, lo construido, las huellas, la hora del día) y se pinta con el arte de siempre, con un recorte cuadrado y algo acercado. Pie de foto, fecha y, al tocarla, la foto en grande con su texto. Lógica en `src/logica/momentos.ts`, dibujo en `src/componentes/FotoEscena.tsx`.
 - **Sin** porcentajes, siluetas ni premios por llenar páginas; lo más reciente arriba.
 - **Limpieza:** fuera la colección antigua (30 objetos), las metas semanales con premio, las sorpresas que daban objetos de esa colección y el robo del cuervo.
+
+### Curiosidades (18/11/2026, rama `dev/curiosidades`)
+- Tercera pestaña del Álbum. 17 objetos con historia (`src/contenido/curiosidades.ts`), cada uno con su texto al tocarlo y de quién es.
+- **Por sorpresa** (10): al tachar una hazaña que cuenta, si el vecino de esa área ya vive en el barrio, 20 % de probabilidad, como mucho una al día. Lo dice el vecino («Nox ha encontrado algo…») con el dibujo y un sonido; deshacer la hazaña se la lleva.
+- **Al terminar historias** (7): La normativa → cartel chamuscado · El puente → salchicha del peaje · El tablón → expediente · Gregorio → tuerca con lazo · El préstamo → libro chamuscado · La planta → lupa · La fórmula → archivador.
+- **Aviso:** punto en la pestaña Álbum cuando hay una foto o curiosidad nueva, hasta que lo abres.
+- Arte: dos láminas 3 × 2 de ChatGPT recortadas en `public/arte/curiosidades/`; las de historia reutilizan las huellas.

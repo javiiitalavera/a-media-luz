@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
-import { hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { hayAlbumNuevo, hayHazanasNuevas, leerNoticias } from './logica/avisos'
 import { createPortal } from 'react-dom'
 import { UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -69,7 +69,7 @@ export default function App() {
   return (
     <>
       <div key={`${pestana}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
-      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora) }} />
+      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
       {sobre && <Novedades ahora={ahora} onIr={irALugar} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />

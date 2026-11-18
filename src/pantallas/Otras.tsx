@@ -1,9 +1,12 @@
 // Álbum y Ajustes.
-import { useRef, useState } from 'react'
-import { AREAS, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
+import { useEffect, useRef, useState } from 'react'
+import { AREAS, COMPANEROS, ORDEN_AREAS, RITMOS, UI, type Ritmo } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
+import { curiosidadesTenidas } from '../logica/curiosidades'
+import { verAlbum } from '../logica/avisos'
+import type { Curiosidad } from '../contenido/curiosidades'
 import type { Partida } from '../logica/partida'
 import { dia } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
@@ -14,24 +17,43 @@ import { desfaseDias, ponerDesfase } from '../logica/reloj'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { usePreferencias } from '../estado/preferencias'
 
-export function Album({ partida }: { partida: Partida; ahora: Date }) {
+export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
+  // Abrir el Álbum apaga su aviso (lo nuevo se ve, de todas formas, arriba del todo).
+  const ajustar = useJuego((s) => s.ajustar)
+  useEffect(() => { ajustar((p) => verAlbum(p, ahora)) }, [ajustar, ahora])
   const momentos = momentosRecientes(partida)
   const lista = cronicas(partida)
-  const [seccion, setSeccion] = useState<'momentos' | 'cronicas'>(momentos.length || !lista.length ? 'momentos' : 'cronicas')
+  const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(momentos.length || !lista.length ? 'momentos' : 'cronicas')
+  const curiosidades = curiosidadesTenidas(partida)
+  const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
   const [abierto, setAbierto] = useState<MomentoAlbum | null>(null)
   return (
     <Pantalla titulo={UI.album.titulo}>
       <p className="-mt-3 mb-3 px-1 text-[14px] text-texto-3">{UI.album2.subtitulo}</p>
-      <div role="tablist" className="mb-4 grid grid-cols-2 gap-1 rounded-full bg-hundido p-1">
-        {(['momentos', 'cronicas'] as const).map((s) => (
+      <div role="tablist" className="mb-4 grid grid-cols-3 gap-1 rounded-full bg-hundido p-1">
+        {(['momentos', 'cronicas', 'curiosidades'] as const).map((s) => (
           <button key={s} type="button" role="tab" aria-selected={seccion === s} onClick={() => setSeccion(s)}
-            className={`min-h-11 rounded-full text-[15px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
+            className={`min-h-11 rounded-full text-[14px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
             {UI.album2[s]}
           </button>
         ))}
       </div>
 
-      {seccion === 'momentos' ? (
+      {seccion === 'curiosidades' ? (
+        curiosidades.length === 0 ? (
+          <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.album2.sinCuriosidades}</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {curiosidades.map((x) => (
+              <button key={x.c.id} type="button" onClick={() => setCosa(x)}
+                className="flex min-h-[124px] flex-col items-center justify-start gap-1.5 rounded-3xl bg-tarjeta p-2.5 text-center shadow-sm active:scale-[0.97]">
+                <img src={x.c.arte} alt="" className="h-16 w-16 object-contain" draggable={false} />
+                <span className="text-[12px] leading-tight font-semibold">{x.c.nombre}</span>
+              </button>
+            ))}
+          </div>
+        )
+      ) : seccion === 'momentos' ? (
         momentos.length === 0 ? (
           <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.album2.sinMomentos}</p>
         ) : (
@@ -65,6 +87,17 @@ export function Album({ partida }: { partida: Partida; ahora: Date }) {
         </div>
       )}
 
+      {cosa && createPortal(
+        <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setCosa(null)}>
+          <div role="dialog" aria-label={cosa.c.nombre} className="anim-globo w-full rounded-[28px] bg-fondo p-5 text-center shadow-2xl">
+            <img src={cosa.c.arte} alt="" className="mx-auto h-36 w-36 object-contain" draggable={false} />
+            <div className="mt-3 text-[19px] font-bold">{cosa.c.nombre}</div>
+            <p className="mt-1.5 text-[15px] leading-snug text-texto-2 italic">{cosa.c.texto}</p>
+            <p className="mt-3 text-[12px] text-texto-3">{UI.album2.deVecino(COMPANEROS[cosa.c.vecino].nombre, UI.album2.fecha(cosa.fecha))}</p>
+          </div>
+        </div>,
+        document.body,
+      )}
       {abierto && createPortal(
         <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setAbierto(null)}>
           <figure role="dialog" aria-label={abierto.titulo} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
