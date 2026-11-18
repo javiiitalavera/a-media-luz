@@ -65,7 +65,7 @@ export default function App() {
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} />
-  else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} />
+  else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} />
 
   return (

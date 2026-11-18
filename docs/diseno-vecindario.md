@@ -252,5 +252,5 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Tu día empieza a las…** medianoche, 3:00 o 5:00. El reloj del juego va esas horas por detrás (lo de madrugada cuenta para el día anterior); la luz de las escenas sigue la hora real (`src/logica/reloj.ts`).
 - **Aspecto:** automático, siempre de día o siempre de noche (solo los colores de los menús).
 - **Copia de seguridad** dice cuándo hiciste la última.
-- **Modo de prueba escondido:** aparece al tocar 5 veces la versión, al final (o si el reloj está adelantado).
-- Al final: «A media luz · versión 0.9» y créditos.
+- **Modo de prueba escondido:** aparece solo al tocar 5 veces la versión (otras 5 lo vuelven a esconder). «Volver a hoy» mueve todas las fechas de la partida los días adelantados hacia atrás, así no se pierde nada de lo jugado con el reloj adelantado (`src/logica/desplazar.ts`).
+- Al final: «A media luz · versión 0.9 · Creado por Javi, en ratos libres que no tenía.»

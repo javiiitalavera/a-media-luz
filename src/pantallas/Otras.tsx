@@ -15,6 +15,7 @@ import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
 import { nacidos } from '../logica/etapas'
+import { desplazarPartida } from '../logica/desplazar'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { usePreferencias } from '../estado/preferencias'
 
@@ -116,7 +117,7 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   )
 }
 
-export function Ajustes({ partida }: { partida: Partida }) {
+export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const ajustar = useJuego((s) => s.ajustar)
   const sustituir = useJuego((s) => s.sustituir)
   const borrar = useJuego((s) => s.borrar)
@@ -126,7 +127,6 @@ export function Ajustes({ partida }: { partida: Partida }) {
   const [confirmarBorrado, setConfirmarBorrado] = useState(false)
   const prefs = usePreferencias()
   const [toquesVersion, setToquesVersion] = useState(0)
-  const ahora = new Date()
 
   const exportar = async () => {
     const ahora = new Date()
@@ -214,7 +214,7 @@ export function Ajustes({ partida }: { partida: Partida }) {
         )}
       </div>
 
-      {(prefs.pruebas || desfaseDias() !== 0) && (
+      {prefs.pruebas && (
         <div className="mt-6">
         <h2 className="mt-6 mb-1 px-1 font-bold">{UI.prueba.titulo}</h2>
         <Tarjeta>
@@ -222,7 +222,7 @@ export function Ajustes({ partida }: { partida: Partida }) {
           <p className="mt-1 text-[14px] font-semibold">{UI.prueba.desfase(desfaseDias())}</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
             <BotonSecundario onClick={() => { ponerDesfase(desfaseDias() + 1); location.reload() }}>{UI.prueba.adelantar}</BotonSecundario>
-            <BotonSecundario onClick={() => { ponerDesfase(0); location.reload() }}>{UI.prueba.volver}</BotonSecundario>
+            <BotonSecundario onClick={() => { sustituir(desplazarPartida(partida, -desfaseDias())); ponerDesfase(0); setTimeout(() => location.reload(), 100) }}>{UI.prueba.volver}</BotonSecundario>
           </div>
         </Tarjeta>
         </div>
