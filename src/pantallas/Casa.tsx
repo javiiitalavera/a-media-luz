@@ -16,6 +16,8 @@ import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeH
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
 import { globoEn, useGlobo } from '../estado/globo'
+import { Aviso } from '../componentes/Aviso'
+import { huellaNueva, microSinVer, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -62,6 +64,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const decidir = useJuego((s) => s.decidir)
   const incubar = useJuego((s) => s.incubar)
   const tocar = useJuego((s) => s.tocar)
+  const ajustar = useJuego((s) => s.ajustar)
   const construirObjeto = useJuego((s) => s.construir)
   const [ref, { w, h }] = useTamano()
   // Solo el último en llegar se descuida (los demás siguen estables y participando en todo).
@@ -98,15 +101,14 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
     const t = setTimeout(() => setNota(null), 6000)
     return () => clearTimeout(t)
   }, [nota])
-  // La pequeña cosa de hoy en esta casa: se cuenta al entrar.
+  // La pequeña cosa de hoy en esta casa: se ve en la escena (cara, visita) y su texto espera a que toques el «…».
   const micro = estado === 'vivo' ? microDeHoy(partida, DUENO, ahora) : null
-  const [microVisible, setMicroVisible] = useState(false)
-  useEffect(() => {
-    if (!micro) return
-    const a = setTimeout(() => { setMicroVisible(true); setNota(micro.texto) }, 1400)
-    const b = setTimeout(() => setMicroVisible(false), 9000)
-    return () => { clearTimeout(a); clearTimeout(b) }
-  }, [micro?.texto])
+  const microPorVer = estado === 'vivo' ? microSinVer(partida, DUENO, ahora) : null
+  const microVisible = Boolean(micro)
+  const verCosita = () => { if (!micro) return; setNota(micro.texto); ajustar((p) => verMicro(p, DUENO, ahora)) }
+  const [decisionAbierta, setDecisionAbierta] = useState(false)
+  // Al entrar, se apagan los avisos de novedades de esta casa.
+  useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO])
   useEffect(() => {
     if (estado !== 'naciendo') return
     const pasos = [
@@ -169,7 +171,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
     const t = setTimeout(() => {
       const noticia = contar()
       const f = noticia?.frase
-      if (f && f.companero === DUENO) { setSaltos((n) => n + 1); setHabla({ texto: f.texto, n: Date.now(), contento: true }) }
+      // La reacción ya salió al tachar la hazaña: aquí solo se celebra con un saltito.
+      if (f && f.companero === DUENO) setSaltos((n) => n + 1)
       if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
@@ -231,7 +234,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
         <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 
-        {huellas.map((hu) => <HuellaEnEscena key={hu.id} h={hu} ew={ew} onTocar={(e) => hu.toque && globoEn(e, hu.toque)} />)}
+        {huellas.map((hu) => <HuellaEnEscena key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]} /> : (
           <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
             {/* sombra en el suelo */}
@@ -295,6 +298,20 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
           </>
         )}
 
+        {/* Avisos sobre el vecino: «…» una cosa pequeña del día, «?» una decisión. Esperan a que los toques. */}
+        {vivo && !celebra && (microPorVer || (decision && !decisionAbierta)) && (
+          <div className="absolute z-[25] flex gap-1" style={{ left: `${NOX.x + anchoNox * 0.3}%`, top: `${NOX.y - altoNox * 0.95}%`, transform: 'translate(-50%, -50%)' }}>
+            {decision && !decisionAbierta && (
+              <button type="button" aria-label={UI.casa.verDecision} onClick={(e) => { e.stopPropagation(); sfx.toque(); setDecisionAbierta(true) }}
+                className="flex min-h-11 min-w-11 items-center justify-center"><Aviso tipo="pregunta" tam={32} /></button>
+            )}
+            {microPorVer && (
+              <button type="button" aria-label={UI.casa.verCosita} onClick={(e) => { e.stopPropagation(); sfx.toque(); verCosita() }}
+                className="flex min-h-11 min-w-11 items-center justify-center"><Aviso tipo="puntos" tam={32} /></button>
+            )}
+          </div>
+        )}
+
         {habla && (
           <div key={habla.n} role="status" className="absolute z-30"
             style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
@@ -336,12 +353,15 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
 
       {/* Abajo: materiales y construir, encima de la navegación. */}
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex flex-col gap-2 px-3">
-        {decision && (
+        {decision && decisionAbierta && (
           <div role="group" aria-label={decision.pregunta} className="animate-entrar rounded-3xl bg-tarjeta p-3 shadow-lg">
-            <div className="text-[15px] font-bold">{decision.pregunta}</div>
+            <div className="flex items-start justify-between gap-2">
+              <div className="pt-1 text-[15px] font-bold">{decision.pregunta}</div>
+              <button type="button" onClick={() => setDecisionAbierta(false)} className="-mt-1 min-h-11 shrink-0 px-2 text-[14px] font-semibold text-texto-3">{UI.casa.luego}</button>
+            </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {decision.opciones.map((o) => (
-                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setNota(o.respuesta) }}
+                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setDecisionAbierta(false); setNota(o.respuesta) }}
                   className="min-h-12 rounded-2xl bg-ambar px-2 text-[14px] leading-tight font-bold text-tinta">{o.texto}</button>
               ))}
             </div>
@@ -398,12 +418,12 @@ function Pregunta({ titulo, texto, si, no, onSi, onNo }: { titulo: string; texto
 }
 
 /** Una huella de una historia (cartel, extintor, expediente…). Los carteles llevan el texto encima. */
-function HuellaEnEscena({ h, ew, onTocar }: { h: Huella; ew: number; onTocar: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
+function HuellaEnEscena({ h, ew, nueva, onTocar }: { h: Huella; ew: number; nueva: boolean; onTocar: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
   const px = (h.sitio.ancho / 100) * ew
   return (
     <button type="button" aria-label={h.texto?.replace('\n', ' ') ?? h.arte} onClick={(e) => { e.stopPropagation(); onTocar(e) }}
       className="absolute z-[5] before:absolute before:-inset-3 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
-      <img src={rutaArte(`huella/${h.arte}`)} alt="" draggable={false} className="block w-full" />
+      <img src={rutaArte(`huella/${h.arte}`)} alt="" draggable={false} className={`block w-full ${nueva ? 'anim-nuevo' : ''}`} />
       {h.texto && (
         <span className="pointer-events-none absolute inset-x-[12%] top-[14%] flex h-[34%] items-center justify-center text-center leading-[1.05] font-bold whitespace-pre-line"
           style={{ fontSize: Math.max(7, px * 0.12), color: h.arte === 'cartel-quemado' ? '#3a2418' : '#5a3424' }}>

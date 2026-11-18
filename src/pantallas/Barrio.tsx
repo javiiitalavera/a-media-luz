@@ -17,9 +17,11 @@ import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
+import { Aviso } from '../componentes/Aviso'
+import { avisoEnCasa, huellaNueva, noticiasSinLeer, verHuella } from '../logica/avisos'
 
-export function Barrio({ partida, ahora, onCasa, onVolver }: {
-  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void
+export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
+  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void; onNovedades: () => void
 }) {
   const caja = useRef<HTMLDivElement>(null)
   const [t, setT] = useState({ w: 390, h: 844 })
@@ -45,6 +47,8 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
     const px = Math.min(Math.max((x / 100) * ancho, -izquierda + mitad), -izquierda + t.w - mitad)
     return (px / ancho) * 100
   }
+  const ajustar = useJuego((st) => st.ajustar)
+  const sinLeer = noticiasSinLeer(partida)
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
@@ -62,9 +66,9 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
             style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, transform: 'translate(-50%, -60%)' }} />
         )}
         {huellasEn(partida, 'barrio').map((h) => (
-          <button key={h.id} type="button" onClick={(e) => h.toque && globoEn(e, h.toque)} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
+          <button key={h.id} type="button" onClick={(e) => { if (h.toque) globoEn(e, h.toque); ajustar((p) => verHuella(p, h.id)) }} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
             className="absolute before:absolute before:-inset-2 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
-            <img src={rutaArte(`huella/${h.arte}`)} alt="" className="block w-full" draggable={false} />
+            <img src={rutaArte(`huella/${h.arte}`)} alt="" className={`block w-full ${huellaNueva(partida, h.id, ahora) ? 'anim-nuevo' : ''}`} draggable={false} />
             {h.texto && (
               <span className="pointer-events-none absolute inset-x-[10%] top-[14%] flex h-[34%] items-center justify-center text-center leading-[1.05] font-bold whitespace-pre-line text-[#5a3424]"
                 style={{ fontSize: Math.max(6, (h.sitio.ancho / 100) * ancho * 0.12) }}>{h.texto}</span>
@@ -98,10 +102,33 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
           ))}
         </div>
         {noche && <Luciernagas cuantas={12} />}
+
+        {/* Avisos: «!» sobre la casita donde ha pasado algo (por encima del tinte de la noche). */}
+        {vecinos.slice(0, PARCELAS.length).map((m, i) => {
+          if (!avisoEnCasa(partida, m.companero)) return null
+          const p = PARCELAS[i]
+          const anchoCasa = p.ancho * 0.82
+          return (
+            <button key={`aviso-${m.companero}`} type="button" aria-label={UI.barrio.hayAlgo(COMPANEROS[m.companero].nombre)}
+              onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
+              className="absolute flex min-h-11 min-w-11 items-center justify-center"
+              style={{ left: `${dentro(p.x, anchoCasa) + anchoCasa * 0.32}%`, top: `${p.y - anchoCasa * PROPORCION_BARRIO * 0.62}%`, transform: 'translate(-50%, -50%)' }}>
+              <Aviso tipo="exclamacion" tam={28} />
+            </button>
+          )
+        })}
       </div>
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <h1 className="flex min-h-11 items-center rounded-2xl bg-tarjeta/85 px-3.5 text-[18px] font-bold shadow-sm backdrop-blur-sm">{UI.barrio.titulo}</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="flex min-h-11 items-center rounded-2xl bg-tarjeta/85 px-3.5 text-[18px] font-bold shadow-sm backdrop-blur-sm">{UI.barrio.titulo}</h1>
+          <button type="button" onClick={onNovedades} aria-label={UI.barrio.abrirNovedades(sinLeer)}
+            className="pointer-events-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-tarjeta/85 shadow-sm backdrop-blur-sm">
+            {sinLeer > 0 ? <Aviso tipo="sobre" tam={32} numero={sinLeer} /> : (
+              <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 text-texto-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 7.5h15v10h-15z M4.8 7.8 12 13l7.2-5.2" /></svg>
+            )}
+          </button>
+        </div>
         {onVolver && (
           <button type="button" onClick={onVolver} className="pointer-events-auto min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
             ‹ {UI.casa.alaCasa}
