@@ -211,3 +211,14 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **El área de Nox se llama Energía** (antes Cuerpo; el identificador interno sigue siendo `cuerpo`).
 - **Partidas antiguas:** las acciones genéricas pasan a su hazaña concreta equivalente; las propias y el historial se conservan.
 - **Segunda fase:** historias que nacen de tus hazañas (por ejemplo, si lees a menudo, Tofu encuentra un libro antiguo).
+
+### Avisos (18/11/2026, rama `dev/avisos`, decidido por Javi)
+Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción a tus hazañas. Lo demás deja un iconito ámbar que late hasta que lo tocas (`src/logica/avisos.ts`, `src/componentes/Aviso.tsx`):
+- **Pestaña Hazañas:** punto cada día nuevo, hasta que la abres ese día.
+- **Sobre en el barrio:** «Mientras no estabas…» ya no sale al abrir; el sobre lleva el número de novedades sin leer y al tocarlo se abre la lista.
+- **«!» sobre una casita:** ha pasado algo allí o te espera una decisión. Se apaga al entrar (la decisión, al decidir).
+- **«…» sobre el vecino:** la cosa pequeña del día; la cara o la visita ya se ven, el texto espera a que lo toques.
+- **«?» sobre el vecino:** una decisión pendiente; al tocarlo sale la pregunta (con «Luego» para dejarla).
+- **Huellas nuevas brillan** durante 3 días o hasta que las tocas.
+- Al volver a casa, el vecino ya no repite la reacción a tu hazaña (salió al tacharla); solo da un saltito.
+- Más adelante: notificaciones fuera de la app (exigen app instalada y un servidor).

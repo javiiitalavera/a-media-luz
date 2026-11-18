@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
+import { hayHazanasNuevas, leerNoticias } from './logica/avisos'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type AreaId, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -30,6 +31,7 @@ export default function App() {
   const [casa, setCasa] = useState<CompaneroId | null>(null)
   const [verBarrio, setVerBarrio] = useState(false)
   const [rincon, setRincon] = useState<AreaId | null>(null)
+  const [sobre, setSobre] = useState(false)
 
   // De noche, la interfaz pasa a su versión oscura (ciruela).
   const momento = momentoDelDia(ahora)
@@ -60,7 +62,7 @@ export default function App() {
   else if (pestana === 'inicio' && casa)
     pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onDetalle={() => setRincon(COMPANEROS[casa].area)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && (conBarrio || verBarrio))
-    pantalla = <Barrio partida={partida} ahora={ahora} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
+    pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       onVolver={conBarrio ? undefined : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onDetalle={() => setRincon(COMPANEROS[ultimo].area)} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
@@ -71,8 +73,8 @@ export default function App() {
   return (
     <>
       <div key={`${pestana}-${rincon}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
-      <Navegacion actual={pestana} onCambiar={irA} />
-      {pestana === 'inicio' && !rincon && <Novedades onIr={irALugar} />}
+      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora) }} />
+      {sobre && <Novedades onIr={irALugar} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />
       <GloboFlotante />
@@ -80,28 +82,27 @@ export default function App() {
   )
 }
 
-/** «Mientras no estabas…»: lo que ha pasado en el barrio desde la última visita. */
-function Novedades({ onIr }: { onIr: (l: Lugar) => void }) {
-  const noticias = useJuego((s) => s.partida?.noticias)
-  const verNoticias = useJuego((s) => s.verNoticias)
-  const hay = Boolean(noticias?.length)
-  useEffect(() => { if (hay) sfx.pagina() }, [hay])
-  if (!noticias?.length) return null
+/** «Mientras no estabas…»: se abre al tocar el sobre del barrio. Al abrirlo, las novedades quedan leídas. */
+function Novedades({ onIr, onCerrar }: { onIr: (l: Lugar) => void; onCerrar: () => void }) {
+  const noticias = useJuego((s) => s.partida?.noticias) ?? []
+  const ajustar = useJuego((s) => s.ajustar)
+  useEffect(() => { sfx.pagina(); ajustar(leerNoticias) }, [ajustar])
   return createPortal(
-    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={verNoticias}>
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={onCerrar}>
       <section role="dialog" aria-label={UI.barrio.novedades} onClick={(e) => e.stopPropagation()} className="animate-entrar w-full rounded-[28px] bg-fondo p-4 shadow-xl">
         <h2 className="px-1 text-[20px] font-bold">{UI.barrio.novedades}</h2>
+        {noticias.length === 0 && <p className="mt-2 px-1 text-[15px] text-texto-3">{UI.barrio.nadaNuevo}</p>}
         <ul className="mt-2 flex flex-col gap-2">
-          {noticias.slice(-3).map((n, i) => (
+          {[...noticias].reverse().map((n, i) => (
             <li key={i}>
-              <button type="button" onClick={() => { verNoticias(); onIr(n.lugar) }}
+              <button type="button" onClick={() => { onCerrar(); onIr(n.lugar) }}
                 className="flex min-h-11 w-full items-center gap-2 rounded-2xl bg-tarjeta px-3.5 py-2.5 text-left text-[15px] leading-snug">
                 <span className="flex-1">{n.texto}</span><span aria-hidden className="text-texto-3">›</span>
               </button>
             </li>
           ))}
         </ul>
-        <button type="button" onClick={verNoticias} className="mt-2 min-h-11 w-full font-semibold text-texto-3">{UI.casa.cerrar}</button>
+        <button type="button" onClick={onCerrar} className="mt-2 min-h-11 w-full font-semibold text-texto-3">{UI.casa.cerrar}</button>
       </section>
     </div>,
     document.body,

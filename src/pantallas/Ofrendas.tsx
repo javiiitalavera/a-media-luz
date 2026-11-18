@@ -8,6 +8,7 @@ import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
 import { anadirHazana, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
+import { verHazanas } from '../logica/avisos'
 import { sfx } from '../sonido'
 import { Interruptor, Pantalla } from '../componentes/comunes'
 import { IconoArea } from '../componentes/IconoArea'
@@ -27,6 +28,9 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
   const [hoja, setHoja] = useState<'editar' | 'algo' | null>(null)
   const [reaccion, setReaccion] = useState<{ texto: string; n: number } | null>(null)
   useEffect(() => olvidar, [olvidar])
+  // Abrir Hazañas apaga el aviso del día nuevo.
+  const ajustar = useJuego((s) => s.ajustar)
+  useEffect(() => { ajustar((p) => verHazanas(p, ahora)) }, [ajustar, ahora])
   useEffect(() => {
     if (!reaccion) return
     const t = setTimeout(() => setReaccion(null), 4500)
