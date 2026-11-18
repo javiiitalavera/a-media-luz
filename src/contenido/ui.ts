@@ -4,6 +4,7 @@ export const UI = {
   nav: { inicio: 'Inicio', ofrendas: 'Hazañas', album: 'Álbum', ajustes: 'Ajustes' },
   barrio: {
     titulo: 'Barrio',
+    proyectos: 'Proyectos',
     puente: 'Puente',
     casaDe: (nombre: string) => `Casa de ${nombre}`,
     hecho: 'Construido',

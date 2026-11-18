@@ -190,3 +190,8 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **Paso entre barrio y casas** (decidido por Javi: distinto de la entrada): al entrar, el barrio se acerca a la casita y la casa sale de ella; al volver, la casa se encoge hacia su casita y el barrio se aleja. Unos 0,75 s; la barra de abajo no se mueve. Transiciones de vista del navegador (iOS 18+); sin ellas, cambio directo.
 - **Barrio con momento del día:** se tiñe igual que las casas (amanecer, atardecer y noche); de noche brillan farolillos y ventanas de las casitas y hay luciérnagas.
 - **Música y sonidos:** recuperados de la primera versión (generados en el móvil, sin archivos). Música suave que cambia con la hora; sonidos al marcar y deshacer hazañas, construir, nacer, crecer, decidir, tocar a un vecino (cada uno con su voz), noticias del barrio y pestañas. Interruptores en Ajustes; respeta el modo silencio del iPhone. Arranca con el primer toque (el móvil no deja sonar antes).
+
+### Pantalla más limpia (18/11/2026, rama `dev/pantalla-limpia`, pedido por Javi)
+- **Barra de abajo compacta:** materiales en una sola línea (punto de color y cantidad) con el botón «Construir» (casa) o «Proyectos» (barrio) a la derecha. Los nombres de los materiales se ven en la hoja de construir.
+- **Mensajes:** lo que **dice** un vecino va en un bocadillo pequeño sobre su cabeza; lo que **pasa** (huellas, micros, decisiones, visitas) va en una franja oscura y discreta arriba, en cursiva. Nunca los dos a la vez.
+- **Música:** arranca con el primer toque al abrir la app (antes se quedaba en silencio hasta apagarla y encenderla).

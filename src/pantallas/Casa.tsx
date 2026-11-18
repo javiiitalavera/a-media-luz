@@ -13,6 +13,7 @@ import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, OFRENDAS_ECLOSION } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
+import { BarraBolsa } from '../componentes/Bolsa'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -67,6 +68,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
+  const [nota, ponerNota] = useState<string | null>(null)
+  // Un mensaje cada vez: si aparece una nota, se cierra el bocadillo.
+  const setNota = (t: string | null) => { if (t) setHabla(null); ponerNota(t) }
   const [saltos, setSaltos] = useState(0)
   const [recien, setRecien] = useState<string | null>(null)
   const [hoja, setHoja] = useState(false)
@@ -81,7 +85,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const faltaHuevo = faltanParaEclosion(partida, ahora)
   const [toques, setToques] = useState(0)
   const [nacer, setNacer] = useState<'rompiendo' | 'salio' | 'ficha' | null>(null)
-  const [nota, setNota] = useState<string | null>(null)
   const [toquesSit, setToquesSit] = useState(0)
   const [preguntaHuevo, setPreguntaHuevo] = useState(false)
   useEffect(() => {
@@ -288,8 +291,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
 
         {habla && (
           <div key={habla.n} role="status" className="absolute z-30"
-            style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 32, 340), transform: 'translate(-50%, -100%)' }}>
-            <div className="animate-entrar relative rounded-3xl bg-tarjeta px-4 py-3 text-[16px] leading-snug text-texto shadow-lg">
+            style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
+            <div className="animate-entrar relative mx-auto w-fit rounded-[22px] bg-tarjeta px-3.5 py-2 text-center text-[15px] leading-snug text-texto shadow-md">
               {habla.texto}
               <span aria-hidden className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-tarjeta" />
             </div>
@@ -338,20 +341,14 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
             </div>
           </div>
         )}
-        <div className="rounded-3xl bg-tarjeta/92 p-3 shadow-lg backdrop-blur-sm">
-          <Materiales mat={mat} />
-          <button type="button" onClick={() => setHoja(true)}
-            className={`relative mt-2.5 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-bold active:scale-[0.98] ${
-              listos ? 'bg-ambar text-tinta' : 'border-2 border-borde text-texto-2'}`}>
-            {UI.casa.construir}
-            {listos > 0 && <span className="rounded-full bg-tinta px-2 py-0.5 text-[12px] text-ambar">{listos}</span>}
-          </button>
-        </div>
+        <BarraBolsa mat={mat} boton={UI.casa.construir} onBoton={() => setHoja(true)} resaltado={listos > 0}
+          insignia={listos > 0 && <span className="rounded-full bg-tinta px-1.5 py-0.5 text-[12px] leading-none text-ambar">{listos}</span>} />
       </div>
 
-      {nota && !celebra && !hallazgo && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="max-w-[340px] rounded-2xl bg-tarjeta/95 px-4 py-2.5 text-center text-[15px] leading-snug shadow-lg">{nota}</span>
+      {/* Lo que pasa (narración): distinto de lo que dicen, en una franja discreta arriba. Nunca a la vez que un bocadillo. */}
+      {nota && !habla && !celebra && !hallazgo && (
+        <div role="status" className="animate-entrar pointer-events-none absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-5">
+          <span className="max-w-[320px] rounded-2xl bg-[#2e2030]/70 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">{nota}</span>
         </div>
       )}
       {hallazgo && !celebra && (
@@ -399,7 +396,7 @@ function HuellaEnEscena({ h, ew, onTocar }: { h: Huella; ew: number; onTocar: ()
   const px = (h.sitio.ancho / 100) * ew
   return (
     <button type="button" aria-label={h.texto?.replace('\n', ' ') ?? h.arte} onClick={(e) => { e.stopPropagation(); onTocar() }}
-      className="absolute z-[5]" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
+      className="absolute z-[5] before:absolute before:-inset-3 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
       <img src={rutaArte(`huella/${h.arte}`)} alt="" draggable={false} className="block w-full" />
       {h.texto && (
         <span className="pointer-events-none absolute inset-x-[12%] top-[14%] flex h-[34%] items-center justify-center text-center leading-[1.05] font-bold whitespace-pre-line"
