@@ -17,6 +17,7 @@ import { Rincon } from './pantallas/Rincon'
 import { Ofrendas } from './pantallas/Ofrendas'
 import { Ajustes, Album } from './pantallas/Otras'
 import { Entrada } from './componentes/Entrada'
+import { GloboFlotante } from './componentes/Globo'
 import { Sonido } from './componentes/Sonido'
 import { sfx } from './sonido'
 
@@ -74,6 +75,7 @@ export default function App() {
       {pestana === 'inicio' && !rincon && <Novedades onIr={irALugar} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />
+      <GloboFlotante />
     </>
   )
 }

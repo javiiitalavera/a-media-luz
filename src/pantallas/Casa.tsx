@@ -1,3 +1,4 @@
+import type React from 'react'
 // La casa de un vecino (docs/diseno-vecindario.md). Lo que manda es la escena: fondo, lo construido, las
 // huellas de las historias y el vecino. La interfaz va encima, arriba y abajo, sin tapar el centro.
 // Todo lo que se mueve es código.
@@ -14,6 +15,8 @@ import { estadoDelMes, faltanParaEclosion, mesActual, OFRENDAS_ECLOSION } from '
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
+import { globoEn, useGlobo } from '../estado/globo'
+import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 
@@ -37,7 +40,7 @@ function useTamano() {
 }
 
 /** Dónde se pone Gregorio (la aspiradora) cuando está en casa de Nox. */
-const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 31, y: 71, ancho: 13 }
+const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 80, y: 80, ancho: 13 }
 /** Dónde se pone un vecino de visita (o sentado en el banco). */
 const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
   nox: { x: 82, y: 56, ancho: 22 },
@@ -71,6 +74,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
   const [nota, ponerNota] = useState<string | null>(null)
   // Un mensaje cada vez: si aparece una nota, se cierra el bocadillo.
   const setNota = (t: string | null) => { if (t) setHabla(null); ponerNota(t) }
+  // Si sale un globo (has tocado un objeto), se callan el bocadillo y la nota.
+  const globo = useGlobo((st) => st.globo)
+  useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
   const [saltos, setSaltos] = useState(0)
   const [recien, setRecien] = useState<string | null>(null)
   const [hoja, setHoja] = useState(false)
@@ -225,8 +231,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
         <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 
-        {huellas.map((hu) => <HuellaEnEscena key={hu.id} h={hu} ew={ew} onTocar={() => hu.toque && setNota(hu.toque)} />)}
-        {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} /> : (
+        {huellas.map((hu) => <HuellaEnEscena key={hu.id} h={hu} ew={ew} onTocar={(e) => hu.toque && globoEn(e, hu.toque)} />)}
+        {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]} /> : (
           <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
             {/* sombra en el suelo */}
             <span aria-hidden className="absolute bottom-[1%] left-1/2 h-[9%] w-[62%] -translate-x-1/2 rounded-[50%] bg-[#4b5d3f]/30 blur-[2px]" />
@@ -248,7 +254,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onDetall
 
         {deVisita && VISITA[deVisita] && (
           <button type="button" aria-label={UI.casa.deVisita(COMPANEROS[deVisita].nombre)}
-            onClick={(e) => { e.stopPropagation(); const l = FRASES_VISITA[deVisita] ?? []; if (l.length) setNota(`${COMPANEROS[deVisita].nombre}: «${l[toquesSit % l.length]}»`); setToquesSit((n) => n + 1) }}
+            onClick={(e) => { e.stopPropagation(); const l = FRASES_VISITA[deVisita] ?? []; if (l.length) globoEn(e, `${COMPANEROS[deVisita].nombre}: «${l[toquesSit % l.length]}»`); setToquesSit((n) => n + 1) }}
             className="absolute z-10" style={{ left: `${VISITA[deVisita]!.x}%`, top: `${VISITA[deVisita]!.y}%`, width: `${VISITA[deVisita]!.ancho}%`, transform: 'translate(-50%, -100%)' }}>
             <img src={rutaCompanero(deVisita, progreso(partida, deVisita, ahora).etapa, 'base')} alt="" draggable={false} className="anim-respirar block w-full" />
           </button>
@@ -392,10 +398,10 @@ function Pregunta({ titulo, texto, si, no, onSi, onNo }: { titulo: string; texto
 }
 
 /** Una huella de una historia (cartel, extintor, expediente…). Los carteles llevan el texto encima. */
-function HuellaEnEscena({ h, ew, onTocar }: { h: Huella; ew: number; onTocar: () => void }) {
+function HuellaEnEscena({ h, ew, onTocar }: { h: Huella; ew: number; onTocar: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
   const px = (h.sitio.ancho / 100) * ew
   return (
-    <button type="button" aria-label={h.texto?.replace('\n', ' ') ?? h.arte} onClick={(e) => { e.stopPropagation(); onTocar() }}
+    <button type="button" aria-label={h.texto?.replace('\n', ' ') ?? h.arte} onClick={(e) => { e.stopPropagation(); onTocar(e) }}
       className="absolute z-[5] before:absolute before:-inset-3 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
       <img src={rutaArte(`huella/${h.arte}`)} alt="" draggable={false} className="block w-full" />
       {h.texto && (
@@ -468,7 +474,16 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
   )
 }
 
-function Objeto({ o, nuevo, ew, eh }: { o: ObjetoCasa; nuevo: boolean; ew: number; eh: number }) {
+/** Cuántas veces se ha tocado cada objeto (para ir rotando sus frases). */
+const vecesTocado = new Map<string, number>()
+
+function Objeto({ o, nuevo, ew, eh, frases }: { o: ObjetoCasa; nuevo: boolean; ew: number; eh: number; frases: string[] }) {
+  const tocar = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    const n = vecesTocado.get(o.id) ?? 0
+    vecesTocado.set(o.id, n + 1)
+    globoEn(e, frases[n % frases.length])
+  }
   const s = o.sitio
   const estilo: CSSProperties = s.colgado
     ? { left: `${s.x}%`, top: `${s.y}%`, width: `${s.ancho}%`, transform: 'translateX(-50%)' }
@@ -477,11 +492,11 @@ function Objeto({ o, nuevo, ew, eh }: { o: ObjetoCasa; nuevo: boolean; ew: numbe
   return (
     <>
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
-      <div className="absolute" style={estilo}>
+      <button type="button" aria-label={o.nombre} onClick={tocar} className="absolute active:brightness-110" style={estilo}>
         <div className={s.colgado ? 'anim-balanceo' : ''}>
-          <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt={o.nombre} draggable={false} className={`block w-full ${nuevo ? 'anim-brotar' : ''}`} />
+          <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false} className={`block w-full ${nuevo ? 'anim-brotar' : ''}`} />
         </div>
-      </div>
+      </button>
       {nuevo && <Estallido x={s.x} y={centroY} />}
     </>
   )

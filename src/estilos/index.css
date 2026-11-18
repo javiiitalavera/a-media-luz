@@ -89,6 +89,9 @@ body {
 }
 .anim-eclosionar { animation: eclosionar 1.6s ease-in both; transform-origin: 50% 90%; }
 
+@keyframes globo { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+.anim-globo { animation: globo 0.18s ease-out both; }
+
 /* Entrada: las nubes se apartan hacia su lado, crecen y se disipan; el velo se va antes. */
 @keyframes nube-fuera { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(calc(var(--lado) * 70vw), -4vh) scale(1.35); opacity: 0; } }
 .anim-nube { animation: nube-fuera 1.9s cubic-bezier(.55,.05,.35,1) both; }
