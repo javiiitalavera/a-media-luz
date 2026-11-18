@@ -17,11 +17,11 @@ export interface Escena {
 }
 
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
-  nox: { proporcion: 941 / 1672, pies: { x: 50, y: 66 }, anchos: [36, 42, 48],
+  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 46, 52],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
-  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 68 }, anchos: [34, 40, 44],
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 44, 48],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
-  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 66 }, anchos: [32, 38, 44],
+  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 42, 48],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }] },
 }
 
@@ -31,15 +31,17 @@ export interface Material {
   singular: string
   /** Color del punto que lo identifica (variable de color de la interfaz). */
   color: string
+  /** Lo que se cuenta al tocarlo en la barra: de dónde sale y para qué sirve, con humor. */
+  explicacion: string
 }
 
 /** Cada ofrenda que cuenta (hasta 3 al día por área) da 1 material de su área. */
 export const MATERIALES: Record<AreaId, Material> = {
-  cuerpo: { area: 'cuerpo', nombre: 'Ascuas', singular: 'ascua', color: '#f08a3c' },
-  mente: { area: 'mente', nombre: 'Semillas', singular: 'semilla', color: '#8fae6b' },
-  calma: { area: 'calma', nombre: 'Rocío', singular: 'gota de rocío', color: '#a99be0' },
-  vinculos: { area: 'vinculos', nombre: 'Hilo', singular: 'hilo', color: '#e8737a' },
-  orden: { area: 'orden', nombre: 'Tornillos', singular: 'tornillo', color: '#7fa7b0' },
+  cuerpo: { area: 'cuerpo', nombre: 'Ascuas', singular: 'ascua', color: '#f08a3c', explicacion: 'Ascuas: salen de moverte, dormir y comer como una persona. Nox jura que no se las come.' },
+  mente: { area: 'mente', nombre: 'Semillas', singular: 'semilla', color: '#8fae6b', explicacion: 'Semillas: de leer, aprender o crear algo. Tofu las planta. No dice qué sale.' },
+  calma: { area: 'calma', nombre: 'Rocío', singular: 'gota de rocío', color: '#a99be0', explicacion: 'Rocío: de parar un rato sin pantallas. Se evapora si lo miras mucho. Es broma. Casi.' },
+  vinculos: { area: 'vinculos', nombre: 'Hilo', singular: 'hilo', color: '#e8737a', explicacion: 'Hilo: de quedar, llamar o abrazar a alguien. Tuerca lo usa para atar expedientes.' },
+  orden: { area: 'orden', nombre: 'Tornillos', singular: 'tornillo', color: '#7fa7b0', explicacion: 'Tornillos: de cerrar pendientes y poner orden. Tuerca los cuenta. Dos veces.' },
 }
 
 export interface ObjetoCasa {

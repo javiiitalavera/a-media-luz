@@ -195,3 +195,7 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **Barra de abajo compacta:** materiales en una sola línea (punto de color y cantidad) con el botón «Construir» (casa) o «Proyectos» (barrio) a la derecha. Los nombres de los materiales se ven en la hoja de construir.
 - **Mensajes:** lo que **dice** un vecino va en un bocadillo pequeño sobre su cabeza; lo que **pasa** (huellas, micros, decisiones, visitas) va en una franja oscura y discreta arriba, en cursiva. Nunca los dos a la vez.
 - **Música:** arranca con el primer toque al abrir la app (antes se quedaba en silencio hasta apagarla y encenderla).
+
+### Toques y espacio (18/11/2026, rama `dev/toques`, pedido por Javi)
+- **Todo se puede tocar:** los objetos de las casas, las huellas y los materiales de la barra muestran un globo pequeño **donde tocas**, con una frase con humor (rotan; textos en `src/contenido/toques.ts` y en `MATERIALES[].explicacion`). Un globo cada vez; se cierra solo o al tocar otra cosa.
+- **Personajes más cerca:** pies más abajo y algo más grandes, para no dejar un hueco vacío sobre la barra. Gregorio, en casa de Nox, pasa a la esquina de abajo a la derecha.

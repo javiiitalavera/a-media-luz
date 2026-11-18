@@ -16,6 +16,7 @@ import { momentoDelDia } from '../logica/momento'
 import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
+import { globoEn } from '../estado/globo'
 
 export function Barrio({ partida, ahora, onCasa, onVolver }: {
   partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void
@@ -61,7 +62,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver }: {
             style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, transform: 'translate(-50%, -60%)' }} />
         )}
         {huellasEn(partida, 'barrio').map((h) => (
-          <button key={h.id} type="button" onClick={() => h.toque && setNota(h.toque)} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
+          <button key={h.id} type="button" onClick={(e) => h.toque && globoEn(e, h.toque)} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
             className="absolute before:absolute before:-inset-2 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
             <img src={rutaArte(`huella/${h.arte}`)} alt="" className="block w-full" draggable={false} />
             {h.texto && (
