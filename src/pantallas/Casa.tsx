@@ -15,6 +15,7 @@ import { estadoDelMes, faltanParaEclosion, mesActual } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
+import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { Materiales } from '../componentes/Bolsa'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
@@ -36,6 +37,8 @@ import { useJuego } from '../estado/juego'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
 const ANCHO_HUEVO = 30
+/** De dónde sale una nota: el vecino, quien está de visita o un objeto de la casa (su id). */
+type Origen = 'vecino' | 'visita' | string
 const SEGUNDOS_BOCADILLO = 7
 
 /** Tamaño de un elemento, actualizado al girar o cambiar la ventana. */
@@ -81,9 +84,10 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
-  const [nota, ponerNota] = useState<string | null>(null)
+  // Lo que pasa (narración): sale de quien lo protagoniza (el vecino, la visita o un objeto), no de arriba.
+  const [nota, ponerNota] = useState<{ texto: string; de?: Origen } | null>(null)
   // Un mensaje cada vez: si aparece una nota, se cierra el bocadillo.
-  const setNota = (t: string | null) => { if (t) setHabla(null); ponerNota(t) }
+  const setNota = (t: string | null, de?: Origen) => { if (t) setHabla(null); ponerNota(t ? { texto: t, de } : null) }
   // Si sale un globo (has tocado un objeto), se callan el bocadillo y la nota.
   const globo = useGlobo((st) => st.globo)
   useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
@@ -113,7 +117,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const micro = estado === 'vivo' ? microDeHoy(partida, DUENO, ahora) : null
   const microPorVer = estado === 'vivo' ? microSinVer(partida, DUENO, ahora) : null
   const microVisible = Boolean(micro)
-  const verCosita = () => { if (!micro) return; setNota(micro.texto); ajustar((p) => verMicro(p, DUENO, ahora)) }
+  const verCosita = () => {
+    if (!micro) return
+    // Sale de la visita, del objeto del que va o, si no, del propio vecino.
+    setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO)))
+    ajustar((p) => verMicro(p, DUENO, ahora))
+  }
   const [decisionAbierta, setDecisionAbierta] = useState(abrirDecision)
   useEffect(() => { if (abrirDecision) onDecisionAbierta?.() }, [abrirDecision, onDecisionAbierta])
   const [ficha, setFicha] = useState(false)
@@ -375,6 +384,27 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
           </div>
         )}
 
+        {/* Lo que pasa (narración): un globo oscuro que sale de quien lo protagoniza. Nunca a la vez que un bocadillo. */}
+        {nota && !habla && !celebra && !hallazgo && (() => {
+          const o = typeof nota.de === 'string' && nota.de !== 'vecino' && nota.de !== 'visita' ? objetos.find((x) => x.id === nota.de) : undefined
+          const sv = nota.de === 'visita' && deVisita ? sitioVisita(DUENO, deVisita) : undefined
+          const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 7 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
+            : sv ? { x: sv.x, y: sv.y - alto(sv.ancho, 1) - 1, abajo: false }
+            : { x: NOX.x, y: NOX.y - altoNox - 1, abajo: false }
+          // Que no se salga por los lados: el globo se centra en el punto pero se queda dentro de la pantalla.
+          const anchoGlobo = Math.min(w - 32, 280)
+          const xPx = (p.x / 100) * ew + (w - ew) / 2
+          const desplaza = Math.min(Math.max(xPx, 16 + anchoGlobo / 2), w - 16 - anchoGlobo / 2) - xPx
+          return (
+            <div key={nota.texto} role="status" className="pointer-events-none absolute z-30"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, width: anchoGlobo, transform: `translate(calc(-50% + ${desplaza}px), ${p.abajo ? '0' : '-100%'})` }}>
+              <div className="animate-entrar relative mx-auto w-fit rounded-[20px] bg-[#2e2030]/85 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">
+                {nota.texto}
+                <span aria-hidden className={`absolute h-3.5 w-3.5 rotate-45 bg-[#2e2030]/85 ${p.abajo ? '-top-1.5' : '-bottom-1.5'}`} style={{ left: `calc(50% - ${desplaza}px - 7px)` }} />
+              </div>
+            </div>
+          )
+        })()}
         {habla && (
           <div key={habla.n} role="status" className="absolute z-30"
             style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
@@ -386,15 +416,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         )}
       </div>
 
-      {/* Arriba: de quién es la casa y ajustes. */}
-      <header className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
-        <button type="button" onClick={() => setFicha(true)} aria-label={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)}
-          className="flex min-h-11 items-center rounded-2xl bg-tarjeta/85 px-3.5 text-[18px] leading-tight font-bold shadow-sm backdrop-blur-sm">
-          {conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre}
-        </button>
-        <button type="button" onClick={onBarrio} className="min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
-          {visita ? `‹ ${UI.casa.alBarrio}` : `${UI.casa.alBarrio} ›`}
-        </button>
+      {/* Arriba a la izquierda: al barrio. */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
+        <h1 className="sr-only">{conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre}</h1>
+        <span className="pointer-events-auto">
+          <BotonPastilla onToque={onBarrio}><Icono d={visita ? ICONOS.atras : ICONOS.mapa} tam={22} />{UI.casa.alBarrio}</BotonPastilla>
+        </span>
       </header>
 
       {/* Abajo: materiales y construir, encima de la navegación. */}
@@ -407,21 +434,19 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {decision.opciones.map((o) => (
-                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setDecisionAbierta(false); setNota(o.respuesta) }}
+                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setDecisionAbierta(false); setNota(o.respuesta, 'vecino') }}
                   className="min-h-12 rounded-2xl bg-ambar px-2 text-[14px] leading-tight font-bold text-tinta">{o.texto}</button>
               ))}
             </div>
           </div>
         )}
-        <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
+        {/* Abajo a la derecha: la ficha del vecino («i») y construir. */}
+        <div className="flex flex-col items-end gap-2.5">
+          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mr-1"><Icono d={ICONOS.info} /></BotonRedondo>
+          <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
+        </div>
       </div>
 
-      {/* Lo que pasa (narración): distinto de lo que dicen, en una franja discreta arriba. Nunca a la vez que un bocadillo. */}
-      {nota && !habla && !celebra && !hallazgo && (
-        <div role="status" className="animate-entrar pointer-events-none absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-5">
-          <span className="max-w-[320px] rounded-2xl bg-[#2e2030]/70 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">{nota}</span>
-        </div>
-      )}
       {hallazgo && !celebra && (
         <div className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
           <span className="rounded-full bg-ambar px-5 py-2.5 text-center text-[15px] font-bold text-tinta shadow-lg">{UI.casa.encontrado(hallazgo)}</span>
