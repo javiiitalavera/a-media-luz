@@ -301,3 +301,10 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Nubes cada vez que abres la app** (no solo la primera del día).
 - **Construir y materiales, detrás de un botón:** en casa y en el barrio ya no hay barra fija abajo; un botón redondo con un martillo (abajo a la derecha) abre la hoja de construir o de proyectos del barrio, con los materiales arriba (al tocar uno, su explicación). Lleva un número y late cuando hay algo listo para construir.
 - **Retos:** sin mínimo y con un **máximo de 10** en tu lista (se recomienda de 3 a 6). Al llegar a 10 no se pueden añadir más hasta quitar alguno (lo hecho en «Algo más» sigue contando). La lista sale **ordenada por área** (Energía, Mente, Calma, Vínculos, Orden) y, dentro, en el orden en que los añadiste.
+
+### Arte y atmósfera del vecindario
+
+- Cada vecino tiene una sombra de contacto ajustada a su figura. Las casas se apoyan en el terreno con sombras y pequeños detalles vegetales delante del borde.
+- Tofu recoge una luz lateral en el invernadero. En las etapas con brote separado, el brote se inclina hacia el lado del toque, el cuerpo acompaña después y ambos se asientan. Si hay maceta, el brote se orienta hacia ella de vez en cuando.
+- De noche, la hoguera construida ilumina la escena de Nox desde su posición. La luz ámbar pierde intensidad al alejarse del fuego y las sombras siguen en ciruela. Con movimiento reducido la iluminación queda fija.
+- Las Crónicas llevan ilustraciones de sus objetos. En «La normativa» el cartel aparece chamuscado cuando le ocurre en la historia. Los encabezados de Retos muestran el símbolo y el vecino de cada área.

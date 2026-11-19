@@ -88,6 +88,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const globo = useGlobo((st) => st.globo)
   useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
   const [saltos, setSaltos] = useState(0)
+  const [ladoTofu, setLadoTofu] = useState<-1 | 1>(1)
   const [recien, setRecien] = useState<string | null>(null)
   const [hoja, setHoja] = useState(false)
   const verEtapa = useJuego((s) => s.verEtapa)
@@ -242,6 +243,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
     ...OBJETOS_CASA.filter((o) => o.companero === DUENO && o.id !== 'aspiradora' && construido(partida, o.id) && rutaArte(`casa/${DUENO}/objeto/${o.id}`)),
     ...(gregorio === DUENO ? [DUENO === 'tuerca' ? aspiradora : { ...aspiradora, sitio: GREGORIO_EN_NOX }] : []),
   ]
+  const hoguera = objetos.find((o) => o.id === 'hoguera')
+  const maceta = objetos.find((o) => o.id === 'maceta')
   const huellas = huellasEn(partida, DUENO)
   const decision = decisionPendiente(partida, DUENO)
   const deVisita = (microVisible && micro?.visita) || visitante(partida, DUENO, ahora)
@@ -263,6 +266,11 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const radio = anchoNox * 0.75
   const gradiente = `radial-gradient(circle at ${NOX.x}% ${centroY}%, rgba(0,0,0,0.35) 0, rgba(0,0,0,0.35) ${radio * 0.55}%, black ${radio * 1.15}%)`
   const mascaraNoche: CSSProperties = { WebkitMaskImage: gradiente, maskImage: gradiente }
+  const luzHoguera = noche && hoguera?.luz ? {
+    x: hoguera.sitio.x + ((hoguera.luz.x - 50) / 100) * hoguera.sitio.ancho,
+    y: hoguera.sitio.y - (1 - hoguera.luz.y / 100) * alto(hoguera.sitio.ancho, hoguera.proporcion),
+  } : null
+  const ladoMaceta = maceta ? (maceta.sitio.x < NOX.x ? -1 : 1) : undefined
 
   return (
     <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
@@ -272,10 +280,16 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         {huellas.map((hu) => <HuellaEnEscena key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]} /> : (
           <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
-            {/* sombra en el suelo */}
-            <span aria-hidden className="absolute bottom-[1%] left-1/2 h-[9%] w-[62%] -translate-x-1/2 rounded-[50%] bg-[#4b5d3f]/30 blur-[2px]" />
+            <span aria-hidden className="sombra-vecino pointer-events-none" data-vecino={conHuevo ? 'huevo' : DUENO} />
             <button type="button" aria-label={conHuevo ? UI.casa.huevo : UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
-              onClick={(e) => { e.stopPropagation(); hablar() }} className="relative block w-full">
+              onClick={(e) => {
+                e.stopPropagation()
+                if (DUENO === 'tofu') {
+                  const caja = e.currentTarget.getBoundingClientRect()
+                  setLadoTofu(e.detail && e.clientX < caja.left + caja.width / 2 ? -1 : 1)
+                }
+                hablar()
+              }} className={`relative block w-full ${DUENO === 'tofu' && !conHuevo && !noche ? 'tofu-a-contraluz' : ''}`}>
               {conHuevo ? (
                 <span key={`h${toques}`} className={`block ${toques ? 'anim-temblar' : ''}`}>
                   <img src={rutaArte(`huevo/${DUENO}/${faltaHuevo <= 1 || estado === 'naciendo' ? 'agrietado' : 'cerrado'}`)} alt="" draggable={false}
@@ -283,7 +297,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
                 </span>
               ) : (
                 <span key={etapaVista} className={`block ${celebra ? 'anim-brotar' : ''}`}>
-                  <FiguraVecino c={DUENO} etapa={etapaVista} expresion={expresion} reaccion={saltos} />
+                  <FiguraVecino c={DUENO} etapa={etapaVista} expresion={expresion} reaccion={saltos} ladoToque={ladoTofu} ladoMaceta={ladoMaceta} />
                 </span>
               )}
             </button>
@@ -305,8 +319,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         )}
 
         {/* Luz del momento del día: tiñe el dibujo, sin cambiarlo. */}
-        <div aria-hidden style={noche && !conHuevo ? mascaraNoche : undefined} className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
-          noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
+        <div aria-hidden style={luzHoguera ? {
+          background: `radial-gradient(ellipse at ${luzHoguera.x}% ${luzHoguera.y}%, transparent 3%, #65517066 28%, #3b2c63 67%)`,
+        } : noche && !conHuevo ? mascaraNoche : undefined} className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
+          luzHoguera ? 'opacity-80' : noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
+        {luzHoguera && <div aria-hidden className="luz-hoguera pointer-events-none absolute inset-0 z-20 mix-blend-screen"
+          style={{ background: `radial-gradient(ellipse 54% 20% at ${luzHoguera.x}% ${luzHoguera.y + 3}%, #ffa14775 0%, #f7a24b35 46%, transparent 100%)` }} />}
 
         {/* Luces que laten (por encima del tinte, para que de noche brillen). */}
         <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-screen">

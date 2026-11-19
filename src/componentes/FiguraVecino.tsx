@@ -1,7 +1,7 @@
 // El vecino en su casa, con sus gestos (tanda C). Cada uno se mueve a su manera, con trozos de su propio
 // dibujo (sin arte nuevo):
 // - Nox: respira, da saltitos impacientes y, al tocarlo, salta.
-// - Tofu: completamente quieto (es el chiste); solo su brote se mece. Al tocarlo, el brote se sobresalta.
+// - Tofu: el brote se adelanta al cuerpo al tocarlo. De adulto solo deja caer unas hojas.
 // - Tuerca: respira y da algún tic; su engranaje gira a ratos. Al tocarlo, respingo y engranaje a toda prisa.
 import type { CSSProperties } from 'react'
 import type { CompaneroId } from '../contenido'
@@ -21,8 +21,9 @@ const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 
 /** Tuerca joven y adulto (dos engranajes y antena): en vez de girar, parpadea la luz de la antena. */
 const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 }]
 
-export function FiguraVecino({ c, etapa, expresion, reaccion }: {
+export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMaceta }: {
   c: CompaneroId; etapa: 0 | 1 | 2; expresion: Expresion; reaccion: number
+  ladoToque: -1 | 1; ladoMaceta?: -1 | 1
 }) {
   const src = rutaCompanero(c, etapa, expresion)
   const brote = c === 'tofu' ? BROTE[etapa][expresion] : undefined
@@ -45,7 +46,7 @@ export function FiguraVecino({ c, etapa, expresion, reaccion }: {
     return (
       <span key={reaccion} data-dormido={dormido || undefined} className="relative block">
         <img src={src} alt="" draggable={false} className="block w-full" />
-        {tocado && [0, 1, 2].map((i) => (
+        {tocado && !dormido && [0, 1, 2].map((i) => (
           <span key={i} aria-hidden className="anim-hoja-cae absolute h-[7%] w-[5%] rounded-[50%_0] bg-[#8fae6b] shadow-[inset_0_0_0_1.5px_#4a6b32]"
             style={{ left: `${32 + i * 17}%`, top: `${26 + (i % 2) * 4}%`, animationDelay: `${i * 0.18}s`, rotate: `${i * 50 - 30}deg` } as CSSProperties} />
         ))}
@@ -64,10 +65,14 @@ export function FiguraVecino({ c, etapa, expresion, reaccion }: {
   const arriba: CSSProperties = { clipPath: `inset(0 0 ${100 - corte - 1}% 0)`, transformOrigin: `${eje[0]}% ${eje[1]}%` }
   const abajo: CSSProperties = { clipPath: `inset(${corte}% 0 0 0)` }
   const tofu = c === 'tofu'
-  const cuerpo = tofu ? '' : tocado ? 'anim-respingo' : 'anim-tic'
-  const parte = tofu ? (tocado ? 'anim-brote-susto' : 'anim-brote') : (tocado ? 'anim-engranaje-prisa' : 'anim-engranaje')
+  const cuerpo = tofu ? (tocado && !dormido ? 'tofu-responde' : '') : tocado ? 'anim-respingo' : 'anim-tic'
+  const parte = tofu ? (tocado && !dormido ? 'tofu-brote-responde' : 'tofu-brote') : (tocado ? 'anim-engranaje-prisa' : 'anim-engranaje')
+  const direccion = tofu ? {
+    '--lado-toque': ladoToque,
+    '--lado-maceta': !dormido ? ladoMaceta ?? 0 : 0,
+  } as CSSProperties : undefined
   return (
-    <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${cuerpo}`}>
+    <span key={reaccion} style={direccion} data-dormido={dormido || undefined} className={`relative block ${cuerpo}`}>
       <span className={`block ${tofu ? '' : 'anim-respirar'}`}>
         <img src={src} alt="" draggable={false} className="block w-full" style={abajo} />
         <img src={src} alt="" draggable={false} className={`absolute inset-0 block w-full ${parte}`} style={arriba} />

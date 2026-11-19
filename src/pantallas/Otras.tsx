@@ -19,6 +19,16 @@ import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/
 import { HojaSugerencias } from '../componentes/HojaSugerencias'
 import { TEXTOS_CUESTIONARIO as TC } from '../contenido/cuestionario'
 import { usePreferencias } from '../estado/preferencias'
+import { rutaArte } from '../arte/manifiesto'
+
+const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
+  tablon: rutaArte('casa/tuerca/objeto/tablon'),
+  gregorio: rutaArte('casa/tuerca/objeto/aspiradora'),
+  puente: rutaArte('huella/puente'),
+  prestamo: rutaArte('casa/tofu/objeto/libros'),
+  pizarra: rutaArte('casa/tofu/objeto/pizarra'),
+  planta: rutaArte('casa/tofu/objeto/maceta'),
+}
 
 export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {
   // Abrir el Álbum apaga su aviso (lo nuevo se ve, de todas formas, arriba del todo).
@@ -84,17 +94,31 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
         <p className="rounded-3xl border-2 border-dashed border-borde px-4 py-3 text-[14px] text-texto-3">{UI.barrio.sinCronicas}</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {lista.map((c) => (
-            <details key={c.id} open={cronicaAbierta === c.id || undefined} className="rounded-3xl bg-tarjeta px-4 py-3">
-              <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-bold">
-                <span className="flex-1">{c.titulo}</span>
-                {c.enMarcha && <span className="rounded-full bg-ambar px-2.5 py-0.5 text-[12px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
-              </summary>
-              <ol className="mt-1 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug text-texto-2">
-                {c.fases.map((f, i) => <li key={i}>{f}</li>)}
-              </ol>
-            </details>
-          ))}
+          {lista.map((c) => {
+            const fase = partida.situaciones?.[c.id]?.fase ?? 0
+            const arte = c.id === 'normativa'
+              ? rutaArte(fase >= 2 || !c.enMarcha ? 'huella/cartel-quemado' : 'huella/cartel')
+              : ILUSTRACION_CRONICA[c.id]
+            return (
+              <details key={c.id} open={cronicaAbierta === c.id || undefined} className="group rounded-[20px] border border-borde/65 bg-tarjeta px-3 py-2.5 shadow-sm">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 [&::-webkit-details-marker]:hidden">
+                  {arte && <span aria-hidden className="grid h-[62px] w-[62px] shrink-0 place-items-center rounded-xl bg-hundido/75">
+                    <img src={arte} alt="" className="h-12 w-12 object-contain" draggable={false} />
+                  </span>}
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[17px] leading-tight font-bold">{c.titulo}</span>
+                    {c.enMarcha && <span className="mt-1 block text-[13px] text-texto-3">{UI.barrio.enMarcha}</span>}
+                  </span>
+                  <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-texto-3 transition-transform group-open:rotate-180 motion-reduce:transition-none">
+                    <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </summary>
+                <ol className="mt-3 flex list-decimal flex-col gap-2 border-t border-borde/60 pt-3 pr-1 pb-1 pl-6 text-[14px] leading-snug text-texto-2">
+                  {c.fases.map((f, i) => <li key={i}>{f}</li>)}
+                </ol>
+              </details>
+            )
+          })}
         </div>
       )}
 

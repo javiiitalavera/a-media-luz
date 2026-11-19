@@ -94,9 +94,24 @@ body {
 /* Gestos de cada vecino (componentes/FiguraVecino). */
 @keyframes impaciente { 0%, 86%, 100% { transform: translateY(0); } 90% { transform: translateY(-4%); } 94% { transform: translateY(0); } 97% { transform: translateY(-2%); } }
 .anim-impaciente { animation: impaciente 7s ease-in-out infinite; }
-@keyframes brote { 0%, 45%, 100% { transform: none; } 65% { transform: rotate(3.5deg); } 84% { transform: rotate(-1.5deg); } }
-.anim-brote { animation: brote 3.6s ease-in-out infinite; }
-@keyframes brote-susto { 0% { transform: rotate(0); } 15% { transform: rotate(-14deg); } 35% { transform: rotate(11deg); } 55% { transform: rotate(-7deg); } 75% { transform: rotate(4deg); } 100% { transform: rotate(0); } }
+.tofu-brote { animation: mirar-maceta 18s ease-in-out infinite; }
+.tofu-brote-responde { animation: orienta-brote 760ms ease-out, mirar-maceta 18s 760ms ease-in-out infinite; }
+.tofu-responde { animation: acompana-brote 760ms ease-out; transform-origin: 50% 97%; }
+@keyframes orienta-brote {
+  0%, 100% { transform: none; }
+  21% { transform: rotate(calc(var(--lado-toque) * 14deg)) scaleY(1.04); }
+  46% { transform: rotate(calc(var(--lado-toque) * 7deg)); }
+  70% { transform: rotate(calc(var(--lado-toque) * -3deg)); }
+}
+@keyframes acompana-brote {
+  0%, 18%, 100% { transform: none; }
+  42% { transform: skewX(calc(var(--lado-toque) * -3deg)) scaleY(.985); }
+  68% { transform: skewX(calc(var(--lado-toque) * 1deg)); }
+}
+@keyframes mirar-maceta {
+  0%, 83%, 100% { transform: none; }
+  90%, 94% { transform: rotate(calc(var(--lado-maceta) * 8deg)); }
+}
 @keyframes engranaje { 0%, 68%, 100% { transform: rotate(0); } 74% { transform: rotate(-5deg); } 82%, 90% { transform: rotate(24deg); } }
 .anim-engranaje { animation: engranaje 5s cubic-bezier(.5,0,.3,1.4) infinite; }
 @keyframes engranaje-prisa { from { transform: rotate(0); } to { transform: rotate(360deg); } }
@@ -194,7 +209,6 @@ body {
 /* Cada respuesta termina dando paso al gesto habitual, incluso después de varios toques. */
 .anim-saltar { animation: saltar 640ms ease-in-out, impaciente 7s 640ms ease-in-out infinite; }
 .anim-respingo { animation: respingo 620ms ease-out, tic 6s 620ms linear infinite; }
-.anim-brote-susto { animation: brote-susto 850ms ease-out, brote 4.8s 850ms ease-in-out infinite; }
 .anim-engranaje-prisa { animation: engranaje-prisa 850ms ease-out, engranaje 5s 850ms ease-in-out infinite; }
 .anim-antena-prisa { animation: pulso-antena 680ms ease-out, antena 4s 680ms ease-in-out infinite; }
 @keyframes pulso-antena { 0%, 100% { opacity: .25; } 35% { opacity: 1; } }
@@ -202,7 +216,48 @@ body {
 [data-dormido].anim-impaciente, [data-dormido].anim-tic { animation: none; }
 [data-dormido].anim-saltar { animation: saltar 640ms ease-in-out; }
 [data-dormido].anim-respingo { animation: respingo 620ms ease-out; }
-[data-dormido] .anim-brote { animation-duration: 7s; }
+
+/* Sombras de contacto y pequeñas oclusiones para que los dibujos compartan el mismo suelo. */
+.casita-en-terreno::before, .casita-en-terreno::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.casita-en-terreno::before {
+  inset: auto 4% 2%;
+  height: 19%;
+  background: radial-gradient(ellipse, #26251866 0%, #42432a35 53%, transparent 74%);
+}
+.casita-en-terreno::after {
+  inset: auto 8% 4%;
+  height: 12%;
+  background:
+    radial-gradient(ellipse 9% 43% at 6% 59%, #818956 52%, transparent 68%),
+    radial-gradient(ellipse 3% 56% at 12% 48%, #9c9a62 53%, transparent 70%),
+    radial-gradient(ellipse 6% 26% at 16% 58%, #818956 55%, transparent 73%),
+    radial-gradient(ellipse 7% 40% at 92% 51%, #848c58 53%, transparent 68%),
+    radial-gradient(ellipse 3% 52% at 87% 47%, #9f9d65 52%, transparent 70%);
+}
+.sombra-vecino {
+  position: absolute;
+  left: var(--sombra-x, 50%);
+  bottom: var(--sombra-pies, 1.5%);
+  width: var(--sombra-ancho, 67%);
+  height: 10%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, var(--sombra-suelo, #52372566), transparent 73%);
+}
+.sombra-vecino[data-vecino='tofu'] { --sombra-pies: 1%; --sombra-ancho: 81%; --sombra-suelo: #603b2b89; }
+.sombra-vecino[data-vecino='tuerca'] { --sombra-pies: 1%; --sombra-ancho: 76%; --sombra-suelo: #40334486; }
+.sombra-vecino[data-vecino='nox'] { --sombra-x: 57%; --sombra-ancho: 65%; --sombra-suelo: #4b452b82; }
+.tofu-a-contraluz { filter: drop-shadow(-1.5px -1px 1px #ffd89b9e); }
+.luz-hoguera { animation: reflejo-hoguera 4.6s ease-in-out infinite; }
+@keyframes reflejo-hoguera {
+  0%, 100% { opacity: .82; }
+  32% { opacity: .96; }
+  58% { opacity: .77; }
+  71% { opacity: .91; }
+}
 
 @keyframes gag-quieto { from, to { opacity: 1; } }
 
@@ -216,7 +271,7 @@ body {
   .anim-asoma { animation: gag-quieto 4s linear both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
-  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .anim-brote, .anim-brote-susto, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
+  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
 
 /* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */
