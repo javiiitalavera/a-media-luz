@@ -4,7 +4,7 @@ import type React from 'react'
 // Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
@@ -14,7 +14,8 @@ import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
-import { BarraBolsa } from '../componentes/Bolsa'
+import { BotonConstruir } from '../componentes/BotonConstruir'
+import { Materiales } from '../componentes/Bolsa'
 import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
@@ -245,7 +246,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const decision = decisionPendiente(partida, DUENO)
   const deVisita = (microVisible && micro?.visita) || visitante(partida, DUENO, ahora)
   const otroHuevo = esUltimo && vivo ? huevoDisponible(partida, ahora, ORDEN_COMPANEROS.filter(tieneMes)) : null
-  const mat = disponibles(partida, ahora)
   const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
   // Lo de abajo se pinta delante: se ordena por la altura de los pies.
   const capas = [...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, o })), { y: NOX.y, o: null }].sort((a, b) => a.y - b.y)
@@ -395,8 +395,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
             </div>
           </div>
         )}
-        <BarraBolsa mat={mat} boton={UI.casa.construir} onBoton={() => setHoja(true)} resaltado={listos > 0}
-          insignia={listos > 0 && <span className="rounded-full bg-tinta px-1.5 py-0.5 text-[12px] leading-none text-ambar">{listos}</span>} />
+        <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
       </div>
 
       {/* Lo que pasa (narración): distinto de lo que dicen, en una franja discreta arriba. Nunca a la vez que un bocadillo. */}
@@ -581,21 +580,6 @@ function Estallido({ x, y }: { x: number; y: number }) {
   )
 }
 
-function Materiales({ mat, falta }: { mat: Record<AreaId, number>; falta?: Partial<Record<AreaId, number>> }) {
-  return (
-    <ul className="grid grid-cols-5 gap-1">
-      {ORDEN_AREAS.map((a) => (
-        <li key={a} className="flex flex-col items-center">
-          <span className="flex items-center gap-1 text-[18px] leading-none font-bold">
-            <IconoMaterial area={a} tam={17} />
-            <span className={falta?.[a] ? 'text-peligro' : ''}>{mat[a]}</span>
-          </span>
-          <span className="mt-1 text-[11px] font-medium text-texto-3">{MATERIALES[a].nombre}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
 
 function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
   dueno: CompaneroId

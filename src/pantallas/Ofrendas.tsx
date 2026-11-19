@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type Accion, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
-import { anadirHazana, borrarHazana, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
+import { anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -216,7 +216,7 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
               <div key={a.id} className="flex items-center gap-2 rounded-3xl bg-tarjeta py-1 pr-1 pl-3">
                 <IconoArea area={a.area} pequeno />
                 <span className="flex-1 text-[15px] font-medium">{a.nombre}</span>
-                <button type="button" onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto">+ {UI.ofrendas.aMiLista}</button>
+                <button type="button" disabled={!cabeOtro(partida)} onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto disabled:opacity-40">+ {UI.ofrendas.aMiLista}</button>
                 <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />
               </div>
             ))}
@@ -225,6 +225,7 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
       )}
 
       <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.anadir}</h3>
+      {!cabeOtro(partida) && <p className="mb-2 rounded-2xl bg-tarjeta px-3 py-2 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
       <div className="flex flex-col gap-3">
         {ORDEN_AREAS.map((area) => {
           const lista = sinUsar.filter((c) => c.area === area)
@@ -234,8 +235,8 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
               <div className="mb-1 px-1 text-[13px] font-semibold text-texto-3">{AREAS[area].nombre}</div>
               <div className="flex flex-wrap gap-2">
                 {lista.map((c) => (
-                  <button key={c.id} type="button" onClick={() => ajustar((p) => anadirHazana(p, c.id))}
-                    className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2">+ {c.nombre}</button>
+                  <button key={c.id} type="button" disabled={!cabeOtro(partida)} onClick={() => ajustar((p) => anadirHazana(p, c.id))}
+                    className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2 disabled:opacity-40">+ {c.nombre}</button>
                 ))}
               </div>
             </div>
@@ -244,7 +245,8 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
       </div>
 
       <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.crearPropia}</h3>
-      <FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => ajustar((p) => crearHazana(p, d, nuevoId()))} />
+      {cabeOtro(partida) ? <FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => ajustar((p) => crearHazana(p, d, nuevoId()))} />
+        : <p className="rounded-2xl bg-tarjeta px-3 py-2 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
     </Hoja>
   )
 }

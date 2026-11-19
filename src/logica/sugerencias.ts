@@ -4,6 +4,7 @@
 import type { Actividad, Perfil } from '../contenido/cuestionario'
 import { ACCIONES } from '../contenido'
 import type { Partida } from './partida'
+import { cabeOtro } from './hazanas'
 
 export interface Sugerencia { id: string; nombre: string; minima?: string }
 
@@ -65,6 +66,7 @@ export function sugerencias(perfil: Perfil): Sugerencia[] {
 /** Añade una sugerencia a tu lista (con su meta ajustada) o la vuelve a hacer tuya si ya la usaste. */
 export function anadirSugerencia(p: Partida, s: Sugerencia): Partida {
   const ya = p.acciones.find((a) => a.id === s.id)
+  if (!(ya && ya.habitual !== false) && !cabeOtro(p)) return p
   const nueva = { id: s.id, area: ACCIONES.find((a) => a.id === s.id)!.area, nombre: s.nombre, ...(s.minima ? { minima: s.minima } : {}) }
   return { ...p, acciones: ya ? p.acciones.map((a) => (a.id === s.id ? nueva : a)) : [...p.acciones, nueva] }
 }

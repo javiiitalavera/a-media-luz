@@ -9,6 +9,7 @@ import { BotonPrincipal, Pantalla } from '../componentes/comunes'
 import { Cuestionario } from '../componentes/Cuestionario'
 import { TEXTOS_CUESTIONARIO as T, type Perfil } from '../contenido/cuestionario'
 import { sugerencias, type Sugerencia } from '../logica/sugerencias'
+import { MAX_RETOS } from '../logica/hazanas'
 
 /** El primer huevo es siempre el de Nox (el único compañero con todo su arte, de momento). */
 const PRIMERO: CompaneroId = 'nox'
@@ -23,7 +24,7 @@ export function Inicio() {
   const nombreDe = (id: string, nombre: string) => sugeridos.find((x) => x.id === id)?.nombre ?? nombre
   const [todas, setTodas] = useState(false)
   useEffect(() => { window.scrollTo(0, 0) }, [paso])
-  const alternar = (id: string) => setHabituales((h) => (h.includes(id) ? h.filter((x) => x !== id) : [...h, id]))
+  const alternar = (id: string) => setHabituales((h) => (h.includes(id) ? h.filter((x) => x !== id) : h.length >= MAX_RETOS ? h : [...h, id]))
 
   return (
     <Pantalla>

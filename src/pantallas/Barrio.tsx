@@ -4,7 +4,7 @@
 // los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
 import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, LUCES_BARRIO, MATERIALES, ORDEN_AREAS, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
+import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
@@ -14,7 +14,8 @@ import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
 import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
-import { BarraBolsa } from '../componentes/Bolsa'
+import { BotonConstruir } from '../componentes/BotonConstruir'
+import { Materiales } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLeer, verGag, verHuella } from '../logica/avisos'
@@ -56,7 +57,6 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
-  const mat = disponibles(partida, ahora)
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
 
@@ -147,7 +147,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
       )}
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 px-3">
-        <BarraBolsa mat={mat} boton={UI.barrio.proyectos} onBoton={() => setHoja(true)} resaltado={listos} />
+        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} />
       </div>
 
       {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onConstruido={setProyectoNuevo} onCerrar={() => setHoja(false)} />}
@@ -155,20 +155,6 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   )
 }
 
-function Materiales({ mat }: { mat: Record<AreaId, number> }) {
-  return (
-    <ul className="grid grid-cols-5 gap-1">
-      {ORDEN_AREAS.map((a) => (
-        <li key={a} className="flex flex-col items-center">
-          <span className="flex items-center gap-1 text-[18px] leading-none font-bold">
-            <IconoMaterial area={a} tam={17} />{mat[a]}
-          </span>
-          <span className="mt-1 text-[11px] font-medium text-texto-3">{MATERIALES[a].nombre}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
 
 function HojaBarrio({ partida, ahora, abierto, onConstruido, onCerrar }: { partida: Partida; ahora: Date; abierto: boolean; onConstruido: (id: string) => void; onCerrar: () => void }) {
   const construirBarrio = useJuego((s) => s.construirBarrio)

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { AREAS, UI, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
-import { anadirHazana, delCatalogoSinUsar } from '../logica/hazanas'
+import { anadirHazana, cabeOtro, delCatalogoSinUsar } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 
 export function SugerirHazanas({ partida, area, titulo }: { partida: Partida; area: AreaId; titulo?: string }) {
@@ -11,7 +11,7 @@ export function SugerirHazanas({ partida, area, titulo }: { partida: Partida; ar
   const [anadida, setAnadida] = useState<string | null>(null)
   const opciones = delCatalogoSinUsar(partida).filter((c) => c.area === area).slice(0, 3)
   if (anadida) return <p className="mt-2 text-[14px] font-semibold text-salvia-texto">{UI.sugerir.anadida(anadida)}</p>
-  if (!opciones.length) return null
+  if (!opciones.length || !cabeOtro(partida)) return null
   return (
     <div className="mt-2">
       <div className="text-[13px] font-semibold text-texto-2">{titulo ?? UI.sugerir.titulo(AREAS[area].nombre)}</div>

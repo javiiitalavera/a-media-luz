@@ -186,7 +186,7 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **Micros:** Tofu atascado en una página, la planta que «saluda», Tuerca corrigiendo la pizarra, Tofu «meditando», Tofu mirando la hoguera de Nox hasta ponerlo nervioso.
 
 ### Ambiente (18/11/2026, rama `dev/ambiente`)
-- **Entrada:** al abrir la app, nubes (hechas por código, color crema de día y ciruela de noche) tapan la pantalla y se apartan hacia los lados mientras se disipan (unos 2 s). Solo al abrir la app.
+- **Entrada:** al abrir la app, nubes (hechas por código, color crema de día y ciruela de noche) tapan la pantalla y se apartan hacia los lados mientras se disipan (unos 2 s). Solo al abrir la app (cada vez).
 - **Paso entre barrio y casas** (decidido por Javi: distinto de la entrada): al entrar, el barrio se acerca a la casita y la casa sale de ella; al volver, la casa se encoge hacia su casita y el barrio se aleja. Unos 0,75 s; la barra de abajo no se mueve. Transiciones de vista del navegador (iOS 18+); sin ellas, cambio directo.
 - **Barrio con momento del día:** se tiñe igual que las casas (amanecer, atardecer y noche); de noche brillan farolillos y ventanas de las casitas y hay luciérnagas.
 - **Música y sonidos:** recuperados de la primera versión (generados en el móvil, sin archivos). Música suave que cambia con la hora; sonidos al marcar y deshacer hazañas, construir, nacer, crecer, decidir, tocar a un vecino (cada uno con su voz), noticias del barrio y pestañas. Interruptores en Ajustes; respeta el modo silencio del iPhone. Arranca con el primer toque (el móvil no deja sonar antes).
@@ -296,3 +296,8 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 ### Movimiento del vecindario (19/11/2026)
 
 La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior permanece en su sitio y el indicador acompaña los cambios de pestaña. Cada vecino recupera su gesto de reposo después del toque. Al construir, el objeto cae unos píxeles, se asienta y levanta pequeñas motas. El puente ya construido permanece quieto al regresar al mapa. Con movimiento reducido se conservan el resultado del toque y la colocación final.
+
+### Pantalla despejada y lista de retos (19/11/2026, rama `dev/botones`, decidido por Javi)
+- **Nubes cada vez que abres la app** (no solo la primera del día).
+- **Construir y materiales, detrás de un botón:** en casa y en el barrio ya no hay barra fija abajo; un botón redondo con un martillo (abajo a la derecha) abre la hoja de construir o de proyectos del barrio, con los materiales arriba (al tocar uno, su explicación). Lleva un número y late cuando hay algo listo para construir.
+- **Retos:** sin mínimo y con un **máximo de 10** en tu lista (se recomienda de 3 a 6). Al llegar a 10 no se pueden añadir más hasta quitar alguno (lo hecho en «Algo más» sigue contando). La lista sale **ordenada por área** (Energía, Mente, Calma, Vínculos, Orden) y, dentro, en el orden en que los añadiste.
