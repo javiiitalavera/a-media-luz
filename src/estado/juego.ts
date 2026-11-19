@@ -19,29 +19,15 @@ import { curiosidadesDeHistorias } from '../logica/curiosidades'
 import { momentoCrecer, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
 
-export const SEGUNDOS_DESHACER = 8
-
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
-
-/** Lo que hay que contar al volver a casa: la frase del compañero y lo que se ha encontrado. */
-export interface Noticia { frase: Frase | null; hallazgos: string[] }
-
-export interface Reciente {
-  resultado: ResultadoOfrenda
-  hasta: number
-}
 
 interface Juego {
   partida: Partida | null
   empezar: (c: CompaneroId, habituales?: string[], perfil?: Perfil, sugeridos?: Sugerencia[]) => void
-  /** Ofrendas recientes que aún se pueden deshacer (no se guarda). */
-  recientes: Reciente[]
   ofrecer: (accionId: string) => ResultadoOfrenda | null
-  /** Lo que el compañero quiere contar de lo último que hiciste: lo dice en casa (no se guarda). */
-  porContar: Noticia | null
-  contar: () => Noticia | null
-  deshacer: () => void
-  olvidarRecientes: () => void
+  /** Reacción visual pendiente del vecino al volver a casa. No se guarda. */
+  porContar: Frase | null
+  contar: () => Frase | null
   /** Quita la última vez de hoy de una acción (para cuando se toca sin querer). */
   quitarUna: (accionId: string) => void
   ponerDiaMalo: (v: boolean) => void
@@ -57,8 +43,6 @@ interface Juego {
   decidir: (situacion: string, opcion: string, respuesta: string) => void
   /** Incuba el huevo que espera en la puerta. */
   incubar: (c: CompaneroId) => void
-  /** Marca como vistas las novedades del barrio. */
-  verNoticias: () => void
   /** Construye un proyecto del barrio. */
   construirBarrio: (id: string) => boolean
   /** Ya se ha visto nacer y presentarse al compañero del mes. */
@@ -76,9 +60,8 @@ export const useJuego = create<Juego>()(
         // Los retos sugeridos se guardan con su meta ajustada; el resto, con la del catálogo.
         let p = crearPartida(c, ahora(), habituales, true)
         for (const s of sugeridos) if (habituales?.includes(s.id)) p = anadirSugerencia(p, s)
-        set({ partida: perfil ? { ...p, perfil } : p, recientes: [] })
+        set({ partida: perfil ? { ...p, perfil } : p, porContar: null })
       },
-      recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida
         if (!p) return null
@@ -86,30 +69,16 @@ export const useJuego = create<Juego>()(
         const resultado = hacerOfrenda(p, accionId, momento, azarReal, nuevoId())
         set({
           partida: resultado.partida,
-          recientes: [...get().recientes, { resultado, hasta: Date.now() + SEGUNDOS_DESHACER * 1000 }].slice(-20),
-          porContar: {
-            frase: resultado.frase ?? get().porContar?.frase ?? null,
-            hallazgos: get().porContar?.hallazgos ?? [],
-          },
+          porContar: resultado.frase ?? get().porContar,
         })
         return resultado
       },
-      deshacer: () => {
-        const { partida, recientes } = get()
-        const u = recientes.at(-1)
-        if (!partida || !u || Date.now() > u.hasta) return
-        const resto = recientes.slice(0, -1)
-        const anterior = resto.at(-1)
-        if (anterior) anterior.hasta = Date.now() + SEGUNDOS_DESHACER * 1000
-        set({ partida: deshacerOfrenda(partida, u.resultado.ofrenda.id), recientes: [...resto], porContar: anterior ? { frase: anterior.resultado.frase, hallazgos: [] } : null })
-      },
-      olvidarRecientes: () => set({ recientes: [] }),
       quitarUna: (accionId) => {
         const p = get().partida
         if (!p) return
         const hoy = dia(ahora().toISOString())
         const ultima = [...p.ofrendas].reverse().find((o) => o.accionId === accionId && dia(o.fecha) === hoy)
-        if (ultima) set({ partida: deshacerOfrenda(p, ultima.id), recientes: get().recientes.filter((r) => r.resultado.ofrenda.id !== ultima.id), porContar: null })
+        if (ultima) set({ partida: deshacerOfrenda(p, ultima.id), porContar: null })
       },
       porContar: null,
       contar: () => {
@@ -162,10 +131,6 @@ export const useJuego = create<Juego>()(
         const p = get().partida
         if (p) set({ partida: incubarHuevo(p, c, ahora()), porContar: null })
       },
-      verNoticias: () => {
-        const p = get().partida
-        if (p?.noticias?.length) set({ partida: { ...p, noticias: [] } })
-      },
       construirBarrio: (id) => {
         const p = get().partida
         const hecha = p && construirEnCasa(p, id, ahora(), true)
@@ -178,10 +143,12 @@ export const useJuego = create<Juego>()(
       },
       ajustar: (cambio) => {
         const p = get().partida
-        if (p) set({ partida: cambio(p) })
+        if (!p) return
+        const nueva = cambio(p)
+        if (nueva !== p) set({ partida: nueva })
       },
-      sustituir: (p) => set({ partida: p, recientes: []}),
-      borrar: () => set({ partida: null, recientes: []}),
+      sustituir: (p) => set({ partida: p, porContar: null }),
+      borrar: () => set({ partida: null, porContar: null}),
     }),
     {
       name: 'a-media-luz', version: 3, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),

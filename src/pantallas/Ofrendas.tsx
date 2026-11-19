@@ -24,29 +24,27 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const ofrecer = useJuego((s) => s.ofrecer)
   const quitarUna = useJuego((s) => s.quitarUna)
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
-  const olvidar = useJuego((s) => s.olvidarRecientes)
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
   const extras = extrasHoy(partida, ahora)
   const hechas = mias.filter((a) => hechaHoy(partida, a.id, ahora)).length
   const [hoja, setHoja] = useState<'editar' | 'algo' | 'sugerencias' | null>(null)
   const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string } | null>(null)
-  useEffect(() => olvidar, [olvidar])
   // Abrir Hazañas apaga el aviso del día nuevo.
   const ajustar = useJuego((s) => s.ajustar)
   useEffect(() => { ajustar((p) => verHazanas(p, ahora)) }, [ajustar, ahora])
   useEffect(() => {
     if (!reaccion) return
     const t = setTimeout(() => setReaccion(null), reaccion.sorpresa ? 6500 : 4500)
-    return () => clearTimeout(t)
+    const sonido = reaccion.sorpresa ? setTimeout(() => sfx.sorpresa(), 250) : undefined
+    return () => { clearTimeout(t); clearTimeout(sonido) }
   }, [reaccion])
 
   const marcar = (a: Accion) => {
-    if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); return }
+    if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); setReaccion(null); return }
     sfx.tachar()
     const r = ofrecer(a.id)
     if (r?.sorpresa) {
-      setTimeout(() => sfx.sorpresa(), 250)
       setReaccion({ texto: `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`, n: Date.now(), sorpresa: r.sorpresa.arte })
     } else if (r?.frase) setReaccion({ texto: `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`, n: Date.now() })
   }

@@ -39,6 +39,6 @@
 Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus caras** (`tieneMes` en `src/arte/manifiesto.ts`).
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |
 | `public/arte/personajes/bruma/**`, `huevos/bruma/*`, `casa/bruma/*`, `casitas/bruma.webp` | Bruma: 3 etapas × 4 caras, huevo, estanque (941 × 1672) y 6 objetos (tetera, campanillas y hamaca son proyectos; frasco, paraguas y barquito, huellas de sus historias). Casita del mapa (cabaña de juncos con charca). |
-| `public/arte/casa/madeja/fondo.webp` | Escenario de Madeja (madriguera de lana), aún sin usar |
+| `docs/arte/madeja-fondo.webp` | Escenario de Madeja (madriguera de lana), reservado hasta su incorporación |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
 | `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (bufanda; de adulto, pecho esponjoso) |

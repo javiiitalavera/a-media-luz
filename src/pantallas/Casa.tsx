@@ -98,7 +98,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const verEtapa = useJuego((s) => s.verEtapa)
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
-  const [hallazgo, setHallazgo] = useState<string | null>(null)
   const presentar = useJuego((s) => s.presentar)
   // El último en llegar: aún en el huevo, naciendo (se enseña la eclosión una vez) o ya en casa.
   const estado = esUltimo ? estadoDelMes(partida, ahora) : 'vivo'
@@ -158,11 +157,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
     ]
     return () => pasos.forEach(clearTimeout)
   }, [estado, abriendo])
-  useEffect(() => {
-    if (!hallazgo) return
-    const t = setTimeout(() => setHallazgo(null), 5000)
-    return () => clearTimeout(t)
-  }, [hallazgo])
 
   // Ha crecido desde la última vez: celebración (una sola vez por etapa).
   const pendiente = vivo && crecioSinVer(partida, DUENO, g.etapa)
@@ -209,11 +203,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   useEffect(() => {
     if (pendiente || !vivo || !esUltimo) return
     const t = setTimeout(() => {
-      const noticia = contar()
-      const f = noticia?.frase
+      const f = contar()
       // La reacción ya salió al tachar la hazaña: aquí solo se celebra con un saltito.
       if (f && f.companero === DUENO) setSaltos((n) => n + 1)
-      if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
   }, [pendiente, vivo, esUltimo, contar, DUENO])
@@ -385,7 +377,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         )}
 
         {/* Lo que pasa (narración): un globo oscuro que sale de quien lo protagoniza. Nunca a la vez que un bocadillo. */}
-        {nota && !habla && !celebra && !hallazgo && (() => {
+        {nota && !habla && !celebra && (() => {
           const o = typeof nota.de === 'string' && nota.de !== 'vecino' && nota.de !== 'visita' ? objetos.find((x) => x.id === nota.de) : undefined
           const sv = nota.de === 'visita' && deVisita ? sitioVisita(DUENO, deVisita) : undefined
           const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 7 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
@@ -447,11 +439,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         </div>
       </div>
 
-      {hallazgo && !celebra && (
-        <div className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-center text-[15px] font-bold text-tinta shadow-lg">{UI.casa.encontrado(hallazgo)}</span>
-        </div>
-      )}
       {celebra && (
         <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
           <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>

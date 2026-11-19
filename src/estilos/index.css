@@ -161,8 +161,6 @@ body {
 .anim-nube { animation: nube-fuera 1.9s cubic-bezier(.55,.05,.35,1) both; }
 @keyframes velo-fuera { 0%, 15% { opacity: 1; } 100% { opacity: 0; } }
 .anim-velo { animation: velo-fuera 1.3s ease-out 0.2s both; }
-@keyframes fundido { from { opacity: 1; } to { opacity: 0; } }
-.anim-fundido { animation: fundido 0.5s ease-out both; }
 
 /* La cámara sigue la puerta. Se recorta al ancho del bosque; la navegación permanece fija. */
 :root[data-transicion] .escena-vecindario { view-transition-name: bosque; }
@@ -272,7 +270,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   /* Los efectos decorativos de una sola vez tampoco dejan partículas inmóviles. */
-  .anim-nube, .anim-velo, .anim-fundido, .anim-brasa, .anim-hoja-cae, .anim-estallido, .anim-chispa { display: none; }
+  .anim-nube, .anim-velo, .anim-brasa, .anim-hoja-cae, .anim-estallido, .anim-chispa { display: none; }
   .indicador-pestana, .tachon { transition: none; }
   .anim-colocar, .anim-palpar, .anim-globo, [data-dormido].anim-saltar, [data-dormido].anim-respingo { animation: none; }
   .anim-luz { transform: translate(-50%, -50%); opacity: .7; }

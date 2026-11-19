@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'A media luz',
         short_name: 'A media luz',
-        description: 'Un compañero al mes que crece con lo que haces en tu vida real.',
+        description: 'Un vecindario de compañeros que crece con lo que haces en tu vida real.',
         lang: 'es',
         start_url: '/',
         scope: '/',

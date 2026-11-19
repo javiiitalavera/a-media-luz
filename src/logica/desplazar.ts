@@ -3,19 +3,37 @@
 import type { Partida } from './partida'
 import { sumarDias } from './fechas'
 
-const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/
-const DIA = /^\d{4}-\d{2}-\d{2}$/
-
-function mover(v: unknown, dias: number): unknown {
-  if (typeof v === 'string') {
-    if (ISO.test(v)) return new Date(Date.parse(v) + dias * 86_400_000).toISOString()
-    if (DIA.test(v)) return sumarDias(v, dias)
-    return v
-  }
-  if (Array.isArray(v)) return v.map((x) => mover(x, dias))
-  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, mover(x, dias)]))
-  return v
-}
-
 /** Mueve todas las fechas de la partida `dias` días (negativo: hacia atrás). */
-export const desplazarPartida = (p: Partida, dias: number): Partida => (dias ? (mover(p, dias) as Partida) : p)
+export function desplazarPartida(p: Partida, dias: number): Partida {
+  if (!dias) return p
+  const fecha = (v: string) => new Date(Date.parse(v) + dias * 86_400_000).toISOString()
+  const dia = (v: string) => sumarDias(v, dias)
+  const fechado = <T extends { fecha: string }>(v: T): T => ({ ...v, fecha: fecha(v.fecha) })
+  const diasDelRegistro = <T extends string>(v: Partial<Record<T, string>>) =>
+    Object.fromEntries(Object.entries(v as Record<string, string>).map(([k, d]) => [k, dia(d)])) as Partial<Record<T, string>>
+  return {
+    ...p,
+    inicio: fecha(p.inicio),
+    ...(p.diaMalo && { diaMalo: dia(p.diaMalo) }),
+    ofrendas: p.ofrendas.map(fechado),
+    hallazgos: p.hallazgos.map(fechado),
+    ...(p.construcciones && { construcciones: p.construcciones.map(fechado) }),
+    ...(p.noticias && { noticias: p.noticias.map(fechado) }),
+    ...(p.momentos && { momentos: p.momentos.map(fechado) }),
+    ...(p.meses && { meses: p.meses.map((m) => ({
+      ...m, inicio: fecha(m.inicio),
+      ...(m.presentado && { presentado: fecha(m.presentado) }),
+      ...(m.cerrado && { cerrado: fecha(m.cerrado) }),
+    })) }),
+    ...(p.situaciones && { situaciones: Object.fromEntries(Object.entries(p.situaciones).map(([id, s]) =>
+      [id, { ...s, dia: dia(s.dia) }])) }),
+    ...(p.vistos && { vistos: {
+      ...p.vistos,
+      ...(p.vistos.album && { album: fecha(p.vistos.album) }),
+      ...(p.vistos.albumSec && { albumSec: Object.fromEntries(Object.entries(p.vistos.albumSec).map(([k, f]) => [k, f && fecha(f)])) }),
+      ...(p.vistos.hazanas && { hazanas: dia(p.vistos.hazanas) }),
+      ...(p.vistos.micros && { micros: diasDelRegistro(p.vistos.micros) }),
+      ...(p.vistos.gags && { gags: diasDelRegistro(p.vistos.gags) }),
+    } }),
+  }
+}
