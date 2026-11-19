@@ -59,23 +59,24 @@ export default function App() {
   const irA = (p: Pestana) => { setVerBarrio(false); setCasa(null); setPestana(p) }
   const ultimo = mesActual(partida).companero
   const conBarrio = nacidos(partida, ahora).length >= 2
-  const enBarrio = pestana === 'inicio' && !casa && (conBarrio || verBarrio)
+  // Al entrar (y al tocar Inicio) se abre la casa del último vecino en llegar; el barrio, desde su botón.
+  const enBarrio = pestana === 'inicio' && !casa && verBarrio
   const irALugar = (l: Lugar) => { irA('inicio'); if (l === 'barrio') setVerBarrio(true); else setCasa(l) }
 
   let pantalla
   if (pestana === 'inicio' && casa)
     pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita abrirDecision={abrirDecision} onDecisionAbierta={() => setAbrirDecision(false)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
-  else if (pestana === 'inicio' && (conBarrio || verBarrio))
+  else if (pestana === 'inicio' && verBarrio)
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       volverA={conBarrio ? (ultimaCasa ?? ultimo) : ultimo}
       onVolver={(p) => {
         const c = conBarrio ? ultimaCasa ?? ultimo : ultimo
         if (p) puntos.current[c] = p
-        transicion('entrar', punto(c), () => { if (conBarrio) setCasa(c); else setVerBarrio(false) })
+        transicion('entrar', punto(c), () => { if (c === ultimo) setVerBarrio(false); else setCasa(c) })
       }} />
   else if (pestana === 'inicio')
-    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
-  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => { irA('inicio'); if (conBarrio) setCasa(ultimo) }} />
+    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
+  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irA('inicio')} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} onIr={irALugar} />
 

@@ -359,3 +359,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - Cuatro arreglos de un tema original. El amanecer lleva flauta y arpegios. Al mediodía predominan las cuerdas pulsadas y la percusión de madera. El atardecer y la noche se apoyan en el piano de fieltro, con más pausas de noche.
 - Cada vecino tiene su voz. Entrar en una casa suena a puerta de madera. Los retos suenan a lápiz y tienen dos notas propias de su área. Al construir se encadenan el martillo, el asentamiento de la pieza y las últimas notas. La eclosión empieza con el crujido de la cáscara.
 - La música baja brevemente durante los efectos destacados. Ambos canales se pueden apagar en Ajustes y se reproducen mediante Web Audio, sin pistas que descargar.
+
+### Al entrar, la última casa (20/11/2026, rama `dev/abrir-en-casa`)
+- Al abrir la app (y al tocar Inicio) se abre la casa del último vecino en llegar, aunque ya haya barrio. El barrio se abre con su botón, arriba a la izquierda; su flecha devuelve a la casa de la que venías.
