@@ -346,3 +346,10 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 ### Aviso por crónica (20/11/2026, rama `dev/aviso-cronicas`)
 - En Crónicas, cada historia que ha empezado o avanzado desde la última vez que la abriste lleva un punto y «Hay algo nuevo» bajo el título. Se apaga al abrirla; si avanza otra fase o decides algo, vuelve a avisar. La parte Crónicas (y el Álbum) avisan mientras quede alguna sin abrir.
 - Sin aviso de copia de seguridad (era invasivo).
+
+### Plaza y ambiente del barrio
+
+- Un banco y un farol quedan junto al borde de la plaza. Si ya viven en el barrio, Bruma pasa al amanecer, Tofu al mediodía y Nox al atardecer. Al tocarles dicen una frase.
+- El puente sigue el paso del sendero. Sus carteles se apoyan en las orillas y al tocarlos se lee el texto completo. Los caminos de las casas tienen pequeñas piedras delante de las entradas.
+- El arroyo tiene reflejos. La chimenea de Tuerca, la niebla de Bruma y el cristal de Tofu se animan a destiempo. Al entrar en una casa, su puerta se ilumina antes del viaje de cámara. Con movimiento reducido, el barrio queda quieto y se entra directamente.
+- Al revisarlo (Claude): los textos de la plaza pasan a `src/contenido/barrio.ts`, el puente a WebP, y los botones del barrio mantienen la altura y el tamaño de los de la casa (el martillo, 56 px).

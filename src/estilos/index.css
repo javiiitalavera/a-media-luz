@@ -164,6 +164,7 @@ body {
 
 /* La cámara sigue la puerta. Se recorta al ancho del bosque; la navegación permanece fija. */
 :root[data-transicion] .escena-vecindario { view-transition-name: bosque; }
+::view-transition { pointer-events: none; }
 ::view-transition-group(bosque) { overflow: clip; }
 ::view-transition-group(navegacion) { z-index: 1; }
 ::view-transition-old(bosque), ::view-transition-new(bosque) {
@@ -235,6 +236,105 @@ body {
     radial-gradient(ellipse 6% 26% at 16% 58%, #818956 55%, transparent 73%),
     radial-gradient(ellipse 7% 40% at 92% 51%, #848c58 53%, transparent 68%),
     radial-gradient(ellipse 3% 52% at 87% 47%, #9f9d65 52%, transparent 70%);
+}
+.pasos-de-casa {
+  position: absolute;
+  inset: auto 9% -7% 57%;
+  height: 22%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 14% 10% at 65% 80%, #d5b18b 73%, #997753 83%, transparent 100%),
+    radial-gradient(ellipse 18% 16% at 46% 64%, #e4c09b 76%, #94714e 83%, transparent 100%),
+    radial-gradient(ellipse 21% 18% at 29% 43%, #e9c6a0 75%, #977354 83%, transparent 100%);
+}
+[data-vecino='tuerca'] .pasos-de-casa,
+[data-vecino='bruma'] .pasos-de-casa {
+  inset-inline: 15% 55%;
+  scale: -1 1;
+}
+.puente-barrio::before {
+  content: '';
+  position: absolute;
+  inset: 18% 0 10%;
+  background: radial-gradient(ellipse, #30272575 5%, #3b302c35 48%, transparent 72%);
+}
+.mueble-plaza { filter: drop-shadow(0 2px 1px #58432d52); }
+.vecino-en-plaza { animation: llegar-a-la-plaza 1.8s ease-out both; }
+.vecino-en-plaza img { filter: drop-shadow(0 2px 1px #58432d66); }
+@keyframes llegar-a-la-plaza {
+  0%, 22% { opacity: 0; transform: translateY(-5%); }
+  100% { opacity: 1; transform: none; }
+}
+.barrio-arroyo {
+  clip-path: polygon(0 53%, 18% 53%, 29% 52.5%, 42% 54.5%, 50% 54.3%, 56% 53%, 67% 52%, 81% 51%, 100% 50%, 100% 58%, 82% 58%, 72% 59.4%, 55% 61%, 47% 58.4%, 40% 60%, 27% 60.6%, 16% 59.3%, 0 61%);
+}
+.barrio-arroyo span {
+  position: absolute;
+  left: 12%;
+  top: 56.6%;
+  width: 13%;
+  height: .37%;
+  background: radial-gradient(ellipse, #e3ffffa1, #ffeabb54 48%, transparent 72%);
+  animation: reflejo-del-arroyo 11s linear infinite;
+}
+.barrio-arroyo span:nth-child(2) { top: 55.4%; width: 9%; animation-delay: -4s; }
+.barrio-arroyo span:nth-child(3) { top: 57.6%; width: 7%; animation-delay: -8s; }
+@keyframes reflejo-del-arroyo {
+  0% { opacity: 0; transform: translateX(0) scaleX(.6); }
+  28% { opacity: .65; }
+  72% { opacity: .5; }
+  100% { opacity: 0; transform: translate(620%, -5px) scaleX(1.1); }
+}
+.luz-puerta {
+  width: 44%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff1b5ae 0%, #ffd27866 40%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+.luz-puerta-activa { animation: responder-puerta 550ms ease-out both; }
+@keyframes responder-puerta {
+  0% { opacity: 0; scale: .7; }
+  24% { opacity: .88; scale: 1; }
+  100% { opacity: .25; scale: 1.1; }
+}
+.gesto-de-casa { position: absolute; pointer-events: none; }
+[data-vecino='tuerca'] .gesto-de-casa {
+  left: 76%; top: 6%; width: 22%; height: 13%;
+  background: radial-gradient(ellipse, #ffe7c9b8, transparent 73%);
+  animation: humo-del-taller 13s -3s ease-out infinite;
+}
+[data-vecino='bruma'] .gesto-de-casa {
+  left: 10%; bottom: 18%; width: 71%; height: 14%;
+  background: radial-gradient(ellipse, #e6bbf696, transparent 68%);
+  animation: niebla-del-estanque 17s -8s ease-in-out infinite;
+}
+[data-vecino='tofu'] .gesto-de-casa {
+  left: 31%; top: 36%; width: 39%; height: 25%;
+  background: radial-gradient(ellipse, #fff1b08c, transparent 69%);
+  animation: cristal-del-invernadero 15s -1s ease-in-out infinite;
+}
+@keyframes humo-del-taller {
+  0%, 76% { opacity: 0; transform: none; }
+  83% { opacity: .72; }
+  100% { opacity: 0; transform: translate(38%, -78%) scale(1.38); }
+}
+@keyframes niebla-del-estanque {
+  0%, 68% { opacity: 0; transform: translateX(-12%); }
+  82% { opacity: .68; }
+  100% { opacity: 0; transform: translateX(23%); }
+}
+@keyframes cristal-del-invernadero {
+  0%, 64%, 100% { opacity: 0; transform: translateX(-12%); }
+  78% { opacity: .7; transform: translateX(12%); }
+}
+.navegacion-barrio { background: color-mix(in srgb, var(--color-tarjeta) 86%, var(--color-fondo)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .barrio-arroyo span, .gesto-de-casa, .luz-puerta-activa { display: none; }
+  .vecino-en-plaza { animation: none; }
 }
 .sombra-vecino {
   position: absolute;

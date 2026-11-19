@@ -516,6 +516,8 @@ export interface Huella {
   sitio: { x: number; y: number; ancho: number }
   proporcion: number
   texto?: string
+  /** Versión legible en carteles pequeños del mapa. */
+  textoCorto?: string
   /** Lo que se cuenta si tocas la huella. */
   toque?: string
 }
@@ -531,10 +533,10 @@ export const HUELLAS: Huella[] = [
     toque: 'Expediente 001: «Hoguera, salchichas y otras infracciones».' },
   { id: 'expediente-interno', situacion: 'tablon', desde: 2, lugar: 'tuerca', arte: 'expediente', sitio: { x: 45, y: 44.4, ancho: 8 }, proporcion: 0.9,
     toque: 'Confidencial. Tuerca dice que no hay nada dentro. Pesa bastante.' },
-  { id: 'cartel-normas', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 36, y: 58, ancho: 9 }, proporcion: 1.1,
-    texto: 'NORMAS\nDEL PUENTE', toque: 'Son veintitrés normas. La primera es «leer las normas».' },
-  { id: 'cartel-peaje', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 63, y: 54, ancho: 9 }, proporcion: 1.1,
-    texto: 'PEAJE:\n1 SALCHICHA', toque: 'Nox cobra en especie. Nadie ha pagado todavía.' },
+  { id: 'cartel-normas', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 40, y: 54.2, ancho: 6.4 }, proporcion: 1.1,
+    texto: 'NORMAS\nDEL PUENTE', textoCorto: 'Normas', toque: 'Son veintitrés normas. La primera es «leer las normas».' },
+  { id: 'cartel-peaje', situacion: 'puente', desde: 2, lugar: 'barrio', arte: 'cartel', sitio: { x: 60, y: 53, ancho: 6.4 }, proporcion: 1.1,
+    texto: 'PEAJE:\n1 SALCHICHA', textoCorto: 'Peaje', toque: 'Nox cobra en especie. Nadie ha pagado todavía.' },
   // Tofu.
   { id: 'libro-hoguera', situacion: 'prestamo', desde: 1, hasta: 2, lugar: 'nox', arte: 'libro-quemado', sitio: { x: 30, y: 61, ancho: 9 }, proporcion: 1.12,
     toque: '«Paciencia», capítulo 1. Del resto quedan cenizas.' },
