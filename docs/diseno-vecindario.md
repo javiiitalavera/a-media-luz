@@ -353,3 +353,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - El puente sigue el paso del sendero. Sus carteles se apoyan en las orillas y al tocarlos se lee el texto completo. Los caminos de las casas tienen pequeñas piedras delante de las entradas.
 - El arroyo tiene reflejos. La chimenea de Tuerca, la niebla de Bruma y el cristal de Tofu se animan a destiempo. Al entrar en una casa, su puerta se ilumina antes del viaje de cámara. Con movimiento reducido, el barrio queda quieto y se entra directamente.
 - Al revisarlo (Claude): los textos de la plaza pasan a `src/contenido/barrio.ts`, el puente a WebP, y los botones del barrio mantienen la altura y el tamaño de los de la casa (el martillo, 56 px).
+
+### Al entrar, la última casa (20/11/2026, rama `dev/abrir-en-casa`)
+- Al abrir la app (y al tocar Inicio) se abre la casa del último vecino en llegar, aunque ya haya barrio. El barrio se abre con su botón, arriba a la izquierda; su flecha devuelve a la casa de la que venías.
