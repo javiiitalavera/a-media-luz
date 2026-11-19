@@ -432,9 +432,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
             </div>
           </div>
         )}
-        {/* Abajo a la derecha: la ficha del vecino («i») y construir. */}
-        <div className="flex flex-col items-end gap-2.5">
-          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mr-1"><Icono d={ICONOS.info} /></BotonRedondo>
+        {/* Abajo: la ficha del vecino («i») a la izquierda y construir a la derecha. */}
+        <div className="flex items-end justify-between">
+          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mb-1"><Icono d={ICONOS.info} /></BotonRedondo>
           <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
         </div>
       </div>

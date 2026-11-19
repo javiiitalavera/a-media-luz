@@ -9,9 +9,8 @@ import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
-import { rutaArte, rutaCompanero } from '../arte/manifiesto'
+import { rutaArte } from '../arte/manifiesto'
 import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
-import { progreso } from '../logica/etapas'
 import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
 import { Luciernagas, Luz } from './Casa'
@@ -132,12 +131,10 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <h1 className="sr-only">{UI.barrio.titulo}</h1>
-        {/* A la izquierda, volver a la casa en la que estabas (con su cara); el sobre, a la derecha. */}
+        {/* A la izquierda, volver a la casa en la que estabas (flecha); el sobre, a la derecha. */}
         <span className="pointer-events-auto">
-          <BotonRedondo etiqueta={UI.barrio.volverA(volverEsHuevo ? UI.casa.huevo : COMPANEROS[volverA].nombre)} onToque={onVolver} className="overflow-visible">
-            <img src={volverEsHuevo ? rutaArte(`huevo/${volverA}/cerrado`) : rutaCompanero(volverA, progreso(partida, volverA, ahora).etapa, 'base')} alt="" draggable={false}
-              className="h-10 w-10 object-contain" />
-            <span aria-hidden className="absolute -bottom-0.5 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-tarjeta text-texto-2 shadow ring-1 ring-borde"><Icono d={ICONOS.atras} tam={14} /></span>
+          <BotonRedondo etiqueta={UI.barrio.volverA(volverEsHuevo ? UI.casa.huevo : COMPANEROS[volverA].nombre)} onToque={onVolver}>
+            <Icono d={ICONOS.atras} />
           </BotonRedondo>
         </span>
         <span className="pointer-events-auto">

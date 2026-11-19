@@ -324,8 +324,8 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - Las Crónicas llevan ilustraciones de sus objetos. En «La normativa» el cartel aparece chamuscado cuando le ocurre en la historia. La lista de Retos sigue siendo una sola, ordenada por área, con el icono y el vecino en cada fila (sin encabezados por área: decidido por Javi).
 
 ### Botones, retos y avisos (19/11/2026, rama `dev/ajustes-pantallas`)
-- **Casa:** «Barrio» arriba a la izquierda. La ficha del vecino pasa a un botón «i» abajo a la derecha, encima del martillo; el nombre ya no ocupa la cabecera (está en la ficha).
-- **Barrio:** arriba a la izquierda, un botón redondo con la cara del vecino en cuya casa estabas (o el último en llegar, si aún no has entrado en ninguna) te devuelve a su casa; el sobre sigue a la derecha.
+- **Casa:** «Barrio» arriba a la izquierda. La ficha del vecino pasa a un botón «i» abajo a la izquierda (el martillo, abajo a la derecha); el nombre ya no ocupa la cabecera (está en la ficha).
+- **Barrio:** arriba a la izquierda, un botón redondo con una flecha (símbolo neutro, decidido por Javi: la cara del vecino despistaba) te devuelve a la casa en la que estabas (o a la del último en llegar, si aún no has entrado en ninguna); el sobre sigue a la derecha.
 - **Botones flotantes iguales:** todos redondos de 48 px (o pastilla de 48 px de alto), fondo crema translúcido, aro claro y sombra; el martillo, que es el principal, mide 56.
 - **Editar retos:** una fila por reto (tocar para cambiar el nombre y, si es propio, el área o borrarlo; la «×» lo quita de la lista) con el contador «6 de 10». El catálogo y «Crear uno propio» van plegados. **Sin versiones mínimas que decidir:** en día malo cada reto pasa a la mínima del catálogo o, si es propio, a «…, aunque sea un poco». Máximo de 10 retos (sin cambios).
 - **Álbum:** cada parte (Momentos, Crónicas, Curiosidades) lleva su punto si tiene algo nuevo, y se abre primero la que lo tenga. Las Crónicas avisan cuando una historia empieza o avanza.
