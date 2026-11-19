@@ -19,6 +19,7 @@ import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
+import { FiguraVecino } from '../componentes/FiguraVecino'
 import { SugerirHazanas } from '../componentes/SugerirHazanas'
 import { misHazanas } from '../logica/hazanas'
 import { resolverTravesura, travesuraPendiente } from '../logica/curiosidades'
@@ -28,9 +29,10 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 const PIÑA = { x: 34, y: 75, ancho: 10 }
 import { gagDeHoy, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
-import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
+import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
+import { IconoMaterial } from '../componentes/IconoMaterial'
 
 const ANCHO_HUEVO = 30
 const SEGUNDOS_BOCADILLO = 7
@@ -136,10 +138,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   }, [estado])
   useEffect(() => {
     if (estado !== 'naciendo' || !abriendo) return
+    // Con «reducir movimiento», la eclosión dura menos.
+    const k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.35 : 1
     const pasos = [
       setTimeout(() => { setNacer('rompiendo'); sfx.eclosion() }, 150),
-      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 1750),
-      setTimeout(() => setNacer('ficha'), 3250),
+      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 1750 * k),
+      setTimeout(() => setNacer('ficha'), 3250 * k),
     ]
     return () => pasos.forEach(clearTimeout)
   }, [estado, abriendo])
@@ -254,6 +258,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const altoNox = alto(anchoNox, 1)
 
+  // De noche, el tinte se aclara alrededor del vecino: el fondo sigue oscuro y él conserva sus contornos.
+  const centroY = NOX.y - altoNox * 0.45
+  const radio = anchoNox * 0.75
+  const gradiente = `radial-gradient(circle at ${NOX.x}% ${centroY}%, rgba(0,0,0,0.35) 0, rgba(0,0,0,0.35) ${radio * 0.55}%, black ${radio * 1.15}%)`
+  const mascaraNoche: CSSProperties = { WebkitMaskImage: gradiente, maskImage: gradiente }
+
   return (
     <main ref={ref} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
@@ -272,9 +282,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
                     className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
-                <span key={saltos} className={`block ${saltos ? 'anim-saltar' : ''}`}>
-                  <img key={etapaVista} src={rutaCompanero(DUENO, etapaVista, expresion)} alt="" draggable={false} className={`anim-respirar block w-full ${celebra ? 'anim-brotar' : ''}`} />
-                </span>
+                <FiguraVecino key={etapaVista} c={DUENO} etapa={etapaVista} expresion={expresion} reaccion={saltos} crecer={Boolean(celebra)} />
               )}
             </button>
           </div>
@@ -295,7 +303,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         )}
 
         {/* Luz del momento del día: tiñe el dibujo, sin cambiarlo. */}
-        <div aria-hidden className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
+        <div aria-hidden style={noche && !conHuevo ? mascaraNoche : undefined} className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
           noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
 
         {/* Luces que laten (por encima del tinte, para que de noche brillen). */}
@@ -528,6 +536,7 @@ function Objeto({ o, nuevo, ew, eh, frases }: { o: ObjetoCasa; nuevo: boolean; e
     e.stopPropagation()
     const n = vecesTocado.get(o.id) ?? 0
     vecesTocado.set(o.id, n + 1)
+    sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
     globoEn(e, frases[n % frases.length])
   }
   const s = o.sitio
@@ -568,7 +577,7 @@ function Materiales({ mat, falta }: { mat: Record<AreaId, number>; falta?: Parti
       {ORDEN_AREAS.map((a) => (
         <li key={a} className="flex flex-col items-center">
           <span className="flex items-center gap-1 text-[18px] leading-none font-bold">
-            <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: MATERIALES[a].color }} />
+            <IconoMaterial area={a} tam={17} />
             <span className={falta?.[a] ? 'text-peligro' : ''}>{mat[a]}</span>
           </span>
           <span className="mt-1 text-[11px] font-medium text-texto-3">{MATERIALES[a].nombre}</span>
@@ -613,7 +622,7 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {(Object.entries(o.coste) as [AreaId, number][]).map(([a, n]) => (
                       <span key={a} className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold ${!hecho && f[a] ? 'bg-hundido text-peligro' : 'bg-hundido text-texto-2'}`}>
-                        <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: MATERIALES[a].color }} />{n} {MATERIALES[a].nombre}
+                        <IconoMaterial area={a} tam={14} />{n} {MATERIALES[a].nombre}
                       </span>
                     ))}
                   </div>

@@ -191,6 +191,13 @@ export const RECETAS = {
   rescate: () => ((c: BaseAudioContext, d: AudioNode, t: number) => { gorjeo(c, d, t, 220, 660, 0.6, 0.05); [69, 76, 81].forEach((n, i) => campana(c, d, n, t + 0.4 + i * 0.1, 0.07, 2.4)) }),
   /** Elegir un encargo o empezar. */
   elegir: () => ((c: BaseAudioContext, d: AudioNode, t: number) => { campana(c, d, 79, t, 0.07); campana(c, d, 84, t + 0.12, 0.07) }),
+  /** Tocar un objeto: crepitar de fuego, clic metálico, roce de hoja o golpecito de madera. */
+  objeto: (tipo: 'fuego' | 'metal' | 'hoja' | 'madera') => ((c: BaseAudioContext, d: AudioNode, t: number) => {
+    if (tipo === 'fuego') [0, 0.07, 0.12, 0.21, 0.29, 0.34].forEach((x, i) => ruido(c, d, t + x, 0.05 + (i % 2) * 0.03, 900 + i * 350, 0.07, 'bandpass', 2400))
+    else if (tipo === 'metal') { campana(c, d, 98, t, 0.05, 0.25); madera(c, d, t + 0.01, 1500, 0.05); campana(c, d, 103, t + 0.09, 0.03, 0.2) }
+    else if (tipo === 'hoja') ruido(c, d, t, 0.32, 3200, 0.06, 'bandpass', 6000)
+    else madera(c, d, t, 420, 0.12)
+  }),
   /** Tachar una hazaña: rayita de lápiz y una campanita limpia. */
   tachar: () => ((c: BaseAudioContext, d: AudioNode, t: number) => {
     ruido(c, d, t, 0.16, 2600, 0.07, 'bandpass', 5200)
