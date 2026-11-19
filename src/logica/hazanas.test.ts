@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, quitarHazana, textoHazana } from './hazanas'
+import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, quitarHazana, textoHazana } from './hazanas'
 import { hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { estadoRincon } from './reglas'
@@ -94,5 +94,15 @@ describe('hazañas', () => {
     const p = migrarHazanas(vieja)
     expect(p.acciones.map((a) => [a.id, a.area, a.nombre])).toEqual([['dormir', 'calma', 'Dormir 8 horas'], ['diario', 'mente', 'Escribir en mi diario'], ['propia-z', 'cuerpo', 'Nadar']])
     expect(p.hazanas).toBe(3)
+  })
+
+  it('la lista sale ordenada por área y no pasa de 10 retos', () => {
+    let p = crearPartida('nox', en('2026-01-05', 8), ['padres', 'leer', 'pasos'])
+    expect(misHazanas(p).map((a) => a.id)).toEqual(['pasos', 'leer', 'padres'])
+    for (const id of ['correr', 'bici', 'fuerza', 'estirar', 'verdura', 'agua', 'idioma', 'meditar']) p = anadirHazana(p, id)
+    expect(misHazanas(p)).toHaveLength(MAX_RETOS)
+    expect(cabeOtro(p)).toBe(false)
+    expect(crearHazana(p, { nombre: 'Nadar', area: 'cuerpo' }, 'x')).toBe(p)
+    expect(misHazanas(quitarHazana(p, 'bici'))).toHaveLength(MAX_RETOS - 1)
   })
 })

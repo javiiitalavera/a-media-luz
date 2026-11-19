@@ -1,10 +1,10 @@
 // Revisar el cuestionario y ver qué retos te sugerimos ahora (desde Retos o Ajustes).
 import { createPortal } from 'react-dom'
-import { AREAS, ACCIONES } from '../contenido'
+import { AREAS, ACCIONES, UI } from '../contenido'
 import { TEXTOS_CUESTIONARIO as T } from '../contenido/cuestionario'
 import type { Partida } from '../logica/partida'
 import { anadirSugerencia, sugerencias } from '../logica/sugerencias'
-import { misHazanas } from '../logica/hazanas'
+import { cabeOtro, misHazanas } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { Cuestionario } from './Cuestionario'
 import { IconoArea } from './IconoArea'
@@ -26,6 +26,7 @@ export function HojaSugerencias({ partida, onCerrar }: { partida: Partida; onCer
         <p className="mt-0.5 mb-3 text-[14px] text-texto-3">{T.hojaExplicacion}</p>
         <Cuestionario perfil={perfil} onCambiar={(nuevo) => ajustar((p) => ({ ...p, perfil: nuevo }))} />
         {perfil.edad === 'menor' && <p className="mt-4 rounded-2xl bg-tarjeta p-3 text-[14px] leading-snug">{T.menor}</p>}
+        {!cabeOtro(partida) && <p className="mt-4 rounded-2xl bg-tarjeta p-3 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
         <ul className="mt-4 flex flex-col gap-2">
           {lista.map((s) => {
             const area = ACCIONES.find((a) => a.id === s.id)!.area
@@ -38,8 +39,8 @@ export function HojaSugerencias({ partida, onCerrar }: { partida: Partida; onCer
                   <span className="block text-[13px] text-texto-3">{AREAS[area].nombre}</span>
                 </span>
                 {ya ? <span className="shrink-0 text-[13px] font-semibold text-salvia-texto">{T.yaLoTienes}</span> : (
-                  <button type="button" onClick={() => ajustar((p) => anadirSugerencia(p, s))}
-                    className="min-h-11 shrink-0 rounded-full bg-ambar px-4 text-[14px] font-bold text-tinta">+ {T.anadir}</button>
+                  <button type="button" disabled={!cabeOtro(partida) && !mias.has(s.id)} onClick={() => ajustar((p) => anadirSugerencia(p, s))}
+                    className="min-h-11 shrink-0 rounded-full bg-ambar px-4 text-[14px] font-bold text-tinta disabled:opacity-40">+ {T.anadir}</button>
                 )}
               </li>
             )
