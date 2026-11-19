@@ -24,6 +24,9 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
   tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 34.9, 33.7],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }] },
+  // Bruma flota sobre el estanque: sus «pies» son el final de su cola de niebla.
+  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [34, 31, 31],
+    luces: [{ x: 20.5, y: 27 }, { x: 67.5, y: 13 }] },
 }
 
 export interface Material {
@@ -93,6 +96,13 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
     coste: { mente: 4, orden: 2 }, sitio: { x: 72, y: 58, ancho: 19 }, proporcion: 0.99 },
   { id: 'maceta', companero: 'tofu', orden: 3, abre: 'Una planta con apetito.', nombre: 'Maceta grande', descripcion: 'Es una planta. Come poco. Casi siempre.',
     coste: { mente: 5, calma: 2 }, sitio: { x: 21, y: 72, ancho: 20 }, proporcion: 0.95 },
+  // Estanque de Bruma: casi todo pide rocío (Calma).
+  { id: 'tetera', companero: 'bruma', orden: 1, abre: 'Infusiones. Y confesiones, que vienen incluidas.', nombre: 'Tetera de barro', descripcion: 'Una infusión relaja. Dos te hacen contar cosas. Yo solo sirvo.',
+    coste: { calma: 3 }, sitio: { x: 47, y: 40.5, ancho: 13 }, proporcion: 0.93 },
+  { id: 'campanillas', companero: 'bruma', orden: 2, abre: 'Música de viento. Y una queja formal.', nombre: 'Campanillas de viento', descripcion: 'Suenan cuando pasa el aire. O cuando paso yo, que es casi lo mismo.',
+    coste: { calma: 4, orden: 2 }, sitio: { x: 47, y: 4, ancho: 13, colgado: true }, proporcion: 1.15 },
+  { id: 'hamaca', companero: 'bruma', orden: 3, abre: 'Siestas sobre el agua. Y un okupa.', nombre: 'Hamaca de nenúfar', descripcion: 'Para flotar sin esfuerzo. Que es lo que hago siempre, pero tumbada.',
+    coste: { calma: 5, cuerpo: 2 }, sitio: { x: 80, y: 50, ancho: 21 }, proporcion: 0.93 },
   { id: 'caja', companero: 'tuerca', orden: 1, abre: 'Las primeras reparaciones del taller. Y las primeras búsquedas de herramientas.', nombre: 'Caja de herramientas', descripcion: 'Arreglo cualquier cosa. El cajón de las herramientas sigue atascado.',
     coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', orden: 3, abre: 'Una aspiradora con ideas propias.', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',
@@ -142,4 +152,13 @@ export const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: 
   nox: { x: 82, y: 56, ancho: 22 },
   tuerca: { x: 75, y: 59, ancho: 21 },
   tofu: { x: 76, y: 62, ancho: 20 },
+  bruma: { x: 76, y: 60, ancho: 21 },
 }
+
+/** En el estanque de Bruma no hay suelo: las visitas se sientan en el embarcadero. */
+const VISITA_EN: Partial<Record<CompaneroId, { x: number; y: number; ancho: number }>> = {
+  bruma: { x: 59, y: 41, ancho: 15 },
+}
+
+/** Dónde se pone un vecino de visita en una casa. */
+export const sitioVisita = (casa: CompaneroId, quien: CompaneroId) => VISITA_EN[casa] ?? VISITA[quien]

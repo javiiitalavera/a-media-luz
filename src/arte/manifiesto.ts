@@ -1,7 +1,7 @@
 // Arte en uso (archivos de public/arte/). Cómo se encarga y se integra: docs/arte-encargos.md.
 // No se dibujan sustitutos: si un recurso no está, la interfaz deja su hueco neutro.
 //
-// Estado a 15/11/2026: casa de Nox (fondo y 6 objetos); Nox y Tuerca: cachorro, joven y adulto con 4 expresiones cada uno; huevo de Nox.
+// Estado a 19/11/2026: Nox, Tuerca, Tofu y Bruma completos.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
 import type { ArteHuella } from '../contenido/situaciones'
@@ -48,6 +48,14 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'huevo/tofu/cerrado': '/arte/huevos/tofu/cerrado.webp',
   'huevo/tofu/agrietado': '/arte/huevos/tofu/agrietado.webp',
   'casita/tofu': '/arte/casitas/tofu.webp',
+  'casa/bruma/fondo': '/arte/casa/bruma/fondo.webp',
+  'casita/bruma': '/arte/casitas/bruma.webp',
+  ...personaje('bruma'),
+  ...objetos('bruma', ['tetera', 'campanillas', 'hamaca', 'frasco', 'paraguas', 'barquito']),
+  'huevo/bruma/cerrado': '/arte/huevos/bruma/cerrado.webp',
+  'huevo/bruma/agrietado': '/arte/huevos/bruma/agrietado.webp',
+  // Huellas de las historias de Bruma (sus propios objetos).
+  ...Object.fromEntries(['frasco', 'paraguas', 'barquito'].map((h) => [`huella/${h}`, `/arte/casa/bruma/objetos/${h}.webp`])),
   ...personaje('tuerca'),
   'companero/nox/base': '/arte/personajes/nox/base.webp',
   'companero/nox/contento': '/arte/personajes/nox/contento.webp',

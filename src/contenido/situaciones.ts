@@ -301,9 +301,206 @@ export const SITUACIONES: Situacion[] = [
       },
     ],
   },
+  // Bruma
+  {
+    id: 'barquitos',
+    titulo: 'Los barquitos',
+    requiere: { vecinos: ['bruma', 'tofu'], construido: [] },
+    fases: [
+      {
+        noticia: 'Por el arroyo baja un barquito de papel. Dentro pone: «¿Alguien más está despierto?». Es la letra de Bruma.',
+        lugar: 'barrio',
+        frases: {
+          bruma: ['Eran las cuatro de la mañana. A esa hora todo el mundo está un poco solo. Yo, un poco más.'],
+          nox: ['Yo estaba despierto. Pero comiendo. No cuenta.'],
+        },
+      },
+      {
+        noticia: 'Tofu ha contestado con otro barquito: «Sí». Ha tardado tres horas en escribirlo.',
+        lugar: 'barrio',
+        frases: {
+          tofu: ['Era una respuesta corta. Tenía que ser la correcta.'],
+          bruma: ['Me ha dicho que sí. Una palabra. La he leído catorce veces.'],
+        },
+      },
+      {
+        noticia: 'Ahora todo el barrio se manda barquitos. Tuerca los numera. Nox se los come: dice que no sabía que eran mensajes.',
+        lugar: 'barrio',
+        frases: {
+          tuerca: ['Barquito 0047. Asunto: «Hola». Registrado, archivado y respondido: «Recibido».'],
+          nox: ['Sabían a papel. Y a secreto. Les faltaba sal.'],
+          bruma: ['El arroyo va lleno de cosas que nadie se atrevía a decir en voz alta.'],
+          tofu: ['No he vuelto a escribir. Ya lo dije todo.'],
+        },
+      },
+    ],
+  },
+  {
+    id: 'infusion',
+    titulo: 'La infusión',
+    requiere: { vecinos: ['bruma', 'nox', 'tuerca', 'tofu'], construido: ['tetera'] },
+    fases: [
+      {
+        noticia: 'Bruma ha invitado a todo el barrio a una infusión. Nadie ha preguntado de qué es. Nadie se ha atrevido.',
+        lugar: 'bruma',
+        frases: {
+          bruma: ['Es de hierbas. Qué hierbas, no lo sé. Las cogí con niebla.', 'Siéntate. No hace falta hablar. Ya hablarás.'],
+          nox: ['Huele a tila y a interrogatorio.'],
+          tuerca: ['He pedido la lista de ingredientes. Me ha servido otra taza.'],
+        },
+      },
+      {
+        noticia: 'Tuerca se ha tomado dos tazas y ha confesado que dentro de la carpeta VARIOS hay otra: SENTIMIENTOS. Tiene un pañuelo y una tuerca de cuando era pequeño.',
+        lugar: 'bruma',
+        frases: {
+          tuerca: ['No he dicho nada. Y si lo he dicho, no consta en acta.', 'Era una tuerca muy bonita. Fin del comunicado.'],
+          bruma: ['No le he preguntado nada. Solo le he servido. Las tazas preguntan solas.'],
+          nox: ['Un pañuelo. Lo sabía. Nadie archiva tanto si no llora un poco.'],
+        },
+      },
+      {
+        noticia: 'Nox se ha tomado una taza y ha confesado que le dan miedo los patos. Lleva toda la mañana negándolo. Bruma quiere servir la última taza.',
+        lugar: 'bruma',
+        frases: {
+          nox: ['No me dan miedo. Me dan respeto. Mucho respeto. Desde lejos.'],
+          bruma: ['Queda una taza. Alguien tiene que tomársela. No miro a nadie. Miro a todos.'],
+        },
+        decision: {
+          pregunta: '¿Quién se toma la última taza?',
+          opciones: [
+            { id: 'tofu', texto: 'Tofu', respuesta: 'Tofu ha cogido la taza sin decir nada. El brote ya se está poniendo nervioso.' },
+            { id: 'bruma', texto: 'La propia Bruma', respuesta: 'Bruma ha mirado su taza un buen rato. Ha suspirado. Se la ha bebido.' },
+          ],
+        },
+      },
+      {
+        noticia: '',
+        lugar: 'bruma',
+        segun: {
+          tofu: {
+            noticia: 'Tofu se ha bebido la infusión entera y no ha confesado nada. El brote se ha puesto rojo y ha confesado por él: le gusta leer en voz alta cuando no hay nadie.',
+            frases: {
+              tofu: ['No tengo nada que declarar. El brote habla por libre.'],
+              bruma: ['Tofu es muy discreto. Su cabeza, no.'],
+              nox: ['Lee en voz alta. Le he oído. Pone voces. La del malo le sale muy bien.'],
+            },
+          },
+          bruma: {
+            noticia: 'Bruma se ha tomado su propia infusión y ha confesado que a veces llueve a propósito, para que alguien le pregunte qué le pasa. Ahora todos se lo preguntan. Demasiado.',
+            frases: {
+              bruma: ['Ahora me preguntan qué me pasa cada cinco minutos. Prefería la lluvia.'],
+              nox: ['Le he preguntado qué le pasa. Me ha llovido encima. No entiendo el sistema.'],
+              tuerca: ['He creado un formulario: «¿Qué te pasa?». Tiene tres casillas. Ninguna sirve.'],
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
+    id: 'frasco',
+    titulo: 'La muestra',
+    requiere: { vecinos: ['bruma', 'tuerca'], construido: ['campanillas'] },
+    fases: [
+      {
+        noticia: 'Las campanillas de Bruma suenan toda la noche. Tuerca las ha medido: dice que es ruido sin licencia.',
+        lugar: 'bruma',
+        frases: {
+          tuerca: ['Cuarenta y dos decibelios a las tres de la mañana. Sin licencia. Sin partitura.'],
+          bruma: ['No suenan ellas. Es el viento. Yo solo paso por al lado. Mucho.'],
+          nox: ['A mí me duermen. Bueno, me despiertan y luego me duermen.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha embotellado un poco de la niebla de Bruma como prueba. El frasco lleva etiqueta: «Niebla. Muestra 1. VARIOS».',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Prueba material. Debidamente etiquetada. Se mueve un poco, pero es normal.'],
+          bruma: ['Tiene un trozo de mí en un frasco. Es el trozo que estaba de buen humor.'],
+        },
+      },
+      {
+        noticia: 'Bruma se ha sentado en el taller a esperar a que le devuelvan su niebla. Lleva así desde ayer. Se han empañado todas las etiquetas.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['No veo las etiquetas. Ninguna. Es lo más parecido al infierno que conozco.'],
+          bruma: ['No tengo prisa. Las nubes nunca tenemos prisa. Es nuestra forma de ganar.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha devuelto la niebla. Se ha quedado el frasco vacío, con su etiqueta. Dice que es para el archivo. Lo mira de vez en cuando.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['El frasco está vacío. Lo guardo por motivos administrativos. Solo administrativos.'],
+          bruma: ['Me ha devuelto la niebla y ha dicho «perdón» muy bajito. Lo he oído igual. Soy niebla: lo oigo todo.'],
+        },
+      },
+    ],
+  },
+  {
+    id: 'hamaca',
+    titulo: 'La hamaca',
+    requiere: { vecinos: ['bruma', 'nox', 'tuerca'], construido: ['hamaca'] },
+    fases: [
+      {
+        noticia: 'Bruma ha colgado una hamaca de nenúfar. Ha estado vacía cuatro minutos. Ahora dentro está Nox.',
+        lugar: 'bruma',
+        frases: {
+          nox: ['Estaba libre. Lo libre es de quien llega primero. Es una norma. De Tuerca, creo.'],
+          bruma: ['Es mi hamaca. Pero se le ve tan a gusto que me da pena. Y rabia. Pena con rabia.'],
+        },
+      },
+      {
+        noticia: 'Nox se niega a salir de la hamaca. Bruma se ha puesto triste y ha empezado a llover. Solo encima de Nox.',
+        lugar: 'bruma',
+        frases: {
+          nox: ['Llueve. Solo aquí. Me lo tomo como algo personal porque lo es.'],
+          bruma: ['No estoy lloviendo a propósito. Del todo.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha abierto un paraguas dentro del taller. Dice que cuando Bruma está triste puede llover en cualquier sitio y que es una cuestión de protocolo.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Paraguas abierto en interior. Dicen que trae mala suerte. Peor es mojar el archivo.'],
+          bruma: ['Tuerca ha abierto un paraguas por mí. Es lo más bonito que han hecho en mi honor. Es lo único.'],
+          nox: ['Sigo en la hamaca. Mojado, pero en la hamaca. Es una cuestión de principios.'],
+        },
+        decision: {
+          pregunta: '¿Cómo se arregla lo de la hamaca?',
+          opciones: [
+            { id: 'turnos', texto: 'Por turnos', respuesta: 'Tuerca ya está haciendo el cuadrante. Nadie se lo ha pedido.' },
+            { id: 'otra', texto: 'Que Nox se haga la suya', respuesta: 'Nox ha salido a buscar un nenúfar. Ha vuelto con una hoja de lechuga.' },
+          ],
+        },
+      },
+      {
+        noticia: '',
+        lugar: 'bruma',
+        segun: {
+          turnos: {
+            noticia: 'Hay cuadrante: la hamaca es de Bruma por la mañana y de Nox por la tarde. Nox ha pedido también las mañanas, como horas extra.',
+            frases: {
+              nox: ['Mi turno es por la tarde. Por la mañana espero mi turno. Tumbado.'],
+              bruma: ['Ya no llueve. Bueno, un poco los martes. Por costumbre.'],
+              tuerca: ['Cuadrante aprobado. Nox lo ha firmado con la cola. Es válido.'],
+            },
+          },
+          otra: {
+            noticia: 'Nox se ha hecho su propia hamaca con una hoja de lechuga. Ha durado una siesta. Tofu dice que era su desayuno.',
+            frases: {
+              nox: ['Era una hamaca muy buena. Crujiente.'],
+              tofu: ['Me he quedado sin desayuno. Lo anoto.'],
+              bruma: ['Vuelvo a tener mi hamaca. Y un vecino que me la mira con hambre.'],
+            },
+          },
+        },
+      },
+    ],
+  },
 ]
 
-export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros'
+export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {
@@ -352,6 +549,13 @@ export const HUELLAS: Huella[] = [
     toque: 'Archivador «VARIOS – Fórmulas». Dentro hay una pizarra pequeña. Entera.' },
   { id: 'lupa-planta', situacion: 'planta', desde: 2, hasta: 2, lugar: 'tofu', arte: 'lupa', sitio: { x: 35, y: 72, ancho: 8 }, proporcion: 1.03,
     toque: 'La lupa de Tuerca. Huele un poco a planta.' },
+  // Bruma.
+  { id: 'barquito-arroyo', situacion: 'barquitos', desde: 2, lugar: 'barrio', arte: 'barquito', sitio: { x: 58, y: 57, ancho: 6 }, proporcion: 0.63,
+    toque: 'Dentro pone: «¿Alguien ha visto mi otro barquito?». Lo tiene Nox. En el estómago.' },
+  { id: 'frasco-taller', situacion: 'frasco', desde: 1, lugar: 'tuerca', arte: 'frasco', sitio: { x: 36.5, y: 44.4, ancho: 6 }, proporcion: 1.15,
+    toque: '«Niebla. Muestra 1. VARIOS». Al final está vacío. Tuerca lo limpia cada mañana.' },
+  { id: 'paraguas-taller', situacion: 'hamaca', desde: 2, lugar: 'tuerca', arte: 'paraguas', sitio: { x: 71, y: 63, ancho: 13 }, proporcion: 0.96,
+    toque: 'Un paraguas abierto dentro de casa. Tuerca dice que la mala suerte no está homologada.' },
 ]
 
 /** Pequeñas cosas que pasan en una casa sin historia detrás. Se ven de vez en cuando al entrar. */
@@ -378,6 +582,12 @@ export const MICROS: Micro[] = [
   { casa: 'tofu', requiere: ['maceta'], texto: 'La planta de Tofu mira hacia la puerta. Tofu dice que es su forma de saludar.' },
   { casa: 'tofu', requiere: ['pizarra', 'tuerca'], texto: 'Tuerca está corrigiendo la ortografía de la pizarra de Tofu. Era una fórmula.', visita: 'tuerca' },
   { casa: 'tofu', requiere: [], texto: 'Tofu está mirando la pared desde el amanecer. Dice que medita. El brote dice que duerme.', cara: 'dormido' },
+  { casa: 'bruma', requiere: [], texto: 'Bruma lleva toda la mañana mirando su reflejo en el estanque. Dice que el del agua está más tranquilo.' },
+  { casa: 'bruma', requiere: [], texto: 'Bruma se ha deshilachado un poco al amanecer. Dice que es la humedad. Es la humedad.', cara: 'dormido' },
+  { casa: 'bruma', requiere: ['tetera'], texto: 'Bruma ha preparado té para dos. No ha venido nadie. Se ha tomado las dos tazas y se ha confesado algo a sí misma.' },
+  { casa: 'bruma', requiere: ['campanillas'], texto: 'No hace viento, pero las campanillas suenan. Bruma dice que no ha sido ella. Ha sido ella.' },
+  { casa: 'bruma', requiere: ['hamaca', 'nox'], texto: 'Nox espera en el embarcadero a que la hamaca quede libre. Bruma ha decidido no volver a levantarse.', visita: 'nox', cara: 'enfurrunado' },
+  { casa: 'tuerca', requiere: ['bruma'], texto: 'Se ha colado niebla en el taller. Tuerca la está intentando archivar.', visita: 'bruma' },
   { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
 ]
 
@@ -386,4 +596,5 @@ export const FRASES_VISITA: Partial<Record<CompaneroId, string[]>> = {
   tuerca: ['He venido a inspeccionar. No es una visita.', 'Nada de esto está homologado. Me quedo igual.', 'He traído etiquetas. Por si acaso.'],
   nox: ['He venido a ver si tenías algo de comer. No tienes.', 'Me he sentado en tu silla. Ahora es mía. Ponle una etiqueta.'],
   tofu: ['He venido a mirar. Ya he mirado.', 'Tu casa tiene muchas cosas. Pocas necesarias.'],
+  bruma: ['He venido a ver cómo estabas. Ya lo sé. No hace falta que me lo digas.', 'Qué casa tan llena de cosas. Y de ruido. Me quedo un poco.', 'No me hagas caso. Soy niebla de paso.'],
 }

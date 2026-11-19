@@ -27,6 +27,8 @@ export const GAGS: Gag[] = [
     texto: 'Se ha caído una nota del tablón. Pone «Ver nota anterior». La anterior pone «Ver nota siguiente».' },
   { id: 'planta-tornillo', lugar: 'tofu', requiere: ['maceta'], sitio: { x: 21, y: 62 }, artes: [cur('tornillo')], ancho: 7,
     texto: 'La planta ha escupido un tornillo. Tuerca lo estaba buscando desde marzo.' },
+  { id: 'barquito-estanque', lugar: 'bruma', requiere: [], sitio: { x: 28, y: 62 }, artes: ['/arte/casa/bruma/objetos/barquito.webp'], ancho: 10,
+    texto: 'Un barquito de papel da vueltas en el estanque. Dentro pone «Para nadie». Bruma dice que es para nadie.' },
   // Barrio: rincones que no anuncia ningún aviso.
   { id: 'arroyo-mensaje', lugar: 'barrio', requiere: [], sitio: { x: 80, y: 49 }, artes: [cur('etiqueta')], ancho: 6,
     texto: 'Flota una etiqueta en el arroyo: «Si encuentras esto, devuélvelo a su sitio. El sitio está en el mensaje». Es de Tuerca.' },

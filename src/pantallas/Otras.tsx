@@ -28,6 +28,10 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
   prestamo: rutaArte('casa/tofu/objeto/libros'),
   pizarra: rutaArte('casa/tofu/objeto/pizarra'),
   planta: rutaArte('casa/tofu/objeto/maceta'),
+  barquitos: rutaArte('casa/bruma/objeto/barquito'),
+  infusion: rutaArte('casa/bruma/objeto/tetera'),
+  frasco: rutaArte('casa/bruma/objeto/frasco'),
+  hamaca: rutaArte('casa/bruma/objeto/hamaca'),
 }
 
 export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {

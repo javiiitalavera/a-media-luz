@@ -2,7 +2,7 @@
 // un recorte cuadrado de la casa alrededor del vecino, o del barrio alrededor del puente.
 import type { CSSProperties } from 'react'
 import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, type CompaneroId } from '../contenido'
-import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
+import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { HUELLAS } from '../contenido/situaciones'
 import { rutaArte, rutaCompanero } from '../arte/manifiesto'
 import type { EscenaFoto } from '../logica/momentos'
@@ -44,7 +44,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
     const s = c === 'tuerca' ? aspiradora.sitio : GREGORIO_EN_NOX
     capas.push({ y: s.y, nodo: <img key="gregorio" src={rutaArte('casa/tuerca/objeto/aspiradora')} alt="" draggable={false} style={pie(s.x, s.y, s.ancho)} /> })
   }
-  const v = e.visita && VISITA[e.visita]
+  const v = e.visita && sitioVisita(c, e.visita)
   if (e.visita && v) capas.push({ y: v.y, nodo: <img key="visita" src={rutaCompanero(e.visita, 0, 'contento')} alt="" draggable={false} style={pie(v.x, v.y, v.ancho)} /> })
   return (
     <div className="absolute" style={{ width: `${ZOOM * 100}%`, left: `${izquierda}%`, aspectRatio: `${esc.proporcion}`, top: `${(-arriba * ZOOM) / esc.proporcion}%` }}>

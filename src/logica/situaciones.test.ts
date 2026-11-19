@@ -17,6 +17,11 @@ function conTofu(construido: string[]): Partida {
   const p = barrio(construido)
   return { ...p, meses: [...p.meses!, { companero: 'tofu', inicio: en('2026-01-06', 8).toISOString() }] }
 }
+/** Y con Bruma. */
+function conBruma(construido: string[]): Partida {
+  const p = conTofu(construido)
+  return { ...p, meses: [...p.meses!, { companero: 'bruma', inicio: en('2026-01-06', 8).toISOString() }] }
+}
 const dia = (n: number, h = 10) => en(sumarDias('2026-01-07', n), h)
 
 describe('situaciones', () => {
@@ -145,5 +150,31 @@ describe('situaciones', () => {
     expect(est.gregorio.fin).toBeFalsy() // espera tu decisión
     expect(est.tablon.fin).toBe(true) // y el tablón ha seguido mientras tanto
     expect(decisionPendiente(p, 'nox')?.situacion).toBe('gregorio')
+  })
+
+  it('Bruma: los barquitos empiezan sin construir nada y dejan uno en el arroyo', () => {
+    expect(avanzar(conTofu([]), dia(0)).nuevas).toHaveLength(0) // sin Bruma, nada
+    let p = avanzar(conBruma([]), dia(0)).partida
+    expect(p.noticias!.at(-1)!.texto).toMatch(/barquito/)
+    p = avanzar(avanzar(p, dia(1)).partida, dia(2)).partida
+    expect(p.situaciones!.barquitos.fin).toBe(true)
+    expect(huellasEn(p, 'barrio').map((h) => h.id)).toEqual(['barquito-arroyo'])
+  })
+
+  it('Bruma: la hamaca deja un paraguas en el taller y acaba según decidas', () => {
+    let p = conBruma(['hamaca'])
+    p = { ...p, situaciones: { barquitos: { fase: 2, dia: '2026-01-01', fin: true } } }
+    p = avanzar(avanzar(avanzar(p, dia(0)).partida, dia(1)).partida, dia(2)).partida
+    expect(huellasEn(p, 'tuerca').map((h) => h.id)).toEqual(['paraguas-taller'])
+    expect(decisionPendiente(p, 'tuerca')?.situacion).toBe('hamaca')
+    p = avanzar(decidir(p, 'hamaca', 'otra')!, dia(3)).partida
+    expect(p.noticias!.at(-1)!.texto).toMatch(/lechuga/)
+    expect(fraseDeSituacion(p, 'tofu', dia(3))![0]).toMatch(/desayuno/)
+  })
+
+  it('los micros con Bruma de visita solo salen si ha nacido', () => {
+    const visitas = (p: Partida) => Array.from({ length: 60 }, (_, i) => microDeHoy(p, 'tuerca', dia(i))?.visita).filter(Boolean)
+    expect(visitas(conTofu([]))).not.toContain('bruma')
+    expect(visitas(conBruma([]))).toContain('bruma')
   })
 })
