@@ -5,9 +5,9 @@ import { Punto } from './Aviso'
 export type Pestana = 'inicio' | 'ofrendas' | 'album' | 'ajustes'
 const PESTANAS: Pestana[] = ['inicio', 'ofrendas', 'album', 'ajustes']
 
-export function Navegacion({ actual, onCambiar, avisos = {} }: { actual: Pestana; onCambiar: (p: Pestana) => void; avisos?: Partial<Record<Pestana, boolean>> }) {
+export function Navegacion({ actual, onCambiar, avisos = {}, sobreBarrio = false }: { actual: Pestana; onCambiar: (p: Pestana) => void; avisos?: Partial<Record<Pestana, boolean>>; sobreBarrio?: boolean }) {
   return (
-    <nav aria-label="Navegación principal" style={{ viewTransitionName: 'navegacion' }} className="fixed inset-x-0 bottom-0 z-20 mx-auto grid max-w-[430px] grid-cols-4 border-t border-borde bg-tarjeta/95 px-2 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] backdrop-blur">
+    <nav aria-label="Navegación principal" style={{ viewTransitionName: 'navegacion' }} className={`fixed inset-x-0 bottom-0 z-20 mx-auto grid max-w-[430px] grid-cols-4 border-t border-borde px-2 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] backdrop-blur ${sobreBarrio ? 'navegacion-barrio' : 'bg-tarjeta/95'}`}>
       <div aria-hidden className="pointer-events-none absolute inset-x-2 top-2 h-11">
         <span className="indicador-pestana block h-full w-1/4 rounded-2xl bg-hundido"
           style={{ transform: `translateX(${PESTANAS.indexOf(actual) * 100}%)` }} />

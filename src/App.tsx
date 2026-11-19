@@ -59,6 +59,7 @@ export default function App() {
   const irA = (p: Pestana) => { setVerBarrio(false); setCasa(null); setPestana(p) }
   const ultimo = mesActual(partida).companero
   const conBarrio = nacidos(partida, ahora).length >= 2
+  const enBarrio = pestana === 'inicio' && !casa && (conBarrio || verBarrio)
   const irALugar = (l: Lugar) => { irA('inicio'); if (l === 'barrio') setVerBarrio(true); else setCasa(l) }
 
   let pantalla
@@ -67,7 +68,11 @@ export default function App() {
   else if (pestana === 'inicio' && (conBarrio || verBarrio))
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       volverA={conBarrio ? (ultimaCasa ?? ultimo) : ultimo}
-      onVolver={conBarrio ? () => { const c = ultimaCasa ?? ultimo; transicion('entrar', punto(c), () => setCasa(c)) } : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
+      onVolver={(p) => {
+        const c = conBarrio ? ultimaCasa ?? ultimo : ultimo
+        if (p) puntos.current[c] = p
+        transicion('entrar', punto(c), () => { if (conBarrio) setCasa(c); else setVerBarrio(false) })
+      }} />
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => { irA('inicio'); if (conBarrio) setCasa(ultimo) }} />
@@ -77,7 +82,7 @@ export default function App() {
   return (
     <>
       <div key={`${pestana}-${verBarrio}-${casa}`} className={pestana === 'inicio' ? undefined : 'animate-aparecer'}>{pantalla}</div>
-      <Navegacion actual={pestana} onCambiar={irA} avisos={{ inicio: hayAlgoEnInicio(partida, ahora), ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
+      <Navegacion actual={pestana} onCambiar={irA} sobreBarrio={enBarrio} avisos={{ inicio: hayAlgoEnInicio(partida, ahora), ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
       {sobre && <Novedades ahora={ahora} onIr={irALugar} onDecidir={(c) => { irALugar(c); setAbrirDecision(true) }} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />

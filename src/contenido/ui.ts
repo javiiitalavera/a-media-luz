@@ -8,6 +8,7 @@ export const UI = {
     proyectos: 'Proyectos',
     puente: 'Puente',
     casaDe: (nombre: string) => `Casa de ${nombre}`,
+    enLaPlaza: (nombre: string) => `${nombre} en la plaza`,
     hecho: 'Construido',
     novedades: 'Mientras no estabas…',
     nadaNuevo: 'Nada nuevo. Están tramando algo, seguro.',

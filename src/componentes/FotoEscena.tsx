@@ -63,8 +63,8 @@ function Barrio({ e }: { e: EscenaFoto }) {
     <div className="absolute left-0 w-full" style={{ aspectRatio: `${PROPORCION_BARRIO}`, top: `${-arriba / PROPORCION_BARRIO}%` }}>
       <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
       {e.objetos.includes('puente') && (
-        <img src={rutaArte('huella/puente')} alt="" draggable={false}
-          style={{ position: 'absolute', left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, transform: 'translate(-50%, -60%)' }} />
+        <img src={rutaArte('barrio/puente')} alt="" draggable={false}
+          style={{ position: 'absolute', left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -50%', rotate: `${PASO_ARROYO.giro}deg` }} />
       )}
       <Huellas ids={e.huellas} />
       {(e.vecinos ?? []).map((c, i) => rutaArte(`casita/${c}`) && PARCELAS[i] && (
@@ -84,7 +84,7 @@ function Huellas({ ids, zoom = 1 }: { ids: string[]; zoom?: number }) {
           <img src={rutaArte(`huella/${h.arte}`)} alt="" className="block w-full" draggable={false} />
           {h.texto && (
             <span className="absolute inset-x-[12%] top-[14%] flex h-[34%] items-center justify-center text-center leading-[1.05] font-bold whitespace-pre-line text-[#5a3424]"
-              style={{ fontSize: `${h.sitio.ancho * 0.12 * zoom}cqw` }}>{h.texto}</span>
+              style={{ fontSize: `${h.sitio.ancho * (h.textoCorto ? 0.17 : 0.12) * zoom}cqw` }}>{h.textoCorto ?? h.texto}</span>
           )}
         </div>
       ))}

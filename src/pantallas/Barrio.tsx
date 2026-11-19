@@ -2,14 +2,15 @@
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
 // El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
 // los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
+import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId, type Momento } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
-import { rutaArte } from '../arte/manifiesto'
+import { rutaArte, rutaCompanero } from '../arte/manifiesto'
+import { progreso } from '../logica/etapas'
 import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
@@ -23,15 +24,35 @@ import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLe
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
+type Punto = { x: number; y: number }
+const PUERTAS: Partial<Record<CompaneroId, Punto>> = {
+  nox: { x: 52, y: 62 }, tuerca: { x: 41, y: 66 },
+  tofu: { x: 41, y: 65 }, bruma: { x: 49, y: 63 },
+}
+const FRASES_PLAZA = {
+  nox: 'Nox: «Estoy vigilando el puente. El banco es por motivos de seguridad».',
+  tofu: 'Tofu: «He venido a leer. El brote ha venido a mirar».',
+  bruma: 'Bruma: «He dejado un poco de niebla en el agua. Se seca sola».',
+}
+const VISITA_PLAZA: Partial<Record<Momento, keyof typeof FRASES_PLAZA>> = {
+  amanecer: 'bruma', mediodia: 'tofu', atardecer: 'nox',
+}
+const juntoAlSuelo = (p: Punto & { ancho: number }): CSSProperties =>
+  ({ left: `${p.x}%`, top: `${p.y}%`, width: `${p.ancho}%`, translate: '-50% -100%' })
+
 export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades }: {
-  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void
+  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: Punto) => void
   /** El vecino en cuya casa estabas (para volver con un toque). */
-  volverA: CompaneroId; onVolver: () => void; onNovedades: () => void
+  volverA: CompaneroId; onVolver: (punto?: Punto) => void; onNovedades: () => void
 }) {
   const caja = useRef<HTMLDivElement>(null)
+  const puertas = useRef<Partial<Record<CompaneroId, HTMLSpanElement | null>>>({})
+  const esperaEntrada = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const [entrada, setEntrada] = useState<CompaneroId | null>(null)
   const [t, setT] = useState({ w: 390, h: 844 })
   const [hoja, setHoja] = useState(false)
   const [proyectoNuevo, setProyectoNuevo] = useState<string | null>(null)
+  useLayoutEffect(() => () => clearTimeout(esperaEntrada.current), [])
   useLayoutEffect(() => {
     const el = caja.current
     if (!el) return
@@ -59,25 +80,53 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
+  const posibleVisita = VISITA_PLAZA[momento]
+  const visita = posibleVisita && vecinos.some((m, i) =>
+    m.companero === posibleVisita && (i < vecinos.length - 1 || estadoUltimo === 'vivo'))
+    ? posibleVisita : null
   const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
+  const entrar = (c: CompaneroId, ir = (p?: Punto) => onCasa(c, p)) => {
+    if (esperaEntrada.current !== undefined) return
+    const puerta = puertas.current[c]
+    const centro = puerta?.getBoundingClientRect()
+    const punto = centro && { x: centro.left + centro.width / 2, y: centro.top + centro.height / 2 }
+    if (!puerta || matchMedia('(prefers-reduced-motion: reduce)').matches || !document.startViewTransition) {
+      ir(punto)
+      return
+    }
+    setEntrada(c)
+    esperaEntrada.current = setTimeout(() => {
+      esperaEntrada.current = undefined
+      ir(punto)
+    }, 120)
+  }
 
   return (
     <main ref={caja} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
       <div className="absolute" style={{ top: arriba, left: izquierda, width: ancho, height: alto }}>
         <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+        <div aria-hidden className="barrio-arroyo pointer-events-none absolute inset-0">
+          {[0, 1, 2].map((i) => <span key={i} />)}
+        </div>
+        <img src={rutaArte('casa/nox/objeto/banco')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.banco)} />
+        <img src={rutaArte('casa/nox/objeto/farolillo')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.farol)} />
         {construido(partida, 'puente') && (
-          <img src={rutaArte('huella/puente')} alt={UI.barrio.puente} className={`absolute ${proyectoNuevo === 'puente' ? 'anim-colocar' : ''}`} draggable={false}
-            style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -60%' }} />
+          <div className="puente-barrio absolute" style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -50%', rotate: `${PASO_ARROYO.giro}deg` }}>
+            <img src={rutaArte('barrio/puente')} alt={UI.barrio.puente} className={`relative block w-full ${proyectoNuevo === 'puente' ? 'anim-colocar' : ''}`} draggable={false} />
+          </div>
         )}
         {huellasEn(partida, 'barrio').map((h) => (
-          <button key={h.id} type="button" onClick={(e) => { if (h.toque) globoEn(e, h.toque); ajustar((p) => verHuella(p, h.id)) }} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
+          <button key={h.id} type="button" onClick={(e) => {
+            if (h.toque) globoEn(e, h.textoCorto && h.texto ? `«${h.texto.replace('\n', ' ')}». ${h.toque}` : h.toque)
+            ajustar((p) => verHuella(p, h.id))
+          }} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
             className="absolute before:absolute before:-inset-2 before:content-['']" style={{ left: `${h.sitio.x}%`, top: `${h.sitio.y}%`, width: `${h.sitio.ancho}%`, transform: 'translate(-50%, -100%)' }}>
             <img src={rutaArte(`huella/${h.arte}`)} alt="" className={`block w-full ${huellaNueva(partida, h.id, ahora) ? 'anim-nuevo' : ''}`} draggable={false} />
             {h.texto && (
               <span className="pointer-events-none absolute inset-x-[10%] top-[14%] flex h-[34%] items-center justify-center text-center leading-[1.05] font-bold whitespace-pre-line text-[#5a3424]"
-                style={{ fontSize: Math.max(6, (h.sitio.ancho / 100) * ancho * 0.12) }}>{h.texto}</span>
+                style={{ fontSize: Math.max(6, (h.sitio.ancho / 100) * ancho * (h.textoCorto ? 0.17 : 0.12)) }}>{h.textoCorto ?? h.texto}</span>
             )}
           </button>
         ))}
@@ -88,23 +137,37 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
           const nombre = huevo ? '?' : COMPANEROS[m.companero].nombre
           const anchoCasa = p.ancho * (huevo ? 0.45 : 0.82)
           return (
-            <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
-              className="absolute flex flex-col items-center transition active:scale-95"
+            <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={() => entrar(m.companero)}
+              className="absolute flex flex-col items-center"
               style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
-              <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`}>
+              <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`} data-vecino={m.companero}>
+                {!huevo && <span aria-hidden className="pasos-de-casa" />}
                 <img src={rutaArte(huevo ? `huevo/${m.companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${m.companero}`)} alt=""
                   className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
+                {!huevo && <span aria-hidden className="gesto-de-casa" />}
+                <span ref={(el) => { puertas.current[m.companero] = el }} aria-hidden
+                  className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === m.companero ? 'luz-puerta-activa' : ''}`}
+                  style={{ left: `${PUERTAS[m.companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[m.companero]?.y ?? 66}%` }} />
               </span>
-              <span className="relative -mt-1 rounded-full bg-tarjeta px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
+              <span className={`relative -mt-1 rounded-full bg-tarjeta/95 px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm ${m.companero === 'bruma' ? 'ml-[38%]' : ''}`}>{nombre}</span>
             </button>
           )
         })}
+        {visita && (
+          <button key={visita} type="button" aria-label={UI.barrio.enLaPlaza(COMPANEROS[visita].nombre)}
+            className="vecino-en-plaza absolute min-h-11 min-w-11"
+            style={juntoAlSuelo(PLAZA.encuentro)}
+            onClick={(e) => { sfx.personaje(visita); globoEn(e, FRASES_PLAZA[visita]) }}>
+            <img src={rutaCompanero(visita, progreso(partida, visita, ahora).etapa, 'base')} alt="" draggable={false} className="block w-full" />
+          </button>
+        )}
 
         {/* Luz del momento del día (igual que en las casas): tiñe el mapa sin cambiarlo. */}
         <div aria-hidden className={`pointer-events-none absolute inset-0 mix-blend-multiply transition-opacity duration-1000 ${
           noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
         <div aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen">
           {LUCES_BARRIO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 16 : 9} color="#ffcf73" retraso={i * 0.5} />)}
+          <Luz x={PLAZA.farol.x} y={PLAZA.farol.y - 1} tam={noche ? 10 : 5} color="#ffcf73" retraso={1.1} />
           {/* Ventanas encendidas de cada casita. */}
           {(noche || momento === 'atardecer') && vecinos.slice(0, PARCELAS.length).map((m, i) => (
             <Luz key={m.companero} x={dentro(PARCELAS[i].x, PARCELAS[i].ancho * 0.82)} y={PARCELAS[i].y - 4} tam={noche ? 20 : 14} color="#ffc56b" retraso={0.3 + i * 0.4} />
@@ -120,7 +183,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
           const anchoCasa = p.ancho * 0.82
           return (
             <button key={`aviso-${m.companero}`} type="button" aria-label={UI.barrio.hayAlgo(COMPANEROS[m.companero].nombre)}
-              onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
+              onClick={() => entrar(m.companero)}
               className="absolute flex min-h-11 min-w-11 items-center justify-center"
               style={{ left: `${dentro(p.x, anchoCasa) + anchoCasa * 0.32}%`, top: `${p.y - anchoCasa * PROPORCION_BARRIO * 0.62}%`, transform: 'translate(-50%, -50%)' }}>
               <Aviso tipo="exclamacion" tam={28} />
@@ -129,11 +192,11 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         })}
       </div>
 
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+10px))]">
         <h1 className="sr-only">{UI.barrio.titulo}</h1>
         {/* A la izquierda, volver a la casa en la que estabas (flecha); el sobre, a la derecha. */}
         <span className="pointer-events-auto">
-          <BotonRedondo etiqueta={UI.barrio.volverA(volverEsHuevo ? UI.casa.huevo : COMPANEROS[volverA].nombre)} onToque={onVolver}>
+          <BotonRedondo etiqueta={UI.barrio.volverA(volverEsHuevo ? UI.casa.huevo : COMPANEROS[volverA].nombre)} onToque={() => entrar(volverA, onVolver)}>
             <Icono d={ICONOS.atras} />
           </BotonRedondo>
         </span>
@@ -145,7 +208,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
       </header>
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex justify-end px-3">
-        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} />
+        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} compacto />
       </div>
 
       {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onConstruido={setProyectoNuevo} onCerrar={() => setHoja(false)} />}
