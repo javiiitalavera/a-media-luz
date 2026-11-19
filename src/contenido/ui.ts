@@ -20,6 +20,7 @@ export const UI = {
     sinCronicas: 'Todavía no ha pasado nada digno de contarse. Dales tiempo.',
   },
   album2: {
+    novedad: 'Hay algo nuevo',
     nacio: (nombre: string) => `Ha llegado ${nombre}`,
     momentos: 'Momentos',
     cronicas: 'Crónicas',
@@ -283,7 +284,6 @@ export const UI = {
     creditos: 'Creado por Javi, en ratos libres que no tenía.',
     copia: 'Copia de seguridad',
     copiaExplicacion: 'Tus datos solo están en este móvil.',
-    tocaCopia: 'Hace más de dos semanas. Si el móvil se pierde, el barrio se va con él. Tuerca no duerme tranquilo.',
     exportar: 'Exportar copia',
     importar: 'Importar copia',
     importarAviso: 'Esto sustituye toda tu partida actual.',

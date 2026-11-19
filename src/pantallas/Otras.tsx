@@ -5,14 +5,13 @@ import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
-import { seccionesNuevas, verSeccion } from '../logica/avisos'
+import { cronicaNueva, seccionesNuevas, verCronica, verSeccion } from '../logica/avisos'
 import { Punto } from '../componentes/Aviso'
 import type { Curiosidad } from '../contenido/curiosidades'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { dia, diasEntre } from '../logica/fechas'
 import { exportarCopia, importarCopia } from '../logica/copia'
-import { tocaCopia } from '../logica/ajustes'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
@@ -43,7 +42,8 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
   const lista = cronicas(partida)
   const nuevas = seccionesNuevas(partida)
   const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(() => nuevas[0] ?? (momentos.length || !lista.length ? 'momentos' : 'cronicas'))
-  useEffect(() => { ajustar((p) => verSeccion(p, seccion, ahora)) }, [ajustar, seccion, ahora])
+  // Momentos y curiosidades se dan por vistos al abrir su parte; las crónicas, de una en una al abrirlas.
+  useEffect(() => { if (seccion !== 'cronicas') ajustar((p) => verSeccion(p, seccion, ahora)) }, [ajustar, seccion, ahora])
   const curiosidades = curiosidadesTenidas(partida)
   const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
   const [cronicaAbierta, setCronicaAbierta] = useState<string | null>(null)
@@ -108,14 +108,16 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
               ? rutaArte(fase >= 2 || !c.enMarcha ? 'huella/cartel-quemado' : 'huella/cartel')
               : ILUSTRACION_CRONICA[c.id]
             return (
-              <details key={c.id} open={cronicaAbierta === c.id || undefined} className="group rounded-[20px] border border-borde/65 bg-tarjeta px-3 py-2.5 shadow-sm">
+              <details key={c.id} open={cronicaAbierta === c.id || undefined} onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open) ajustar((p) => verCronica(p, c.id)) }}
+                className="group rounded-[20px] border border-borde/65 bg-tarjeta px-3 py-2.5 shadow-sm">
                 <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 [&::-webkit-details-marker]:hidden">
                   {arte && <span aria-hidden className="grid h-[62px] w-[62px] shrink-0 place-items-center rounded-xl bg-hundido/75">
                     <img src={arte} alt="" className="h-12 w-12 object-contain" draggable={false} />
                   </span>}
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[17px] leading-tight font-bold">{c.titulo}</span>
-                    {c.enMarcha && <span className="mt-1 block text-[13px] text-texto-3">{UI.barrio.enMarcha}</span>}
+                    <span className="flex items-center gap-2 text-[17px] leading-tight font-bold">{c.titulo}{cronicaNueva(partida, c.id) && <Punto />}</span>
+                    {cronicaNueva(partida, c.id) ? <span className="mt-1 block text-[13px] font-semibold text-coral-texto">{UI.album2.novedad}</span>
+                      : c.enMarcha && <span className="mt-1 block text-[13px] text-texto-3">{UI.barrio.enMarcha}</span>}
                   </span>
                   <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-texto-3 transition-transform group-open:rotate-180 motion-reduce:transition-none">
                     <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -223,11 +225,10 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
         <Interruptor titulo={UI.sonido.efectos} explicacion={UI.sonido.efectosExplicacion} activo={prefs.sonidos} onCambiar={prefs.ponerSonidos} />
       </div>
 
-      <h2 className="mt-6 mb-1 flex items-center gap-2 px-1 font-bold">{UI.ajustes.copia}{tocaCopia(partida.inicio, prefs.ultimaCopia, new Date()) && <Punto />}</h2>
+      <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.copia}</h2>
       <Tarjeta>
         <p className="text-[13px] text-texto-3">{UI.ajustes.copiaExplicacion}</p>
         <p className="mt-1 text-[14px] font-semibold">{UI.ajustes.ultimaCopia(prefs.ultimaCopia ? diasEntre(dia(prefs.ultimaCopia), dia(new Date())) : null)}</p>
-        {tocaCopia(partida.inicio, prefs.ultimaCopia, new Date()) && <p className="mt-1 text-[14px] text-coral-texto">{UI.ajustes.tocaCopia}</p>}
         <div className="mt-3 grid grid-cols-2 gap-2">
           <BotonSecundario onClick={exportar}>{UI.ajustes.exportar}</BotonSecundario>
           <BotonSecundario onClick={() => archivo.current?.click()}>{UI.ajustes.importar}</BotonSecundario>
