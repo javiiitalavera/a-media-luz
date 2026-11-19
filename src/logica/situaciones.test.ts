@@ -107,7 +107,7 @@ describe('situaciones', () => {
     p = avanzar(decidir(p, 'prestamo', 'salchichas')!, dia(3)).partida
     expect(p.noticias!.at(-1)!.texto).toMatch(/salchichas/)
     expect(huellasEn(p, 'nox')).toHaveLength(0)
-    expect(huellasEn(p, 'tofu').map((h) => h.id)).toEqual(['libro-estante'])
+    expect(huellasEn(p, 'tofu').map((h) => h.id)).toEqual(['libro-estante', 'salchichas-estante'])
   })
 
   it('Tofu: la planta se traga a Gregorio un par de días y lo devuelve', () => {
@@ -135,5 +135,15 @@ describe('situaciones', () => {
     expect(cronicas(p)).toEqual([{ id: 'normativa', titulo: expect.any(String), fases: [expect.stringMatching(/cartel/)], enMarcha: true }])
     p = avanzar(avanzar(avanzar(p, dia(1)).partida, dia(2)).partida, dia(3)).partida
     expect(cronicas(p).map((c) => [c.id, c.enMarcha])).toEqual([['tablon', true], ['normativa', false]])
+  })
+
+  it('una decisión pendiente no congela el barrio: puede empezar otra historia (como mucho dos)', () => {
+    let p = barrio(['aspiradora', 'tablon'])
+    for (let i = 1; i < 12; i++) p = avanzar(p, dia(i)).partida
+    const est = p.situaciones!
+    expect(est.gregorio.decision).toBeUndefined()
+    expect(est.gregorio.fin).toBeFalsy() // espera tu decisión
+    expect(est.tablon.fin).toBe(true) // y el tablón ha seguido mientras tanto
+    expect(decisionPendiente(p, 'nox')?.situacion).toBe('gregorio')
   })
 })

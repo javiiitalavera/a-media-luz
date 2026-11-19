@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
-import { hayAlbumNuevo, hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { decisionesPendientes, hayAlbumNuevo, hayHazanasNuevas, leerNoticias } from './logica/avisos'
 import { createPortal } from 'react-dom'
-import { UI, type CompaneroId } from './contenido'
+import { COMPANEROS, UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
 import { useJuego } from './estado/juego'
 import { momentoDelDia } from './logica/momento'
@@ -31,6 +31,8 @@ export default function App() {
   const [casa, setCasa] = useState<CompaneroId | null>(null)
   const [verBarrio, setVerBarrio] = useState(false)
   const [sobre, setSobre] = useState(false)
+  // Si vienes del sobre a decidir algo, la casa abre la pregunta directamente.
+  const [abrirDecision, setAbrirDecision] = useState(false)
 
   // De noche, la interfaz pasa a su versión oscura (ciruela).
   const momento = momentoDelDia(ahora)
@@ -58,7 +60,7 @@ export default function App() {
 
   let pantalla
   if (pestana === 'inicio' && casa)
-    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
+    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita abrirDecision={abrirDecision} onDecisionAbierta={() => setAbrirDecision(false)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && (conBarrio || verBarrio))
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       onVolver={conBarrio ? undefined : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
@@ -66,13 +68,13 @@ export default function App() {
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => { irA('inicio'); if (conBarrio) setCasa(ultimo) }} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
-  else pantalla = <Album partida={partida} ahora={ahora} />
+  else pantalla = <Album partida={partida} ahora={ahora} onIr={irALugar} />
 
   return (
     <>
       <div key={`${pestana}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
       <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
-      {sobre && <Novedades ahora={ahora} onIr={irALugar} onCerrar={() => setSobre(false)} />}
+      {sobre && <Novedades ahora={ahora} onIr={irALugar} onDecidir={(c) => { irALugar(c); setAbrirDecision(true) }} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />
       <GloboFlotante />
@@ -81,8 +83,10 @@ export default function App() {
 }
 
 /** «Mientras no estabas…»: se abre al tocar el sobre del barrio. Al abrirlo, las novedades quedan leídas. */
-function Novedades({ ahora, onIr, onCerrar }: { ahora: Date; onIr: (l: Lugar) => void; onCerrar: () => void }) {
+function Novedades({ ahora, onIr, onDecidir, onCerrar }: { ahora: Date; onIr: (l: Lugar) => void; onDecidir: (c: CompaneroId) => void; onCerrar: () => void }) {
   const noticias = useJuego((s) => s.partida?.noticias) ?? []
+  const partida = useJuego((s) => s.partida)
+  const decisiones = partida ? decisionesPendientes(partida, ahora) : []
   const ajustar = useJuego((s) => s.ajustar)
   // Lo que no estaba leído al abrir se ve resaltado mientras el sobre siga abierto.
   const [nuevas] = useState(() => new Set(noticias.filter((n) => !n.leida).map((n) => n.fecha + n.texto)))
@@ -91,7 +95,16 @@ function Novedades({ ahora, onIr, onCerrar }: { ahora: Date; onIr: (l: Lugar) =>
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={onCerrar}>
       <section role="dialog" aria-label={UI.barrio.novedades} onClick={(e) => e.stopPropagation()} className="animate-entrar max-h-[80dvh] w-full overflow-y-auto rounded-[28px] bg-fondo p-4 shadow-xl">
         <h2 className="px-1 text-[20px] font-bold">{UI.barrio.novedades}</h2>
-        {noticias.length === 0 && <p className="mt-2 px-1 text-[15px] text-texto-3">{UI.barrio.nadaNuevo}</p>}
+        {/* Lo que espera tu decisión se queda arriba hasta que decidas: dos toques y estás en la pregunta. */}
+        {decisiones.map((d) => (
+          <button key={d.lugar} type="button" onClick={() => { onCerrar(); onDecidir(d.lugar) }}
+            className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-2xl bg-ambar px-3.5 py-2.5 text-left text-[15px] leading-snug font-semibold text-tinta shadow-sm">
+            <span aria-hidden className="text-[18px] font-bold">?</span>
+            <span className="flex-1">{UI.barrio.esperaDecision(COMPANEROS[d.lugar].nombre, d.pregunta)}</span>
+            <span aria-hidden>›</span>
+          </button>
+        ))}
+        {noticias.length === 0 && decisiones.length === 0 && <p className="mt-2 px-1 text-[15px] text-texto-3">{UI.barrio.nadaNuevo}</p>}
         <ul className="mt-2 flex flex-col gap-2">
           {[...noticias].reverse().map((n, i) => {
             const nueva = nuevas.has(n.fecha + n.texto)

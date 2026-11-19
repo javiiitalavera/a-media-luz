@@ -7,6 +7,7 @@ import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
 import { verAlbum } from '../logica/avisos'
 import type { Curiosidad } from '../contenido/curiosidades'
+import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { dia, diasEntre } from '../logica/fechas'
 import { cambiarRitmo } from '../logica/ajustes'
@@ -19,7 +20,7 @@ import { desplazarPartida } from '../logica/desplazar'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { usePreferencias } from '../estado/preferencias'
 
-export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
+export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {
   // Abrir el Álbum apaga su aviso (lo nuevo se ve, de todas formas, arriba del todo).
   const ajustar = useJuego((s) => s.ajustar)
   useEffect(() => { ajustar((p) => verAlbum(p, ahora)) }, [ajustar, ahora])
@@ -28,6 +29,14 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(momentos.length || !lista.length ? 'momentos' : 'cronicas')
   const curiosidades = curiosidadesTenidas(partida)
   const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
+  const [cronicaAbierta, setCronicaAbierta] = useState<string | null>(null)
+  /** Dónde terminó una historia (su última fase). */
+  const lugarDe = (id: string): Lugar | null => {
+    const s = SITUACIONES.find((x) => x.id === id)
+    const e = partida.situaciones?.[id]
+    return s && e ? s.fases[e.fase].lugar : null
+  }
+  const leerCronica = (id: string) => { setCosa(null); setAbierto(null); setSeccion('cronicas'); setCronicaAbierta(id) }
   const [abierto, setAbierto] = useState<MomentoAlbum | null>(null)
   return (
     <Pantalla titulo={UI.album.titulo}>
@@ -76,7 +85,7 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
       ) : (
         <div className="flex flex-col gap-2">
           {lista.map((c) => (
-            <details key={c.id} className="rounded-3xl bg-tarjeta px-4 py-3">
+            <details key={c.id} open={cronicaAbierta === c.id || undefined} className="rounded-3xl bg-tarjeta px-4 py-3">
               <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-bold">
                 <span className="flex-1">{c.titulo}</span>
                 {c.enMarcha && <span className="rounded-full bg-ambar px-2.5 py-0.5 text-[12px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
@@ -91,24 +100,26 @@ export function Album({ partida, ahora }: { partida: Partida; ahora: Date }) {
 
       {cosa && createPortal(
         <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setCosa(null)}>
-          <div role="dialog" aria-label={cosa.c.nombre} className="anim-globo w-full rounded-[28px] bg-fondo p-5 text-center shadow-2xl">
+          <div role="dialog" aria-label={cosa.c.nombre} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-[28px] bg-fondo p-5 text-center shadow-2xl">
             <img src={cosa.c.arte} alt="" className="mx-auto h-36 w-36 object-contain" draggable={false} />
             <div className="mt-3 text-[19px] font-bold">{cosa.c.nombre}</div>
             <p className="mt-1.5 text-[15px] leading-snug text-texto-2 italic">{cosa.c.texto}</p>
             <p className="mt-3 text-[12px] text-texto-3">{UI.album2.deVecino(COMPANEROS[cosa.c.vecino].nombre, UI.album2.fecha(cosa.fecha))}</p>
+            {cosa.c.historia && <IrA leer={() => leerCronica(cosa.c.historia!)} lugar={lugarDe(cosa.c.historia)} onIr={(l) => { setCosa(null); onIr(l) }} />}
           </div>
         </div>,
         document.body,
       )}
       {abierto && createPortal(
         <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setAbierto(null)}>
-          <figure role="dialog" aria-label={abierto.titulo} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
+          <figure role="dialog" aria-label={abierto.titulo} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
             <FotoEscena e={abierto.escena} />
             <figcaption className="mt-3 px-1">
               <span className="block text-[17px] font-bold text-[#3f2a3a]">{abierto.titulo}</span>
               {abierto.texto && <span className="mt-1 block text-[14px] leading-snug text-[#5e4a56] italic">{abierto.texto}</span>}
               <span className="mt-2 block text-[12px] text-[#7a6670]">{UI.album2.fecha(abierto.fecha)}</span>
             </figcaption>
+            <IrA leer={abierto.id.startsWith('historia-') ? () => leerCronica(abierto.id.slice(9)) : undefined} lugar={abierto.escena.lugar} onIr={(l) => { setAbierto(null); onIr(l) }} />
           </figure>
         </div>,
         document.body,
@@ -256,6 +267,17 @@ function Opciones({ valor, opciones, onCambiar }: { valor: string; opciones: [st
         <button key={v} type="button" role="radio" aria-checked={valor === v} onClick={() => valor !== v && onCambiar(v)}
           className={`min-h-11 rounded-full text-[14px] font-semibold ${valor === v ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>{texto}</button>
       ))}
+    </div>
+  )
+}
+
+/** Botones para ir del Álbum a la crónica o al sitio donde pasó. */
+function IrA({ leer, lugar, onIr }: { leer?: () => void; lugar: Lugar | null; onIr: (l: Lugar) => void }) {
+  if (!leer && !lugar) return null
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-2">
+      {leer && <button type="button" onClick={leer} className="min-h-11 rounded-full border-2 border-borde text-[14px] font-semibold text-texto-2">{UI.album2.leerCronica}</button>}
+      {lugar && <button type="button" onClick={() => onIr(lugar)} className={`min-h-11 rounded-full bg-ambar text-[14px] font-bold text-tinta ${leer ? '' : 'col-span-2'}`}>{UI.album2.verDonde}</button>}
     </div>
   )
 }

@@ -26,7 +26,8 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
-import { huellaNueva, microSinVer, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { gagDeHoy, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { GagEnEscena } from '../componentes/GagEnEscena'
 import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -51,9 +52,11 @@ function useTamano() {
 }
 
 
-export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDecision = false, onDecisionAbierta }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
   onBarrio: () => void
+  /** Venir del sobre a decidir: la pregunta sale abierta. */
+  abrirDecision?: boolean; onDecisionAbierta?: () => void
 }) {
   const DUENO = dueno
   const AREA = COMPANEROS[DUENO].area
@@ -107,8 +110,11 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
   const microPorVer = estado === 'vivo' ? microSinVer(partida, DUENO, ahora) : null
   const microVisible = Boolean(micro)
   const verCosita = () => { if (!micro) return; setNota(micro.texto); ajustar((p) => verMicro(p, DUENO, ahora)) }
-  const [decisionAbierta, setDecisionAbierta] = useState(false)
+  const [decisionAbierta, setDecisionAbierta] = useState(abrirDecision)
+  useEffect(() => { if (abrirDecision) onDecisionAbierta?.() }, [abrirDecision, onDecisionAbierta])
   const [ficha, setFicha] = useState(false)
+  // La escena que se puede tocar hoy (se fija al entrar, para que su animación no desaparezca al verla).
+  const [gag] = useState(() => (estado === 'vivo' ? gagDeHoy(partida, DUENO, ahora) : null))
   // Primera travesura de Nox: una piña negra mal escondida tras la cola. Tocarla y decidir qué hacer con ella.
   const piñaPendiente = vivo && !nacer && travesuraPendiente(partida, DUENO)
   const piñaAqui = DUENO === 'nox' && partida.vistos?.pina === 'aqui'
@@ -324,6 +330,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
           </button>
         )}
         {piñaPendiente && <span aria-hidden className="anim-brasa pointer-events-none absolute z-[11] h-2 w-2 rounded-full bg-[#ffb347] shadow-[0_0_8px_3px_#ff8a3d]" style={{ left: `${PIÑA.x + 2}%`, top: `${PIÑA.y - 11}%` }} />}
+
+        {gag && <GagEnEscena gag={gag} onVisto={() => ajustar((p) => verGag(p, DUENO, ahora))} />}
 
         {/* Avisos sobre el vecino: «…» una cosa pequeña del día, «?» una decisión. Esperan a que los toques. */}
         {vivo && !celebra && (microPorVer || (decision && !decisionAbierta)) && (

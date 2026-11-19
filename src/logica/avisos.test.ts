@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
+import { gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -48,5 +48,17 @@ describe('avisos', () => {
     expect(huellaNueva(p, 'cartel-fuego', en('2026-01-12', 12))).toBe(false)
     p = verHuella(p, 'cartel-fuego')
     expect(huellaNueva(p, 'cartel-fuego', en('2026-01-07', 12))).toBe(false)
+  })
+
+  it('escenas que se tocan: algunos días, solo con lo construido, y una vez vista ya no sale ese día', () => {
+    let p = barrio(['hoguera'])
+    const dias = Array.from({ length: 30 }, (_, i) => en(`2026-02-${String(1 + (i % 28)).padStart(2, '0')}`, 12))
+    const conGag = dias.filter((d) => gagDeHoy(p, 'nox', d))
+    expect(conGag.length).toBeGreaterThan(3)
+    expect(conGag.length).toBeLessThan(20)
+    expect(gagDeHoy(p, 'nox', conGag[0])!.id).toBe('hoguera-salchicha') // el del banco necesita a Gregorio
+    expect(gagDeHoy(barrio([]), 'nox', conGag[0])).toBeNull()
+    p = verGag(p, 'nox', conGag[0])
+    expect(gagDeHoy(p, 'nox', conGag[0])).toBeNull()
   })
 })

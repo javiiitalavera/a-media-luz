@@ -262,3 +262,11 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Primera travesura de Nox:** la primera vez que estás con él, una piña negra junto a su cola y una brasa que cae. Al tocarla: «Ya estaba así.» y eliges «Guardarla en el Álbum» o «Dejarla aquí» (se queda para siempre). En los dos casos es tu primera curiosidad.
 - **Ayudas de materiales:** en Construir, qué falta para el siguiente proyecto y de qué área sale («Te faltan 3 ascuas: salen de tus hazañas de Energía»); si no tienes hazañas de esa área, sugerencias de un toque. Lo mismo en la ficha de un vecino que nace si su área no está en tu lista.
 - La ficha del huevo dice «Tres hazañas de cualquier tipo lo despiertan». Fuera el «Este mes» de la presentación de Tuerca.
+
+### Tanda B: historias y barrio (19/11/2026, rama `dev/historias`)
+- **Una decisión pendiente no congela el barrio:** esa historia espera, pero puede empezar otra (como mucho dos en marcha).
+- **El sobre guarda lo que espera tu decisión** («En casa de Nox esperan tu decisión: …») arriba del todo, en ámbar, hasta que decidas; al tocarlo vas a la casa con la pregunta ya abierta. El número del sobre las cuenta.
+- **Escenas que se tocan** (`src/contenido/gags.ts`): uno de cada tres días brilla algo en una casa o en el barrio (bajo el banco, en la hoguera, en el tablón, en la maceta; en el arroyo, entre las setas, en la plaza). Al tocarlo asoma un dibujo ya existente unos segundos con su frase. No da nada.
+- **Del Álbum al sitio:** las curiosidades de una historia y las fotos tienen «Leer la crónica» y «Ver dónde pasó».
+- **Decisiones que se ven:** en «El préstamo», con salchichas aparecen en el estante de Tofu; si Nox lee, quedan los libros junto a su banco.
+- **Chistes:** fuera los que se meten con el jugador (caja, flexo, reloj, estantería, farolillo, zapatillas, bufanda, farol, medalla y frases de descuido) y los restos del «bosque» y las «ofrendas».

@@ -17,7 +17,8 @@ import { sfx } from '../sonido'
 import { BarraBolsa } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
-import { avisoEnCasa, huellaNueva, noticiasSinLeer, verHuella } from '../logica/avisos'
+import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLeer, verGag, verHuella } from '../logica/avisos'
+import { GagEnEscena } from '../componentes/GagEnEscena'
 
 export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void; onNovedades: () => void
@@ -47,7 +48,8 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
     return (px / ancho) * 100
   }
   const ajustar = useJuego((st) => st.ajustar)
-  const sinLeer = noticiasSinLeer(partida)
+  const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
+  const sinLeer = noticiasSinLeer(partida) + decisionesPendientes(partida, ahora).length
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
@@ -102,6 +104,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
           ))}
         </div>
         {noche && <Luciernagas cuantas={12} />}
+        {gag && <GagEnEscena gag={gag} onVisto={() => ajustar((p) => verGag(p, 'barrio', ahora))} />}
 
         {/* Avisos: «!» sobre la casita donde ha pasado algo (por encima del tinte de la noche). */}
         {vecinos.slice(0, PARCELAS.length).map((m, i) => {

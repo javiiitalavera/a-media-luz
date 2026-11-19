@@ -12,6 +12,9 @@ const estados = (p: Partida) => p.situaciones ?? {}
 /** Cuántas novedades se guardan en el sobre (las leídas se quedan en gris). */
 export const NOTICIAS_GUARDADAS = 10
 
+/** Historias en marcha a la vez, como mucho (una puede estar esperando tu decisión). */
+export const EN_MARCHA_MAX = 2
+
 export function cumpleRequisitos(p: Partida, s: Situacion, ahora: Date): boolean {
   return s.requiere.vecinos.every((c) => nacido(p, c, ahora)) && s.requiere.construido.every((id) => construido(p, id))
 }
@@ -25,24 +28,27 @@ export function faseDe(s: Situacion, i: number, decision?: string) {
 
 /**
  * Avanza el vecindario: como mucho una fase al día, y primero se termina lo que está en marcha. Si una
- * fase espera una decisión tuya, no sigue hasta que decidas. Si no hay nada en marcha, empieza la
- * primera situación disponible. Devuelve la partida y las novedades nuevas.
+ * fase espera una decisión tuya, esa historia no sigue hasta que decidas, pero puede empezar otra
+ * (como mucho dos en marcha). Devuelve la partida y las novedades nuevas.
  */
 export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: NoticiaBarrio[] } {
   const hoy = dia(ahora.toISOString())
   const est = estados(p)
   if (Object.values(est).some((e) => e.dia === hoy)) return { partida: p, nuevas: [] }
 
-  const enMarcha = SITUACIONES.find((s) => est[s.id] && !est[s.id].fin)
+  // Primero sigue lo que está en marcha y no espera una decisión tuya. Si todo lo que está en marcha
+  // espera una decisión, puede empezar otra historia (como mucho dos a la vez): el barrio no se congela.
+  const enMarcha = SITUACIONES.filter((x) => est[x.id] && !est[x.id].fin)
+  const esperando = (x: Situacion) => Boolean(x.fases[est[x.id].fase].decision && !est[x.id].decision)
+  const sigue = enMarcha.find((x) => !esperando(x))
   let s: Situacion | undefined
   let nuevo: EstadoSituacion | undefined
-  if (enMarcha) {
-    const e = est[enMarcha.id]
-    if (enMarcha.fases[e.fase].decision && !e.decision) return { partida: p, nuevas: [] }
+  if (sigue) {
+    const e = est[sigue.id]
     const fase = e.fase + 1
-    s = enMarcha
-    nuevo = { ...e, fase, dia: hoy, fin: fase === enMarcha.fases.length - 1 }
-  } else {
+    s = sigue
+    nuevo = { ...e, fase, dia: hoy, fin: fase === sigue.fases.length - 1 }
+  } else if (enMarcha.length < EN_MARCHA_MAX) {
     s = SITUACIONES.find((x) => !est[x.id] && cumpleRequisitos(p, x, ahora))
     if (s) nuevo = { fase: 0, dia: hoy, fin: s.fases.length === 1 }
   }
