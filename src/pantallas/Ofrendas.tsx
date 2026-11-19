@@ -42,8 +42,8 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
 
   const marcar = (a: Accion) => {
     if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); setReaccion(null); return }
-    sfx.tachar()
     const r = ofrecer(a.id)
+    if (r) sfx.tachar(a.area)
     if (r?.sorpresa) {
       setReaccion({ texto: `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`, n: Date.now(), sorpresa: r.sorpresa.arte })
     } else if (r?.frase) setReaccion({ texto: `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`, n: Date.now() })
