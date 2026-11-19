@@ -18,9 +18,9 @@ export interface Escena {
 }
 
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
-  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 40, 40],
+  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 38.7, 37.8],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
-  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 38, 38],
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 39.1, 37.6],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
   tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 36, 36],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }] },

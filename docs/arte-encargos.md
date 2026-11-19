@@ -24,7 +24,7 @@
 | `public/arte/casa/nox/fondo.webp` | Casa de Nox: claro con madriguera y farol (941 × 1672) |
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
-| `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno |
+| `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (dos engranajes, antena; de adulto, placas metálicas) |
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca, sus 6 objetos y sus 3 premios de retos |
 | `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los antiguos retos de Nox (sin uso de momento) |
 | `public/arte/barrio/mapa.webp` | Mapa del barrio: 5 parcelas, plaza y arroyo |
@@ -40,4 +40,4 @@ Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus c
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |
 | `public/arte/casa/bruma/fondo.webp`, `public/arte/casa/madeja/fondo.webp` | Escenarios de Bruma (estanque) y Madeja (madriguera de lana), aún sin usar |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
-| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones |
+| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (bufanda; de adulto, pecho esponjoso) |

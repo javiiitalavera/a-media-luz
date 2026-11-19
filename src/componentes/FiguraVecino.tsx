@@ -8,9 +8,11 @@ import type { CompaneroId } from '../contenido'
 import { rutaCompanero, type Expresion } from '../arte/manifiesto'
 
 /** Altura (en % del dibujo) donde se separa la parte que se mueve sola (brote o engranaje), por etapa. */
-const CORTE: Partial<Record<CompaneroId, [number, number, number]>> = { tofu: [42, 44, 35], tuerca: [31, 25, 27] }
+const CORTE: Partial<Record<CompaneroId, (number | null)[]>> = { tofu: [42, 44, 35], tuerca: [31, null, null] }
 /** Punto sobre el que gira esa parte (x, y en %): el brote, desde su base; el engranaje, desde su centro. */
-const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 20], [52, 15], [60.3, 17]] }
+const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 20]] }
+/** Tuerca joven y adulto (dos engranajes y antena): en vez de girar, parpadea la luz de la antena. */
+const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 }]
 
 export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
   c: CompaneroId; etapa: 0 | 1 | 2; expresion: Expresion; reaccion: number; crecer: boolean
@@ -19,6 +21,17 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
   const corte = CORTE[c]?.[etapa]
   const tocado = reaccion > 0
   const brotar = crecer ? 'anim-brotar' : ''
+  const antena = c === 'tuerca' ? ANTENA[etapa] : null
+  if (antena) {
+    return (
+      <span key={reaccion} className={`relative block ${tocado ? 'anim-respingo' : 'anim-tic'} ${brotar}`}>
+        <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
+        <span aria-hidden className={`absolute rounded-full ${tocado ? 'anim-antena-prisa' : 'anim-antena'}`}
+          style={{ left: `${antena.x}%`, top: `${antena.y}%`, width: `${antena.tam}%`, aspectRatio: '1', transform: 'translate(-50%, -50%)',
+            background: 'radial-gradient(circle, #fff8c8 0%, #ffd34ecc 45%, transparent 72%)' }} />
+      </span>
+    )
+  }
   if (!corte) {
     // Nox (y quien no tenga gesto propio): respira; saltitos de impaciencia; al tocar, salto.
     return (
