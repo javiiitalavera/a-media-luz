@@ -151,7 +151,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
     // Con «reducir movimiento», la eclosión dura menos.
     const k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.35 : 1
     const pasos = [
-      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion() }, 150),
+      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion(k < 1) }, 150),
       setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 1750 * k),
       setTimeout(() => setNacer('ficha'), 3250 * k),
     ]

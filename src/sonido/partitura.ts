@@ -1,104 +1,86 @@
-// Música generativa: qué suena en cada momento del día. Lógica pura (sin audio), con tests.
-// Notas en MIDI (60 = do central). Cada compás tiene 4 pulsos y un acorde.
-import type { Azar } from '../logica/azar'
+// Tema original de A media luz. MIDI: 60 es do central, cada pareja es [pulso, nota].
 import type { Momento } from '../contenido'
+
+type Tema = readonly (readonly (readonly [pulso: number, midi: number])[])[]
+type Timbre = 'piano' | 'cuerda' | 'flauta'
 
 export interface Estilo {
   bpm: number
-  /** Acordes (notas MIDI) que se repiten en bucle, uno por compás. */
-  progresion: number[][]
-  /** Notas posibles para la melodía de caja de música. */
-  escala: number[]
-  /** Probabilidad de que suene una nota de melodía en cada corchea (0–1). */
-  densidad: number
-  /** Frecuencia de corte del filtro del colchón: más alta = más brillante. */
+  pulsos: 3 | 4
+  tema: Tema
+  acordes: readonly (readonly [bajo: number, ...voces: number[]])[]
+  voz: Timbre
+  acompanamiento: 'arpegio' | 'pulso' | 'espaciado'
   brillo: number
-  /** Volumen relativo (1 = normal). */
   volumen: number
 }
 
-const PENTA_DO = [72, 74, 76, 79, 81, 84, 86, 88]
-const PENTA_RE = [74, 76, 78, 81, 83, 86, 88]
-const PENTA_LA_MENOR = [69, 72, 74, 76, 79, 81, 84]
+const DO = [48, 55, 59, 64] as const
+const LAm = [45, 55, 60, 64] as const
+const FA = [41, 53, 57, 60, 64] as const
+const MIm = [40, 52, 55, 59, 62] as const
+const REm = [38, 53, 57, 60, 64] as const
+const SOL = [43, 53, 57, 59, 62] as const
+const MI = [40, 52, 56, 59, 62] as const
+const SOLsus = [43, 53, 55, 60, 62] as const
+
+// Presentación, respuesta, puente y vuelta. Las pausas forman parte de la frase.
+const MANANA: Tema = [
+  [[0, 64], [0.75, 67], [1.5, 69], [2.5, 72]], [[0.5, 71], [1.5, 67], [2.5, 64]],
+  [[0, 65], [1, 69], [2, 67]], [[0, 62], [1.5, 64]],
+  [[0, 67], [0.75, 69], [1.5, 72], [2.5, 76]], [[0, 74], [1, 72], [2, 69]],
+  [[0.5, 67], [1.5, 65], [2.5, 64]], [[0, 62], [2, 67]],
+  [[0, 81], [1.5, 79]], [[0, 76], [1, 74], [2.5, 72]],
+  [[0, 77], [1, 76], [2, 74]], [[0, 71]],
+  [[0, 64], [0.75, 67], [1.5, 69], [2.5, 72]], [[0.5, 71], [1.5, 67]],
+  [[0, 65], [1, 62], [2.5, 64]], [[0, 60]],
+]
+
+const PLAZA: Tema = [
+  [[0.5, 64], [1.25, 67], [2, 69], [3, 72]], [[0.25, 71], [1.5, 67], [2.25, 64], [3.5, 67]],
+  [[0, 65], [1, 69], [1.75, 72], [3, 74]], [[0, 71], [2, 67], [3.5, 62]],
+  [[0.5, 64], [1.25, 67], [2, 69], [3, 76]], [[0, 74], [1, 72], [2, 69], [3.5, 72]],
+  [[0, 67], [0.75, 65], [1.5, 64], [3, 62]], [[0, 71], [2, 67]],
+  [[0, 69], [1.5, 76], [2.5, 79], [3.25, 81]], [[0.5, 79], [1.5, 77], [2.25, 76]],
+  [[0, 74], [1, 77], [2, 81], [3, 79]], [[0.5, 74], [2, 71]],
+  [[0.5, 64], [1.25, 67], [2, 69], [3, 72]], [[0.25, 71], [1.5, 67], [2.25, 64]],
+  [[0, 65], [1, 64], [2, 62], [3.25, 67]], [[0, 60], [2.5, 67]],
+]
+
+const TARDE: Tema = [
+  [[0, 69], [1.5, 72], [3, 74]], [[0, 76], [2.5, 71]], [[0.5, 69], [2, 65]], [[1, 62]],
+  [[0, 67], [1.5, 69], [3, 72]], [[0, 71], [2, 67]], [[1, 65], [2.5, 62]], [[0, 64]],
+  [[0.5, 76], [2.5, 79]], [[0, 77], [2, 72]], [[0, 74], [2.5, 71]], [[1, 68]],
+  [[0, 69], [1.5, 72], [3, 74]], [[0, 76], [2, 71]], [[0.5, 69], [2, 65]], [[0, 64], [2, 60]],
+]
+
+const NOCHE: Tema = [
+  [[0.5, 64], [2, 69]], [[0, 72], [1.75, 69]], [[1, 67]], [],
+  [[0.5, 64], [2, 69]], [[0, 76], [2.25, 72]], [[0, 71], [2, 67]], [[0.75, 64]],
+  [[0, 65], [2, 69]], [[0.5, 72], [2.5, 74]], [[0, 71]], [[1, 68]],
+  [[0.5, 64], [2, 69]], [[0, 72], [1.75, 69]], [[0.5, 67], [2, 64]], [[0.5, 60]],
+]
 
 export const ESTILOS: Record<Momento | 'apagada', Estilo> = {
-  // Amanecer: luminoso y tranquilo. Cmaj7 – Am7 – Fmaj7 – G6
-  amanecer: {
-    bpm: 66,
-    progresion: [[48, 55, 59, 64], [45, 55, 60, 64], [41, 57, 60, 64], [43, 55, 59, 64]],
-    escala: PENTA_DO,
-    densidad: 0.32,
-    brillo: 1800,
-    volumen: 0.9,
-  },
-  // Mediodía: un poco más vivo. Dmaj7 – Bm7 – Gmaj7 – A6
-  mediodia: {
-    bpm: 72,
-    progresion: [[50, 57, 61, 66], [47, 57, 62, 66], [43, 59, 62, 66], [45, 57, 61, 66]],
-    escala: PENTA_RE,
-    densidad: 0.38,
-    brillo: 2200,
-    volumen: 1,
-  },
-  // Atardecer: cálido, bajando. Fmaj7 – Em7 – Dm7 – Cmaj7
-  atardecer: {
-    bpm: 62,
-    progresion: [[41, 57, 60, 64], [40, 55, 59, 62], [38, 57, 60, 65], [36, 55, 59, 64]],
-    escala: PENTA_DO,
-    densidad: 0.28,
-    brillo: 1400,
-    volumen: 0.9,
-  },
-  // Noche: lento y oscuro, como una nana. Am7 – Fmaj7 – Cmaj7 – Em7
-  noche: {
-    bpm: 54,
-    progresion: [[45, 55, 60, 64], [41, 57, 60, 64], [36, 55, 59, 64], [40, 55, 59, 62]],
-    escala: PENTA_LA_MENOR,
-    densidad: 0.18,
-    brillo: 900,
-    volumen: 0.72,
-  },
-  // Casa apagada: casi nada, solo el colchón y alguna nota suelta.
-  apagada: {
-    bpm: 50,
-    progresion: [[45, 52, 57, 60], [41, 48, 57, 60]],
-    escala: [69, 72, 76],
-    densidad: 0.06,
-    brillo: 600,
-    volumen: 0.45,
-  },
+  amanecer: { bpm: 75, pulsos: 3, tema: MANANA,
+    acordes: [DO, MIm, FA, SOL, DO, LAm, REm, SOL, LAm, DO, REm, SOL, DO, MIm, SOLsus, DO],
+    voz: 'flauta', acompanamiento: 'arpegio', brillo: 2400, volumen: .89 },
+  mediodia: { bpm: 94, pulsos: 4, tema: PLAZA,
+    acordes: [DO, MIm, FA, SOL, DO, LAm, REm, SOL, LAm, FA, REm, SOL, DO, MIm, SOLsus, DO],
+    voz: 'cuerda', acompanamiento: 'pulso', brillo: 3000, volumen: 1 },
+  atardecer: { bpm: 72, pulsos: 4, tema: TARDE,
+    acordes: [FA, MIm, REm, SOL, DO, MIm, REm, DO, LAm, FA, SOL, MI, FA, MIm, REm, DO],
+    voz: 'piano', acompanamiento: 'arpegio', brillo: 1710, volumen: .92 },
+  noche: { bpm: 64, pulsos: 3, tema: NOCHE,
+    acordes: [LAm, FA, DO, MIm, LAm, FA, SOL, DO, REm, FA, SOL, MI, LAm, FA, SOLsus, DO],
+    voz: 'piano', acompanamiento: 'espaciado', brillo: 1120, volumen: .75 },
+  apagada: { bpm: 55, pulsos: 4, tema: [[[1, 64]], [], [[2, 60]], []],
+    acordes: [LAm, FA, DO, MIm], voz: 'piano', acompanamiento: 'espaciado', brillo: 780, volumen: .48 },
 }
 
-export interface NotaMelodia {
-  /** Pulso dentro del compás (0, 0.5, 1 … 3.5). */
-  pulso: number
-  midi: number
-}
-
-export interface Compas {
-  acorde: number[]
-  bajo: number
-  melodia: NotaMelodia[]
-}
-
-/** Genera el compás número `indice` de un estilo. Nunca repite la misma nota seguida y deja respirar. */
-export function generarCompas(estilo: Estilo, indice: number, azar: Azar, ultimaNota?: number): Compas {
-  const acorde = estilo.progresion[indice % estilo.progresion.length]
-  const melodia: NotaMelodia[] = []
-  let previa = ultimaNota
-  for (let corchea = 0; corchea < 8; corchea++) {
-    // Más probable en pulsos fuertes; nunca dos corcheas seguidas.
-    const fuerte = corchea % 2 === 0 ? 1.4 : 0.6
-    if (melodia.length && melodia[melodia.length - 1].pulso === (corchea - 1) / 2) continue
-    if (azar() >= estilo.densidad * fuerte) continue
-    // Prefiere notas cercanas a la anterior (melodía suave).
-    const opciones = estilo.escala.filter((n) => n !== previa && (previa === undefined || Math.abs(n - previa) <= 7))
-    const lista = opciones.length ? opciones : estilo.escala.filter((n) => n !== previa)
-    const midi = lista[Math.floor(azar() * lista.length)]
-    melodia.push({ pulso: corchea / 2, midi })
-    previa = midi
-  }
-  return { acorde, bajo: acorde[0] - 12, melodia }
+export function compas(estilo: Estilo, indice: number) {
+  const [bajo, ...acorde] = estilo.acordes[indice % estilo.acordes.length]
+  return { bajo, acorde, melodia: estilo.tema[indice % estilo.tema.length] }
 }
 
 export const frecuencia = (midi: number) => 440 * 2 ** ((midi - 69) / 12)

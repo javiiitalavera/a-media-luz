@@ -353,3 +353,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - El puente sigue el paso del sendero. Sus carteles se apoyan en las orillas y al tocarlos se lee el texto completo. Los caminos de las casas tienen pequeñas piedras delante de las entradas.
 - El arroyo tiene reflejos. La chimenea de Tuerca, la niebla de Bruma y el cristal de Tofu se animan a destiempo. Al entrar en una casa, su puerta se ilumina antes del viaje de cámara. Con movimiento reducido, el barrio queda quieto y se entra directamente.
 - Al revisarlo (Claude): los textos de la plaza pasan a `src/contenido/barrio.ts`, el puente a WebP, y los botones del barrio mantienen la altura y el tamaño de los de la casa (el martillo, 56 px).
+
+### Música y sonidos del barrio
+
+- Cuatro arreglos de un tema original. El amanecer lleva flauta y arpegios. Al mediodía predominan las cuerdas pulsadas y la percusión de madera. El atardecer y la noche se apoyan en el piano de fieltro, con más pausas de noche.
+- Cada vecino tiene su voz. Entrar en una casa suena a puerta de madera. Los retos suenan a lápiz y tienen dos notas propias de su área. Al construir se encadenan el martillo, el asentamiento de la pieza y las últimas notas. La eclosión empieza con el crujido de la cáscara.
+- La música baja brevemente durante los efectos destacados. Ambos canales se pueden apagar en Ajustes y se reproducen mediante Web Audio, sin pistas que descargar.

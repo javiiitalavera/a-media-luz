@@ -82,6 +82,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
   const entrar = (c: CompaneroId, ir = (p?: Punto) => onCasa(c, p)) => {
     if (esperaEntrada.current !== undefined) return
+    sfx.puerta()
     const puerta = puertas.current[c]
     const centro = puerta?.getBoundingClientRect()
     const punto = centro && { x: centro.left + centro.width / 2, y: centro.top + centro.height / 2 }
