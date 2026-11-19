@@ -4,7 +4,7 @@ import type React from 'react'
 // Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, ORDEN_AREAS, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
@@ -19,6 +19,13 @@ import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
+import { SugerirHazanas } from '../componentes/SugerirHazanas'
+import { misHazanas } from '../logica/hazanas'
+import { resolverTravesura, travesuraPendiente } from '../logica/curiosidades'
+import { CURIOSIDADES } from '../contenido/curiosidades'
+
+/** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
+const PIÑA = { x: 34, y: 75, ancho: 10 }
 import { huellaNueva, microSinVer, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
@@ -102,17 +109,34 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
   const verCosita = () => { if (!micro) return; setNota(micro.texto); ajustar((p) => verMicro(p, DUENO, ahora)) }
   const [decisionAbierta, setDecisionAbierta] = useState(false)
   const [ficha, setFicha] = useState(false)
+  // Primera travesura de Nox: una piña negra mal escondida tras la cola. Tocarla y decidir qué hacer con ella.
+  const piñaPendiente = vivo && !nacer && travesuraPendiente(partida, DUENO)
+  const piñaAqui = DUENO === 'nox' && partida.vistos?.pina === 'aqui'
+  const [preguntaPiña, setPreguntaPiña] = useState(false)
+  const tocarPiña = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (piñaAqui) { globoEn(e, CURIOSIDADES.find((x) => x.id === 'pina')!.texto); return }
+    sfx.personaje('nox')
+    globoEn(e, UI.arranque.piñaAviso)
+    setTimeout(() => setPreguntaPiña(true), 1300)
+  }
   // Al entrar, se apagan los avisos de novedades de esta casa.
   useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO])
+  // El huevo listo espera a que lo toques: el último toque es tuyo.
+  const [abriendo, setAbriendo] = useState(false)
   useEffect(() => {
-    if (estado !== 'naciendo') return
+    if (estado === 'naciendo' && !abriendo) setNota(UI.arranque.daleUnToque)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estado])
+  useEffect(() => {
+    if (estado !== 'naciendo' || !abriendo) return
     const pasos = [
-      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion() }, 500),
-      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 2100),
-      setTimeout(() => setNacer('ficha'), 3600),
+      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion() }, 150),
+      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 1750),
+      setTimeout(() => setNacer('ficha'), 3250),
     ]
     return () => pasos.forEach(clearTimeout)
-  }, [estado])
+  }, [estado, abriendo])
   useEffect(() => {
     if (!hallazgo) return
     const t = setTimeout(() => setHallazgo(null), 5000)
@@ -181,7 +205,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
       setHabla({ texto: lista[toques % lista.length], n: Date.now() })
       return
     }
-    if (estado === 'naciendo') return
+    if (estado === 'naciendo') { if (!abriendo) { setNota(null); setAbriendo(true) } return }
     sfx.personaje(DUENO)
     setSaltos((n) => n + 1)
     // Si está metido en una historia, habla de ella; si no, lo de siempre.
@@ -239,7 +263,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
               {conHuevo ? (
                 <span key={`h${toques}`} className={`block ${toques ? 'anim-temblar' : ''}`}>
                   <img src={rutaArte(`huevo/${DUENO}/${faltaHuevo <= 1 || estado === 'naciendo' ? 'agrietado' : 'cerrado'}`)} alt="" draggable={false}
-                    className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : 'anim-mecer'}`} />
+                    className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
                 <span key={saltos} className={`block ${saltos ? 'anim-saltar' : ''}`}>
@@ -292,6 +316,14 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
             <Estallido x={NOX.x} y={NOX.y - altoNox / 2} />
           </>
         )}
+
+        {(piñaPendiente || piñaAqui) && (
+          <button type="button" aria-label={UI.arranque.piña} onClick={tocarPiña} className="absolute z-[11] before:absolute before:-inset-2 before:content-['']"
+            style={{ left: `${PIÑA.x}%`, top: `${PIÑA.y}%`, width: `${PIÑA.ancho}%`, transform: 'translate(-50%, -100%)' }}>
+            <img src="/arte/curiosidades/pina.webp" alt="" draggable={false} className={`block w-full ${piñaPendiente ? 'anim-nuevo' : ''}`} />
+          </button>
+        )}
+        {piñaPendiente && <span aria-hidden className="anim-brasa pointer-events-none absolute z-[11] h-2 w-2 rounded-full bg-[#ffb347] shadow-[0_0_8px_3px_#ff8a3d]" style={{ left: `${PIÑA.x + 2}%`, top: `${PIÑA.y - 11}%` }} />}
 
         {/* Avisos sobre el vecino: «…» una cosa pequeña del día, «?» una decisión. Esperan a que los toques. */}
         {vivo && !celebra && (microPorVer || (decision && !decisionAbierta)) && (
@@ -367,7 +399,13 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
       )}
 
       {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} fase={r.fase} faltanParaArreglar={r.faltanParaArreglar} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
-      {nacer === 'ficha' && <Ficha c={DUENO} onCerrar={() => { setNacer(null); presentar() }} />}
+      {nacer === 'ficha' && <Ficha c={DUENO} partida={partida} onCerrar={() => { setNacer(null); presentar() }} />}
+      {preguntaPiña && (
+        <Pregunta titulo={UI.arranque.piñaPregunta} texto={UI.arranque.piñaTexto} si={UI.arranque.guardarla} no={UI.arranque.dejarla}
+          onSi={() => { sfx.sorpresa(); setPreguntaPiña(false); ajustar((p) => resolverTravesura(p, 'guardada', ahora)) }}
+          onNo={() => { sfx.elegir(); setPreguntaPiña(false); ajustar((p) => resolverTravesura(p, 'aqui', ahora)) }}
+          onFondo={() => setPreguntaPiña(false)} />
+      )}
       {preguntaHuevo && otroHuevo && (
         <Pregunta titulo={UI.casa.huevoEnPuerta} texto={UI.casa.huevoPregunta}
           si={UI.casa.queVenga} no={UI.casa.ahoraNo}
@@ -380,9 +418,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio }: {
 }
 
 /** Pregunta sencilla de sí o no (por ejemplo, incubar el huevo que ha aparecido en la puerta). */
-function Pregunta({ titulo, texto, si, no, onSi, onNo }: { titulo: string; texto: string; si: string; no: string; onSi: () => void; onNo: () => void }) {
+function Pregunta({ titulo, texto, si, no, onSi, onNo, onFondo }: { titulo: string; texto: string; si: string; no: string; onSi: () => void; onNo: () => void; onFondo?: () => void }) {
   return createPortal(
-    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-end bg-[#2e2030]/50 px-3 pb-[max(16px,env(safe-area-inset-bottom))]" onClick={onNo}>
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-end bg-[#2e2030]/50 px-3 pb-[max(16px,env(safe-area-inset-bottom))]" onClick={onFondo ?? onNo}>
       <section role="dialog" aria-label={titulo} onClick={(e) => e.stopPropagation()} className="anim-hoja w-full rounded-[28px] bg-fondo p-5 shadow-xl">
         <h2 className="text-[22px] leading-tight font-bold">{titulo}</h2>
         <p className="mt-2 text-[16px] leading-snug">{texto}</p>
@@ -414,7 +452,7 @@ function HuellaEnEscena({ h, ew, nueva, onTocar }: { h: Huella; ew: number; nuev
 }
 
 /** Presentación del compañero al salir del huevo: quién es y qué necesita. */
-function Ficha({ c, onCerrar }: { c: CompaneroId; onCerrar: () => void }) {
+function Ficha({ c, partida, onCerrar }: { c: CompaneroId; partida: Partida; onCerrar: () => void }) {
   const h = HISTORIAS[c]
   const comp = COMPANEROS[c]
   return createPortal(
@@ -428,6 +466,7 @@ function Ficha({ c, onCerrar }: { c: CompaneroId; onCerrar: () => void }) {
           <div className="mt-4 rounded-2xl bg-tarjeta p-3">
             <div className="text-[13px] font-semibold text-texto-3">{UI.casa.necesita}</div>
             <p className="mt-0.5 text-[15px] leading-snug">{h.necesita}</p>
+            {!misHazanas(partida).some((x) => x.area === comp.area) && <SugerirHazanas partida={partida} area={comp.area} />}
           </div>
         )}
         <button type="button" onClick={onCerrar} className="mt-4 min-h-12 w-full rounded-2xl bg-ambar text-[16px] font-bold text-tinta">
@@ -538,6 +577,8 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
   const mat = disponibles(partida, ahora)
   const visibles = proyectosVisibles(partida, DUENO)
   const quedan = proyectosDe(DUENO).length - visibles.length
+  const siguiente = visibles.find((o) => !construido(partida, o.id))
+  const faltaSiguiente = siguiente ? faltan(partida, siguiente, ahora) : {}
   // Se pinta directamente en el documento para quedar por encima de la navegación.
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
@@ -582,6 +623,17 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir }: {
           })}
         </ul>
         {quedan > 0 && <p className="mt-3 px-1 text-[13px] text-texto-3">{UI.casa.masProyectos}</p>}
+        {/* Qué falta para el siguiente proyecto y de dónde sale (con sugerencias si no tienes hazañas de esa área). */}
+        {siguiente && Object.keys(faltaSiguiente).length > 0 && (
+          <div className="mt-3 rounded-3xl bg-tarjeta p-3">
+            {(Object.entries(faltaSiguiente) as [AreaId, number][]).map(([a, n]) => (
+              <div key={a} className="mt-1 first:mt-0">
+                <p className="text-[14px] leading-snug text-texto-2">{UI.sugerir.faltan(n, MATERIALES[a].singular, MATERIALES[a].plural, AREAS[a].nombre)}</p>
+                {!misHazanas(partida).some((x) => x.area === a) && <SugerirHazanas partida={partida} area={a} />}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>,
     document.body,

@@ -43,3 +43,12 @@ export function curiosidadesDeHistorias(antes: Partida, despues: Partida, ahora:
   }
   return p
 }
+
+/** La primera travesura de Nox: la piña espera en su casa hasta que decides qué hacer con ella. */
+export const travesuraPendiente = (p: Partida, c: string) => c === 'nox' && !p.vistos?.pina
+
+/** Guardarla en el Álbum o dejarla junto a Nox: en los dos casos pasa a tus Curiosidades. */
+export function resolverTravesura(p: Partida, opcion: 'guardada' | 'aqui', ahora: Date): Partida {
+  const q = anadirCuriosidad(p, 'pina', ahora.toISOString())
+  return { ...q, vistos: { ...q.vistos, pina: opcion } }
+}

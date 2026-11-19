@@ -254,3 +254,11 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Copia de seguridad** dice cuándo hiciste la última.
 - **Modo de prueba escondido:** aparece solo al tocar 5 veces la versión (otras 5 lo vuelven a esconder). «Volver a hoy» mueve todas las fechas de la partida los días adelantados hacia atrás, así no se pierde nada de lo jugado con el reloj adelantado (`src/logica/desplazar.ts`).
 - Al final: «A media luz · versión 0.9 · Creado por Javi, en ratos libres que no tenía.»
+
+### Tanda A: arranque y progresión (19/11/2026, rama `dev/arranque`, revisión de ChatGPT aceptada por Javi)
+- **Inicio:** «Tres cosas para empezar» (andar 8000 pasos, leer 15 páginas, escribir a mis padres), «Ver todas» para el catálogo y «Las cambias cuando quieras en Hazañas».
+- **El huevo listo te invita:** en Hazañas sale «Algo se mueve en casa · Ir a ver» hasta que vas. En casa el huevo tiembla («La cáscara cruje. Dale un toque.») y **lo rompes tú** con un toque; ya no se abre solo.
+- **El mapa no adelanta el nombre:** hasta que ves la eclosión, el último vecino es un huevo sin nombre («?», «Huevo sospechoso»); si está listo, tiembla.
+- **Primera travesura de Nox:** la primera vez que estás con él, una piña negra junto a su cola y una brasa que cae. Al tocarla: «Ya estaba así.» y eliges «Guardarla en el Álbum» o «Dejarla aquí» (se queda para siempre). En los dos casos es tu primera curiosidad.
+- **Ayudas de materiales:** en Construir, qué falta para el siguiente proyecto y de qué área sale («Te faltan 3 ascuas: salen de tus hazañas de Energía»); si no tienes hazañas de esa área, sugerencias de un toque. Lo mismo en la ficha de un vecino que nace si su área no está en tu lista.
+- La ficha del huevo dice «Tres hazañas de cualquier tipo lo despiertan». Fuera el «Este mes» de la presentación de Tuerca.

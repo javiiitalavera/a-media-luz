@@ -8,7 +8,6 @@ import { COMPANEROS, LUCES_BARRIO, MATERIALES, ORDEN_AREAS, PARCELAS, PASO_ARROY
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
-import { nacido } from '../logica/etapas'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
 import { rutaArte } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -52,7 +51,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
-  const ultimoEnHuevo = estadoDelMes(partida, ahora) === 'huevo'
+  const estadoUltimo = estadoDelMes(partida, ahora)
   const mat = disponibles(partida, ahora)
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
@@ -77,15 +76,16 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
         ))}
         {vecinos.slice(0, PARCELAS.length).map((m, i) => {
           const p = PARCELAS[i]
-          const huevo = i === vecinos.length - 1 && ultimoEnHuevo && !nacido(partida, m.companero, ahora)
+          // Hasta que lo ves salir del huevo (aunque ya esté listo), en el mapa sigue siendo un huevo sin nombre.
+          const huevo = i === vecinos.length - 1 && estadoUltimo !== 'vivo'
           const nombre = huevo ? '?' : COMPANEROS[m.companero].nombre
           const anchoCasa = p.ancho * (huevo ? 0.45 : 0.82)
           return (
             <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
               className="absolute flex flex-col items-center transition active:scale-95"
               style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
-              <img src={rutaArte(huevo ? `huevo/${m.companero}/cerrado` : `casita/${m.companero}`)} alt=""
-                className={`w-full drop-shadow-[0_3px_3px_rgba(63,42,58,0.35)] ${huevo ? 'anim-mecer' : ''}`} draggable={false} />
+              <img src={rutaArte(huevo ? `huevo/${m.companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${m.companero}`)} alt=""
+                className={`w-full drop-shadow-[0_3px_3px_rgba(63,42,58,0.35)] ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
               <span className="-mt-1 rounded-full bg-tarjeta px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
             </button>
           )

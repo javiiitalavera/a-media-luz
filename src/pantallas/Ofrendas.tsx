@@ -9,6 +9,8 @@ import { diaMaloActivo } from '../logica/ofrendas'
 import { anadirHazana, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
+import { estadoDelMes, mesActual } from '../logica/meses'
+import { rutaArte } from '../arte/manifiesto'
 import { sfx } from '../sonido'
 import { Interruptor, Pantalla } from '../componentes/comunes'
 import { IconoArea } from '../componentes/IconoArea'
@@ -16,7 +18,7 @@ import { IconoArea } from '../componentes/IconoArea'
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 const campo = 'h-11 w-full rounded-2xl border-2 border-borde bg-fondo px-3 text-base focus:border-coral focus:outline-none'
 
-export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) {
+export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahora: Date; onIrACasa: () => void }) {
   const ofrecer = useJuego((s) => s.ofrecer)
   const quitarUna = useJuego((s) => s.quitarUna)
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
@@ -58,6 +60,16 @@ export function Ofrendas({ partida, ahora }: { partida: Partida; ahora: Date }) 
           {UI.ofrendas.editar}
         </button>
       </div>
+
+      {/* El huevo está listo: la invitación se queda hasta que vas a verlo (el último toque es tuyo). */}
+      {estadoDelMes(partida, ahora) === 'naciendo' && (
+        <button type="button" onClick={onIrACasa}
+          className="animate-entrar mt-4 flex min-h-[64px] w-full items-center gap-3 rounded-3xl bg-ambar px-4 py-3 text-left text-tinta shadow-md active:scale-[0.99]">
+          <img src={rutaArte(`huevo/${mesActual(partida).companero}/agrietado`)} alt="" className="anim-inquieto h-11 w-11 shrink-0 object-contain" draggable={false} />
+          <span className="flex-1 text-[16px] font-bold">{UI.arranque.algoSeMueve}</span>
+          <span className="shrink-0 rounded-full bg-tinta/10 px-3 py-1.5 text-[14px] font-bold">{UI.arranque.irAVer} ›</span>
+        </button>
+      )}
 
       <div className="mt-4 overflow-hidden rounded-3xl bg-tarjeta shadow-sm">
         {mias.length === 0 && <p className="px-4 py-5 text-[15px] text-texto-3">{UI.ofrendas.vacia}</p>}
