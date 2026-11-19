@@ -10,7 +10,7 @@ const base = () => crearPartida('nox', en('2026-01-05', 8), ['pasos', 'leer'])
 describe('hazañas', () => {
   it('al empezar: las elegidas, o las iniciales si no se elige ninguna', () => {
     expect(misHazanas(base()).map((a) => a.id)).toEqual(['pasos', 'leer'])
-    expect(misHazanas(crearPartida('nox', en('2026-01-05'))).map((a) => a.id)).toEqual(['pasos', 'leer', 'diario', 'padres'])
+    expect(misHazanas(crearPartida('nox', en('2026-01-05'))).map((a) => a.id)).toEqual(['pasos', 'leer', 'padres'])
   })
 
   it('cada mañana empiezan sin tachar (hecha = hay ofrenda hoy)', () => {

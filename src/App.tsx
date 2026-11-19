@@ -64,7 +64,7 @@ export default function App() {
       onVolver={conBarrio ? undefined : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
-  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} />
+  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => { irA('inicio'); if (conBarrio) setCasa(ultimo) }} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} />
 

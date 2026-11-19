@@ -83,7 +83,7 @@ export const ACCIONES: HazanaCatalogo[] = [
 ]
 
 /** Las que vienen marcadas al empezar (se pueden cambiar). */
-export const HAZANAS_INICIALES = ['pasos', 'leer', 'padres', 'diario']
+export const HAZANAS_INICIALES = ['pasos', 'leer', 'padres']
 
 /** Equivalencias de las acciones antiguas (genéricas) con las hazañas nuevas, para las partidas de antes. */
 export const EQUIVALENCIAS_ANTIGUAS: Record<string, string> = {

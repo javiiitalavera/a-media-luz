@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { curiosidadesDeHistorias, curiosidadesTenidas, sorpresa } from './curiosidades'
+import { curiosidadesDeHistorias, curiosidadesTenidas, resolverTravesura, sorpresa, travesuraPendiente } from './curiosidades'
 import { hayAlbumNuevo, verAlbum } from './avisos'
 import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
@@ -35,5 +35,15 @@ describe('curiosidades', () => {
     expect(hayAlbumNuevo(p)).toBe(true)
     p = verAlbum(p, en('2026-01-09', 13))
     expect(hayAlbumNuevo(p)).toBe(false)
+  })
+
+  it('la primera travesura de Nox: la piña espera, y al decidir pasa a tus Curiosidades', () => {
+    let p = barrio([])
+    expect(travesuraPendiente(p, 'nox')).toBe(true)
+    expect(travesuraPendiente(p, 'tuerca')).toBe(false)
+    p = resolverTravesura(p, 'aqui', en('2026-01-07'))
+    expect(travesuraPendiente(p, 'nox')).toBe(false)
+    expect(p.vistos?.pina).toBe('aqui')
+    expect(curiosidadesTenidas(p).map((x) => x.c.id)).toEqual(['pina'])
   })
 })
