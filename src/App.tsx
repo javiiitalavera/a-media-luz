@@ -72,7 +72,7 @@ export default function App() {
 
   return (
     <>
-      <div key={`${pestana}-${verBarrio}-${casa}`} className="animate-aparecer">{pantalla}</div>
+      <div key={`${pestana}-${verBarrio}-${casa}`} className={pestana === 'inicio' ? undefined : 'animate-aparecer'}>{pantalla}</div>
       <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
       {sobre && <Novedades ahora={ahora} onIr={irALugar} onDecidir={(c) => { irALugar(c); setAbrirDecision(true) }} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />

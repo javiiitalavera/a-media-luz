@@ -151,7 +151,6 @@ body {
 
 /* La cámara sigue la puerta. Se recorta al ancho del bosque; la navegación permanece fija. */
 :root[data-transicion] .escena-vecindario { view-transition-name: bosque; }
-:root[data-transicion] .animate-aparecer { animation: none; }
 ::view-transition-group(bosque) { overflow: clip; }
 ::view-transition-group(navegacion) { z-index: 1; }
 ::view-transition-old(bosque), ::view-transition-new(bosque) {
