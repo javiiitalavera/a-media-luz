@@ -80,21 +80,9 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
 
       <div className="mt-4 overflow-hidden rounded-3xl bg-tarjeta shadow-sm">
         {mias.length === 0 && <p className="px-4 py-5 text-[15px] text-texto-3">{UI.ofrendas.vacia}</p>}
-        {ORDEN_AREAS.map((area) => {
-          const lista = mias.filter((a) => a.area === area)
-          if (!lista.length) return null
-          return (
-            <section key={area} aria-labelledby={`retos-${area}`} className="border-borde/60 [&+section]:border-t">
-              <h2 id={`retos-${area}`} className="flex items-center gap-2 bg-hundido/35 px-4 py-2 text-[13px] font-bold text-texto">
-                <IconoArea area={area} pequeno />
-                {AREAS[area].nombre} <span className="font-normal text-texto-3">· {COMPANEROS[AREAS[area].companero].nombre}</span>
-              </h2>
-              <ul className="divide-y divide-borde/60">
-                {lista.map((a) => <Fila key={a.id} a={a} hecha={hechaHoy(partida, a.id, ahora)} texto={textoHazana(a, diaMalo)} onToque={() => marcar(a)} agrupada />)}
-              </ul>
-            </section>
-          )
-        })}
+        <ul className="divide-y divide-borde/60">
+          {mias.map((a) => <Fila key={a.id} a={a} hecha={hechaHoy(partida, a.id, ahora)} texto={textoHazana(a, diaMalo)} onToque={() => marcar(a)} />)}
+        </ul>
         <div className="flex items-center justify-between gap-2 border-t border-borde/60 px-4 py-2.5">
           <span className="text-[14px] text-texto-3">{UI.ofrendas.hechas(hechas, mias.length)}</span>
           <button type="button" onClick={() => setHoja('algo')} className="min-h-11 rounded-full border-2 border-borde px-4 text-[15px] font-semibold text-texto-2">
@@ -133,19 +121,19 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
 }
 
 /** Una hazaña: icono de su área, texto (tachado si está hecha), de quién es y el círculo. */
-function Fila({ a, hecha, texto, onToque, agrupada }: { a: Accion; hecha: boolean; texto: string; onToque: () => void; agrupada?: boolean }) {
+function Fila({ a, hecha, texto, onToque }: { a: Accion; hecha: boolean; texto: string; onToque: () => void }) {
   const area = AREAS[a.area]
   return (
     <li>
       <button type="button" onClick={onToque} aria-pressed={hecha} aria-label={hecha ? UI.ofrendas.desmarcar(texto) : UI.ofrendas.marcar(texto)}
-        className={`flex w-full items-center gap-3 px-4 py-2.5 text-left active:bg-hundido/60 ${agrupada ? 'min-h-12' : 'min-h-16'}`}>
-        {!agrupada && <IconoArea area={a.area} />}
+        className="flex min-h-[64px] w-full items-center gap-3 px-4 py-2.5 text-left active:bg-hundido/60">
+        <IconoArea area={a.area} />
         <span className="min-w-0 flex-1">
           <span className={`relative inline-block text-[16px] leading-snug font-semibold transition-colors ${hecha ? 'text-texto-3' : 'text-texto'}`}>
             {texto}
             <span aria-hidden className={`tachon absolute top-1/2 left-0 h-[2px] rounded-full bg-texto-3 ${hecha ? 'tachon-si' : ''}`} />
           </span>
-          {!agrupada && <span className="block text-[13px] text-texto-3">{COMPANEROS[area.companero].nombre} · {area.nombre}</span>}
+          <span className="block text-[13px] text-texto-3">{COMPANEROS[area.companero].nombre} · {area.nombre}</span>
         </span>
         <Circulo hecha={hecha} />
       </button>
