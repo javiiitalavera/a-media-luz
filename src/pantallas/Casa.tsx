@@ -16,7 +16,7 @@ import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeH
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
 import { Materiales } from '../componentes/Bolsa'
-import { GREGORIO_EN_NOX, VISITA } from '../contenido/casa'
+import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
@@ -304,13 +304,13 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
           </div>
         ))}
 
-        {deVisita && VISITA[deVisita] && (
+        {deVisita && sitioVisita(DUENO, deVisita) && (() => { const sv = sitioVisita(DUENO, deVisita)!; return (
           <button type="button" aria-label={UI.casa.deVisita(COMPANEROS[deVisita].nombre)}
             onClick={(e) => { e.stopPropagation(); const l = FRASES_VISITA[deVisita] ?? []; if (l.length) globoEn(e, `${COMPANEROS[deVisita].nombre}: «${l[toquesSit % l.length]}»`); setToquesSit((n) => n + 1) }}
-            className="absolute z-10" style={{ left: `${VISITA[deVisita]!.x}%`, top: `${VISITA[deVisita]!.y}%`, width: `${VISITA[deVisita]!.ancho}%`, transform: 'translate(-50%, -100%)' }}>
+            className="absolute z-10" style={{ left: `${sv.x}%`, top: `${sv.y}%`, width: `${sv.ancho}%`, transform: 'translate(-50%, -100%)' }}>
             <img src={rutaCompanero(deVisita, progreso(partida, deVisita, ahora).etapa, 'base')} alt="" draggable={false} className="anim-respirar block w-full" />
           </button>
-        )}
+        ) })()}
         {otroHuevo && (
           <button type="button" aria-label={UI.casa.huevoEnPuerta} onClick={(e) => { e.stopPropagation(); setPreguntaHuevo(true) }}
             className="absolute z-10" style={{ left: '81%', top: '71%', width: '12%', transform: 'translate(-50%, -100%)' }}>

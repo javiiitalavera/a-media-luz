@@ -249,6 +249,7 @@ body {
 }
 .sombra-vecino[data-vecino='tofu'] { --sombra-pies: 1%; --sombra-ancho: 81%; --sombra-suelo: #603b2b89; }
 .sombra-vecino[data-vecino='tuerca'] { --sombra-pies: 1%; --sombra-ancho: 76%; --sombra-suelo: #40334486; }
+.sombra-vecino[data-vecino='bruma'] { --sombra-pies: -5%; --sombra-ancho: 72%; --sombra-suelo: #4d4a8a45; animation: sombra-flotar 4.8s ease-in-out infinite; }
 .sombra-vecino[data-vecino='nox'] { --sombra-x: 57%; --sombra-ancho: 65%; --sombra-suelo: #4b452b82; }
 .tofu-a-contraluz { filter: drop-shadow(-1.5px -1px 1px #ffd89b9e); }
 .luz-hoguera { animation: reflejo-hoguera 4.6s ease-in-out infinite; }
@@ -258,6 +259,14 @@ body {
   58% { opacity: .77; }
   71% { opacity: .91; }
 }
+
+/* Bruma flota; al tocarla se esponja. La sombra en el agua se encoge cuando sube. */
+@keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3.5%); } }
+.anim-flotar { animation: flotar 4.8s ease-in-out infinite; }
+[data-dormido].anim-flotar { animation-duration: 8s; }
+@keyframes esponjar { 0% { transform: scale(1); } 30% { transform: scale(1.09, 0.95) translateY(-2%); } 55% { transform: scale(0.96, 1.05) translateY(-4%); } 80% { transform: scale(1.02, 0.99) translateY(-1%); } 100% { transform: scale(1); } }
+.anim-esponjar { animation: esponjar 760ms ease-out, flotar 4.8s 760ms ease-in-out infinite; transform-origin: 50% 70%; }
+@keyframes sombra-flotar { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(0.88); opacity: .75; } }
 
 @keyframes gag-quieto { from, to { opacity: 1; } }
 
@@ -271,7 +280,7 @@ body {
   .anim-asoma { animation: gag-quieto 4s linear both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
-  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
+  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
 
 /* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */

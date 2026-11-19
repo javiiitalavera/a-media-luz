@@ -39,6 +39,18 @@ export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
     ],
     vecino: ['Brote con opiniones', 'Rama joven, cara seria', 'Árbol de cabecera'],
   },
+  bruma: {
+    especie: 'Nube de estanque',
+    historia: 'Se desprendió de una tormenta que se lo tomaba todo demasiado a pecho. Desde entonces flota a media altura, que es donde mejor se oye todo. Te entiende antes de que hables, lo cual es un consuelo y también un problema.',
+    necesita: 'Vive de tu Calma: dormir, parar, salir sin pantalla, respirar. Con eso junta rocío para su estanque y crece. Si no paras, se deshilacha. No te lo echará en cara. Te lo echará en niebla.',
+    despedida: 'Hola. Ya sé lo que vas a decir.',
+    cierre: [
+      'Sigo siendo pequeña. Las nubes pequeñas también tapan el sol. Un rato.',
+      'He crecido. Me siento más ligera. Será la humedad.',
+      'Adulta. He visto pasar muchas cosas por este estanque. Tú has sido de las buenas. Casi siempre.',
+    ],
+    vecino: ['Nubecilla con ojeras', 'Niebla con criterio', 'Borrasca serena'],
+  },
   tuerca: {
     especie: 'Robot de taller',
     historia: 'Lo montaron con piezas sobrantes y un engranaje que no encajaba en ningún sitio, así que se lo pusieron en la cabeza. Desde entonces ordena todo lo que toca, menos sus sentimientos, que tiene etiquetados como «VARIOS».',

@@ -16,6 +16,7 @@ export interface Curiosidad {
 
 const c = (id: string) => `/arte/curiosidades/${id}.webp`
 const h = (id: string) => `/arte/huellas/${id}.webp`
+const b = (id: string) => `/arte/casa/bruma/objetos/${id}.webp`
 
 export const CURIOSIDADES: Curiosidad[] = [
   // Nox
@@ -38,4 +39,8 @@ export const CURIOSIDADES: Curiosidad[] = [
   { id: 'libro-quemado', vecino: 'tofu', nombre: 'Libro chamuscado', arte: h('libro-quemado'), historia: 'prestamo', texto: '«Paciencia». Lo que queda de ella. Tofu dice que ahora tiene más carácter.' },
   { id: 'lupa', vecino: 'tofu', nombre: 'Lupa de Tuerca', arte: h('lupa'), historia: 'planta', texto: 'Se la dejó en casa de Tofu durante el interrogatorio. Huele a planta.' },
   { id: 'archivador', vecino: 'tofu', nombre: 'Archivador «Fórmulas»', arte: h('archivador'), historia: 'pizarra', texto: 'Dentro, la fórmula versión 1. Derogada. Archivada. Intacta.' },
+  // Bruma (por ahora solo las que dejan sus historias)
+  { id: 'frasco', vecino: 'bruma', nombre: 'Frasco de niebla', arte: b('frasco'), historia: 'frasco', texto: 'Vacío. La etiqueta dice «Muestra 1. VARIOS». Tuerca jura que no lo abre por las noches.' },
+  { id: 'paraguas', vecino: 'bruma', nombre: 'Paraguas de interior', arte: b('paraguas'), historia: 'hamaca', texto: 'Tuerca lo abrió en el taller por si Bruma lloraba. Sigue abierto. Por si acaso.' },
+  { id: 'barquito', vecino: 'bruma', nombre: 'Barquito de papel', arte: b('barquito'), historia: 'barquitos', texto: 'Dentro pone «Sí». Tardaron tres horas en escribirlo. Tofu dice que no es suyo.' },
 ]

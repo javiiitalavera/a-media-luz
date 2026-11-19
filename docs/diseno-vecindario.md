@@ -185,6 +185,20 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
   - *La planta* (Tofu y Tuerca): la planta se traga a Gregorio dos días, Tuerca la interroga con una lupa y lo devuelve limpio.
 - **Micros:** Tofu atascado en una página, la planta que «saluda», Tuerca corrigiendo la pizarra, Tofu «meditando», Tofu mirando la hoguera de Nox hasta ponerlo nervioso.
 
+### Bruma, la cuarta vecina (19/11/2026, rama `dev/bruma`)
+- **Llega** cuando Tofu es joven y tiene un proyecto (huevo en la puerta del invernadero). Vive en el estanque de niebla. **Falta su casita del mapa**: hasta que llegue, su huevo no aparece (la app no deja huecos sin arte).
+- **Es una nube melancólica** que dice verdades incómodas con ternura. Frases reescritas para el juego nuevo; ficha: «Nube de estanque».
+- **Gesto:** flota arriba y abajo (más despacio dormida) y su sombra en el agua se encoge cuando sube; al tocarla se esponja.
+- **Proyectos:** tetera (3 rocío; abre «la infusión»), campanillas de viento (4 rocío + 2 tornillos; abren «la muestra») y hamaca de nenúfar (5 rocío + 2 ascuas; abre «la hamaca»).
+- **Historias:**
+  - *Los barquitos* (Bruma y Tofu, sin construir nada): Bruma echa al arroyo un barquito de madrugada, Tofu contesta «Sí» tres horas después y acaba todo el barrio mandándose barquitos. Queda uno en el arroyo.
+  - *La infusión* (con la tetera): las infusiones de Bruma hacen confesar (Tuerca, la carpeta SENTIMIENTOS; Nox, los patos); tú decides quién se toma la última taza (Tofu o la propia Bruma).
+  - *La muestra* (con las campanillas): Tuerca denuncia el ruido, embotella niebla de Bruma como prueba y acaba quedándose el frasco vacío. Queda el frasco en el taller.
+  - *La hamaca* (con la hamaca): Nox la okupa, Bruma le llueve encima, Tuerca abre un paraguas en el taller; tú decides si por turnos o que Nox se haga la suya. Queda el paraguas en el taller.
+- **Visitas:** en el estanque no hay suelo, así que quien visita a Bruma se sienta en el embarcadero.
+- **Micros:** Bruma mirando su reflejo, deshilachada al amanecer, té para dos sin invitados, campanillas sin viento, Nox esperando la hamaca, niebla colándose en el taller de Tuerca.
+- **Curiosidades** (al terminar sus historias): barquito de papel, frasco de niebla y paraguas de interior. Las de sorpresa llegarán con una lámina propia.
+
 ### Ambiente (18/11/2026, rama `dev/ambiente`)
 - **Entrada:** al abrir la app, nubes (hechas por código, color crema de día y ciruela de noche) tapan la pantalla y se apartan hacia los lados mientras se disipan (unos 2 s). Solo al abrir la app (cada vez).
 - **Paso entre barrio y casas** (decidido por Javi: distinto de la entrada): al entrar, el barrio se acerca a la casita y la casa sale de ella; al volver, la casa se encoge hacia su casita y el barrio se aleja. Unos 0,75 s; la barra de abajo no se mueve. Transiciones de vista del navegador (iOS 18+); sin ellas, cambio directo.

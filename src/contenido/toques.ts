@@ -27,6 +27,10 @@ export const TOQUES_OBJETO: Record<string, string[]> = {
   libros: ['La biblioteca de Tofu. Presta libros. Con condiciones.', 'Los ha leído todos. Dice que ninguno le ha cambiado. El brote dice lo contrario.'],
   pizarra: ['Una fórmula. Nadie sabe qué calcula. Funciona.', 'Tofu dice que la próxima versión resolverá algo. No dice qué.'],
   maceta: ['La planta de Tofu. Come poco. Casi siempre.', 'Te está mirando. Tofu dice que es su forma de saludar.', 'No le acerques los dedos. Es un consejo general.'],
+  // Bruma
+  tetera: ['La tetera de Bruma. Lo que sirve relaja. Y suelta la lengua.', 'Siempre hay una taza de más. Por si viene alguien. O por si viene ella misma.'],
+  campanillas: ['Campanillas de viento. Suenan aunque no haga viento. Bruma no da explicaciones.', 'Tuerca ha medido los decibelios. Bruma ha medido a Tuerca.'],
+  hamaca: ['Una hamaca de nenúfar. Bruma la usa poco. Nox, demasiado.', 'Se balancea sola. Bruma dice que es el agua. A veces es Nox, escondido.'],
 }
 
 /** Gregorio de visita en casa de Nox (es la misma aspiradora, con otra vida). */
@@ -36,5 +40,5 @@ export const TOQUES_GREGORIO_EN_NOX = ['Gregorio, en casa de Nox. Come migas. Es
 export const SONIDO_OBJETO: Record<string, 'fuego' | 'metal' | 'hoja'> = {
   hoguera: 'fuego', horno: 'fuego', 'farol-luna': 'fuego', farolillo: 'fuego',
   caja: 'metal', aspiradora: 'metal', flexo: 'metal', cajonera: 'metal', 'estanteria-tarros': 'metal', reloj: 'metal', medalla: 'metal', tuerquita: 'metal', tablon: 'metal',
-  libros: 'hoja', pizarra: 'hoja', maceta: 'hoja', estanteria: 'hoja', seta: 'hoja', cojin: 'hoja', bufanda: 'hoja',
+  libros: 'hoja', pizarra: 'hoja', maceta: 'hoja', hamaca: 'hoja', campanillas: 'metal', estanteria: 'hoja', seta: 'hoja', cojin: 'hoja', bufanda: 'hoja',
 }
