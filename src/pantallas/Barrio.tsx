@@ -4,7 +4,8 @@
 // los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId, type Momento } from '../contenido'
+import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
+import { FRASES_PLAZA, VISITA_PLAZA } from '../contenido/barrio'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
@@ -28,14 +29,6 @@ type Punto = { x: number; y: number }
 const PUERTAS: Partial<Record<CompaneroId, Punto>> = {
   nox: { x: 52, y: 62 }, tuerca: { x: 41, y: 66 },
   tofu: { x: 41, y: 65 }, bruma: { x: 49, y: 63 },
-}
-const FRASES_PLAZA = {
-  nox: 'Nox: «Estoy vigilando el puente. El banco es por motivos de seguridad».',
-  tofu: 'Tofu: «He venido a leer. El brote ha venido a mirar».',
-  bruma: 'Bruma: «He dejado un poco de niebla en el agua. Se seca sola».',
-}
-const VISITA_PLAZA: Partial<Record<Momento, keyof typeof FRASES_PLAZA>> = {
-  amanecer: 'bruma', mediodia: 'tofu', atardecer: 'nox',
 }
 const juntoAlSuelo = (p: Punto & { ancho: number }): CSSProperties =>
   ({ left: `${p.x}%`, top: `${p.y}%`, width: `${p.ancho}%`, translate: '-50% -100%' })
@@ -157,7 +150,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
           <button key={visita} type="button" aria-label={UI.barrio.enLaPlaza(COMPANEROS[visita].nombre)}
             className="vecino-en-plaza absolute min-h-11 min-w-11"
             style={juntoAlSuelo(PLAZA.encuentro)}
-            onClick={(e) => { sfx.personaje(visita); globoEn(e, FRASES_PLAZA[visita]) }}>
+            onClick={(e) => { sfx.personaje(visita); globoEn(e, `${COMPANEROS[visita].nombre}: «${FRASES_PLAZA[visita]}»`) }}>
             <img src={rutaCompanero(visita, progreso(partida, visita, ahora).etapa, 'base')} alt="" draggable={false} className="block w-full" />
           </button>
         )}
@@ -192,7 +185,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         })}
       </div>
 
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+10px))]">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <h1 className="sr-only">{UI.barrio.titulo}</h1>
         {/* A la izquierda, volver a la casa en la que estabas (flecha); el sobre, a la derecha. */}
         <span className="pointer-events-auto">
@@ -208,7 +201,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
       </header>
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex justify-end px-3">
-        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} compacto />
+        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} />
       </div>
 
       {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onConstruido={setProyectoNuevo} onCerrar={() => setHoja(false)} />}

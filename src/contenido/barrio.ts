@@ -1,3 +1,5 @@
+import type { CompaneroId, Momento } from './tipos'
+
 // El mapa del barrio (public/arte/barrio/mapa.webp, 1024 × 1536). Posiciones en % del mapa, localizadas
 // automáticamente en el dibujo.
 
@@ -26,3 +28,11 @@ export const PLAZA = {
 export const LUCES_BARRIO = [
   { x: 33, y: 83.6 }, { x: 58.6, y: 83.6 }, { x: 21, y: 11 }, { x: 13, y: 23.5 }, { x: 77.3, y: 41.4 }, { x: 81, y: 76 },
 ]
+
+/** Quién pasa por la plaza según el momento del día (si ya vive en el barrio) y lo que dice al tocarlo. */
+export const VISITA_PLAZA: Partial<Record<Momento, CompaneroId>> = { amanecer: 'bruma', mediodia: 'tofu', atardecer: 'nox' }
+export const FRASES_PLAZA: Partial<Record<CompaneroId, string>> = {
+  nox: 'Estoy vigilando el puente. El banco es por motivos de seguridad.',
+  tofu: 'He venido a leer. El brote ha venido a mirar.',
+  bruma: 'He dejado un poco de niebla en el agua. Se seca sola.',
+}
