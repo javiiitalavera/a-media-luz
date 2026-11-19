@@ -32,7 +32,7 @@ interface Juego {
   quitarUna: (accionId: string) => void
   ponerDiaMalo: (v: boolean) => void
   /** Tocar a un compañero en el bosque: devuelve lo que dice. */
-  tocar: (c: CompaneroId, soloSaludo?: boolean) => Frase | null
+  tocar: (c: CompaneroId, sinQuejas?: boolean) => Frase | null
   /** Construye un objeto en la casa; devuelve lo que dice el compañero (o null si no se pudo). */
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
   /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
@@ -90,10 +90,10 @@ export const useJuego = create<Juego>()(
         const p = get().partida
         if (p) set({ partida: cambiarDiaMalo(p, v, ahora()) })
       },
-      tocar: (c, soloSaludo) => {
+      tocar: (c, sinQuejas) => {
         const p = get().partida
         if (!p) return null
-        const r = fraseAlTocar(p, c, ahora(), azarReal, soloSaludo)
+        const r = fraseAlTocar(p, c, ahora(), azarReal, sinQuejas)
         set({ partida: { ...p, frasesRecientes: r.recientes } })
         return r.frase
       },

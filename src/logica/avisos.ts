@@ -2,12 +2,14 @@
 // donde ha pasado algo y tú decides cuándo mirarlo. Todo se guarda en la partida.
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import { GAGS, type Gag } from '../contenido/gags'
-import { construido } from './casa'
+import { construido, proyectosDe, proyectosVisibles, puedeConstruir } from './casa'
 import type { Lugar } from '../contenido/situaciones'
 import type { Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre } from './fechas'
 import { misHazanas } from './hazanas'
-import { nacido, nacidos } from './etapas'
+import { crecioSinVer, nacido, nacidos, progreso } from './etapas'
+import { estadoDelMes } from './meses'
+import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
 import { decisionPendiente, dondeGregorio, huellasEn, microDeHoy } from './situaciones'
 
@@ -32,9 +34,31 @@ export function visitarLugar(p: Partida, lugar: Lugar): Partida {
     ? { ...p, noticias: n.map((x) => (x.lugar === lugar ? { ...x, leida: true, visitada: true } : x)) } : p
 }
 
-/** «!» sobre una casita: ha pasado algo allí o te espera una decisión. */
-export const avisoEnCasa = (p: Partida, c: CompaneroId) =>
-  (p.noticias ?? []).some((n) => n.lugar === c && !n.visitada) || Boolean(decisionPendiente(p, c))
+/** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
+export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
+  if (!nacido(p, c, ahora)) return false
+  return crecioSinVer(p, c, progreso(p, c, ahora).etapa) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
+}
+
+/** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
+export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
+  (p.noticias ?? []).some((n) => n.lugar === c && !n.visitada) || Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
+
+/** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
+export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
+  estadoDelMes(p, ahora) === 'naciendo' || noticiasSinLeer(p) > 0 || decisionesPendientes(p, ahora).length > 0 ||
+  nacidos(p, ahora).some((c) => crecioSinVer(p, c, progreso(p, c, ahora).etapa))
+
+/** Lo que enseña la ficha y puede cambiar: el siguiente proyecto y las historias en las que sale. */
+export function firmaFicha(p: Partida, c: CompaneroId): string {
+  const siguiente = proyectosDe(c).find((o) => !construido(p, o.id))?.id ?? ''
+  const historias = SITUACIONES.filter((s) => s.requiere.vecinos.includes(c) && p.situaciones?.[s.id]).map((s) => s.id)
+  return [siguiente, ...historias].join('|')
+}
+/** Punto en la «i»: la ficha ha cambiado desde la última vez que la abriste. */
+export const fichaNueva = (p: Partida, c: CompaneroId) => vistos(p).fichas?.[c] !== firmaFicha(p, c)
+export const verFicha = (p: Partida, c: CompaneroId): Partida =>
+  fichaNueva(p, c) ? { ...p, vistos: { ...vistos(p), fichas: { ...vistos(p).fichas, [c]: firmaFicha(p, c) } } } : p
 
 /** La pequeña cosa de hoy en una casa, si aún no la has mirado. */
 export function microSinVer(p: Partida, c: CompaneroId, ahora: Date) {
