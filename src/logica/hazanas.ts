@@ -70,7 +70,8 @@ export const textoHazana = (a: Accion, diaMalo: boolean) => (diaMalo && a.minima
  * propias ni el historial (las ofrendas pasadas se reapuntan a la hazaña nueva).
  */
 export function migrarHazanas(p: Partida): Partida {
-  if (p.hazanas === 2) return p
+  if (p.hazanas === 3) return p
+  if (p.hazanas === 2) return alinearAreas(p)
   const nuevoId = (id: string) => EQUIVALENCIAS_ANTIGUAS[id] ?? id
   const acciones: Accion[] = []
   for (const a of p.acciones) {
@@ -79,7 +80,17 @@ export function migrarHazanas(p: Partida): Partida {
     const c = ACCIONES.find((x) => x.id === id)
     acciones.push(c ? limpia(c) : a)
   }
-  return { ...p, hazanas: 2, acciones, ofrendas: p.ofrendas.map((o) => ({ ...o, accionId: nuevoId(o.accionId) })) }
+  return alinearAreas({ ...p, acciones, ofrendas: p.ofrendas.map((o) => ({ ...o, accionId: nuevoId(o.accionId) })) })
+}
+
+/** v3 (19/11/2026): los retos del catálogo que cambiaron de área (dormir → Calma, diario → Mente, jugar
+ *  fuera → Vínculos) se pasan a su área nueva. Lo ya hecho sigue contando en el área en que se hizo. */
+function alinearAreas(p: Partida): Partida {
+  const acciones = p.acciones.map((a) => {
+    const c = ACCIONES.find((x) => x.id === a.id)
+    return c && c.area !== a.area ? { ...a, area: c.area } : a
+  })
+  return { ...p, hazanas: 3, acciones }
 }
 
 export const esPropia = (a: Accion) => a.id.startsWith('propia-')

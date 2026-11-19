@@ -288,3 +288,7 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Las respuestas se cambian** desde Retos › Sugerencias o Ajustes › «Revisar y ver sugerencias», y se añaden las nuevas sugerencias con un toque.
 - **Retos propios:** se puede cambiar su área y borrarlos de verdad (con confirmación); los que quitaste o apuntaste en «Algo más» salen en «Otros retos tuyos» para volver a tu lista o borrarlos. Lo hecho sigue contando.
 - **Evolucionan sin crecer:** las tres etapas se ven del mismo tamaño (ancho de cada etapa ajustado para que el cuerpo mida igual que el del cachorro). Arte nuevo de ChatGPT con cuerpo de bebé: Nox, Tuerca y Tofu integrados. Tuerca joven y adulto, con dos engranajes, no giran el engranaje: parpadea la luz de su antena. El brote de Tofu se corta por cara (nace a distinta altura en cada expresión); Tofu adulto, con la copa enredada en el musgo, se queda quieto y al tocarlo se le caen tres hojas.
+
+### Áreas de algunos retos (19/11/2026, rama `dev/areas`, decidido por Javi)
+- **Dormir 7 horas → Calma** (Bruma), **Escribir en mi diario → Mente** (Tofu), **Jugar fuera → Vínculos** (Madeja), cada uno con reacciones nuevas en la voz de su vecino. Verdura y agua se quedan en Energía (cuerpo: moverse, comer, beber).
+- Las partidas guardadas pasan sus retos a la nueva área al abrir (versión 3); lo ya hecho cuenta en el área en que se hizo.

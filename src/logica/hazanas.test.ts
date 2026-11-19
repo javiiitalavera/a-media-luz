@@ -84,4 +84,15 @@ describe('hazañas', () => {
     expect(borrarHazana(p, 'pasos').acciones.some((a) => a.id === 'pasos')).toBe(true) // solo los propios
     expect(p.ofrendas).toHaveLength(1)
   })
+
+  it('partidas de antes del cambio de áreas: dormir pasa a Calma y el diario a Mente', () => {
+    const vieja = { ...base(), hazanas: 2 as const, acciones: [
+      { id: 'dormir', area: 'cuerpo' as const, nombre: 'Dormir 8 horas' },
+      { id: 'diario', area: 'calma' as const, nombre: 'Escribir en mi diario' },
+      { id: 'propia-z', area: 'cuerpo' as const, nombre: 'Nadar' },
+    ] }
+    const p = migrarHazanas(vieja)
+    expect(p.acciones.map((a) => [a.id, a.area, a.nombre])).toEqual([['dormir', 'calma', 'Dormir 8 horas'], ['diario', 'mente', 'Escribir en mi diario'], ['propia-z', 'cuerpo', 'Nadar']])
+    expect(p.hazanas).toBe(3)
+  })
 })

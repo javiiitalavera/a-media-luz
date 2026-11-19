@@ -40,9 +40,9 @@ export interface Material {
 
 /** Cada ofrenda que cuenta (hasta 3 al día por área) da 1 material de su área. */
 export const MATERIALES: Record<AreaId, Material> = {
-  cuerpo: { area: 'cuerpo', nombre: 'Ascuas', singular: 'ascua', plural: 'ascuas', color: '#f08a3c', explicacion: 'Ascuas: salen de moverte, dormir y comer como una persona. Nox jura que no se las come.' },
+  cuerpo: { area: 'cuerpo', nombre: 'Ascuas', singular: 'ascua', plural: 'ascuas', color: '#f08a3c', explicacion: 'Ascuas: salen de moverte y comer como una persona. Nox jura que no se las come.' },
   mente: { area: 'mente', nombre: 'Semillas', singular: 'semilla', plural: 'semillas', color: '#8fae6b', explicacion: 'Semillas: de leer, aprender o crear algo. Tofu las planta. No dice qué sale.' },
-  calma: { area: 'calma', nombre: 'Rocío', singular: 'gota de rocío', plural: 'gotas de rocío', color: '#a99be0', explicacion: 'Rocío: de parar un rato sin pantallas. Se evapora si lo miras mucho. Es broma. Casi.' },
+  calma: { area: 'calma', nombre: 'Rocío', singular: 'gota de rocío', plural: 'gotas de rocío', color: '#a99be0', explicacion: 'Rocío: de dormir bien y parar un rato sin pantallas. Se evapora si lo miras mucho. Es broma. Casi.' },
   vinculos: { area: 'vinculos', nombre: 'Hilo', singular: 'hebra de hilo', plural: 'hebras de hilo', color: '#e8737a', explicacion: 'Hilo: de quedar, llamar o abrazar a alguien. Tuerca lo usa para atar expedientes.' },
   orden: { area: 'orden', nombre: 'Tornillos', singular: 'tornillo', plural: 'tornillos', color: '#7fa7b0', explicacion: 'Tornillos: de cerrar pendientes y poner orden. Tuerca los cuenta. Dos veces.' },
 }
