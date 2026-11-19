@@ -41,7 +41,7 @@ export interface Partida {
   /** Fotos del Álbum (hitos del barrio). */
   momentos?: MomentoAlbum[]
   /** Lo que ya has mirado (para apagar los avisos). */
-  vistos?: { pina?: 'guardada' | 'aqui'; album?: string; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[] }
+  vistos?: { gags?: Partial<Record<string, string>>; pina?: 'guardada' | 'aqui'; album?: string; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[] }
   /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */
   hazanas?: 2
   /** Novedades del barrio que aún no se han visto («Mientras no estabas…»). */

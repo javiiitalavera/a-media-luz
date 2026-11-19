@@ -20,7 +20,7 @@ export type TipoFrase =
   | 'fase3' // ha llegado un visitante
   | 'arreglo' // el rincón vuelve a estar bien
   | 'visitanteFuera' // el visitante se ha ido y ha devuelto lo robado
-  | 'llegada' // se despierta y se muda al bosque
+  | 'llegada' // se despierta y se muda al barrio
   | 'sorpresa' // encuentra un objeto para la colección
 
 type Frases = Partial<Record<Exclude<TipoFrase, 'saludo'>, string[]>> & { saludo: Record<Momento, string[]> }
@@ -39,12 +39,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
       'Mi cola acaba de subir un grado. No me mires así.',
       'Bien. Ahora haz como que no te ha costado.',
     ],
-    otraArea: ['No es lo mío, pero vale. El bosque lo agradece. Yo, moderadamente.', 'Ofrenda aceptada. La he guardado donde no la vea nadie.'],
+    otraArea: ['No es lo mío, pero vale. El barrio lo agradece. Yo, moderadamente.', 'Apuntado. Lo he guardado donde no lo vea nadie.'],
     tope: ['Ya está. Hoy no sumo más. No hay medalla por agotarse.', 'Tres por hoy. Lo demás es exhibicionismo.'],
     diaMalo: ['Día malo. Lo mínimo cuenta entero. Hasta yo tengo días de brasa.', 'Cinco minutos. Para hoy, es una gesta. No se lo digas a nadie.'],
-    fase1: ['Mi claro se está llenando de malas hierbas. Igual que tu agenda, sospecho.', 'Llevas días sin moverte. He empezado a hablar con los hongos.'],
+    fase1: ['Mi claro se está llenando de malas hierbas. Les he puesto nombre.', 'Llevo días sin moverme. He empezado a hablar con los hongos.'],
     fase2: ['He escondido tus zapatillas. No preguntes dónde. Hay una nota.', 'Te he dejado una nota: «Sigo vivo. Tú, a saber».'],
-    fase3: ['Ha venido un cuervo. Se ha llevado algo. Yo no he hecho nada, que conste.', 'Hay un pájaro negro en mi claro. Le gustan las cosas brillantes. Y tus cosas.'],
+    fase3: ['Ha venido un cuervo y se ha sentado en mi hoguera. Yo no le he invitado, que conste.', 'Hay un pájaro negro en mi claro. Me mira. Le miro. Nadie cede.'],
     arreglo: ['Ah, mira quién ha vuelto. Las malas hierbas te mandan saludos.', 'Claro despejado. Ni lo menciones. Bueno, menciónalo un poco.'],
     visitanteFuera: ['El cuervo se ha ido. Ha soltado lo tuyo al salir. Cobarde.'],
     llegada: ['Vale, ya estoy aquí. No hagas una fiesta. Bueno, una pequeña.'],
@@ -75,7 +75,7 @@ export const FRASES: Record<CompaneroId, Frases> = {
     otraArea: ['No es mi área. Lo anoto igual. Con indiferencia.', 'Aceptado. Sin comentarios. Bueno, uno: bien.'],
     tope: ['Suficiente por hoy. Más no suma. La cabeza también necesita no hacer nada.'],
     diaMalo: ['Día malo. Una página vale. Una frase vale. Tofu ha hablado.'],
-    fase1: ['El huerto se está llenando de musgo. Del malo. Ni lo sabía que había de malo.', 'El brote se ha doblado. No es tristeza. Es falta de riego. Tuyo.'],
+    fase1: ['El huerto se está llenando de musgo. Del malo. Ni lo sabía que había de malo.', 'El brote se ha doblado. No es tristeza. Es dramatismo.'],
     fase2: ['He decidido que no existes. Es una decisión firme. Temporal, pero firme.', 'Tofu no está disponible. Deje su mensaje después de nada.'],
     fase3: ['Hay una polilla enorme comiéndose la luz del huerto. Le he pedido que se vaya. No hablamos el mismo idioma.'],
     arreglo: ['Huerto limpio. Bien. Sigamos.', 'Has vuelto. Lo anoto sin emoción. (Con un poco de emoción.)'],
@@ -110,12 +110,12 @@ export const FRASES: Record<CompaneroId, Frases> = {
       noche: ['Es tarde para llamar a nadie. Pero no para pensar a quién llamarás mañana.', 'Si alguien duerme a tu lado, apaga esto y habla con él.'],
     },
     ofrenda: ['¡Ay, qué bonito! Ya me lo contarás todo.', 'Un hilo más. Con esto tejo media bufanda.', '¡Por fin noticias! Pensaba que te habías hecho ermitaño.', 'Eso se recuerda años. Lo sé yo, que lo recuerdo todo.'],
-    otraArea: ['No es lo mío, pero lo cuento por ahí igual. Que se sepa.', 'Muy bien, cariño. Se lo diré a todo el bosque.'],
+    otraArea: ['No es lo mío, pero lo cuento por ahí igual. Que se sepa.', 'Muy bien, cariño. Se lo diré a todo el barrio.'],
     tope: ['Tres en un día. Más sociable que yo, y eso es mucho decir. Descansa.'],
     diaMalo: ['Día malo. Un mensaje cuenta. Un «pienso en ti» cuenta. Con eso tejo.'],
-    fase1: ['El porche está lleno de telarañas. Y no son mías.', 'Llevas días sin hablar con nadie. Lo sé. Lo sé todo.'],
+    fase1: ['El porche está lleno de telarañas. Y no son mías.', 'El porche está muy callado. No me gusta el silencio: me invento cosas.'],
     fase2: ['Les he contado a los demás lo tuyo. Todo. Con detalles. Lo siento. No lo siento.', 'He estado cotilleando sobre ti. Por despecho. Por cariño. Las dos cosas.'],
-    fase3: ['Ha entrado un cuervo en el porche y se ha llevado algo. Encima, maleducado.'],
+    fase3: ['Ha entrado un cuervo en el porche. No ha saludado. Encima, maleducado.'],
     arreglo: ['¡Ya estás aquí! Siéntate, que te pongo un té y me cuentas qué me he perdido.', 'Porche barrido. Los cotilleos sobre ti, retirados. Casi todos.'],
     visitanteFuera: ['El cuervo se ha ido sin despedirse, pero ha devuelto lo tuyo. Algo es algo.'],
     llegada: ['¡Por fin te pillo! Me mudo. Ya he traído la tetera.'],
@@ -133,8 +133,8 @@ export const FRASES: Record<CompaneroId, Frases> = {
     tope: ['Tres por hoy. Ya está bien. Hasta yo necesito un poco de caos.'],
     diaMalo: ['Día malo. Un papel a la basura cuenta. Lo dice el reglamento. Lo he escrito yo.'],
     fase1: ['El taller está lleno de polvo. He clasificado el polvo. No ayuda.', 'Engranaje chirriando. Aviso sin importancia. Importantísimo.'],
-    fase2: ['He reetiquetado todo el bosque como «VARIOS». Por error. No ha sido por error.', 'Todo lo tuyo está ahora en cajas. Etiquetadas. Mal.'],
-    fase3: ['Un caracol se ha instalado en el taller. Se ha llevado una pieza. No sé cuál. Ese es el problema.'],
+    fase2: ['He reetiquetado todo el barrio como «VARIOS». Por error. No ha sido por error.', 'Todo lo tuyo está ahora en cajas. Etiquetadas. Mal.'],
+    fase3: ['Un caracol se ha instalado en el taller. Le he abierto un expediente. Se lo ha comido.'],
     arreglo: ['¡Engranaje en marcha! Rrrr. Clonc. Perdón, es la emoción.', 'Taller operativo. Te he quitado de la lista de «Desaparecidos».'],
     visitanteFuera: ['El caracol ha abandonado el taller. Ha devuelto la pieza. Estaba en «VARIOS».'],
     llegada: ['Atención. Procedo a mudarme. Paso dos: no sé qué va en el paso dos.'],

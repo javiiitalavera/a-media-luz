@@ -82,6 +82,12 @@ body {
 .anim-mecer { animation: mecer 2.6s ease-in-out infinite; transform-origin: 50% 95%; }
 @keyframes temblar { 0%, 100% { transform: rotate(0); } 15% { transform: rotate(-9deg); } 30% { transform: rotate(8deg); } 45% { transform: rotate(-6deg); } 60% { transform: rotate(5deg); } 75% { transform: rotate(-3deg); } }
 .anim-temblar { animation: temblar 0.6s ease-in-out both; transform-origin: 50% 95%; }
+/* Algo brilla (escena que se toca) y lo que asoma al tocarlo. */
+@keyframes destello { 0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.55; } 50% { transform: scale(1.1) rotate(25deg); opacity: 1; } }
+.anim-destello { animation: destello 1.6s ease-in-out infinite; }
+@keyframes asoma { 0% { opacity: 0; translate: 0 30%; } 15%, 80% { opacity: 1; translate: 0 0; } 100% { opacity: 0; translate: 0 20%; } }
+.anim-asoma { animation: asoma 4s ease-out both; }
+
 /* La brasa que cae de la cola de Nox sobre la piña (una vez). */
 @keyframes brasa { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } 70% { transform: translate(-6px, 34px); opacity: 1; } 100% { transform: translate(-6px, 38px) scale(0.3); opacity: 0; } }
 .anim-brasa { animation: brasa 1.4s ease-in 0.8s both; }
@@ -133,7 +139,7 @@ body {
   .anim-nube { animation: aparecer 0.6s ease-out reverse both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
-  .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
+  .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
 
 /* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */

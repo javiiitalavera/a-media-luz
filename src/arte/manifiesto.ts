@@ -37,6 +37,9 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
   'barrio/mapa': '/arte/barrio/mapa.webp',
   ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente', 'libro-quemado', 'archivador', 'lupa'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
+  // Huellas que reutilizan otros dibujos.
+  'huella/salchicha': '/arte/curiosidades/salchicha.webp',
+  'huella/libros': '/arte/casa/tofu/objetos/libros.webp',
   'casita/nox': '/arte/casitas/nox.webp',
   'casita/tuerca': '/arte/casitas/tuerca.webp',
   'casa/tofu/fondo': '/arte/casa/tofu/fondo.webp',

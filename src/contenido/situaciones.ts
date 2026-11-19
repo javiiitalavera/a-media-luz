@@ -303,7 +303,7 @@ export const SITUACIONES: Situacion[] = [
   },
 ]
 
-export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa'
+export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {
@@ -343,6 +343,11 @@ export const HUELLAS: Huella[] = [
     toque: '«Paciencia», capítulo 1. Del resto quedan cenizas.' },
   { id: 'libro-estante', situacion: 'prestamo', desde: 3, lugar: 'tofu', arte: 'libro-quemado', sitio: { x: 23, y: 36.3, ancho: 7 }, proporcion: 1.12,
     toque: 'Tofu lo ha devuelto a su sitio. Dice que ahora tiene más carácter.' },
+  // Lo que decidiste en «El préstamo» se queda a la vista.
+  { id: 'salchichas-estante', situacion: 'prestamo', desde: 3, decision: 'salchichas', lugar: 'tofu', arte: 'salchicha', sitio: { x: 13, y: 36.6, ancho: 7 }, proporcion: 1.32,
+    toque: 'Sección de embutidos de la biblioteca de Tofu. Clasificada por grosor.' },
+  { id: 'libro-leido', situacion: 'prestamo', desde: 3, decision: 'leer', lugar: 'nox', arte: 'libros', sitio: { x: 72, y: 56, ancho: 9 }, proporcion: 1.04,
+    toque: 'Los libros que Nox se leyó para pagar el préstamo. Uno era de cocina. Lo tiene abierto por las salsas.' },
   { id: 'archivador-formula', situacion: 'pizarra', desde: 1, lugar: 'tuerca', arte: 'archivador', sitio: { x: 28, y: 44.4, ancho: 8 }, proporcion: 1.06,
     toque: 'Archivador «VARIOS – Fórmulas». Dentro hay una pizarra pequeña. Entera.' },
   { id: 'lupa-planta', situacion: 'planta', desde: 2, hasta: 2, lugar: 'tofu', arte: 'lupa', sitio: { x: 35, y: 72, ancho: 8 }, proporcion: 1.03,

@@ -1,12 +1,15 @@
 // Avisos (decidido por Javi, 18/11/2026): en vez de que las cosas salgan solas, aparece un iconito
 // donde ha pasado algo y tú decides cuándo mirarlo. Todo se guarda en la partida.
-import type { CompaneroId } from '../contenido'
+import { COMPANEROS, type CompaneroId } from '../contenido'
+import { GAGS, type Gag } from '../contenido/gags'
+import { construido } from './casa'
 import type { Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { dia, diasEntre } from './fechas'
 import { misHazanas } from './hazanas'
+import { nacido, nacidos } from './etapas'
 import { curiosidadesTenidas } from './curiosidades'
-import { decisionPendiente, huellasEn, microDeHoy } from './situaciones'
+import { decisionPendiente, dondeGregorio, huellasEn, microDeHoy } from './situaciones'
 
 const vistos = (p: Partida) => p.vistos ?? {}
 
@@ -59,3 +62,30 @@ export function hayAlbumNuevo(p: Partida): boolean {
 }
 export const verAlbum = (p: Partida, ahora: Date): Partida =>
   hayAlbumNuevo(p) ? { ...p, vistos: { ...vistos(p), album: ahora.toISOString() } } : p
+
+/** Decisiones que te esperan (para el sobre): en qué casa y qué se pregunta. */
+export function decisionesPendientes(p: Partida, ahora: Date): { lugar: CompaneroId; pregunta: string }[] {
+  return nacidos(p, ahora).flatMap((c) => {
+    const d = decisionPendiente(p, c)
+    return d ? [{ lugar: c, pregunta: d.pregunta }] : []
+  })
+}
+
+/** La escena que se puede tocar hoy en un sitio (uno de cada tres días, si hay alguna posible y no la has visto). */
+export function gagDeHoy(p: Partida, lugar: CompaneroId | 'barrio', ahora: Date): Gag | null {
+  const hoy = dia(ahora)
+  if (vistos(p).gags?.[lugar] === hoy) return null
+  const n = semillaDe(`${hoy}|gag|${lugar}`)
+  if (n % 3) return null
+  const posibles = GAGS.filter((g) => g.lugar === lugar && g.requiere.every((r) =>
+    r === 'gregorio' ? dondeGregorio(p, ahora) === lugar : r in COMPANEROS ? nacido(p, r as CompaneroId, ahora) : construido(p, r)))
+  return posibles.length ? posibles[Math.floor(n / 3) % posibles.length] : null
+}
+export const verGag = (p: Partida, lugar: CompaneroId | 'barrio', ahora: Date): Partida =>
+  ({ ...p, vistos: { ...vistos(p), gags: { ...vistos(p).gags, [lugar]: dia(ahora) } } })
+
+function semillaDe(texto: string): number {
+  let h = 2166136261
+  for (const ch of texto) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
+  return Math.abs(h)
+}
