@@ -292,3 +292,7 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 ### Áreas de algunos retos (19/11/2026, rama `dev/areas`, decidido por Javi)
 - **Dormir 7 horas → Calma** (Bruma), **Escribir en mi diario → Mente** (Tofu), **Jugar fuera → Vínculos** (Madeja), cada uno con reacciones nuevas en la voz de su vecino. Verdura y agua se quedan en Energía (cuerpo: moverse, comer, beber).
 - Las partidas guardadas pasan sus retos a la nueva área al abrir (versión 3); lo ya hecho cuenta en el área en que se hizo.
+
+### Movimiento del vecindario (19/11/2026)
+
+La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior permanece en su sitio y el indicador acompaña los cambios de pestaña. Cada vecino recupera su gesto de reposo después del toque. Al construir, el objeto cae unos píxeles, se asienta y levanta pequeñas motas. El puente ya construido permanece quieto al regresar al mapa. Con movimiento reducido se conservan el resultado del toque y la colocación final.

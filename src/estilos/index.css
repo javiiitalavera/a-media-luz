@@ -58,19 +58,28 @@ body {
 @keyframes respirar { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.99, 1.025); } }
 .anim-respirar { animation: respirar 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
 @keyframes saltar {
-  0% { transform: none; } 18% { transform: scale(1.08, 0.9); } 45% { transform: translateY(-16%) scale(0.95, 1.06); }
-  75% { transform: scale(1.05, 0.94); } 100% { transform: none; }
+  0%, 100% { transform: none; }
+  16% { transform: scale(1.045,.94); }
+  43% { transform: translateY(-12%) rotate(-3deg) scale(.98,1.035); }
+  65% { transform: translateY(-7%) rotate(1deg); }
+  80% { transform: scale(1.04,.955); }
+  92% { transform: scale(.99,1.01); }
 }
-.anim-saltar { animation: saltar 0.6s cubic-bezier(.3,.7,.4,1) both; transform-origin: 50% 100%; }
+.anim-saltar, .anim-respingo { transform-origin: 50% 100%; }
 @keyframes latir-luz { 0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.15); } }
 .anim-luz { animation: latir-luz 2.4s ease-in-out infinite; }
 @keyframes chispa { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--dx), -70px) scale(0.3); opacity: 0; } }
 .anim-chispa { animation: chispa 1.8s ease-out infinite; }
-@keyframes luciernaga { 0%, 100% { transform: translate(0, 0); opacity: 0.15; } 50% { transform: translate(var(--dx), var(--dy)); opacity: 1; } }
+@keyframes luciernaga {
+  0%, 100% { transform: none; opacity: .08; }
+  29% { transform: translate(var(--dx), -3px); opacity: .42; }
+  54% { transform: translate(var(--dx), var(--dy)); opacity: .8; }
+  78% { transform: translate(-2px, var(--dy)); opacity: .22; }
+}
 .anim-luciernaga { animation: luciernaga var(--t, 6s) ease-in-out infinite; }
 @keyframes brotar { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 80% { transform: scale(0.95); } 100% { transform: scale(1); } }
 .anim-brotar { animation: brotar 0.7s cubic-bezier(.3,.7,.4,1) both; transform-origin: 50% 100%; }
-@keyframes estallido { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; } }
+@keyframes estallido { 0% { transform: scale(.3); opacity: 0; } 18% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.22); opacity: 0; } }
 .anim-estallido { animation: estallido 0.9s ease-out both; }
 @keyframes balanceo { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
 .anim-balanceo { animation: balanceo 3.6s ease-in-out infinite; transform-origin: 50% 0; }
@@ -85,24 +94,19 @@ body {
 /* Gestos de cada vecino (componentes/FiguraVecino). */
 @keyframes impaciente { 0%, 86%, 100% { transform: translateY(0); } 90% { transform: translateY(-4%); } 94% { transform: translateY(0); } 97% { transform: translateY(-2%); } }
 .anim-impaciente { animation: impaciente 7s ease-in-out infinite; }
-@keyframes brote { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(4deg); } }
+@keyframes brote { 0%, 45%, 100% { transform: none; } 65% { transform: rotate(3.5deg); } 84% { transform: rotate(-1.5deg); } }
 .anim-brote { animation: brote 3.6s ease-in-out infinite; }
 @keyframes brote-susto { 0% { transform: rotate(0); } 15% { transform: rotate(-14deg); } 35% { transform: rotate(11deg); } 55% { transform: rotate(-7deg); } 75% { transform: rotate(4deg); } 100% { transform: rotate(0); } }
-.anim-brote-susto { animation: brote-susto 0.9s ease-out both; }
-@keyframes engranaje { 0%, 70% { transform: rotate(0); } 85%, 100% { transform: rotate(45deg); } }
+@keyframes engranaje { 0%, 68%, 100% { transform: rotate(0); } 74% { transform: rotate(-5deg); } 82%, 90% { transform: rotate(24deg); } }
 .anim-engranaje { animation: engranaje 5s cubic-bezier(.5,0,.3,1.4) infinite; }
 @keyframes engranaje-prisa { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-.anim-engranaje-prisa { animation: engranaje-prisa 0.9s cubic-bezier(.2,.6,.3,1) both; }
 @keyframes tic { 0%, 92%, 100% { transform: translateX(0); } 93% { transform: translateX(-1.5%); } 95% { transform: translateX(1.5%); } 97% { transform: translateX(-1%); } }
 .anim-tic { animation: tic 6s linear infinite; }
 @keyframes respingo { 0% { transform: translateY(0) scale(1, 1); } 20% { transform: translateY(-8%) scale(0.96, 1.05); } 45% { transform: translateY(0) scale(1.04, 0.96); } 60% { transform: translateX(-2%); } 75% { transform: translateX(2%); } 100% { transform: none; } }
-.anim-respingo { animation: respingo 0.7s ease-out both; }
 @keyframes hoja-cae { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translate(14px, 120px) rotate(160deg); opacity: 0; } }
 .anim-hoja-cae { animation: hoja-cae 1.6s ease-in both; }
 @keyframes antena { 0%, 80%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); } 86% { opacity: 1; transform: translate(-50%, -50%) scale(1.6); } 92% { opacity: 0.3; } }
 .anim-antena { animation: antena 4s ease-in-out infinite; }
-@keyframes antena-prisa { 0%, 50%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.7); } 25%, 75% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); } }
-.anim-antena-prisa { animation: antena-prisa 0.25s linear 3; }
 
 /* Algo brilla (escena que se toca) y lo que asoma al tocarlo. */
 @keyframes destello { 0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.55; } 50% { transform: scale(1.1) rotate(25deg); opacity: 1; } }
@@ -145,22 +149,71 @@ body {
 @keyframes fundido { from { opacity: 1; } to { opacity: 0; } }
 .anim-fundido { animation: fundido 0.5s ease-out both; }
 
-/* Paso entre barrio y casas (componentes/transicion.ts). La barra de abajo no se mueve. */
-::view-transition-old(root), ::view-transition-new(root) {
-  animation-duration: 0.75s; animation-timing-function: cubic-bezier(.55,0,.25,1); transform-origin: var(--vt-x, 50%) var(--vt-y, 55%);
+/* La cámara sigue la puerta. Se recorta al ancho del bosque; la navegación permanece fija. */
+:root[data-transicion] .escena-vecindario { view-transition-name: bosque; }
+::view-transition-group(bosque) { overflow: clip; }
+::view-transition-group(navegacion) { z-index: 1; }
+::view-transition-old(bosque), ::view-transition-new(bosque) {
+  mix-blend-mode: normal;
+  transform-origin: var(--vt-x, 50%) var(--vt-y, 55%);
+  animation-duration: 540ms;
+  animation-timing-function: cubic-bezier(.22,.68,.22,1);
+  animation-fill-mode: both;
 }
-::view-transition-group(navegacion) { animation: none; }
-:root[data-transicion='entrar']::view-transition-old(root) { animation-name: vt-sumergirse; }
-:root[data-transicion='entrar']::view-transition-new(root) { animation-name: vt-brotar; }
-:root[data-transicion='salir']::view-transition-old(root) { animation-name: vt-encoger; z-index: 2; }
-:root[data-transicion='salir']::view-transition-new(root) { animation-name: vt-emerger; }
-@keyframes vt-sumergirse { to { transform: scale(2.6); opacity: 0; filter: blur(6px); } }
-@keyframes vt-brotar { from { transform: scale(0.35); opacity: 0; border-radius: 50%; } 60% { opacity: 1; } }
-@keyframes vt-encoger { to { transform: scale(0.3); opacity: 0; } }
-@keyframes vt-emerger { from { transform: scale(2.6); opacity: 0; filter: blur(6px); } }
+:root[data-transicion='entrar']::view-transition-old(bosque) { animation-name: acercar-mapa; }
+:root[data-transicion='entrar']::view-transition-new(bosque) { animation-name: llegar-casa; }
+:root[data-transicion='salir']::view-transition-old(bosque) { animation-name: dejar-casa; }
+:root[data-transicion='salir']::view-transition-new(bosque) { animation-name: volver-mapa; }
+@keyframes acercar-mapa { to { transform: scale(1.42); opacity: 0; } }
+@keyframes llegar-casa {
+  0%, 10% { opacity: 0; transform: scale(.94); }
+  72% { opacity: 1; }
+  to { transform: none; }
+}
+@keyframes dejar-casa { to { transform: scale(.94); opacity: 0; } }
+@keyframes volver-mapa { from { transform: scale(1.32); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.indicador-pestana { transition: transform 320ms cubic-bezier(.2,.8,.22,1); }
+
+/* Primero llega el objeto, luego apoya su peso y se asienta en el suelo. */
+@keyframes colocar {
+  0% { opacity: 0; transform: translateY(-12px) scale(.93); }
+  35% { opacity: 1; }
+  62% { transform: translateY(1px) scale(1.045,.955); }
+  83% { transform: translateY(-1px) scale(.99,1.015); }
+  100% { transform: none; }
+}
+.anim-colocar { transform-origin: 50% 92%; animation: colocar 560ms ease-out both; }
+@keyframes palpar {
+  0%, 100% { transform: none; }
+  25% { transform: rotate(-2deg) scale(.985); }
+  62% { transform: rotate(1deg) scale(1.012); }
+}
+.anim-palpar { transform-origin: 50% 90%; animation: palpar 300ms ease-out; }
+
+/* Cada respuesta termina dando paso al gesto habitual, incluso después de varios toques. */
+.anim-saltar { animation: saltar 640ms ease-in-out, impaciente 7s 640ms ease-in-out infinite; }
+.anim-respingo { animation: respingo 620ms ease-out, tic 6s 620ms linear infinite; }
+.anim-brote-susto { animation: brote-susto 850ms ease-out, brote 4.8s 850ms ease-in-out infinite; }
+.anim-engranaje-prisa { animation: engranaje-prisa 850ms ease-out, engranaje 5s 850ms ease-in-out infinite; }
+.anim-antena-prisa { animation: pulso-antena 680ms ease-out, antena 4s 680ms ease-in-out infinite; }
+@keyframes pulso-antena { 0%, 100% { opacity: .25; } 35% { opacity: 1; } }
+[data-dormido] .anim-respirar, .anim-respirar[data-dormido] { animation-duration: 5.6s; }
+[data-dormido].anim-impaciente, [data-dormido].anim-tic { animation: none; }
+[data-dormido].anim-saltar { animation: saltar 640ms ease-in-out; }
+[data-dormido].anim-respingo { animation: respingo 620ms ease-out; }
+[data-dormido] .anim-brote { animation-duration: 7s; }
+
+@keyframes gag-quieto { from, to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-nube { animation: aparecer 0.6s ease-out reverse both; }
+  /* Los efectos decorativos de una sola vez tampoco dejan partículas inmóviles. */
+  .anim-nube, .anim-velo, .anim-fundido, .anim-brasa, .anim-hoja-cae, .anim-estallido, .anim-chispa { display: none; }
+  .indicador-pestana, .tachon { transition: none; }
+  .anim-colocar, .anim-palpar, .anim-globo, [data-dormido].anim-saltar, [data-dormido].anim-respingo { animation: none; }
+  .anim-luz { transform: translate(-50%, -50%); opacity: .7; }
+  .anim-luciernaga { opacity: .38; }
+  .anim-asoma { animation: gag-quieto 4s linear both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
   .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .anim-brote, .anim-brote-susto, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }

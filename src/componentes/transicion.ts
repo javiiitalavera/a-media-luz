@@ -1,16 +1,28 @@
-// Paso entre el barrio y las casas: el barrio se acerca a la casita y la casa «sale» de ella; al volver,
-// la casa se encoge hacia su casita y el barrio se aleja. Usa las transiciones de vista del navegador
-// (iPhone con iOS 18 o más); si no las hay, o con «reducir movimiento», cambia sin más.
+// El origen se expresa en la escena de juego, también cuando está centrada en un escritorio.
 import { flushSync } from 'react-dom'
 
-type Doc = Document & { startViewTransition?: (cb: () => void) => unknown }
-
 export function transicion(tipo: 'entrar' | 'salir', punto: { x: number; y: number }, cambiar: () => void) {
-  const doc = document as Doc
+  const escena = document.querySelector<HTMLElement>('.escena-vecindario')
+  if (!document.startViewTransition || !escena || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    cambiar()
+    return
+  }
+
+  const caja = escena.getBoundingClientRect()
   const raiz = document.documentElement
-  if (!doc.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { cambiar(); return }
-  raiz.style.setProperty('--vt-x', `${Math.round(punto.x)}px`)
-  raiz.style.setProperty('--vt-y', `${Math.round(punto.y)}px`)
+  raiz.style.setProperty('--vt-x', `${punto.x - caja.left}px`)
+  raiz.style.setProperty('--vt-y', `${punto.y - caja.top}px`)
   raiz.dataset.transicion = tipo
-  doc.startViewTransition(() => flushSync(cambiar))
+  const paso = document.startViewTransition(() => flushSync(cambiar))
+  // Una transición interrumpida no debe desmontar los estilos de la siguiente.
+  enCurso = paso
+  void paso.finished.finally(() => {
+    if (enCurso !== paso) return
+    enCurso = undefined
+    delete raiz.dataset.transicion
+    raiz.style.removeProperty('--vt-x')
+    raiz.style.removeProperty('--vt-y')
+  })
 }
+
+let enCurso: ViewTransition | undefined

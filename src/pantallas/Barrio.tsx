@@ -27,6 +27,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   const caja = useRef<HTMLDivElement>(null)
   const [t, setT] = useState({ w: 390, h: 844 })
   const [hoja, setHoja] = useState(false)
+  const [proyectoNuevo, setProyectoNuevo] = useState<string | null>(null)
   const [nota, setNota] = useState<string | null>(null)
   useLayoutEffect(() => {
     const el = caja.current
@@ -60,12 +61,12 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
 
   return (
-    <main ref={caja} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
+    <main ref={caja} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
       <div className="absolute" style={{ top: arriba, left: izquierda, width: ancho, height: alto }}>
         <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
         {construido(partida, 'puente') && (
-          <img src={rutaArte('huella/puente')} alt={UI.barrio.puente} className="anim-brotar absolute" draggable={false}
-            style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, transform: 'translate(-50%, -60%)' }} />
+          <img src={rutaArte('huella/puente')} alt={UI.barrio.puente} className={`absolute ${proyectoNuevo === 'puente' ? 'anim-colocar' : ''}`} draggable={false}
+            style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -60%' }} />
         )}
         {huellasEn(partida, 'barrio').map((h) => (
           <button key={h.id} type="button" onClick={(e) => { if (h.toque) globoEn(e, h.toque); ajustar((p) => verHuella(p, h.id)) }} aria-label={h.texto?.replace('\n', ' ') ?? h.arte}
@@ -149,7 +150,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
         <BarraBolsa mat={mat} boton={UI.barrio.proyectos} onBoton={() => setHoja(true)} resaltado={listos} />
       </div>
 
-      {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onCerrar={() => setHoja(false)} />}
+      {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onConstruido={setProyectoNuevo} onCerrar={() => setHoja(false)} />}
     </main>
   )
 }
@@ -169,7 +170,7 @@ function Materiales({ mat }: { mat: Record<AreaId, number> }) {
   )
 }
 
-function HojaBarrio({ partida, ahora, abierto, onCerrar }: { partida: Partida; ahora: Date; abierto: boolean; onCerrar: () => void }) {
+function HojaBarrio({ partida, ahora, abierto, onConstruido, onCerrar }: { partida: Partida; ahora: Date; abierto: boolean; onConstruido: (id: string) => void; onCerrar: () => void }) {
   const construirBarrio = useJuego((s) => s.construirBarrio)
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
@@ -205,7 +206,7 @@ function HojaBarrio({ partida, ahora, abierto, onCerrar }: { partida: Partida; a
                 {hecho ? (
                   <span className="w-20 shrink-0 text-center text-[12px] font-semibold text-salvia-texto">{UI.barrio.hecho}</span>
                 ) : (
-                  <button type="button" disabled={!puede} onClick={() => { if (construirBarrio(b.id)) { sfx.construir(); onCerrar() } }}
+                  <button type="button" disabled={!puede} onClick={() => { if (construirBarrio(b.id)) { sfx.construir(); onConstruido(b.id); onCerrar() } }}
                     className="min-h-11 w-20 shrink-0 rounded-2xl bg-ambar text-[14px] font-bold text-tinta disabled:bg-hundido disabled:text-texto-3">{UI.casa.construir}</button>
                 )}
               </li>

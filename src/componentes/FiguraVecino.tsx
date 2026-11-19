@@ -21,18 +21,18 @@ const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 
 /** Tuerca joven y adulto (dos engranajes y antena): en vez de girar, parpadea la luz de la antena. */
 const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 }]
 
-export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
-  c: CompaneroId; etapa: 0 | 1 | 2; expresion: Expresion; reaccion: number; crecer: boolean
+export function FiguraVecino({ c, etapa, expresion, reaccion }: {
+  c: CompaneroId; etapa: 0 | 1 | 2; expresion: Expresion; reaccion: number
 }) {
   const src = rutaCompanero(c, etapa, expresion)
   const brote = c === 'tofu' ? BROTE[etapa][expresion] : undefined
   const corte = brote ? brote[0] : CORTE[c]?.[etapa]
   const tocado = reaccion > 0
-  const brotar = crecer ? 'anim-brotar' : ''
+  const dormido = expresion === 'dormido'
   const antena = c === 'tuerca' ? ANTENA[etapa] : null
   if (antena) {
     return (
-      <span key={reaccion} className={`relative block ${tocado ? 'anim-respingo' : 'anim-tic'} ${brotar}`}>
+      <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${tocado ? 'anim-respingo' : 'anim-tic'}`}>
         <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
         <span aria-hidden className={`absolute rounded-full ${tocado ? 'anim-antena-prisa' : 'anim-antena'}`}
           style={{ left: `${antena.x}%`, top: `${antena.y}%`, width: `${antena.tam}%`, aspectRatio: '1', transform: 'translate(-50%, -50%)',
@@ -43,7 +43,7 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
   if (c === 'tofu' && !corte) {
     // Tofu adulto: inmóvil del todo. Al tocarlo, se le caen tres hojas y él ni se inmuta.
     return (
-      <span key={reaccion} className={`relative block ${brotar}`}>
+      <span key={reaccion} data-dormido={dormido || undefined} className="relative block">
         <img src={src} alt="" draggable={false} className="block w-full" />
         {tocado && [0, 1, 2].map((i) => (
           <span key={i} aria-hidden className="anim-hoja-cae absolute h-[7%] w-[5%] rounded-[50%_0] bg-[#8fae6b] shadow-[inset_0_0_0_1.5px_#4a6b32]"
@@ -55,8 +55,8 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
   if (!corte) {
     // Nox (y quien no tenga gesto propio): respira; saltitos de impaciencia; al tocar, salto.
     return (
-      <span key={reaccion} className={`block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
-        <img src={src} alt="" draggable={false} className={`anim-respirar block w-full ${brotar}`} />
+      <span key={reaccion} data-dormido={dormido || undefined} className={`block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
+        <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
       </span>
     )
   }
@@ -67,7 +67,7 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, crecer }: {
   const cuerpo = tofu ? '' : tocado ? 'anim-respingo' : 'anim-tic'
   const parte = tofu ? (tocado ? 'anim-brote-susto' : 'anim-brote') : (tocado ? 'anim-engranaje-prisa' : 'anim-engranaje')
   return (
-    <span key={reaccion} className={`relative block ${cuerpo} ${brotar}`}>
+    <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${cuerpo}`}>
       <span className={`block ${tofu ? '' : 'anim-respirar'}`}>
         <img src={src} alt="" draggable={false} className="block w-full" style={abajo} />
         <img src={src} alt="" draggable={false} className={`absolute inset-0 block w-full ${parte}`} style={arriba} />

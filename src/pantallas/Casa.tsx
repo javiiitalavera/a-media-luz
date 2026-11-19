@@ -265,7 +265,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const mascaraNoche: CSSProperties = { WebkitMaskImage: gradiente, maskImage: gradiente }
 
   return (
-    <main ref={ref} className="relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
+    <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
         <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 
@@ -274,7 +274,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
           <div key="nox" className="absolute z-10" style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
             {/* sombra en el suelo */}
             <span aria-hidden className="absolute bottom-[1%] left-1/2 h-[9%] w-[62%] -translate-x-1/2 rounded-[50%] bg-[#4b5d3f]/30 blur-[2px]" />
-            <button type="button" aria-label={UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
+            <button type="button" aria-label={conHuevo ? UI.casa.huevo : UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
               onClick={(e) => { e.stopPropagation(); hablar() }} className="relative block w-full">
               {conHuevo ? (
                 <span key={`h${toques}`} className={`block ${toques ? 'anim-temblar' : ''}`}>
@@ -282,7 +282,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
                     className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
-                <FiguraVecino key={etapaVista} c={DUENO} etapa={etapaVista} expresion={expresion} reaccion={saltos} crecer={Boolean(celebra)} />
+                <span key={etapaVista} className={`block ${celebra ? 'anim-brotar' : ''}`}>
+                  <FiguraVecino c={DUENO} etapa={etapaVista} expresion={expresion} reaccion={saltos} />
+                </span>
               )}
             </button>
           </div>
@@ -498,7 +500,7 @@ export function Luz({ x, y, tam, color, retraso }: { x: number; y: number; tam: 
   return (
     <span className="anim-luz absolute rounded-full" style={{
       left: `${x}%`, top: `${y}%`, width: `${tam}%`, aspectRatio: '1',
-      background: `radial-gradient(circle, ${color}cc 0%, ${color}55 35%, transparent 70%)`, animationDelay: `${retraso}s`,
+      background: `radial-gradient(circle, ${color}cc 0%, ${color}55 35%, transparent 70%)`, animationDelay: `-${retraso}s`,
     }} />
   )
 }
@@ -509,7 +511,7 @@ function Chispas({ x, y }: { x: number; y: number }) {
     <div aria-hidden className="pointer-events-none absolute z-20" style={{ left: `${x}%`, top: `${y}%` }}>
       {[0, 1, 2, 3].map((i) => (
         <span key={i} className="anim-chispa absolute h-1.5 w-1.5 rounded-full bg-[#ffd27a] shadow-[0_0_6px_2px_#ffb34799]"
-          style={{ '--dx': `${(i % 2 ? 1 : -1) * (6 + i * 4)}px`, animationDelay: `${i * 0.45}s` } as CSSProperties} />
+          style={{ '--dx': `${(i % 2 ? 1 : -1) * (6 + i * 4)}px`, animationDelay: `-${i * 0.45}s` } as CSSProperties} />
       ))}
     </div>
   )
@@ -521,8 +523,10 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
       {SITIOS_LUCIERNAGAS.slice(0, cuantas).map(([x, y], i) => (
-        <span key={i} className="anim-luciernaga absolute h-1.5 w-1.5 rounded-full bg-[#fff3b0] shadow-[0_0_8px_3px_#ffe27a88]"
-          style={{ left: `${x}%`, top: `${y}%`, '--dx': `${(i % 3) * 8 - 8}px`, '--dy': `${(i % 2 ? -1 : 1) * 10}px`, '--t': `${5 + (i % 4)}s`, animationDelay: `${i * 0.6}s` } as CSSProperties} />
+        <span key={i} className="anim-luciernaga absolute rounded-full bg-[#fff3b0] shadow-[0_0_5px_1px_#ffe27a88]"
+          style={{ left: `${x}%`, top: `${y}%`, width: 2 + i % 3, height: 2 + i % 3,
+            '--dx': `${i % 2 ? 8 : -9}px`, '--dy': `${-7 - (i % 3) * 3}px`,
+            '--t': `${6 + i % 5}s`, animationDelay: `-${i * 1.37}s` } as CSSProperties} />
       ))}
     </div>
   )
@@ -532,8 +536,10 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
 const vecesTocado = new Map<string, number>()
 
 function Objeto({ o, nuevo, ew, eh, frases }: { o: ObjetoCasa; nuevo: boolean; ew: number; eh: number; frases: string[] }) {
+  const [toques, setToques] = useState(0)
   const tocar = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    setToques((n) => n + 1)
     const n = vecesTocado.get(o.id) ?? 0
     vecesTocado.set(o.id, n + 1)
     sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
@@ -549,7 +555,10 @@ function Objeto({ o, nuevo, ew, eh, frases }: { o: ObjetoCasa; nuevo: boolean; e
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
       <button type="button" aria-label={o.nombre} onClick={tocar} className="absolute active:brightness-110" style={estilo}>
         <div className={s.colgado ? 'anim-balanceo' : ''}>
-          <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false} className={`block w-full ${nuevo ? 'anim-brotar' : ''}`} />
+          <span className={`block ${nuevo ? 'anim-colocar' : ''}`}>
+            <img key={toques} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
+              className={`block w-full ${toques ? 'anim-palpar' : ''}`} />
+          </span>
         </div>
       </button>
       {nuevo && <Estallido x={s.x} y={centroY} />}
@@ -559,13 +568,14 @@ function Objeto({ o, nuevo, ew, eh, frases }: { o: ObjetoCasa; nuevo: boolean; e
 
 /** Puñado de chispas al construir algo. */
 function Estallido({ x, y }: { x: number; y: number }) {
-  const colores = ['#ffc145', '#e58b91', '#fff3b0', '#a1af8d']
+  const colores = ['#ffcf76', '#fff6db', '#ffab65']
   return (
     <div aria-hidden className="pointer-events-none absolute z-30" style={{ left: `${x}%`, top: `${y}%` }}>
-      {Array.from({ length: 12 }, (_, i) => {
-        const ang = (i / 12) * Math.PI * 2
-        return <span key={i} className="anim-estallido absolute h-2.5 w-2.5 rounded-full"
-          style={{ background: colores[i % 4], '--dx': `${Math.cos(ang) * 70}px`, '--dy': `${Math.sin(ang) * 70}px`, animationDelay: '0.15s' } as CSSProperties} />
+      {Array.from({ length: 9 }, (_, i) => {
+        const ang = (i / 9) * Math.PI * 2
+        const radio = 28 + (i % 3) * 9
+        return <span key={i} className="anim-estallido absolute h-1.5 w-1.5 rounded-full"
+          style={{ background: colores[i % 3], '--dx': `${Math.cos(ang) * radio}px`, '--dy': `${Math.sin(ang) * radio - 10}px`, animationDelay: `${100 + (i % 3) * 32}ms` } as CSSProperties} />
       })}
     </div>
   )
