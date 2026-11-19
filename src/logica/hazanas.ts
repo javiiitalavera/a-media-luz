@@ -75,7 +75,8 @@ export function editarHazana(p: Partida, id: string, cambio: { nombre?: string; 
 }
 
 /** Lo que se lee en la tarjeta: con el modo día malo, su versión mínima si la tiene. */
-export const textoHazana = (a: Accion, diaMalo: boolean) => (diaMalo && a.minima ? a.minima : a.nombre)
+/** En día malo, cada reto pasa a su versión mínima: la del catálogo o, si no tiene (los propios), «…, aunque sea un poco». */
+export const textoHazana = (a: Accion, diaMalo: boolean) => (!diaMalo ? a.nombre : a.minima ?? `${a.nombre}, aunque sea un poco`)
 
 /**
  * Partidas de antes (acciones genéricas): pasan a las hazañas concretas equivalentes, sin perder las

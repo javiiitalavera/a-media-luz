@@ -4,7 +4,7 @@ import { COMPANEROS, type CompaneroId } from '../contenido'
 import { GAGS, type Gag } from '../contenido/gags'
 import { construido } from './casa'
 import type { Lugar } from '../contenido/situaciones'
-import type { Partida } from './partida'
+import type { Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre } from './fechas'
 import { misHazanas } from './hazanas'
 import { nacido, nacidos } from './etapas'
@@ -54,14 +54,24 @@ export function huellaNueva(p: Partida, id: string, ahora: Date): boolean {
 export const verHuella = (p: Partida, id: string): Partida =>
   vistos(p).huellas?.includes(id) ? p : { ...p, vistos: { ...vistos(p), huellas: [...(vistos(p).huellas ?? []), id] } }
 
-/** Álbum: avisa si hay una foto o una curiosidad nueva desde la última vez que lo abriste. */
-export function hayAlbumNuevo(p: Partida): boolean {
-  const visto = vistos(p).album ?? ''
-  const fechas = [...(p.momentos ?? []).map((m) => m.fecha), ...curiosidadesTenidas(p).map((x) => x.fecha)]
-  return fechas.some((f) => f > visto)
+/** Álbum: cada parte (momentos, crónicas, curiosidades) avisa de lo nuevo desde la última vez que la miraste. */
+const SECCIONES: SeccionAlbum[] = ['momentos', 'cronicas', 'curiosidades']
+const vistoEn = (p: Partida, s: SeccionAlbum) => vistos(p).albumSec?.[s] ?? vistos(p).album ?? ''
+export function seccionesNuevas(p: Partida): SeccionAlbum[] {
+  return SECCIONES.filter((s) => {
+    const visto = vistoEn(p, s)
+    if (s === 'momentos') return (p.momentos ?? []).some((m) => m.fecha > visto)
+    if (s === 'curiosidades') return curiosidadesTenidas(p).some((x) => x.fecha > visto)
+    // Crónicas: una historia ha empezado o avanzado otro día después de mirarlas.
+    return Object.values(p.situaciones ?? {}).some((e) => !visto || e.dia > dia(visto))
+  })
 }
-export const verAlbum = (p: Partida, ahora: Date): Partida =>
-  hayAlbumNuevo(p) ? { ...p, vistos: { ...vistos(p), album: ahora.toISOString() } } : p
+export const hayAlbumNuevo = (p: Partida) => seccionesNuevas(p).length > 0
+/** Mirar una parte del Álbum apaga su aviso. */
+export const verSeccion = (p: Partida, s: SeccionAlbum, ahora: Date): Partida =>
+  seccionesNuevas(p).includes(s) ? { ...p, vistos: { ...vistos(p), albumSec: { ...vistos(p).albumSec, [s]: ahora.toISOString() } } } : p
+/** Mirarlo todo. */
+export const verAlbum = (p: Partida, ahora: Date): Partida => SECCIONES.reduce((q, s) => verSeccion(q, s, ahora), p)
 
 /** Decisiones que te esperan (para el sobre): en qué casa y qué se pregunta. */
 export function decisionesPendientes(p: Partida, ahora: Date): { lugar: CompaneroId; pregunta: string }[] {

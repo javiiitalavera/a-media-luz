@@ -9,7 +9,9 @@ import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
-import { rutaArte } from '../arte/manifiesto'
+import { rutaArte, rutaCompanero } from '../arte/manifiesto'
+import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
+import { progreso } from '../logica/etapas'
 import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
 import { Luciernagas, Luz } from './Casa'
@@ -22,14 +24,15 @@ import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLe
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
-export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
-  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void; onNovedades: () => void
+export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades }: {
+  partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void
+  /** El vecino en cuya casa estabas (para volver con un toque). */
+  volverA: CompaneroId; onVolver: () => void; onNovedades: () => void
 }) {
   const caja = useRef<HTMLDivElement>(null)
   const [t, setT] = useState({ w: 390, h: 844 })
   const [hoja, setHoja] = useState(false)
   const [proyectoNuevo, setProyectoNuevo] = useState<string | null>(null)
-  const [nota, setNota] = useState<string | null>(null)
   useLayoutEffect(() => {
     const el = caja.current
     if (!el) return
@@ -57,6 +60,7 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
+  const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
 
@@ -128,27 +132,22 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <h1 className="sr-only">{UI.barrio.titulo}</h1>
-        {/* A la izquierda, volver a casa (si solo hay un vecino); el sobre, a la derecha para no tapar el farolillo. */}
-        {onVolver ? (
-          <button type="button" onClick={onVolver} className="pointer-events-auto min-h-11 shrink-0 whitespace-nowrap rounded-full bg-tarjeta/85 px-4 text-sm font-semibold text-texto-2 shadow-sm backdrop-blur-sm">
-            ‹ {UI.casa.alaCasa}
-          </button>
-        ) : <span />}
-        <button type="button" onClick={onNovedades} aria-label={UI.barrio.abrirNovedades(sinLeer)}
-          className="pointer-events-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-tarjeta/85 shadow-sm backdrop-blur-sm">
-          {sinLeer > 0 ? <Aviso tipo="sobre" tam={32} numero={sinLeer} /> : (
-            <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 text-texto-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 7.5h15v10h-15z M4.8 7.8 12 13l7.2-5.2" /></svg>
-          )}
-        </button>
+        {/* A la izquierda, volver a la casa en la que estabas (con su cara); el sobre, a la derecha. */}
+        <span className="pointer-events-auto">
+          <BotonRedondo etiqueta={UI.barrio.volverA(volverEsHuevo ? UI.casa.huevo : COMPANEROS[volverA].nombre)} onToque={onVolver} className="overflow-visible">
+            <img src={volverEsHuevo ? rutaArte(`huevo/${volverA}/cerrado`) : rutaCompanero(volverA, progreso(partida, volverA, ahora).etapa, 'base')} alt="" draggable={false}
+              className="h-10 w-10 object-contain" />
+            <span aria-hidden className="absolute -bottom-0.5 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-tarjeta text-texto-2 shadow ring-1 ring-borde"><Icono d={ICONOS.atras} tam={14} /></span>
+          </BotonRedondo>
+        </span>
+        <span className="pointer-events-auto">
+          <BotonRedondo etiqueta={UI.barrio.abrirNovedades(sinLeer)} onToque={onNovedades}>
+            {sinLeer > 0 ? <Aviso tipo="sobre" tam={34} numero={sinLeer} /> : <Icono d={ICONOS.sobre} />}
+          </BotonRedondo>
+        </span>
       </header>
 
-      {nota && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-5" onClick={() => setNota(null)}>
-          <span className="max-w-[320px] rounded-2xl bg-[#2e2030]/70 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">{nota}</span>
-        </div>
-      )}
-
-      <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 px-3">
+      <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex justify-end px-3">
         <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} />
       </div>
 
