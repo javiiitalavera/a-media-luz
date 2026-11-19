@@ -5,7 +5,8 @@ import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
-import { verAlbum } from '../logica/avisos'
+import { seccionesNuevas, verSeccion } from '../logica/avisos'
+import { Punto } from '../componentes/Aviso'
 import type { Curiosidad } from '../contenido/curiosidades'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
@@ -35,12 +36,13 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
 }
 
 export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {
-  // Abrir el Álbum apaga su aviso (lo nuevo se ve, de todas formas, arriba del todo).
+  // Cada parte avisa con un punto de lo nuevo; al abrirla, se apaga. Se abre primero la que tiene novedades.
   const ajustar = useJuego((s) => s.ajustar)
-  useEffect(() => { ajustar((p) => verAlbum(p, ahora)) }, [ajustar, ahora])
   const momentos = momentosRecientes(partida)
   const lista = cronicas(partida)
-  const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(momentos.length || !lista.length ? 'momentos' : 'cronicas')
+  const nuevas = seccionesNuevas(partida)
+  const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(() => nuevas[0] ?? (momentos.length || !lista.length ? 'momentos' : 'cronicas'))
+  useEffect(() => { ajustar((p) => verSeccion(p, seccion, ahora)) }, [ajustar, seccion, ahora])
   const curiosidades = curiosidadesTenidas(partida)
   const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
   const [cronicaAbierta, setCronicaAbierta] = useState<string | null>(null)
@@ -58,8 +60,9 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
       <div role="tablist" className="mb-4 grid grid-cols-3 gap-1 rounded-full bg-hundido p-1">
         {(['momentos', 'cronicas', 'curiosidades'] as const).map((s) => (
           <button key={s} type="button" role="tab" aria-selected={seccion === s} onClick={() => setSeccion(s)}
-            className={`min-h-11 rounded-full text-[14px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
+            className={`relative min-h-11 rounded-full text-[14px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
             {UI.album2[s]}
+            {seccion !== s && nuevas.includes(s) && <Punto className="absolute top-1.5 right-2" />}
           </button>
         ))}
       </div>

@@ -31,7 +31,7 @@ describe('hazañas', () => {
     const a = p.acciones.find((x) => x.id === 'pasos')!
     expect(a.nombre).toBe('Andar 6000 pasos')
     expect(a.minima).toBeUndefined()
-    expect(textoHazana(a, true)).toBe('Andar 6000 pasos')
+    expect(textoHazana(a, true)).toBe('Andar 6000 pasos, aunque sea un poco')
     p = editarHazana(p, 'pasos', { nombre: '  ', minima: 'Bajar una parada antes' })
     const b = p.acciones.find((x) => x.id === 'pasos')!
     expect(b.nombre).toBe('Andar 6000 pasos')

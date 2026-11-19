@@ -44,7 +44,8 @@ function perfil(v: unknown) {
 
 function vistos(v: unknown) {
   const dias = (d: unknown) => objeto(d) && Object.values(d).every(dia)
-  return objeto(v) && opcional(v.album, fecha) && opcional(v.hazanas, dia) &&
+  const fechas = (d: unknown) => objeto(d) && Object.values(d).every(fecha)
+  return objeto(v) && opcional(v.album, fecha) && opcional(v.albumSec, fechas) && opcional(v.hazanas, dia) &&
     opcional(v.micros, dias) && opcional(v.gags, dias) &&
     opcional(v.huellas, (h) => lista(h, texto)) &&
     opcional(v.pina, (p) => p === 'guardada' || p === 'aqui')

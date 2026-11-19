@@ -29,6 +29,9 @@ export default function App() {
   const [pestana, setPestana] = useState<Pestana>('inicio')
   // En Inicio: casa que se está visitando (desde el barrio) o barrio abierto mientras solo hay un vecino.
   const [casa, setCasa] = useState<CompaneroId | null>(null)
+  // La última casa visitada: desde el barrio, un toque te devuelve a ella.
+  const [ultimaCasa, setUltimaCasa] = useState<CompaneroId | null>(null)
+  useEffect(() => { if (casa) setUltimaCasa(casa) }, [casa])
   const [verBarrio, setVerBarrio] = useState(false)
   const [sobre, setSobre] = useState(false)
   // Si vienes del sobre a decidir algo, la casa abre la pregunta directamente.
@@ -63,7 +66,8 @@ export default function App() {
     pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita abrirDecision={abrirDecision} onDecisionAbierta={() => setAbrirDecision(false)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && (conBarrio || verBarrio))
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
-      onVolver={conBarrio ? undefined : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
+      volverA={conBarrio ? (ultimaCasa ?? ultimo) : ultimo}
+      onVolver={conBarrio ? () => { const c = ultimaCasa ?? ultimo; transicion('entrar', punto(c), () => setCasa(c)) } : () => transicion('entrar', punto(ultimo), () => setVerBarrio(false))} />
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => setVerBarrio(true))} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => { irA('inicio'); if (conBarrio) setCasa(ultimo) }} />

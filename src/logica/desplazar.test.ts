@@ -21,4 +21,8 @@ describe('volver a hoy en el modo de prueba', () => {
     p.acciones[0].minima = '2026-01-10T09:00:00.000Z'
     expect(desplazarPartida(p, -3).acciones).toEqual(p.acciones)
   })
+  it('mueve también lo visto en cada parte del Álbum', () => {
+    const p = { ...crearPartida('nox', en('2026-01-10', 9)), vistos: { albumSec: { cronicas: en('2026-01-10', 12).toISOString() } } }
+    expect(desplazarPartida(p, -3).vistos!.albumSec!.cronicas).toBe(en('2026-01-07', 12).toISOString())
+  })
 })

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { curiosidadesDeHistorias, curiosidadesTenidas, resolverTravesura, sorpresa, travesuraPendiente } from './curiosidades'
-import { hayAlbumNuevo, verAlbum } from './avisos'
+import { hayAlbumNuevo, seccionesNuevas, verAlbum, verSeccion } from './avisos'
 import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
@@ -33,8 +33,15 @@ describe('curiosidades', () => {
     p = curiosidadesDeHistorias(antes, p, en('2026-01-09', 12))
     expect(curiosidadesTenidas(p).map((x) => x.c.id)).toEqual(['cartel-quemado'])
     expect(hayAlbumNuevo(p)).toBe(true)
+    expect(seccionesNuevas(p)).toEqual(['cronicas', 'curiosidades'])
+    // Mirar una parte apaga solo su aviso.
+    p = verSeccion(p, 'curiosidades', en('2026-01-09', 13))
+    expect(seccionesNuevas(p)).toEqual(['cronicas'])
     p = verAlbum(p, en('2026-01-09', 13))
     expect(hayAlbumNuevo(p)).toBe(false)
+    // Al día siguiente la historia de la normativa ya terminó: si empieza otra, avisan las Crónicas.
+    p = { ...p, situaciones: { ...p.situaciones, tablon: { fase: 0, dia: '2026-01-10' } } }
+    expect(seccionesNuevas(p)).toEqual(['cronicas'])
   })
 
   it('la primera travesura de Nox: la piña espera, y al decidir pasa a tus Curiosidades', () => {

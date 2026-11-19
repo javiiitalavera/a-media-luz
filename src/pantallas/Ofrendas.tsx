@@ -1,12 +1,12 @@
 // Hazañas (decidido por Javi, 18/11/2026): tu lista de cada día, que empieza sin tachar cada mañana.
 // Un toque la tacha (con su sonido) y el vecino del área la comenta; otro toque la desmarca.
-// «Algo más» apunta lo que has hecho fuera de tu lista. «Editar» ajusta metas, mínimas y la lista.
+// «Algo más» apunta lo que has hecho fuera de tu lista. «Editar» ajusta la lista (las mínimas van por defecto).
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type Accion, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
-import { anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
+import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -167,44 +167,57 @@ function Hoja({ titulo, explicacion, onCerrar, children }: { titulo: string; exp
   )
 }
 
-/** Mis hazañas: ajustar meta y mínima, quitar, añadir del catálogo o crear una propia. */
+/** Mis retos: una fila por reto (tocar para cambiarlo), y debajo, plegados, el catálogo y crear uno propio.
+ *  Las versiones mínimas no se piden: van por defecto (las del catálogo o «…, aunque sea un poco»). */
 function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => void }) {
   const ajustar = useJuego((s) => s.ajustar)
   const mias = misHazanas(partida)
   const sinUsar = delCatalogoSinUsar(partida)
+  const [abierta, setAbierta] = useState<string | null>(null)
+  const [plegable, setPlegable] = useState<'catalogo' | 'propia' | null>(null)
+  const cabe = cabeOtro(partida)
   return (
-    <Hoja titulo={UI.ofrendas.misHazanas} explicacion={UI.ofrendas.misHazanasExplicacion} onCerrar={onCerrar}>
-      <div className="mt-3 flex flex-col gap-2">
+    <Hoja titulo={`${UI.ofrendas.misHazanas} · ${UI.ofrendas.cuantos(mias.length, MAX_RETOS)}`} explicacion={UI.ofrendas.misHazanasExplicacion} onCerrar={onCerrar}>
+      <ul className="mt-3 divide-y divide-borde/60 overflow-hidden rounded-3xl bg-tarjeta">
         {mias.map((a) => (
-          <div key={a.id} className="rounded-3xl bg-tarjeta p-3">
-            <div className="mb-2 flex items-center gap-2">
-              <IconoArea area={a.area} pequeno />
-              <span className="flex-1 text-[13px] font-semibold text-texto-3">{AREAS[a.area].nombre}{esPropia(a) && ` · ${UI.ofrendas.propio}`}</span>
-              <button type="button" onClick={() => ajustar((p) => quitarHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-texto-2">{UI.ofrendas.quitar}</button>
-              {esPropia(a) && <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />}
+          <li key={a.id}>
+            <div className="flex items-center gap-1 pl-3">
+              <button type="button" aria-expanded={abierta === a.id} aria-label={UI.ofrendas.cambiar(a.nombre)} onClick={() => setAbierta(abierta === a.id ? null : a.id)}
+                className="flex min-h-12 flex-1 items-center gap-2.5 py-1.5 text-left">
+                <IconoArea area={a.area} pequeno />
+                <span className="flex-1 text-[15px] leading-snug font-semibold">{a.nombre}</span>
+              </button>
+              <button type="button" aria-label={UI.ofrendas.quitarDeLista(a.nombre)} onClick={() => ajustar((p) => quitarHazana(p, a.id))}
+                className="flex h-12 w-12 shrink-0 items-center justify-center text-texto-3">
+                <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+              </button>
             </div>
-            {esPropia(a) && (
-              <div className="mb-2 flex flex-wrap gap-1.5">
-                {ORDEN_AREAS.map((ar) => (
-                  <button key={ar} type="button" aria-pressed={a.area === ar} onClick={() => ajustar((p) => editarHazana(p, a.id, { area: ar }))}
-                    className={`min-h-11 rounded-full border-2 px-3 text-[13px] font-semibold ${a.area === ar ? 'border-transparent text-tinta' : 'border-borde text-texto-3'}`}
-                    style={a.area === ar ? { background: MATERIALES[ar].color } : undefined}>{AREAS[ar].nombre}</button>
-                ))}
+            {abierta === a.id && (
+              <div className="animate-entrar px-3 pb-3">
+                <label className="block text-[13px] font-semibold text-texto-3">{UI.ofrendas.nombre}
+                  <input key={a.nombre} defaultValue={a.nombre} className={`${campo} mt-1`}
+                    onBlur={(e) => e.target.value !== a.nombre && ajustar((p) => editarHazana(p, a.id, { nombre: e.target.value }))}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
+                </label>
+                {esPropia(a) && (
+                  <>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {ORDEN_AREAS.map((ar) => (
+                        <button key={ar} type="button" aria-pressed={a.area === ar} onClick={() => ajustar((p) => editarHazana(p, a.id, { area: ar }))}
+                          className={`min-h-11 rounded-full border-2 px-3 text-[13px] font-semibold ${a.area === ar ? 'border-transparent text-tinta' : 'border-borde text-texto-3'}`}
+                          style={a.area === ar ? { background: MATERIALES[ar].color } : undefined}>{AREAS[ar].nombre}</button>
+                      ))}
+                    </div>
+                    <div className="mt-2 flex justify-end"><BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} /></div>
+                  </>
+                )}
               </div>
             )}
-            <label className="block text-[13px] font-semibold text-texto-3">{UI.ofrendas.nombre}
-              <input key={a.nombre} defaultValue={a.nombre} className={`${campo} mt-1`}
-                onBlur={(e) => e.target.value !== a.nombre && ajustar((p) => editarHazana(p, a.id, { nombre: e.target.value }))}
-                onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
-            </label>
-            <label className="mt-2 block text-[13px] font-semibold text-texto-3">{UI.ofrendas.minima}
-              <input key={a.minima ?? ''} defaultValue={a.minima ?? ''} placeholder={UI.ofrendas.minimaEjemplo} className={`${campo} mt-1`}
-                onBlur={(e) => e.target.value !== (a.minima ?? '') && ajustar((p) => editarHazana(p, a.id, { minima: e.target.value }))}
-                onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
-            </label>
-          </div>
+          </li>
         ))}
-      </div>
+        {mias.length === 0 && <li className="px-4 py-4 text-[14px] text-texto-3">{UI.ofrendas.vacia}</li>}
+      </ul>
+      {!cabe && <p className="mt-2 rounded-2xl bg-tarjeta px-3 py-2 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
 
       {propiasFuera(partida).length > 0 && (
         <>
@@ -214,7 +227,7 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
               <div key={a.id} className="flex items-center gap-2 rounded-3xl bg-tarjeta py-1 pr-1 pl-3">
                 <IconoArea area={a.area} pequeno />
                 <span className="flex-1 text-[15px] font-medium">{a.nombre}</span>
-                <button type="button" disabled={!cabeOtro(partida)} onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto disabled:opacity-40">+ {UI.ofrendas.aMiLista}</button>
+                <button type="button" disabled={!cabe} onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto disabled:opacity-40">+ {UI.ofrendas.aMiLista}</button>
                 <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />
               </div>
             ))}
@@ -222,29 +235,38 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
         </>
       )}
 
-      <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.anadir}</h3>
-      {!cabeOtro(partida) && <p className="mb-2 rounded-2xl bg-tarjeta px-3 py-2 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
-      <div className="flex flex-col gap-3">
-        {ORDEN_AREAS.map((area) => {
-          const lista = sinUsar.filter((c) => c.area === area)
-          if (!lista.length) return null
-          return (
-            <div key={area}>
-              <div className="mb-1 px-1 text-[13px] font-semibold text-texto-3">{AREAS[area].nombre}</div>
-              <div className="flex flex-wrap gap-2">
-                {lista.map((c) => (
-                  <button key={c.id} type="button" disabled={!cabeOtro(partida)} onClick={() => ajustar((p) => anadirHazana(p, c.id))}
-                    className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2 disabled:opacity-40">+ {c.nombre}</button>
-                ))}
+      {cabe && (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {(['catalogo', 'propia'] as const).map((k) => (
+            <button key={k} type="button" aria-expanded={plegable === k} onClick={() => setPlegable(plegable === k ? null : k)}
+              className={`min-h-12 rounded-2xl border-2 px-2 text-[14px] leading-tight font-bold ${plegable === k ? 'border-transparent bg-ambar text-tinta' : 'border-borde text-texto-2'}`}>
+              + {k === 'catalogo' ? UI.ofrendas.anadir : UI.ofrendas.crearPropia}
+            </button>
+          ))}
+        </div>
+      )}
+      {cabe && plegable === 'catalogo' && (
+        <div className="animate-entrar mt-3 flex flex-col gap-3">
+          {ORDEN_AREAS.map((area) => {
+            const lista = sinUsar.filter((c) => c.area === area)
+            if (!lista.length) return null
+            return (
+              <div key={area}>
+                <div className="mb-1 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-texto-3"><IconoArea area={area} pequeno />{AREAS[area].nombre}</div>
+                <div className="flex flex-wrap gap-2">
+                  {lista.map((c) => (
+                    <button key={c.id} type="button" onClick={() => ajustar((p) => anadirHazana(p, c.id))}
+                      className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2">+ {c.nombre}</button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.crearPropia}</h3>
-      {cabeOtro(partida) ? <FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => ajustar((p) => crearHazana(p, d, nuevoId()))} />
-        : <p className="rounded-2xl bg-tarjeta px-3 py-2 text-[14px] font-medium text-texto-2">{UI.ofrendas.lleno}</p>}
+            )
+          })}
+        </div>
+      )}
+      {cabe && plegable === 'propia' && (
+        <div className="animate-entrar mt-3"><FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => { ajustar((p) => crearHazana(p, d, nuevoId())); setPlegable(null) }} /></div>
+      )}
     </Hoja>
   )
 }
@@ -290,7 +312,7 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
         })}
       </div>
       <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.otra}</h3>
-      <FormularioPropia boton={UI.ofrendas.apuntar} sinMinima onCrear={(d) => {
+      <FormularioPropia boton={UI.ofrendas.apuntar} onCrear={(d) => {
         const id = nuevoId()
         ajustar((p) => crearHazana(p, d, id, false))
         onApuntar({ id: `propia-${id}`, area: d.area, nombre: d.nombre.trim(), habitual: false })
@@ -299,14 +321,13 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
   )
 }
 
-function FormularioPropia({ boton, sinMinima, onCrear }: { boton: string; sinMinima?: boolean; onCrear: (d: { nombre: string; area: AreaId; minima?: string }) => void }) {
+function FormularioPropia({ boton, onCrear }: { boton: string; onCrear: (d: { nombre: string; area: AreaId }) => void }) {
   const [nombre, setNombre] = useState('')
-  const [minima, setMinima] = useState('')
   const [area, setArea] = useState<AreaId>('cuerpo')
   const crear = () => {
     if (!nombre.trim()) return
-    onCrear({ nombre, area, minima: sinMinima ? undefined : minima })
-    setNombre(''); setMinima('')
+    onCrear({ nombre, area })
+    setNombre('')
   }
   return (
     <div className="rounded-3xl bg-tarjeta p-3">
@@ -323,11 +344,6 @@ function FormularioPropia({ boton, sinMinima, onCrear }: { boton: string; sinMin
           </button>
         ))}
       </div>
-      {!sinMinima && (
-        <label className="mt-2 block text-[13px] font-semibold text-texto-3">{UI.ofrendas.minima}
-          <input value={minima} onChange={(e) => setMinima(e.target.value)} placeholder={UI.ofrendas.minimaEjemplo} className={`${campo} mt-1`} />
-        </label>
-      )}
       <button type="button" disabled={!nombre.trim()} onClick={crear}
         className="mt-3 min-h-11 w-full rounded-full bg-ambar text-[15px] font-bold text-tinta disabled:opacity-40">{boton}</button>
     </div>
