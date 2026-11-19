@@ -1,4 +1,5 @@
-// Al abrir la app: nubes que tapan la pantalla y se apartan hacia los lados mientras se disipan.
+// Al abrir la app: nubes que tapan la pantalla y se apartan hacia los lados mientras se disipan (la
+// primera vez del día; si vuelves a abrirla el mismo día, solo un fundido corto).
 // Solo código (formas y degradados), sin dibujo. De noche, nubes color ciruela.
 import { useEffect, useState, type CSSProperties } from 'react'
 
@@ -11,10 +12,23 @@ const NUBES: { lado: -1 | 1; x: number; y: number; t: number; r: number }[] = [
   { lado: 1, x: 50, y: 30, t: 90, r: 0.16 }, { lado: -1, x: 46, y: 80, t: 95, r: 0.18 },
 ]
 
+const CLAVE = 'a-media-luz-entrada'
+/** ¿Primera vez que se abre hoy? (las nubes, una vez al día; luego, un fundido corto). */
+function primeraDelDia(): boolean {
+  const hoy = new Date().toDateString()
+  try {
+    if (localStorage.getItem(CLAVE) === hoy) return false
+    localStorage.setItem(CLAVE, hoy)
+  } catch { /* sin almacenamiento: nubes siempre */ }
+  return true
+}
+
 export function Entrada({ noche }: { noche: boolean }) {
+  const [nubes] = useState(primeraDelDia)
   const [fuera, setFuera] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setFuera(true), 2600); return () => clearTimeout(t) }, [])
+  useEffect(() => { const t = setTimeout(() => setFuera(true), nubes ? 2600 : 600); return () => clearTimeout(t) }, [nubes])
   if (fuera) return null
+  if (!nubes) return <div aria-hidden className="anim-fundido pointer-events-none fixed inset-0 z-[60] mx-auto max-w-[430px]" style={{ background: noche ? '#2e2030' : '#f9ebdd' }} />
   const color = noche ? '#5b466e' : '#fff6ec'
   const sombra = noche ? '#3d2c4d' : '#f3d9c9'
   return (

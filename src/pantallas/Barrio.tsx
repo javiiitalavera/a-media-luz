@@ -19,6 +19,7 @@ import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
 import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLeer, verGag, verHuella } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
+import { IconoMaterial } from '../componentes/IconoMaterial'
 
 export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
   partida: Partida; ahora: Date; onCasa: (c: CompaneroId, punto?: { x: number; y: number }) => void; onVolver?: () => void; onNovedades: () => void
@@ -159,7 +160,7 @@ function Materiales({ mat }: { mat: Record<AreaId, number> }) {
       {ORDEN_AREAS.map((a) => (
         <li key={a} className="flex flex-col items-center">
           <span className="flex items-center gap-1 text-[18px] leading-none font-bold">
-            <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: MATERIALES[a].color }} />{mat[a]}
+            <IconoMaterial area={a} tam={17} />{mat[a]}
           </span>
           <span className="mt-1 text-[11px] font-medium text-texto-3">{MATERIALES[a].nombre}</span>
         </li>
@@ -196,7 +197,7 @@ function HojaBarrio({ partida, ahora, abierto, onCerrar }: { partida: Partida; a
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {(Object.entries(b.coste) as [AreaId, number][]).map(([a, n]) => (
                       <span key={a} className={`flex items-center gap-1 rounded-full bg-hundido px-2 py-0.5 text-[12px] font-semibold ${!hecho && f[a] ? 'text-peligro' : 'text-texto-2'}`}>
-                        <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: MATERIALES[a].color }} />{n} {MATERIALES[a].nombre}
+                        <IconoMaterial area={a} tam={14} />{n} {MATERIALES[a].nombre}
                       </span>
                     ))}
                   </div>

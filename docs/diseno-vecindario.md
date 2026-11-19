@@ -270,3 +270,13 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Del Álbum al sitio:** las curiosidades de una historia y las fotos tienen «Leer la crónica» y «Ver dónde pasó».
 - **Decisiones que se ven:** en «El préstamo», con salchichas aparecen en el estante de Tofu; si Nox lee, quedan los libros junto a su banco.
 - **Chistes:** fuera los que se meten con el jugador (caja, flexo, reloj, estantería, farolillo, zapatillas, bufanda, farol, medalla y frases de descuido) y los restos del «bosque» y las «ofrendas».
+
+### Tanda C: estética (19/11/2026, rama `dev/estetica`)
+- **Gestos de cada vecino** (`src/componentes/FiguraVecino.tsx`), con trozos de su propio dibujo:
+  - **Nox:** respira y da saltitos impacientes; al tocarlo, salta.
+  - **Tofu:** completamente quieto; solo el brote se mece. Al tocarlo, solo el brote se sobresalta.
+  - **Tuerca:** respira, tic nervioso de vez en cuando, el engranaje gira a ratos; al tocarlo, respingo y engranaje a toda prisa.
+- **Noche:** el tinte se aclara alrededor del vecino (máscara), así se ve nítido y el fondo sigue oscuro.
+- **Materiales con forma:** llama, semilla, gota, carrete y tornillo, dibujados por código (`IconoMaterial`), en la barra, las hojas y los costes. Cabe a 360 px con cantidades de dos cifras.
+- **Entrada:** nubes solo en la primera apertura del día; si vuelves a abrir, fundido de medio segundo. Con «reducir movimiento», la eclosión es más corta.
+- **Sonidos de objetos:** crepitar (hoguera, horno, faroles), clic metálico (cosas del taller), roce de hoja (libros, plantas, tela) y golpecito de madera para el resto (`SONIDO_OBJETO`).

@@ -31,3 +31,10 @@ export const TOQUES_OBJETO: Record<string, string[]> = {
 
 /** Gregorio de visita en casa de Nox (es la misma aspiradora, con otra vida). */
 export const TOQUES_GREGORIO_EN_NOX = ['Gregorio, en casa de Nox. Come migas. Está muy bien atendido.', 'Nox le ha puesto una manta. Gregorio no ha opinado.']
+
+/** Cómo suena cada objeto al tocarlo (los que no están, golpecito de madera). */
+export const SONIDO_OBJETO: Record<string, 'fuego' | 'metal' | 'hoja'> = {
+  hoguera: 'fuego', horno: 'fuego', 'farol-luna': 'fuego', farolillo: 'fuego',
+  caja: 'metal', aspiradora: 'metal', flexo: 'metal', cajonera: 'metal', 'estanteria-tarros': 'metal', reloj: 'metal', medalla: 'metal', tuerquita: 'metal', tablon: 'metal',
+  libros: 'hoja', pizarra: 'hoja', maceta: 'hoja', estanteria: 'hoja', seta: 'hoja', cojin: 'hoja', bufanda: 'hoja',
+}
