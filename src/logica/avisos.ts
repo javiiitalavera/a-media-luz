@@ -86,14 +86,35 @@ export function seccionesNuevas(p: Partida): SeccionAlbum[] {
     const visto = vistoEn(p, s)
     if (s === 'momentos') return (p.momentos ?? []).some((m) => m.fecha > visto)
     if (s === 'curiosidades') return curiosidadesTenidas(p).some((x) => x.fecha > visto)
-    // Crónicas: una historia ha empezado o avanzado otro día después de mirarlas.
-    return Object.values(p.situaciones ?? {}).some((e) => !visto || e.dia > dia(visto))
+    return Object.keys(p.situaciones ?? {}).some((id) => cronicaNueva(p, id))
   })
+}
+
+/** Lo que tiene una crónica hasta ahora (fase y decisión): si cambia, hay novedad. */
+const firmaCronica = (e: { fase: number; decision?: string }) => `${e.fase}|${e.decision ?? ''}`
+/** Una crónica tiene novedades: ha empezado o avanzado desde la última vez que la abriste. */
+export function cronicaNueva(p: Partida, id: string): boolean {
+  const e = p.situaciones?.[id]
+  if (!e) return false
+  const vistas = vistos(p).cronicas
+  if (vistas) return vistas[id] !== firmaCronica(e) // una que no has abierto nunca también es nueva
+  // Partidas de antes de este aviso: lo que avanzó después de la última vez que se miraron las Crónicas.
+  const visto = vistoEn(p, 'cronicas')
+  return !visto || e.dia > dia(visto)
+}
+/** Abrir una crónica apaga su punto. */
+export const verCronica = (p: Partida, id: string): Partida => {
+  const e = p.situaciones?.[id]
+  return e && cronicaNueva(p, id) ? { ...p, vistos: { ...vistos(p), cronicas: { ...vistos(p).cronicas, [id]: firmaCronica(e) } } } : p
 }
 export const hayAlbumNuevo = (p: Partida) => seccionesNuevas(p).length > 0
 /** Mirar una parte del Álbum apaga su aviso. */
-export const verSeccion = (p: Partida, s: SeccionAlbum, ahora: Date): Partida =>
-  seccionesNuevas(p).includes(s) ? { ...p, vistos: { ...vistos(p), albumSec: { ...vistos(p).albumSec, [s]: ahora.toISOString() } } } : p
+export const verSeccion = (p: Partida, s: SeccionAlbum, ahora: Date): Partida => {
+  if (!seccionesNuevas(p).includes(s)) return p
+  // Las crónicas se apagan de una en una (al abrirlas); aquí, todas a la vez.
+  if (s === 'cronicas') return Object.keys(p.situaciones ?? {}).reduce(verCronica, p)
+  return { ...p, vistos: { ...vistos(p), albumSec: { ...vistos(p).albumSec, [s]: ahora.toISOString() } } }
+}
 /** Mirarlo todo. */
 export const verAlbum = (p: Partida, ahora: Date): Partida => SECCIONES.reduce((q, s) => verSeccion(q, s, ahora), p)
 
