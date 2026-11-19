@@ -7,7 +7,8 @@ export interface Escena {
   proporcion: number
   /** Dónde apoya los pies el compañero (centro horizontal y altura). */
   pies: { x: number; y: number }
-  /** Ancho del compañero (en % del ancho del fondo) en cada etapa. */
+  /** Ancho del compañero (en % del ancho del fondo) en cada etapa. Igual en las tres (decidido por Javi:
+   *  evolucionan sin crecer, que de bebés son más monos). */
   anchos: [number, number, number]
   /** Luces ya dibujadas en el fondo, para hacerlas latir. */
   luces: { x: number; y: number }[]
@@ -17,11 +18,11 @@ export interface Escena {
 }
 
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
-  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 46, 52],
+  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 40, 40],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true } },
-  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 44, 48],
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 38, 38],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 } },
-  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 42, 48],
+  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 36, 36],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }] },
 }
 

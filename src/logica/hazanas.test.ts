@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { anadirHazana, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, quitarHazana, textoHazana } from './hazanas'
+import { anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, quitarHazana, textoHazana } from './hazanas'
 import { hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { estadoRincon } from './reglas'
@@ -69,5 +69,19 @@ describe('hazañas', () => {
     expect(p.acciones[0].nombre).toBe('Andar 8000 pasos')
     expect(p.ofrendas[0].accionId).toBe('pasos')
     expect(migrarHazanas(p)).toBe(p)
+  })
+
+  it('propios: se puede cambiar el área y borrarlos de verdad (el historial queda)', () => {
+    let p = crearHazana(base(), { nombre: 'Nadar 20 minutos', area: 'calma' }, 'x')
+    p = editarHazana(p, 'propia-x', { area: 'cuerpo' })
+    expect(p.acciones.find((a) => a.id === 'propia-x')!.area).toBe('cuerpo')
+    expect(editarHazana(p, 'pasos', { area: 'mente' }).acciones.find((a) => a.id === 'pasos')!.area).toBe('cuerpo') // los del catálogo no cambian de área
+    p = hacerOfrenda(p, 'propia-x', en('2026-01-05'), azarFijo(0.99, 0.99), 'o1').partida
+    p = quitarHazana(p, 'propia-x')
+    expect(propiasFuera(p).map((a) => a.id)).toEqual(['propia-x'])
+    p = borrarHazana(p, 'propia-x')
+    expect(p.acciones.some((a) => a.id === 'propia-x')).toBe(false)
+    expect(borrarHazana(p, 'pasos').acciones.some((a) => a.id === 'pasos')).toBe(true) // solo los propios
+    expect(p.ofrendas).toHaveLength(1)
   })
 })

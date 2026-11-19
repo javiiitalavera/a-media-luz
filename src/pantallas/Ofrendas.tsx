@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type Accion, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
-import { anadirHazana, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
+import { anadirHazana, borrarHazana, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -14,6 +14,8 @@ import { rutaArte } from '../arte/manifiesto'
 import { sfx } from '../sonido'
 import { Interruptor, Pantalla } from '../componentes/comunes'
 import { IconoArea } from '../componentes/IconoArea'
+import { HojaSugerencias } from '../componentes/HojaSugerencias'
+import { TEXTOS_CUESTIONARIO as TC } from '../contenido/cuestionario'
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 const campo = 'h-11 w-full rounded-2xl border-2 border-borde bg-fondo px-3 text-base focus:border-coral focus:outline-none'
@@ -27,7 +29,7 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const mias = misHazanas(partida)
   const extras = extrasHoy(partida, ahora)
   const hechas = mias.filter((a) => hechaHoy(partida, a.id, ahora)).length
-  const [hoja, setHoja] = useState<'editar' | 'algo' | null>(null)
+  const [hoja, setHoja] = useState<'editar' | 'algo' | 'sugerencias' | null>(null)
   const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string } | null>(null)
   useEffect(() => olvidar, [olvidar])
   // Abrir Hazañas apaga el aviso del día nuevo.
@@ -56,9 +58,14 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
           <h1 className="text-[28px] leading-tight font-bold">{UI.ofrendas.titulo}</h1>
           <p className="mt-1 text-[14px] text-texto-3">{UI.ofrendas.subtitulo}</p>
         </div>
-        <button type="button" onClick={() => setHoja('editar')} className="min-h-11 shrink-0 rounded-full bg-hundido px-4 text-[14px] font-semibold text-texto-2">
-          {UI.ofrendas.editar}
-        </button>
+        <div className="flex shrink-0 gap-1.5">
+          <button type="button" onClick={() => setHoja('sugerencias')} className="min-h-11 rounded-full bg-hundido px-3.5 text-[14px] font-semibold text-texto-2">
+            {TC.boton}
+          </button>
+          <button type="button" onClick={() => setHoja('editar')} className="min-h-11 rounded-full bg-hundido px-3.5 text-[14px] font-semibold text-texto-2">
+            {UI.ofrendas.editar}
+          </button>
+        </div>
       </div>
 
       {/* El huevo está listo: la invitación se queda hasta que vas a verlo (el último toque es tuyo). */}
@@ -106,6 +113,7 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
         </div>
       )}
 
+      {hoja === 'sugerencias' && <HojaSugerencias partida={partida} onCerrar={() => setHoja(null)} />}
       {hoja === 'editar' && <HojaEditar partida={partida} onCerrar={() => setHoja(null)} />}
       {hoja === 'algo' && <HojaAlgoMas partida={partida} onCerrar={() => setHoja(null)} onApuntar={(a) => { setHoja(null); marcar(a) }} />}
     </Pantalla>
@@ -173,9 +181,19 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
           <div key={a.id} className="rounded-3xl bg-tarjeta p-3">
             <div className="mb-2 flex items-center gap-2">
               <IconoArea area={a.area} pequeno />
-              <span className="flex-1 text-[13px] font-semibold text-texto-3">{AREAS[a.area].nombre}</span>
-              <button type="button" onClick={() => ajustar((p) => quitarHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-peligro">{UI.ofrendas.quitar}</button>
+              <span className="flex-1 text-[13px] font-semibold text-texto-3">{AREAS[a.area].nombre}{esPropia(a) && ` · ${UI.ofrendas.propio}`}</span>
+              <button type="button" onClick={() => ajustar((p) => quitarHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-texto-2">{UI.ofrendas.quitar}</button>
+              {esPropia(a) && <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />}
             </div>
+            {esPropia(a) && (
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {ORDEN_AREAS.map((ar) => (
+                  <button key={ar} type="button" aria-pressed={a.area === ar} onClick={() => ajustar((p) => editarHazana(p, a.id, { area: ar }))}
+                    className={`min-h-11 rounded-full border-2 px-3 text-[13px] font-semibold ${a.area === ar ? 'border-transparent text-tinta' : 'border-borde text-texto-3'}`}
+                    style={a.area === ar ? { background: MATERIALES[ar].color } : undefined}>{AREAS[ar].nombre}</button>
+                ))}
+              </div>
+            )}
             <label className="block text-[13px] font-semibold text-texto-3">{UI.ofrendas.nombre}
               <input key={a.nombre} defaultValue={a.nombre} className={`${campo} mt-1`}
                 onBlur={(e) => e.target.value !== a.nombre && ajustar((p) => editarHazana(p, a.id, { nombre: e.target.value }))}
@@ -189,6 +207,22 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
           </div>
         ))}
       </div>
+
+      {propiasFuera(partida).length > 0 && (
+        <>
+          <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.otrosPropios}</h3>
+          <div className="flex flex-col gap-2">
+            {propiasFuera(partida).map((a) => (
+              <div key={a.id} className="flex items-center gap-2 rounded-3xl bg-tarjeta py-1 pr-1 pl-3">
+                <IconoArea area={a.area} pequeno />
+                <span className="flex-1 text-[15px] font-medium">{a.nombre}</span>
+                <button type="button" onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto">+ {UI.ofrendas.aMiLista}</button>
+                <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.anadir}</h3>
       <div className="flex flex-col gap-3">
@@ -212,6 +246,17 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
       <h3 className="mt-5 mb-1 px-1 font-bold">{UI.ofrendas.crearPropia}</h3>
       <FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => ajustar((p) => crearHazana(p, d, nuevoId()))} />
     </Hoja>
+  )
+}
+
+/** Borrar con confirmación (un segundo toque). */
+function BotonBorrar({ onBorrar }: { onBorrar: () => void }) {
+  const [seguro, setSeguro] = useState(false)
+  return (
+    <button type="button" onClick={() => (seguro ? onBorrar() : setSeguro(true))} onBlur={() => setSeguro(false)}
+      className={`min-h-11 rounded-full px-3 text-[14px] font-semibold ${seguro ? 'bg-peligro text-white' : 'text-peligro'}`}>
+      {seguro ? UI.ofrendas.seguroBorrar : UI.ofrendas.borrar}
+    </button>
   )
 }
 
