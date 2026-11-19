@@ -184,7 +184,7 @@ export const useJuego = create<Juego>()(
       borrar: () => set({ partida: null, recientes: []}),
     }),
     {
-      name: 'a-media-luz', version: 2, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),
+      name: 'a-media-luz', version: 3, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),
       // v2: hazañas concretas (las acciones genéricas pasan a sus equivalentes).
       migrate: (guardado) => {
         const g = guardado as { partida: Partida | null }

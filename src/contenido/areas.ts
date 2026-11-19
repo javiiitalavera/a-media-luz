@@ -2,9 +2,9 @@
 import type { Area, AreaId, Ritmo } from './tipos'
 
 export const AREAS: Record<AreaId, Area> = {
-  cuerpo: { id: 'cuerpo', nombre: 'Energía', rincon: 'Claro del fuego', companero: 'nox', ritmo: 'diario', descripcion: 'moverse, dormir, comer, beber agua' },
-  mente: { id: 'mente', nombre: 'Mente', rincon: 'Huerto de musgo', companero: 'tofu', ritmo: 'varias', descripcion: 'leer, aprender, concentrarse, crear' },
-  calma: { id: 'calma', nombre: 'Calma', rincon: 'Estanque de niebla', companero: 'bruma', ritmo: 'varias', descripcion: 'desconectar, naturaleza, respirar, descansar sin pantallas' },
+  cuerpo: { id: 'cuerpo', nombre: 'Energía', rincon: 'Claro del fuego', companero: 'nox', ritmo: 'diario', descripcion: 'moverse, comer, beber agua' },
+  mente: { id: 'mente', nombre: 'Mente', rincon: 'Huerto de musgo', companero: 'tofu', ritmo: 'varias', descripcion: 'leer, aprender, concentrarse, crear, escribir' },
+  calma: { id: 'calma', nombre: 'Calma', rincon: 'Estanque de niebla', companero: 'bruma', ritmo: 'varias', descripcion: 'desconectar, dormir, naturaleza, respirar, descansar sin pantallas' },
   vinculos: { id: 'vinculos', nombre: 'Vínculos', rincon: 'Porche de las visitas', companero: 'madeja', ritmo: 'par', descripcion: 'pareja, familia, amigos, llamadas, quedadas' },
   orden: { id: 'orden', nombre: 'Orden', rincon: 'Taller', companero: 'tuerca', ritmo: 'semanal', descripcion: 'pendientes, papeleo, finanzas, ordenar, planificar' },
 }
