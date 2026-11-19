@@ -88,9 +88,11 @@ export function Barrio({ partida, ahora, onCasa, onVolver, onNovedades }: {
             <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); onCasa(m.companero, { x: r.left + r.width / 2, y: r.top + r.height / 2 }) }}
               className="absolute flex flex-col items-center transition active:scale-95"
               style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
-              <img src={rutaArte(huevo ? `huevo/${m.companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${m.companero}`)} alt=""
-                className={`w-full drop-shadow-[0_3px_3px_rgba(63,42,58,0.35)] ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
-              <span className="-mt-1 rounded-full bg-tarjeta px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
+              <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`}>
+                <img src={rutaArte(huevo ? `huevo/${m.companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${m.companero}`)} alt=""
+                  className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
+              </span>
+              <span className="relative -mt-1 rounded-full bg-tarjeta px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
             </button>
           )
         })}
