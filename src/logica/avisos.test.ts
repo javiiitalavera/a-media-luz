@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
+import { fichaNueva, hayAlgoEnInicio, hayAlgoQueHacer, verFicha, gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -24,12 +24,12 @@ describe('avisos', () => {
   it('el sobre cuenta las no leídas; el «!» de la casa sigue hasta que entras', () => {
     let p = avanzar(barrio(['hoguera']), en('2026-01-07', 10)).partida
     expect(noticiasSinLeer(p)).toBe(1)
-    expect(avisoEnCasa(p, 'nox')).toBe(true)
+    expect(avisoEnCasa(p, 'nox', en('2026-01-07', 10))).toBe(true)
     p = leerNoticias(p)
     expect(noticiasSinLeer(p)).toBe(0)
-    expect(avisoEnCasa(p, 'nox')).toBe(true)
+    expect(avisoEnCasa(p, 'nox', en('2026-01-07', 10))).toBe(true)
     p = visitarLugar(p, 'nox')
-    expect(avisoEnCasa(p, 'nox')).toBe(false)
+    expect(avisoEnCasa(p, 'nox', en('2026-01-07', 10))).toBe(false)
     expect(p.noticias).toHaveLength(1) // se queda en el sobre, leída
   })
 
@@ -60,5 +60,35 @@ describe('avisos', () => {
     expect(gagDeHoy(barrio([]), 'nox', conGag[0])).toBeNull()
     p = verGag(p, 'nox', conGag[0])
     expect(gagDeHoy(p, 'nox', conGag[0])).toBeNull()
+  })
+
+  it('Inicio avisa si el huevo está listo o alguien ha crecido sin que lo hayas visto', () => {
+    const ahora = en('2026-01-07', 10)
+    let p = barrio([])
+    p = { ...p, noticias: [], meses: p.meses!.map((m) => ({ ...m, presentado: m.inicio })) }
+    expect(hayAlgoEnInicio(p, ahora)).toBe(false)
+    // Tuerca aún sin presentar y con sus tres retos: está naciendo.
+    const naciendo = { ...p, meses: [p.meses![0], { ...p.meses![1], presentado: undefined }],
+      ofrendas: [...p.ofrendas, ...[0, 1, 2].map((i) => ({ id: 't' + i, accionId: p.acciones[0].id, area: p.acciones[0].area, fecha: en('2026-01-06', 18, i).toISOString(), diaMalo: false }))] }
+    expect(hayAlgoEnInicio(naciendo, ahora)).toBe(true)
+    // Ha crecido (lo dicen las etapas vistas, que van por detrás).
+    const crecido = { ...p, etapasVistas: { nox: 0 as const }, construcciones: [{ objetoId: 'hoguera', fecha: en('2026-01-06').toISOString() }],
+      ofrendas: [...p.ofrendas, ...[5, 7, 8].map((d) => ({ id: 'c' + d, accionId: p.acciones[0].id, area: p.acciones[0].area, fecha: en(`2026-01-0${d}`, 9).toISOString(), diaMalo: false }))] }
+    const luego = en('2026-01-09', 10)
+    expect(hayAlgoQueHacer(crecido, 'nox', luego)).toBe(true)
+    expect(avisoEnCasa(crecido, 'nox', luego)).toBe(true)
+    expect(hayAlgoEnInicio(crecido, luego)).toBe(true)
+  })
+
+  it('la «i» avisa cuando cambia la ficha (siguiente proyecto o una historia nueva)', () => {
+    let p = barrio([])
+    expect(fichaNueva(p, 'nox')).toBe(true)
+    p = verFicha(p, 'nox')
+    expect(fichaNueva(p, 'nox')).toBe(false)
+    p = { ...p, construcciones: [{ objetoId: 'hoguera', fecha: en('2026-01-06').toISOString() }] }
+    expect(fichaNueva(p, 'nox')).toBe(true) // el siguiente proyecto ya es otro
+    p = verFicha(p, 'nox')
+    p = avanzar(p, en('2026-01-07', 10)).partida // empieza «La normativa»
+    expect(fichaNueva(p, 'nox')).toBe(true)
   })
 })

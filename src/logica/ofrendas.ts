@@ -8,8 +8,9 @@ import type { Ofrenda, Partida } from './partida'
 import { estadoBosque, estadoRincon, TOPE_DIARIO } from './reglas'
 import { anadirCuriosidad, sorpresa } from './curiosidades'
 import type { Curiosidad } from '../contenido/curiosidades'
+import { gruposDeCharla } from './charla'
 
-export const RECIENTES = 8
+export const RECIENTES = 12
 
 export interface Frase {
   companero: CompaneroId
@@ -104,12 +105,23 @@ export function deshacerOfrenda(p: Partida, ofrendaId: string): Partida {
 
 export const cambiarDiaMalo = (p: Partida, activo: boolean, ahora: Date): Partida => ({ ...p, diaMalo: activo ? dia(ahora) : undefined })
 
-/** Lo que dice un compañero al tocarlo en el bosque: si su rincón está mal, se queja; si no, saluda según la hora. */
-export function fraseAlTocar(p: Partida, companero: CompaneroId, ahora: Date, azar: Azar, soloSaludo = false) {
+/** Lo que dice un vecino al tocarlo: si su casa está mal, se queja (salvo `sinQuejas`: no es el último en llegar);
+ *  si no, saluda según la hora o comenta lo que pasa (charla.ts). */
+export function fraseAlTocar(p: Partida, companero: CompaneroId, ahora: Date, azar: Azar, sinQuejas = false) {
   const area = COMPANEROS[companero].area
   const r = estadoBosque(p, ahora).find((x) => x.area === area)
-  if (!soloSaludo && r && r.llegado && r.fase > 0) return elegirFrase(p, companero, `fase${r.fase}` as TipoFrase, azar)
-  return elegirFrase(p, companero, 'saludo', azar, momentoDelDia(ahora))
+  if (!sinQuejas && r && r.llegado && r.fase > 0) return elegirFrase(p, companero, `fase${r.fase}` as TipoFrase, azar)
+  const saludo = FRASES[companero].saludo[momentoDelDia(ahora)]
+  // Los saludos de la hora pesan como dos grupos; el resto, lo que viene a cuento (charla.ts).
+  const grupos = [saludo, saludo, ...gruposDeCharla(p, companero, ahora)]
+  const libre = (t: string) => !p.frasesRecientes.includes(t)
+  const conLibres = grupos.filter((g) => g.some(libre))
+  const grupo = elegir(conLibres.length ? conLibres : grupos, azar)!
+  const texto = elegir(grupo.some(libre) ? grupo.filter(libre) : grupo, azar)!
+  return {
+    frase: { companero, tipo: grupo === saludo ? 'saludo' : 'charla', texto } as Frase,
+    recientes: [...p.frasesRecientes.filter((t) => t !== texto), texto].slice(-RECIENTES),
+  }
 }
 
 export const nombreCompanero = (id: CompaneroId) => COMPANEROS[id].nombre

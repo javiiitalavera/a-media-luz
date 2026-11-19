@@ -115,7 +115,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
 
         {/* Avisos: «!» sobre la casita donde ha pasado algo (por encima del tinte de la noche). */}
         {vecinos.slice(0, PARCELAS.length).map((m, i) => {
-          if (!avisoEnCasa(partida, m.companero)) return null
+          if (!avisoEnCasa(partida, m.companero, ahora)) return null
           const p = PARCELAS[i]
           const anchoCasa = p.ancho * 0.82
           return (

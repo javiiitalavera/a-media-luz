@@ -19,7 +19,7 @@ import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/Boton
 import { Materiales } from '../componentes/Bolsa'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { globoEn, useGlobo } from '../estado/globo'
-import { Aviso } from '../componentes/Aviso'
+import { Aviso, Punto } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
 import { FiguraVecino } from '../componentes/FiguraVecino'
 import { SugerirHazanas } from '../componentes/SugerirHazanas'
@@ -29,7 +29,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
-import { gagDeHoy, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { fichaNueva, gagDeHoy, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
@@ -434,7 +434,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         )}
         {/* Abajo: la ficha del vecino («i») a la izquierda y construir a la derecha. */}
         <div className="flex items-end justify-between">
-          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mb-1"><Icono d={ICONOS.info} /></BotonRedondo>
+          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => { setFicha(true); ajustar((p) => verFicha(p, DUENO)) }} className="mb-1"><Icono d={ICONOS.info} />{!conHuevo && fichaNueva(partida, DUENO) && <Punto className="absolute -top-0.5 -right-0.5" />}</BotonRedondo>
           <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
-import { decisionesPendientes, hayAlbumNuevo, hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { decisionesPendientes, hayAlbumNuevo, hayAlgoEnInicio, hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { tocaCopia } from './logica/ajustes'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -40,6 +41,7 @@ export default function App() {
   // De noche, la interfaz pasa a su versión oscura (ciruela).
   const momento = momentoDelDia(ahora)
   const aspecto = usePreferencias((s) => s.aspecto)
+  const ultimaCopia = usePreferencias((s) => s.ultimaCopia)
   const noche = aspecto === 'auto' ? momento === 'noche' : aspecto === 'noche'
   useEffect(() => {
     document.documentElement.dataset.noche = noche ? 'si' : 'no'
@@ -77,7 +79,7 @@ export default function App() {
   return (
     <>
       <div key={`${pestana}-${verBarrio}-${casa}`} className={pestana === 'inicio' ? undefined : 'animate-aparecer'}>{pantalla}</div>
-      <Navegacion actual={pestana} onCambiar={irA} avisos={{ ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida) }} />
+      <Navegacion actual={pestana} onCambiar={irA} avisos={{ inicio: hayAlgoEnInicio(partida, ahora), ofrendas: hayHazanasNuevas(partida, ahora), album: hayAlbumNuevo(partida), ajustes: tocaCopia(partida.inicio, ultimaCopia, ahora) }} />
       {sobre && <Novedades ahora={ahora} onIr={irALugar} onDecidir={(c) => { irALugar(c); setAbrirDecision(true) }} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />

@@ -330,3 +330,15 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Editar retos:** una fila por reto (tocar para cambiar el nombre y, si es propio, el área o borrarlo; la «×» lo quita de la lista) con el contador «6 de 10». El catálogo y «Crear uno propio» van plegados. **Sin versiones mínimas que decidir:** en día malo cada reto pasa a la mínima del catálogo o, si es propio, a «…, aunque sea un poco». Máximo de 10 retos (sin cambios).
 - **Álbum:** cada parte (Momentos, Crónicas, Curiosidades) lleva su punto si tiene algo nuevo, y se abre primero la que lo tenga. Las Crónicas avisan cuando una historia empieza o avanza.
 - **Lo que pasa en las historias** (escenitas del día, respuestas a tus decisiones, «dale un toque») ya no sale en una franja arriba: sale en un globo oscuro desde quien lo protagoniza (el objeto, el vecino de visita o el dueño de la casa).
+
+### Más avisos y más frases (20/11/2026, rama `dev/avisos-y-frases`)
+- **Avisos nuevos:**
+  - **Pestaña Inicio** (cuando estás en otra): el huevo está listo para abrirse, un vecino ha crecido y no lo has visto, hay una decisión pendiente o novedades sin leer.
+  - **«!» de las casitas del barrio**, también cuando ese vecino ha crecido sin que lo veas o tiene un proyecto listo para construir.
+  - **Punto en la «i»** de la casa cuando cambia la ficha: hay un proyecto siguiente nuevo o empieza una historia en la que sale. Se apaga al abrirla.
+  - **Ajustes y «Copia de seguridad»**: si la partida tiene más de dos semanas y no hay copia o la última es de hace más de dos semanas.
+  - Sin avisos al móvil con la app cerrada (necesitarían servidor y chocan con «culpa no»): quedan para más adelante.
+- **Frases:**
+  - 6 saludos por momento del día y 8 reacciones genéricas por vecino (Nox, Tuerca, Tofu y Bruma); 4 reacciones por reto del catálogo. Tofu ya tiene frases al construir y al crecer. Fuera las del juego antiguo (retos del mes, comodín).
+  - **Charla** (`src/contenido/charla.ts`): al tocarlo, el vecino mezcla los saludos de la hora con lo que viene a cuento: cómo va tu lista de hoy (sin tachar nada solo a partir de mediodía, para no pinchar por la mañana), lunes/viernes/fin de semana, vuelta tras 3 días o más sin tachar nada (sin reproches), su etapa, lo que tiene construido y los otros vecinos que ya han llegado (pullas entre ellos). Los saludos pesan como dos grupos; no se repite ninguna de las 12 últimas frases.
+  - Los vecinos que no son el último en llegar no se quejan de su casa, pero sí charlan (antes solo saludaban).

@@ -12,6 +12,7 @@ import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { dia, diasEntre } from '../logica/fechas'
 import { exportarCopia, importarCopia } from '../logica/copia'
+import { tocaCopia } from '../logica/ajustes'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
@@ -222,10 +223,11 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
         <Interruptor titulo={UI.sonido.efectos} explicacion={UI.sonido.efectosExplicacion} activo={prefs.sonidos} onCambiar={prefs.ponerSonidos} />
       </div>
 
-      <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.copia}</h2>
+      <h2 className="mt-6 mb-1 flex items-center gap-2 px-1 font-bold">{UI.ajustes.copia}{tocaCopia(partida.inicio, prefs.ultimaCopia, new Date()) && <Punto />}</h2>
       <Tarjeta>
         <p className="text-[13px] text-texto-3">{UI.ajustes.copiaExplicacion}</p>
         <p className="mt-1 text-[14px] font-semibold">{UI.ajustes.ultimaCopia(prefs.ultimaCopia ? diasEntre(dia(prefs.ultimaCopia), dia(new Date())) : null)}</p>
+        {tocaCopia(partida.inicio, prefs.ultimaCopia, new Date()) && <p className="mt-1 text-[14px] text-coral-texto">{UI.ajustes.tocaCopia}</p>}
         <div className="mt-3 grid grid-cols-2 gap-2">
           <BotonSecundario onClick={exportar}>{UI.ajustes.exportar}</BotonSecundario>
           <BotonSecundario onClick={() => archivo.current?.click()}>{UI.ajustes.importar}</BotonSecundario>
