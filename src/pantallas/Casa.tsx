@@ -94,7 +94,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const verEtapa = useJuego((s) => s.verEtapa)
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
-  const [hallazgo, setHallazgo] = useState<string | null>(null)
   const presentar = useJuego((s) => s.presentar)
   // El último en llegar: aún en el huevo, naciendo (se enseña la eclosión una vez) o ya en casa.
   const estado = esUltimo ? estadoDelMes(partida, ahora) : 'vivo'
@@ -149,11 +148,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
     ]
     return () => pasos.forEach(clearTimeout)
   }, [estado, abriendo])
-  useEffect(() => {
-    if (!hallazgo) return
-    const t = setTimeout(() => setHallazgo(null), 5000)
-    return () => clearTimeout(t)
-  }, [hallazgo])
 
   // Ha crecido desde la última vez: celebración (una sola vez por etapa).
   const pendiente = vivo && crecioSinVer(partida, DUENO, g.etapa)
@@ -200,11 +194,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   useEffect(() => {
     if (pendiente || !vivo || !esUltimo) return
     const t = setTimeout(() => {
-      const noticia = contar()
-      const f = noticia?.frase
+      const f = contar()
       // La reacción ya salió al tachar la hazaña: aquí solo se celebra con un saltito.
       if (f && f.companero === DUENO) setSaltos((n) => n + 1)
-      if (noticia?.hallazgos.length) setHallazgo(noticia.hallazgos.join(' · '))
     }, 600)
     return () => clearTimeout(t)
   }, [pendiente, vivo, esUltimo, contar, DUENO])
@@ -417,16 +409,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
       </div>
 
       {/* Lo que pasa (narración): distinto de lo que dicen, en una franja discreta arriba. Nunca a la vez que un bocadillo. */}
-      {nota && !habla && !celebra && !hallazgo && (
+      {nota && !habla && !celebra && (
         <div role="status" className="animate-entrar pointer-events-none absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+64px)] z-30 flex justify-center px-5">
           <span className="max-w-[320px] rounded-2xl bg-[#2e2030]/70 px-3.5 py-2 text-center text-[14px] leading-snug text-[#fbefe4] italic shadow-md backdrop-blur-sm">{nota}</span>
         </div>
       )}
-      {hallazgo && !celebra && (
-        <div className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-center text-[15px] font-bold text-tinta shadow-lg">{UI.casa.encontrado(hallazgo)}</span>
-        </div>
-      )}
+
       {celebra && (
         <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
           <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>

@@ -160,6 +160,7 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
   const sustituir = useJuego((s) => s.sustituir)
   const borrar = useJuego((s) => s.borrar)
   const archivo = useRef<HTMLInputElement>(null)
+  const ultimaLectura = useRef(0)
   const [pendiente, setPendiente] = useState<Partida | null>(null)
   const [mensaje, setMensaje] = useState<string | null>(null)
   const [confirmarBorrado, setConfirmarBorrado] = useState(false)
@@ -181,12 +182,16 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
     prefs.copiaHecha(new Date().toISOString())
   }
   const leer = async (f?: File) => {
-    setMensaje(null)
     if (!f) return
-    const p = importarCopia(await f.text())
+    const lectura = ++ultimaLectura.current
+    setMensaje(null)
+    setPendiente(null)
+    if (archivo.current) archivo.current.value = ''
+    const texto = await f.text().catch(() => '')
+    if (lectura !== ultimaLectura.current) return
+    const p = importarCopia(texto)
     if (p) setPendiente(p)
     else setMensaje(UI.ajustes.errorCopia)
-    if (archivo.current) archivo.current.value = ''
   }
 
   return (

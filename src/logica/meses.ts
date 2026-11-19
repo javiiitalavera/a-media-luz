@@ -1,12 +1,7 @@
-// Un compañero al mes (docs/diseno-meses.md). Cada mes dura 28 días desde que llega el huevo; el huevo
-// eclosiona con las primeras ofrendas; lo ganado ese mes es de la casa de ese compañero.
-import { AREAS, ORDEN_COMPANEROS, type AreaId, type CompaneroId } from '../contenido'
+// Llegada y eclosión de los vecinos. Se conserva «meses» en las partidas guardadas.
+import type { CompaneroId } from '../contenido'
 import type { Partida } from './partida'
-import { TOPE_DIARIO } from './reglas'
-import { dia, sumarDias } from './fechas'
-import { elegir, type Azar } from './azar'
 
-export const DIAS_MES = 28
 export const OFRENDAS_ECLOSION = 3
 
 export interface Mes {
@@ -30,30 +25,18 @@ export interface Reto {
 }
 
 /** Los meses jugados (las partidas antiguas tienen uno implícito: su compañero principal desde el inicio). */
-export const mesesDe = (p: Partida): Mes[] => p.meses ?? [{ companero: p.principal, inicio: p.inicio }]
-
-/** Medianoche (local) del día en que acaba el mes: el día 29 contando el de llegada como día 1. */
-export function finDe(m: Mes): Date {
-  const [y, mo, d] = sumarDias(dia(m.inicio), DIAS_MES).split('-').map(Number)
-  return new Date(y, mo - 1, d)
-}
+export const mesesDe = (p: Partida): Mes[] => p.meses ?? [{ companero: p.principal, inicio: p.inicio, presentado: p.inicio }]
 
 /**
  * Ventana de tiempo de un mes: desde que llega el huevo hasta que se cierra (al ver el informe y
  * llegar el huevo siguiente). Mientras no se cierre, sigue abierto: nada de lo que hagas se pierde.
  */
-export const ventana = (m: Mes) => ({ desde: new Date(m.inicio), hasta: m.cerrado ? new Date(m.cerrado) : new Date(8.64e15) })
+const ventana = (m: Mes) => ({ desde: new Date(m.inicio), hasta: m.cerrado ? new Date(m.cerrado) : new Date(8.64e15) })
 
 export const mesActual = (p: Partida): Mes => mesesDe(p).at(-1)!
 
-/** Día del mes (1–28) y si ya ha terminado (falta ver el informe). */
-export function diaDelMes(m: Mes, ahora: Date) {
-  const n = Math.floor((ahora.getTime() - new Date(dia(m.inicio) + 'T00:00:00').getTime()) / 86_400_000) + 1
-  return { dia: Math.min(Math.max(n, 1), DIAS_MES), terminado: ahora >= finDe(m) }
-}
-
 /** Ofrendas hechas durante un mes, en orden, hasta `ahora`. */
-export function ofrendasDelMes(p: Partida, m: Mes, ahora: Date) {
+function ofrendasDelMes(p: Partida, m: Mes, ahora: Date) {
   const { desde, hasta } = ventana(m)
   return p.ofrendas
     .filter((o) => { const f = new Date(o.fecha); return f >= desde && f < hasta && f <= ahora })
@@ -65,62 +48,11 @@ export function eclosion(p: Partida, m: Mes, ahora: Date): string | null {
   return ofrendasDelMes(p, m, ahora)[OFRENDAS_ECLOSION - 1]?.fecha ?? null
 }
 
-/** Ofrendas que cuentan (como mucho 3 al día por área). */
-export function queCuentan<T extends { area: AreaId; fecha: string }>(lista: T[]): T[] {
-  const porDia = new Map<string, number>()
-  return lista.filter((o) => {
-    const k = `${o.area}|${dia(o.fecha)}`
-    const n = (porDia.get(k) ?? 0) + 1
-    porDia.set(k, n)
-    return n <= TOPE_DIARIO
-  })
-}
-
-/** Crecimiento del compañero en su mes: ofrendas de su área principal que cuentan. */
-export function crecimientoDelMes(p: Partida, m: Mes, ahora: Date, area: AreaId): number {
-  return queCuentan(ofrendasDelMes(p, m, ahora)).filter((o) => o.area === area).length
-}
-
-/**
- * El siguiente compañero: uno de los que aún no han salido, al azar. `posibles` limita a los que ya
- * tienen su arte. Devuelve null si no queda ninguno nuevo (de momento no se repiten).
- */
-export function siguienteCompanero(p: Partida, azar: Azar, posibles: readonly CompaneroId[] = ORDEN_COMPANEROS): CompaneroId | null {
-  const usados = new Set(mesesDe(p).map((m) => m.companero))
-  return elegir(posibles.filter((c) => !usados.has(c)), azar) ?? null
-}
-
-/** Cierra el mes actual (tras ver el informe) y llega el huevo siguiente. Null si no hay siguiente. */
-export function empezarMesSiguiente(p: Partida, ahora: Date, azar: Azar, posibles?: readonly CompaneroId[]): Partida | null {
-  const c = siguienteCompanero(p, azar, posibles)
-  if (!c) return null
-  const meses = mesesDe(p)
-  const cerrados = meses.map((m, i) => (i === meses.length - 1 ? { ...m, cerrado: ahora.toISOString() } : m))
-  return { ...p, meses: [...cerrados, { companero: c, inicio: ahora.toISOString() }] }
-}
-
-export interface Informe {
-  dias: number
-  diasConAlgo: number
-  porArea: Record<AreaId, number>
-  total: number
-}
-
-/** Resumen del mes para el informe final (los objetos construidos y la etapa los pone quien lo muestra). */
-export function informe(p: Partida, m: Mes, ahora: Date): Informe {
-  const fin = finDe(m)
-  const lista = ofrendasDelMes(p, m, ahora).filter((o) => new Date(o.fecha) < fin)
-  const porArea = Object.fromEntries(Object.keys(AREAS).map((a) => [a, 0])) as Record<AreaId, number>
-  for (const o of lista) porArea[o.area]++
-  return { dias: DIAS_MES, diasConAlgo: new Set(lista.map((o) => dia(o.fecha))).size, porArea, total: lista.length }
-}
-
 /** Estado del compañero del mes: aún en el huevo, recién nacido (falta enseñar su eclosión) o ya en casa. */
 export function estadoDelMes(p: Partida, ahora: Date): 'huevo' | 'naciendo' | 'vivo' {
-  if (!p.meses) return 'vivo' // partidas de antes de los meses: su compañero ya vivía en casa
   const m = mesActual(p)
-  if (!eclosion(p, m, ahora)) return 'huevo'
-  return m.presentado ? 'vivo' : 'naciendo'
+  if (m.presentado) return 'vivo'
+  return eclosion(p, m, ahora) ? 'naciendo' : 'huevo'
 }
 
 /** Marca como vista la eclosión y presentación del compañero del mes. */

@@ -28,7 +28,7 @@ export const vecinoDe = (p: Partida, c: CompaneroId) => mesesDe(p).find((m) => m
 export function nacido(p: Partida, c: CompaneroId, ahora: Date): boolean {
   const m = vecinoDe(p, c)
   if (!m) return false
-  return !p.meses || eclosion(p, m, ahora) !== null
+  return Boolean(m.presentado) || eclosion(p, m, ahora) !== null
 }
 
 export const nacidos = (p: Partida, ahora: Date): CompaneroId[] =>
@@ -58,8 +58,10 @@ export function progreso(p: Partida, c: CompaneroId, ahora: Date): Progreso {
   const dias = diasActivos(p, c, ahora)
   const proyectos = proyectosHechos(p, c)
   const u = UMBRALES[c]
-  const etapa: Etapa = dias >= u.adulto && proyectos >= PROYECTOS_PARA.adulto ? 2
+  const ganada: Etapa = dias >= u.adulto && proyectos >= PROYECTOS_PARA.adulto ? 2
     : dias >= u.joven && proyectos >= PROYECTOS_PARA.joven ? 1 : 0
+  const vista = p.etapasVistas?.[c] ?? 0
+  const etapa = vista > ganada ? vista : ganada
   const siguiente = etapa === 0 ? { dias: u.joven, proyectos: PROYECTOS_PARA.joven }
     : etapa === 1 ? { dias: u.adulto, proyectos: PROYECTOS_PARA.adulto } : null
   const fraccion = siguiente ? (Math.min(1, dias / siguiente.dias) + Math.min(1, proyectos / siguiente.proyectos)) / 2 : 1
