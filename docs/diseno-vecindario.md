@@ -186,7 +186,7 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **Micros:** Tofu atascado en una página, la planta que «saluda», Tuerca corrigiendo la pizarra, Tofu «meditando», Tofu mirando la hoguera de Nox hasta ponerlo nervioso.
 
 ### Bruma, la cuarta vecina (19/11/2026, rama `dev/bruma`)
-- **Llega** cuando Tofu es joven y tiene un proyecto (huevo en la puerta del invernadero). Vive en el estanque de niebla. **Falta su casita del mapa**: hasta que llegue, su huevo no aparece (la app no deja huecos sin arte).
+- **Llega** cuando Tofu es joven y tiene un proyecto (huevo en la puerta del invernadero). Vive en el estanque de niebla; su casita del mapa es una cabaña de juncos junto a una charca, en la parcela de arriba a la izquierda.
 - **Es una nube melancólica** que dice verdades incómodas con ternura. Frases reescritas para el juego nuevo; ficha: «Nube de estanque».
 - **Gesto:** flota arriba y abajo (más despacio dormida) y su sombra en el agua se encoge cuando sube; al tocarla se esponja.
 - **Proyectos:** tetera (3 rocío; abre «la infusión»), campanillas de viento (4 rocío + 2 tornillos; abren «la muestra») y hamaca de nenúfar (5 rocío + 2 ascuas; abre «la hamaca»).

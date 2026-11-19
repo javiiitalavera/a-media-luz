@@ -1,7 +1,7 @@
 // Arte en uso (archivos de public/arte/). Cómo se encarga y se integra: docs/arte-encargos.md.
 // No se dibujan sustitutos: si un recurso no está, la interfaz deja su hueco neutro.
 //
-// Estado a 19/11/2026: Nox, Tuerca y Tofu completos; Bruma con todo menos su casita del mapa (sin ella no llega).
+// Estado a 19/11/2026: Nox, Tuerca, Tofu y Bruma completos.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
 import type { ArteHuella } from '../contenido/situaciones'
@@ -49,6 +49,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'huevo/tofu/agrietado': '/arte/huevos/tofu/agrietado.webp',
   'casita/tofu': '/arte/casitas/tofu.webp',
   'casa/bruma/fondo': '/arte/casa/bruma/fondo.webp',
+  'casita/bruma': '/arte/casitas/bruma.webp',
   ...personaje('bruma'),
   ...objetos('bruma', ['tetera', 'campanillas', 'hamaca', 'frasco', 'paraguas', 'barquito']),
   'huevo/bruma/cerrado': '/arte/huevos/bruma/cerrado.webp',
