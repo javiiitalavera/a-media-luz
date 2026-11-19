@@ -26,6 +26,10 @@ export const ACCIONES: HazanaCatalogo[] = [
     reacciones: ['Verdura. Respeto tu decisión. No la comparto.', 'Dos comidas con verdura. Yo me como la parte de la salchicha.'] },
   { id: 'agua', area: 'cuerpo', nombre: 'Beber 2 litros de agua', minima: 'Un vaso al levantarme',
     reacciones: ['Agua. Mantente lejos de mi hoguera, pero bien hecho.'] },
+  { id: 'jugar-fuera', area: 'cuerpo', nombre: 'Jugar fuera 30 minutos', minima: 'Salir a la calle 10 minutos',
+    reacciones: ['Jugar fuera. Por fin alguien que me entiende.'] },
+  { id: 'equilibrio', area: 'cuerpo', nombre: 'Ejercicios de equilibrio 10 minutos', minima: 'A la pata coja 1 minuto',
+    reacciones: ['Equilibrio. Yo lo pierdo cada vez que huelo una salchicha.'] },
   // Mente · Tofu
   { id: 'leer', area: 'mente', nombre: 'Leer 15 páginas', minima: 'Leer 1 página',
     reacciones: ['Quince páginas. Yo llevo tres horas con la portada.', 'Has leído. El brote se ha enterado antes que yo.'] },
@@ -41,6 +45,8 @@ export const ACCIONES: HazanaCatalogo[] = [
     reacciones: ['Has creado algo. No hace falta que me lo enseñes. Pero puedes.'] },
   { id: 'podcast', area: 'mente', nombre: 'Escuchar un audiolibro 30 minutos', minima: 'Escuchar 10 minutos',
     reacciones: ['Un libro con voz. Es leer con los ojos cerrados. Aprobado.'] },
+  { id: 'deberes', area: 'mente', nombre: 'Hacer los deberes', minima: 'Empezar los deberes 10 minutos',
+    reacciones: ['Deberes hechos. Yo nunca tuve deberes. Tuve musgo.'] },
   // Calma · Bruma
   { id: 'diario', area: 'calma', nombre: 'Escribir en mi diario', minima: 'Una frase en el diario',
     reacciones: ['Has escrito en tu diario. No lo leeré. Lo intuiré.', 'Un día menos sin contarlo. Me gusta.'] },
@@ -54,6 +60,8 @@ export const ACCIONES: HazanaCatalogo[] = [
     reacciones: ['Aire libre. Ahí fuera hay nubes como yo. Más grandes. Menos interesantes.'] },
   { id: 'aficion', area: 'calma', nombre: 'Una afición tranquila 20 minutos', minima: 'Cinco minutos de algo que me guste',
     reacciones: ['Algo que te gusta, sin prisa. Debería ser obligatorio. No lo es. Por eso vale.'] },
+  { id: 'para-mi', area: 'calma', nombre: 'Veinte minutos para mí', minima: 'Cinco minutos para mí',
+    reacciones: ['Veinte minutos tuyos. Nadie te los devuelve si no los coges.'] },
   // Vínculos · Madeja
   { id: 'padres', area: 'vinculos', nombre: 'Escribir a mis padres', minima: 'Un audio corto',
     reacciones: ['¡Has escrito a tus padres! ¿Qué te han contestado? Cuéntamelo todo.', 'Tus padres ya saben que existes. Buen trabajo.'] },
@@ -68,6 +76,8 @@ export const ACCIONES: HazanaCatalogo[] = [
   { id: 'gracias', area: 'vinculos', nombre: 'Dar las gracias a alguien', minima: 'Un «gracias» por mensaje',
     reacciones: ['Has dado las gracias. Alguien hoy está un poco mejor. Y no sabe por qué.'] },
   // Orden · Tuerca
+  { id: 'ayudar-casa', area: 'orden', nombre: 'Ayudar en casa 15 minutos', minima: 'Recoger mi plato',
+    reacciones: ['Ayuda doméstica registrada. Tu casa sube un puesto en mi clasificación.'] },
   { id: 'ordenar', area: 'orden', nombre: 'Ordenar 15 minutos', minima: 'Ordenar una balda',
     reacciones: ['Quince minutos ordenando. He abierto un expediente de felicitación.', 'Orden. Mis tornillos te aplauden. En silencio, por orden de tamaño.'] },
   { id: 'gestion', area: 'orden', nombre: 'Hacer una gestión pendiente', minima: 'Abrir el sobre que llevo días evitando',

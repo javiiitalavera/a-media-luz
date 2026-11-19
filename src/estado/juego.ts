@@ -9,6 +9,8 @@ import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { ahora } from '../logica/reloj'
 import { migrarHazanas } from '../logica/hazanas'
+import { anadirSugerencia, type Sugerencia } from '../logica/sugerencias'
+import type { Perfil } from '../contenido/cuestionario'
 import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
@@ -31,7 +33,7 @@ export interface Reciente {
 
 interface Juego {
   partida: Partida | null
-  empezar: (c: CompaneroId, habituales?: string[]) => void
+  empezar: (c: CompaneroId, habituales?: string[], perfil?: Perfil, sugeridos?: Sugerencia[]) => void
   /** Ofrendas recientes que aún se pueden deshacer (no se guarda). */
   recientes: Reciente[]
   ofrecer: (accionId: string) => ResultadoOfrenda | null
@@ -70,7 +72,12 @@ export const useJuego = create<Juego>()(
   persist(
     (set, get) => ({
       partida: null,
-      empezar: (c, habituales) => set({ partida: crearPartida(c, ahora(), habituales, true), recientes: []}),
+      empezar: (c, habituales, perfil, sugeridos = []) => {
+        // Los retos sugeridos se guardan con su meta ajustada; el resto, con la del catálogo.
+        let p = crearPartida(c, ahora(), habituales, true)
+        for (const s of sugeridos) if (habituales?.includes(s.id)) p = anadirSugerencia(p, s)
+        set({ partida: perfil ? { ...p, perfil } : p, recientes: [] })
+      },
       recientes: [],
       ofrecer: (accionId) => {
         const p = get().partida

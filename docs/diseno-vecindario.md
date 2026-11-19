@@ -280,3 +280,11 @@ Nada sale solo salvo las celebraciones (nacer, crecer, construir) y la reacción
 - **Materiales con forma:** llama, semilla, gota, carrete y tornillo, dibujados por código (`IconoMaterial`), en la barra, las hojas y los costes. Cabe a 360 px con cantidades de dos cifras.
 - **Entrada:** nubes solo en la primera apertura del día; si vuelves a abrir, fundido de medio segundo. Con «reducir movimiento», la eclosión es más corta.
 - **Sonidos de objetos:** crepitar (hoguera, horno, faroles), clic metálico (cosas del taller), roce de hoja (libros, plantas, tela) y golpecito de madera para el resto (`SONIDO_OBJETO`).
+
+### Retos, cuestionario y tamaño (19/11/2026, rama `dev/retos-diarios`, decidido por Javi)
+- **«Hazañas» pasa a llamarse «Retos»** en toda la interfaz (por dentro el código sigue usando `hazanas`/`acciones`).
+- **Fuera la paciencia de los vecinos en Ajustes:** cada uno con su ritmo por defecto.
+- **Cuestionario al empezar** (se puede saltar): edad por tramos, qué quieres mejorar (hasta 3), cómo es tu día y cuánto te mueves. Sugiere de 3 a 5 retos con la meta ajustada (`src/logica/sugerencias.ts`, reglas pendientes de revisión médica de Javi): pasos según actividad y edad, equilibrio a partir de 65, estirar si trabajas sentado, tiempo para ti si cuidas de alguien… Para menores: jugar fuera, deberes, ayudar en casa, dormir 9 horas, y el mensaje de elegir los retos con sus padres; el juego es el mismo.
+- **Las respuestas se cambian** desde Retos › Sugerencias o Ajustes › «Revisar y ver sugerencias», y se añaden las nuevas sugerencias con un toque.
+- **Retos propios:** se puede cambiar su área y borrarlos de verdad (con confirmación); los que quitaste o apuntaste en «Algo más» salen en «Otros retos tuyos» para volver a tu lista o borrarlos. Lo hecho sigue contando.
+- **Evolucionan sin crecer:** las tres etapas se ven del mismo tamaño (ancho de cada etapa ajustado para que el cuerpo mida igual que el del cachorro). Arte nuevo de ChatGPT con cuerpo de bebé: Nox, Tuerca y Tofu integrados. Tuerca joven y adulto, con dos engranajes, no giran el engranaje: parpadea la luz de su antena. El brote de Tofu se corta por cara (nace a distinta altura en cada expresión); Tofu adulto, con la copa enredada en el musgo, se queda quieto y al tocarlo se le caen tres hojas.

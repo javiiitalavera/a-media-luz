@@ -45,13 +45,13 @@ export function crearHazana(p: Partida, datos: { nombre: string; area: AreaId; m
   return { ...p, acciones: [...p.acciones, { id: `propia-${id}`, area: datos.area, nombre, ...(minima ? { minima } : {}), ...(habitual ? {} : { habitual: false }) }] }
 }
 
-/** Cambia el nombre (con su meta) o la versión mínima. Una mínima vacía la quita; un nombre vacío no se guarda. */
-export function editarHazana(p: Partida, id: string, cambio: { nombre?: string; minima?: string }): Partida {
+/** Cambia el nombre (con su meta), la versión mínima o, si es propia, el área. Una mínima vacía la quita; un nombre vacío no se guarda. */
+export function editarHazana(p: Partida, id: string, cambio: { nombre?: string; minima?: string; area?: AreaId }): Partida {
   return {
     ...p,
     acciones: p.acciones.map((a) => {
       if (a.id !== id) return a
-      const r: Accion = { ...a, nombre: cambio.nombre?.trim() || a.nombre }
+      const r: Accion = { ...a, nombre: cambio.nombre?.trim() || a.nombre, ...(cambio.area && esPropia(a) ? { area: cambio.area } : {}) }
       if (cambio.minima !== undefined) {
         const m = cambio.minima.trim()
         if (m) r.minima = m
@@ -81,3 +81,12 @@ export function migrarHazanas(p: Partida): Partida {
   }
   return { ...p, hazanas: 2, acciones, ofrendas: p.ofrendas.map((o) => ({ ...o, accionId: nuevoId(o.accionId) })) }
 }
+
+export const esPropia = (a: Accion) => a.id.startsWith('propia-')
+
+/** Borra de verdad un reto propio: desaparece de tu lista y de «Algo más». Lo que ya hiciste sigue contando. */
+export const borrarHazana = (p: Partida, id: string): Partida =>
+  ({ ...p, acciones: p.acciones.filter((a) => !(a.id === id && esPropia(a))) })
+
+/** Tus retos propios que no están en tu lista (los apuntaste en «Algo más» o los quitaste). */
+export const propiasFuera = (p: Partida) => p.acciones.filter((a) => esPropia(a) && !esHabitual(a))

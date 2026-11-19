@@ -1,6 +1,6 @@
 // Álbum y Ajustes.
 import { useEffect, useRef, useState } from 'react'
-import { AREAS, COMPANEROS, RITMOS, UI, type Ritmo } from '../contenido'
+import { COMPANEROS, UI } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
@@ -10,14 +10,14 @@ import type { Curiosidad } from '../contenido/curiosidades'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { dia, diasEntre } from '../logica/fechas'
-import { cambiarRitmo } from '../logica/ajustes'
 import { exportarCopia, importarCopia } from '../logica/copia'
 import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
-import { nacidos } from '../logica/etapas'
 import { desplazarPartida } from '../logica/desplazar'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
+import { HojaSugerencias } from '../componentes/HojaSugerencias'
+import { TEXTOS_CUESTIONARIO as TC } from '../contenido/cuestionario'
 import { usePreferencias } from '../estado/preferencias'
 
 export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {
@@ -128,8 +128,7 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
   )
 }
 
-export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
-  const ajustar = useJuego((s) => s.ajustar)
+export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
   const sustituir = useJuego((s) => s.sustituir)
   const borrar = useJuego((s) => s.borrar)
   const archivo = useRef<HTMLInputElement>(null)
@@ -138,6 +137,7 @@ export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
   const [confirmarBorrado, setConfirmarBorrado] = useState(false)
   const prefs = usePreferencias()
   const [toquesVersion, setToquesVersion] = useState(0)
+  const [sugerencias, setSugerencias] = useState(false)
 
   const exportar = async () => {
     const ahora = new Date()
@@ -165,22 +165,10 @@ export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
     <Pantalla>
       <h1 className="mb-4 px-1 text-[28px] font-bold">{UI.ajustes.titulo}</h1>
 
-      <h2 className="mb-1 px-1 font-bold">{UI.ajustes.paciencia}</h2>
-      <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.pacienciaExplicacion}</p>
-      <div className="flex flex-col gap-2">
-        {nacidos(partida, ahora).map((c) => {
-          const area = COMPANEROS[c].area
-          return (
-            <label key={c} className="flex flex-col gap-1 rounded-3xl bg-tarjeta px-4 py-3">
-              <span className="font-semibold">{COMPANEROS[c].nombre} <span className="text-[13px] font-medium text-texto-3">· {AREAS[area].nombre}</span></span>
-              <select value={partida.ritmos[area]} onChange={(e) => ajustar((p) => cambiarRitmo(p, area, e.target.value as Ritmo))}
-                className="min-h-11 rounded-2xl border-2 border-borde bg-fondo px-2 text-[15px]">
-                {(Object.keys(RITMOS) as Ritmo[]).map((r) => <option key={r} value={r}>{UI.ajustes.aguanta(RITMOS[r].nombre)}</option>)}
-              </select>
-            </label>
-          )
-        })}
-      </div>
+      <h2 className="mb-1 px-1 font-bold">{TC.ajustes}</h2>
+      <p className="mb-2 px-1 text-[13px] text-texto-3">{TC.ajustesExplicacion}</p>
+      <BotonSecundario onClick={() => setSugerencias(true)}>{TC.ajustesBoton}</BotonSecundario>
+      {sugerencias && <HojaSugerencias partida={partida} onCerrar={() => setSugerencias(false)} />}
 
       <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.inicioDia}</h2>
       <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.inicioDiaExplicacion}</p>

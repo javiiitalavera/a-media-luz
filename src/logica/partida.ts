@@ -1,6 +1,7 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
 import type { MomentoAlbum } from './momentos'
+import type { Perfil } from '../contenido/cuestionario'
 import type { Lugar } from '../contenido/situaciones'
 import { ACCIONES, AREAS, COMPANEROS, HAZANAS_INICIALES, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
 
@@ -38,6 +39,8 @@ export interface Partida {
   meses?: Mes[]
   /** Cómo va cada situación del vecindario. */
   situaciones?: Record<string, EstadoSituacion>
+  /** Respuestas del cuestionario (para sugerir retos). */
+  perfil?: Perfil
   /** Fotos del Álbum (hitos del barrio). */
   momentos?: MomentoAlbum[]
   /** Lo que ya has mirado (para apagar los avisos). */

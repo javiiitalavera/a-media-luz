@@ -24,13 +24,13 @@
 | `public/arte/casa/nox/fondo.webp` | Casa de Nox: claro con madriguera y farol (941 × 1672) |
 | `public/arte/casa/nox/objetos/*.webp` | Hoguera, farolillo, banco, cojín, estantería, seta |
 | `public/arte/personajes/nox/*.webp` | Nox cachorro (el de la lámina): base, contento, enfurruñado, dormido (600 × 600) |
-| `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno |
+| `public/arte/personajes/tuerca/**` | Tuerca: cachorro, joven y adulto, 4 expresiones cada uno. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (dos engranajes, antena; de adulto, placas metálicas) |
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca, sus 6 objetos y sus 3 premios de retos |
 | `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los antiguos retos de Nox (sin uso de momento) |
 | `public/arte/barrio/mapa.webp` | Mapa del barrio: 5 parcelas, plaza y arroyo |
 | `public/arte/curiosidades/*.webp` | 12 curiosidades del Álbum (piña, salchicha, zapatilla, tornillo, llave, tuerca con lazo, semilla, gafas, marcapáginas, cerilla, etiqueta, piedra-corazón) |
 | `public/arte/huellas/*.webp` | Huellas de las situaciones: cartel en blanco, cartel chamuscado, extintor, expediente, puente, libro chamuscado, archivador y lupa (el texto de los carteles lo pone la app) |
-| `public/arte/personajes/tofu/**`, `huevos/tofu/*`, `casitas/tofu.webp`, `casa/tofu/*` | Tofu: 3 etapas × 4 caras, huevo, casita, invernadero-biblioteca (941 × 1672) y sus 3 proyectos (pila de libros, pizarra, maceta) |
+| `public/arte/personajes/tofu/**`, `huevos/tofu/*`, `casitas/tofu.webp`, `casa/tofu/*` | Tofu: 3 etapas × 4 caras (joven y adulto rehechos el 19/11/2026 con cuerpo de bebé), huevo, casita, invernadero-biblioteca (941 × 1672) y sus 3 proyectos (pila de libros, pizarra, maceta) |
 | `public/arte/huevos/tuerca/*.webp` | Huevo de Tuerca |
 | `public/arte/casitas/nox.webp`, `tuerca.webp` | Casitas para el bosque |
 | `public/iconos/*.png` | Icono de la app (iPhone 180, Android 192/512, favicon 64). Esquinas rellenadas prolongando el fondo |
@@ -40,4 +40,4 @@ Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus c
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |
 | `public/arte/casa/bruma/fondo.webp`, `public/arte/casa/madeja/fondo.webp` | Escenarios de Bruma (estanque) y Madeja (madriguera de lana), aún sin usar |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
-| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones |
+| `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (bufanda; de adulto, pecho esponjoso) |
