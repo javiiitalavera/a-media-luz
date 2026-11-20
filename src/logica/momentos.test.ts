@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fotoDe, momentoSubirNivel, momentoNacimiento, momentosDeHistorias, momentosRecientes, tituloMomento } from './momentos'
+import { fijarFotosDeCasa, fotoDe, momentoSubirNivel, momentoNacimiento, momentosDeHistorias, momentosRecientes, tituloMomento } from './momentos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -19,6 +19,20 @@ describe('momentos del Álbum', () => {
     expect(f.objetos).toEqual(['hoguera', 'banco'])
     expect(f.huellas).toEqual(['cartel-fuego'])
     expect(f.momentoDia).toBe('noche')
+  })
+
+  it('fija los muebles movidos y los que seguían en su sitio al tomar la foto', () => {
+    const p = { ...barrio(['hoguera', 'banco']), colocados: { banco: { x: 65, y: 77 } } }
+    const ahora = en('2026-01-07', 22)
+    const foto = fotoDe(p, 'nox', ahora)
+    expect(foto.sitios?.hoguera).toMatchObject({ x: 24, y: 58, ancho: 22 })
+    expect(foto.sitios?.banco).toMatchObject({ x: 65, y: 77 })
+    expect(foto.sitios?.banco.ancho).toBeGreaterThan(15)
+    const escenarioAntiguo = { ...foto, sitios: undefined, colocados: p.colocados }
+    const antes = { ...p, momentos: [{ id: 'antiguo', titulo: '', texto: '', fecha: ahora.toISOString(), escena: escenarioAntiguo }] }
+    const partida = fijarFotosDeCasa(antes)
+    expect(partida.momentos![0].escena.sitios).toEqual(foto.sitios)
+    expect(fijarFotosDeCasa(partida)).toBe(partida)
   })
 
   it('nacer y crecer dejan su foto, una sola vez', () => {

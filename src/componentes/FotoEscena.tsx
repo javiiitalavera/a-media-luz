@@ -5,10 +5,10 @@ import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYEC
 import { colocarCasita } from '../logica/mapaBarrio'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { sitioDe } from '../logica/colocar'
-import type { Partida } from '../logica/partida'
 import { HUELLAS } from '../contenido/situaciones'
 import { rutaArte, rutaCompanero } from '../arte/manifiesto'
 import type { EscenaFoto } from '../logica/momentos'
+import { EscenaBreve } from './EscenaBreve'
 
 const TINTE: Record<EscenaFoto['momentoDia'], string> = {
   amanecer: 'bg-[#ffcfb8] opacity-40', mediodia: 'opacity-0', atardecer: 'bg-[#ff9f7a] opacity-35', noche: 'bg-[#3b2c63] opacity-60',
@@ -35,7 +35,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
   const arriba = Math.min(Math.max(esc.pies.y + 7 - altoRel, 0), 100 - altoRel)
   const izquierda = Math.min(Math.max(50 - esc.pies.x * ZOOM, 100 - ZOOM * 100), 0)
   const objetos = OBJETOS_CASA.filter((o) => e.objetos.includes(o.id) && rutaArte(`casa/${o.companero}/objeto/${o.id}`))
-    .map((o) => ({ ...o, sitio: sitioDe({ colocados: e.colocados } as Partida, o) }))
+    .map((o) => ({ ...o, sitio: e.sitios?.[o.id] ?? sitioDe({ colocados: e.colocados }, o) }))
   const aspiradora = OBJETOS_CASA.find((o) => o.id === 'aspiradora')!
   const capas: { y: number; nodo: React.ReactNode }[] = [
     ...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, nodo: (
@@ -54,6 +54,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
     <div className="absolute" style={{ width: `${ZOOM * 100}%`, left: `${izquierda}%`, aspectRatio: `${esc.proporcion}`, top: `${(-arriba * ZOOM) / esc.proporcion}%` }}>
       <img src={rutaArte(`casa/${c}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
       <Huellas ids={e.huellas} zoom={ZOOM} />
+      {e.visual && <EscenaBreve visual={e.visual} quieta />}
       {capas.sort((a, b) => a.y - b.y).map((x) => x.nodo)}
       <div aria-hidden className={`absolute inset-0 mix-blend-multiply ${TINTE[e.momentoDia]}`} />
     </div>

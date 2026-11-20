@@ -11,13 +11,13 @@ export interface HazanaCatalogo extends Accion {
 export const ACCIONES: HazanaCatalogo[] = [
   // Energía · Nox
   { id: 'pasos', area: 'cuerpo', nombre: 'Andar 8000 pasos', minima: 'Andar 2000 pasos',
-    reacciones: ['¿Pasos? Yo he dado uno más que tú. Por ganar.', 'Has andado. Yo he corrido detrás de una hoja. Empate técnico.', 'Pasos contados. Yo los cuento de dos en dos para ir más rápido.', 'Has andado tanto que casi me canso yo. Casi.'] },
+    reacciones: ['¿Pasos? Yo he dado uno más que tú. Por ganar.', 'He corrido detrás de una hoja. Se ha subido a un árbol. Muy listo de su parte.', 'Pasos contados. Yo los cuento de dos en dos para ir más rápido.', 'Has andado tanto que casi me canso yo. Casi.'] },
   { id: 'correr', area: 'cuerpo', nombre: 'Correr 30 minutos', minima: 'Correr 10 minutos',
     reacciones: ['Un rato corriendo. ¿Huías de algo? No contestes.', 'Has corrido. Mi cola ha subido dos grados.', 'Correr por gusto. Los zorros solo corremos si nos persiguen. Respeto tu locura.', 'Has corrido. Yo he mirado. Ha sido un trabajo en equipo.'] },
   { id: 'bici', area: 'cuerpo', nombre: 'Bici 30 minutos', minima: 'Bici 10 minutos',
     reacciones: ['Bici. Dos ruedas y ninguna excusa. Me gusta.', 'Si te cruzas con una cuesta, salúdala de mi parte.', 'Pedalear. Es como correr, pero sentado. Muy inteligente.', 'Has vuelto con las piernas enteras. Buena señal.'] },
   { id: 'fuerza', area: 'cuerpo', nombre: 'Fuerza 20 minutos', minima: '10 sentadillas',
-    reacciones: ['Fuerza. Ahora podrás llevar más salchichas. Piénsalo.', 'Has levantado peso. Yo he levantado una ceja. Mismo esfuerzo.', 'Más fuerte que ayer. Más débil que mañana. Así funciona.', 'Fuerza hecha. Ahora puedes abrir los botes de pepinillos sin pedir ayuda.'] },
+    reacciones: ['He intentado mover una piedra que me estorbaba. Ahora me estorba la espalda.', 'Has levantado peso. Yo he levantado una ceja. Mismo esfuerzo.', 'Más fuerte que ayer. Más débil que mañana. Así funciona.', 'Fuerza hecha. Ahora puedes abrir los botes de pepinillos sin pedir ayuda.'] },
   { id: 'estirar', area: 'cuerpo', nombre: 'Estirar 10 minutos', minima: 'Estirar 2 minutos',
     reacciones: ['Estiramientos. Yo lo hago cada mañana. Se llama bostezar.', 'Estirado. Ahora llegas a la balda de arriba. Ahí escondo las salchichas.', 'Has estirado. Los gatos te mirarían con respeto. Yo, con envidia.', 'Tus músculos te lo agradecen. Lo sé, me lo han dicho.'] },
   { id: 'dormir', area: 'calma', nombre: 'Dormir 7 horas', minima: 'Acostarme sin pantalla',
@@ -49,7 +49,7 @@ export const ACCIONES: HazanaCatalogo[] = [
     reacciones: ['Deberes hechos. Yo nunca tuve deberes. Tuve musgo.', 'Deberes terminados. El que los inventó estaría orgulloso. Es el único.', 'Hecho. Ahora tienes la tarde libre. Úsala mal, que también se aprende.', 'Deberes. Lo aburrido hecho primero. Muy sabio.'] },
   // Calma · Bruma
   { id: 'diario', area: 'mente', nombre: 'Escribir en mi diario', minima: 'Una frase en el diario',
-    reacciones: ['Has escrito en tu diario. No lo leeré. El brote, quizá.', 'Una página tuya. Sin fórmula. Funciona igual.', 'Has escrito lo que piensas. Ahora lo piensas mejor.', 'El diario guarda lo que tú no puedes. Para eso está.'] },
+    reacciones: ['Has escrito en tu diario. No lo leeré. El brote, quizá.', 'Una página tuya. Sin fórmula. Funciona igual.', 'El brote lleva un diario. Cada página dice que necesita una maceta más grande.', 'El diario guarda lo que tú no puedes. Para eso está.'] },
   { id: 'meditar', area: 'calma', nombre: 'Meditar 10 minutos', minima: 'Tres respiraciones lentas',
     reacciones: ['Un rato sin hacer nada a propósito. Es más difícil de lo que parece.', 'Has estado contigo un rato. Sin huir. Eso es mucho.', 'Respiraciones contadas. Las que no contaste también valen.', 'Meditar. Estar quieto por dentro. Yo lo intento y me disperso.'] },
   { id: 'paseo', area: 'calma', nombre: 'Pasear 20 minutos sin móvil', minima: 'Cinco minutos fuera sin móvil',
@@ -61,7 +61,7 @@ export const ACCIONES: HazanaCatalogo[] = [
   { id: 'aficion', area: 'calma', nombre: 'Una afición tranquila 20 minutos', minima: 'Cinco minutos de algo que me guste',
     reacciones: ['Algo que te gusta, sin prisa. Debería ser obligatorio. No lo es. Por eso vale.', 'Algo que te gusta porque sí. No sirve para nada. Por eso sirve.', 'Un rato de lo tuyo. Se te nota en la cara. Tienes otra.', 'Has jugado a ser tú. Sale muy bien.'] },
   { id: 'para-mi', area: 'calma', nombre: 'Veinte minutos para mí', minima: 'Cinco minutos para mí',
-    reacciones: ['Tiempo tuyo. Nadie te los devuelve si no los coges.', 'Un rato para ti. No has pedido permiso. Bien.', 'Un rato tuyo. No se lo has dado a nadie. Ni al móvil.', 'Tiempo para ti. Lo guardo en la niebla, junto a lo bueno.'] },
+    reacciones: ['Me he reservado un rato también. Si viene alguien, dile que soy niebla.', 'Un rato para ti. No has pedido permiso. Bien.', 'Un rato tuyo. No se lo has dado a nadie. Ni al móvil.', 'Tiempo para ti. Lo guardo en la niebla, junto a lo bueno.'] },
   // Vínculos · Madeja
   { id: 'compartir-foto', area: 'vinculos', nombre: 'Enviar una foto a alguien', minima: 'Enviar algo que me recordó a alguien',
     reacciones: ['Una foto. Si salen dos vecinos, quiero los dos nombres.', 'Una imagen vale más que mil palabras. A mí me caben las mil igual.', 'Has mandado algo que te recordó a alguien. A mí me pasa con los teléfonos.'] },
@@ -78,12 +78,12 @@ export const ACCIONES: HazanaCatalogo[] = [
   { id: 'detalle', area: 'vinculos', nombre: 'Tener un detalle con alguien', minima: 'Un mensaje bonito',
     reacciones: ['Un detalle. Pequeño, seguro. Los pequeños son los que se recuerdan.', 'Un detalle. Alguien ahora sonríe y no sabe que has sido tú. Yo sí.', 'Has pensado en otra persona. Es lo más bonito que se puede hacer gratis.', 'Detalle hecho. Los detalles son el pegamento. Yo soy de lana, sé de qué hablo.'] },
   { id: 'gracias', area: 'vinculos', nombre: 'Dar las gracias a alguien', minima: 'Un «gracias» por mensaje',
-    reacciones: ['Has dado las gracias. Alguien hoy está un poco mejor. Y no sabe por qué.', 'Un gracias bien dicho. Casi nadie lo hace. Por eso funciona tanto.', 'Agradecer. Lo recordarán más que cualquier regalo.', 'Gracias dadas. Alguien hoy duerme un poco mejor.'] },
+    reacciones: ['Yo le di las gracias a Tuerca por un favor. Me pidió el nombre de la persona que me había atendido.', 'Un gracias bien dicho. Casi nadie lo hace. Por eso funciona tanto.', 'Agradecer. Lo recordarán más que cualquier regalo.', 'De nada. Perdona, lo he oído desde el porche y me he dado por aludida.'] },
   // Orden · Tuerca
   { id: 'ayudar-casa', area: 'orden', nombre: 'Ayudar en casa 15 minutos', minima: 'Recoger mi plato',
     reacciones: ['Ayuda doméstica registrada. Tu casa sube un puesto en mi clasificación.', 'Ayuda en casa. Tus convivientes te subirán la valoración. Yo ya lo he hecho.', 'Has ayudado. Sin que te lo pidieran dos veces. Inaudito.', 'Contribución al hogar registrada. Sello oficial: «Bien».'] },
   { id: 'ordenar', area: 'orden', nombre: 'Ordenar 15 minutos', minima: 'Ordenar una balda',
-    reacciones: ['Has ordenado. He abierto un expediente de felicitación.', 'Orden. Mis tornillos te aplauden. En silencio, por orden de tamaño.', 'Ver las cosas en su sitio me calma los engranajes.', 'Has ordenado. Lo sé porque a lo lejos ha sonado un «clic» de satisfacción.'] },
+    reacciones: ['He despejado mi banco. Ahora no tengo dónde dejar lo que estaba encima.', 'Orden. Mis tornillos te aplauden. En silencio, por orden de tamaño.', 'Ver las cosas en su sitio me calma los engranajes.', 'Si encuentras un botón azul, es mío. Si encuentras dos, ya me dirás cuál es el mío.'] },
   { id: 'gestion', area: 'orden', nombre: 'Hacer una gestión pendiente', minima: 'Abrir el sobre que llevo días evitando',
     reacciones: ['Gestión hecha. La archivo en RESUELTOS. Es una carpeta nueva. Está casi vacía.', 'Ese trámite que llevabas evitando. Ya no existe. Bueno, existe archivado.', 'Gestión resuelta. La burocracia ha perdido una batalla hoy.', 'Hecho. Lo difícil no era hacerlo; era empezar. Lo sé, me pasa.'] },
   { id: 'gastos', area: 'orden', nombre: 'Revisar gastos 10 minutos', minima: 'Mirar el saldo sin miedo',

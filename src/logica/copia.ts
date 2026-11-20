@@ -2,9 +2,10 @@
 import { desplazarPartida } from './desplazar'
 import { AREAS, COMPANEROS, ESCENAS, RITMOS } from '../contenido'
 import { PREGUNTAS } from '../contenido/cuestionario'
-import { SITUACIONES } from '../contenido/situaciones'
+import { ESCENAS_MICRO, SITUACIONES } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { migrarHazanas } from './hazanas'
+import { fijarFotosDeCasa } from './momentos'
 
 const objeto = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 const texto = (v: unknown): v is string => typeof v === 'string'
@@ -24,7 +25,8 @@ function escena(v: unknown) {
     ['base', 'contento', 'enfurrunado', 'dormido'].some((c) => c === v.cara) &&
     ['amanecer', 'mediodia', 'atardecer', 'noche'].some((m) => m === v.momentoDia) &&
     lista(v.objetos, texto) && lista(v.huellas, texto) && booleano(v.gregorio) &&
-    opcional(v.visita, vecino) && opcional(v.visitaEtapa, etapa) && opcional(v.vecinos, (l) => lista(l, vecino)) && opcional(v.colocados, posiciones)
+    opcional(v.visita, vecino) && opcional(v.visitaEtapa, etapa) && opcional(v.vecinos, (l) => lista(l, vecino)) && opcional(v.colocados, posiciones) &&
+    opcional(v.visual, (visual) => ESCENAS_MICRO.some((id) => id === visual)) && opcional(v.sitios, sitios)
 }
 
 function situaciones(v: unknown) {
@@ -40,6 +42,10 @@ function situaciones(v: unknown) {
 const numero = (v: unknown) => typeof v === 'number' && Number.isFinite(v)
 const coste = (v: unknown) => objeto(v) && Object.entries(v).every(([a, n]) => clave(a, AREAS) && typeof n === 'number' && Number.isInteger(n) && n > 0)
 const posiciones = (v: unknown) => objeto(v) && Object.values(v).every((x) => objeto(x) && numero(x.x) && numero(x.y))
+
+const sitios = (v: unknown) => objeto(v) && Object.values(v).every((s) =>
+  objeto(s) && numero(s.x) && numero(s.y) && typeof s.ancho === 'number' && numero(s.ancho) && s.ancho > 0 &&
+  opcional(s.colgado, booleano))
 
 function perfil(v: unknown) {
   return objeto(v) &&
@@ -105,11 +111,11 @@ function leerCopia(contenido: string): Partida | null {
       opcional(p.privado, booleano)
     if (!ok) return null
     const partida = p as unknown as Partida
-    return migrarHazanas({
+    return fijarFotosDeCasa(migrarHazanas({
       ...partida, version: 1,
       frasesRecientes: Array.isArray(p.frasesRecientes) ? p.frasesRecientes.filter(texto) : [],
       construcciones: partida.construcciones ?? [],
-    })
+    }))
   } catch {
     return null
   }

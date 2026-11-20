@@ -80,18 +80,21 @@ Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos
 
 ## 7. Niveles del personaje
 
-| Nivel | Días con al menos un reto de su área desde que llegó su huevo |
-|---|---|
-| 1 | Empieza aquí al nacer |
-| 2 | 4 |
-| 3 | 10 |
-| 4 | 21 |
-| 5 | 35 |
+Días acumulados con al menos un reto de su área desde la llegada del huevo.
 
-- Los días se acumulan aunque haya pausas. Los proyectos tienen su propia progresión.
+| Nivel | Energía | Mente | Calma | Vínculos | Orden |
+|---|---:|---:|---:|---:|---:|
+| 1 (al nacer) | 0 | 0 | 0 | 0 | 0 |
+| 2 | 4 | 3 | 3 | 2 | 2 |
+| 3 | 10 | 6 | 6 | 4 | 3 |
+| 4 | 21 | 12 | 12 | 7 | 5 |
+| 5 | 35 | 20 | 20 | 12 | 8 |
+
+- Los días se acumulan aunque haya pausas. Los umbrales reflejan la frecuencia habitual de los retos. El ajuste del ritmo personal sigue afectando al deterioro del rincón. Los proyectos tienen su propia progresión.
 - Cada nivel se celebra con una frase y una foto. Las tres apariencias existentes se usan en los niveles 1, 2 y 3. Los niveles 4 y 5 conservan la tercera y abren escenas nuevas entre vecinos.
 - Las partidas anteriores conservan los niveles ya celebrados y las fotos que hicieron. Todos los personajes usan la superficie visible del Tuerca inicial como referencia de tamaño en sus casas.
-- **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
+- **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas. El libro chamuscado de Tofu se comenta después del Préstamo.
+- Dos escenas muestran el remate en la casa antes de abrir el texto: el bosque y la sombra de Nox, y el manual de Tuerca. Las fotos fijan la posición y el tamaño de los muebles visibles y capturan el remate visual cuando está presente.
 
 ## 8. Proyectos (sustituyen a los retos y al catálogo)
 **Personales:** una cadena por vecino, de 4 a 6 proyectos, que transforma su casa. Cada uno pide sobre todo el material de su área, más algo de otras.

@@ -23,6 +23,9 @@ describe('sugerencias del cuestionario', () => {
     expect(ids({ edad: '30-49', mejorar: ['dormir'], dia: 'sentado' })).toContain('estirar')
     expect(ids({ edad: '30-49', mejorar: ['moverme', 'dormir', 'calma'], dia: 'sentado', actividad: 'poco' }).length).toBeLessThanOrEqual(5)
   })
+  it('si buscas Calma y pasas el día sentado, las dos sugerencias principales son de Calma', () => {
+    expect(ids({ dia: 'sentado', mejorar: ['calma'] }).slice(0, 2)).toEqual(['meditar', 'paseo'])
+  })
   it('distingue la actividad en solitario de las opciones sociales breves', () => {
     const p = crearPartida('nox', en('2026-01-05'), ids({ edad: 'menor', mejorar: ['moverme', 'gente'] }))
     expect(p.acciones.find((a) => a.id === 'jugar-fuera')?.area).toBe('cuerpo')

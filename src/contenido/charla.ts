@@ -21,19 +21,19 @@ export interface Charla {
 export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
   nox: {
     hoy: {
-      nada: ['Aún no has tachado nada. Yo tampoco he hecho nada. Pero yo soy un zorro.', 'Lista intacta. Como recién comprada. Con su plástico y todo.', 'El día sigue ahí. Tú también. Algo es algo.'],
+      nada: ['Iba a barrer el porche. He movido la escoba a un sitio donde no la veo.', 'He oído crujir el suelo y he dicho «adelante». Era el suelo.', 'Hoy he salido de casa por la ventana. La puerta estaba abierta.'],
       algo: ['Llevas unas cuantas. No es una carrera. Bueno, un poco sí.', 'A medias. Como mis siestas: empezadas con mucha convicción.', 'Vas bien. No te lo digo dos veces.'],
-      todo: ['Todo tachado. Me estás haciendo quedar mal delante de los vecinos.', 'Lista completa. Voy a necesitar sentarme. Ya estaba sentado. Me siento más.', 'Hoy lo has hecho todo. Mañana puedes ser normal otra vez.'],
+      todo: ['Iba a aplaudir. Me he acordado de cómo tengo las patas.', 'Voy a necesitar sentarme. Ya estaba sentado. Me siento más.', 'Voy a copiarte una idea. Luego diré que se me ocurrió en la ducha.'],
     },
     semana: {
       lunes: ['Lunes. Lo odio con la intensidad de mil hogueras. Bueno, de una.', 'Es lunes. Haz lo mínimo y que parezca mucho. Técnica de zorro.'],
-      viernes: ['Viernes. Huele a salchicha. Siempre huele a salchicha, pero hoy más.', 'Viernes. El cuerpo pide sofá. El mío también. Le hago caso.'],
+      viernes: ['Es viernes. He sacado la silla buena. La mala cruje cuando digo que sí.', 'Viernes. El cuerpo pide sofá. El mío también. Le hago caso.'],
       finde: ['Fin de semana. Aprovecha para moverte. O para dormir. Las dos cuentan si las haces bien.', 'Sábado o domingo, da igual. Para un zorro, todos los días son festivos.'],
     },
     vuelta: ['Mira quién ha vuelto. Te he guardado el sitio. Lo he calentado yo.', 'Unos días fuera. Yo también me escapo a veces. Volver es la parte buena.', 'Ya estás aquí. No digo nada. Bueno, una cosa: hola.'],
     etapa: [
-      ['Soy pequeño. Pero las brasas pequeñas son las que prenden el monte.', 'Cuando sea mayor quiero ser una hoguera. O un incendio. Ya veremos.'],
-      ['Estoy en la edad del pavo. Del zorro. Es igual de molesta.', 'Me he dado cuenta de que tengo cuello. Lo uso para mirarte por encima del hombro.'],
+      ['Soy pequeño. Pero las brasas pequeñas son las que prenden el monte.', 'Me he subido a un tocón para ver el horizonte. He visto otro tocón.'],
+      ['Hoy he intentado rugir. Ha venido un pato a ver qué me pasaba.', 'Me he dado cuenta de que tengo cuello. Lo uso para mirarte por encima del hombro.'],
       ['Tengo responsabilidades. No las cumplo, pero las tengo.', 'Me estoy poniendo interesante. Espero que no me pidas pruebas.'],
     ],
     objetos: {
@@ -105,7 +105,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       ['Tengo copa. No me da sombra a mí, pero me da sombra.', 'Me caen las hojas. A propósito.'],
     ],
     objetos: {
-      libros: ['Mis libros. Los he leído todos. Algunos al revés, para ver si cambiaba el final.', 'He prestado tres libros. He recuperado dos. Uno, chamuscado.'],
+      libros: ['Mis libros. Los he leído todos. Algunos al revés, para ver si cambiaba el final.', 'He numerado las páginas que me gustan. Empiezan por la 87.'],
       pizarra: ['La fórmula de la pizarra sigue sin resolver nada. Sigue siendo bonita.', 'He borrado la pizarra. La he vuelto a escribir igual. Ahora la entiendo menos.'],
       maceta: ['La planta me mira. Yo la miro. Es nuestra forma de hablar.', 'La planta ha comido. No pregunto qué.'],
     },
@@ -113,7 +113,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       nox: ['Nox me ha devuelto un libro. Olía a humo. Era otro libro.', 'Nox habla mucho. Yo escucho. Es un buen reparto.', 'Nox me ha preguntado de qué va mi libro. Le he dicho que de un zorro. Se lo ha creído.'],
       tuerca: ['Tuerca me ha pedido que clasifique mis libros. Ya están clasificados: por cariño.', 'Tuerca y yo nos entendemos. Él ordena. Yo no desordeno.', 'Tuerca ha corregido la ortografía de mi fórmula. Ahora funciona peor.'],
       bruma: ['Bruma y yo nos sentamos a no decir nada. Es nuestra conversación favorita.', 'Bruma me ha empañado las gafas. No las necesito. Las llevo por ella.', 'Bruma lee lo que pienso. Es cómodo: me ahorra hablar.'],
-      madeja: ['Madeja me ha preguntado qué leo. Se lo he dicho. Ahora lo lee todo el barrio.', 'Madeja habla por los dos. Es un buen reparto.', 'Madeja me ha tejido un marcapáginas. Es muy largo. Marca tres libros a la vez.'],
+      madeja: ['Madeja me ha preguntado qué leo. Se lo he dicho. Ahora lo lee todo el barrio.', 'Madeja me deja recados entre páginas. En los libros malos, eso ayuda.', 'Madeja me ha tejido un marcapáginas. Es muy largo. Marca tres libros a la vez.'],
     },
   },
 
@@ -149,7 +149,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
 
   madeja: {
     hoy: {
-      nada: ['Aún no has tachado nada. ¿Qué has hecho entonces? Cuéntamelo igual.', 'Lista sin tocar. Como una conversación que no empieza. Empieza tú.', 'Nada todavía. No pasa nada. Ya pasará algo. Siempre pasa algo.'],
+      nada: ['Aún no has tachado nada. ¿Qué has hecho entonces? Cuéntamelo igual.', 'Lista sin tocar. Como una conversación que no empieza. Empieza tú.', 'Estoy tejiendo unos mitones. Si te preguntan, son para alguien con manos.'],
       algo: ['Vas a medias. Como una bufanda: lo difícil es el principio. Y el final. Y el medio.', 'Llevas unas cuantas. Ya tengo de qué hablar con los vecinos.', 'Bien. Sigue, que me quedo sin cotilleos si paras.'],
       todo: ['¡Todo hecho! Lo voy a contar en el barrio. Ya lo he contado.', 'Lista completa. Te tejo algo. No me digas que no.', 'Hoy lo has hecho todo. Mañana, una quedada. Te lo mereces.'],
     },

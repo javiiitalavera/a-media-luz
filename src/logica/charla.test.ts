@@ -40,6 +40,14 @@ describe('lo que comentan al tocarlos', () => {
     expect(gruposDeCharla(conTuerca, 'nox', en('2026-01-07', 13))).toContainEqual(ch.vecinos.tuerca)
   })
 
+  it('Tofu comenta el libro chamuscado cuando termina El préstamo', () => {
+    const p = { ...base(), construcciones: [{ objetoId: 'libros', fecha: en('2026-01-06').toISOString() }] }
+    const estaQuemado = (p: ReturnType<typeof base>) => gruposDeCharla(p, 'tofu', en('2026-01-07', 13))
+      .flat().some((t) => t.includes('chamuscado'))
+    expect(estaQuemado(p)).toBe(false)
+    expect(estaQuemado({ ...p, situaciones: { prestamo: { dia: '2026-01-07', fase: 3, fin: true } } })).toBe(true)
+  })
+
   it('al tocarlo mezcla saludos de la hora y charla, sin repetir las recientes', () => {
     let p = base()
     const vistas = new Set<string>()

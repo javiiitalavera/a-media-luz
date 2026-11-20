@@ -31,6 +31,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
 import { avisoFuera, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { EscenaBreve } from '../componentes/EscenaBreve'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { PideReto } from '../componentes/PideReto'
 import { retoQueFalta } from '../logica/pista'
@@ -318,6 +319,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className={`absolute inset-0 h-full w-full ${nacer ? 'animate-aparecer' : ''}`} draggable={false} />
         )}
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
+        {micro?.visual && !ordenando && <EscenaBreve visual={micro.visual} />}
 
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}

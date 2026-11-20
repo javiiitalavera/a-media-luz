@@ -44,7 +44,7 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
       : perfil.dia === 'jubilado' ? [del('curso', 'Dedicar 15 minutos a aprender algo'), del('podcast')]
       : joven ? [del('idioma'), del('crear')] : [del('leer'), del('idioma')],
     calma: [del('meditar', act === 'poco' || mayor ? 'Meditar 5 minutos' : undefined),
-      perfil.dia === 'sentado' ? del('estirar', 'Estirar 5 minutos') : perfil.dia === 'cuido' ? del('para-mi') : del('paseo')],
+      perfil.dia === 'cuido' ? del('para-mi') : del('paseo')],
     gente: menor ? [del('compartir-foto'), del('cena', 'Cenar en familia sin móviles')]
       : mayor ? [del('amigo', 'Llamar a alguien que quiero'), del('preguntar')]
       : perfil.dia === 'cuido' ? [del('preguntar'), del('gracias')]
@@ -65,7 +65,7 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
   }
   for (const m of mejorar) meter(porMejora[m][0])
   // Lo que pide tu día, aunque no lo hayas marcado.
-  if (perfil.dia === 'sentado') meter(del('estirar', 'Estirar 5 minutos'))
+  if (perfil.dia === 'sentado' && !perfil.mejorar.includes('calma')) meter(del('estirar', 'Estirar 5 minutos'))
   if (perfil.dia === 'cuido') meter(del('para-mi'))
   // Un segundo reto por cosa que quieres mejorar (si no has dicho nada, mejor empezar con tres).
   if (perfil.mejorar.length) for (const m of mejorar) meter(porMejora[m][1])
