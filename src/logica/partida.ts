@@ -82,11 +82,11 @@ export interface Construccion {
 }
 
 /**
- * Crea la partida. `habituales`: las hazañas del catálogo elegidas en el inicio; si no se elige
- * ninguna, se ponen las iniciales.
+ * Crea la partida. `habituales`: las hazañas del catálogo elegidas en el inicio; si no se pasa
+ * nada, se ponen las iniciales. Una lista vacía elegida a propósito se respeta (se apunta con «Algo más»).
  */
 export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: string[], conHuevo = false): Partida {
-  const ids = habituales?.length ? habituales : HAZANAS_INICIALES
+  const ids = habituales ?? HAZANAS_INICIALES
   const acciones: Accion[] = ACCIONES.filter((a) => ids.includes(a.id)).map((a) => ({ id: a.id, area: a.area, nombre: a.nombre, ...(a.minima ? { minima: a.minima } : {}) }))
   return {
     version: 1,

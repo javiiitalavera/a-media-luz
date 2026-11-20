@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { crecioSinVer, diasActivos, huevoDisponible, incubar, marcarEtapaVista, nacido, progreso } from './etapas'
 import { construir } from './casa'
-import { estadoDelMes, mesActual } from './meses'
+import { estadoDelMes, marcarPresentado, mesActual } from './meses'
 import { crearPartida, type Partida } from './partida'
 import { en } from './test-utils'
 import { sumarDias } from './fechas'
@@ -20,11 +20,15 @@ describe('vecinos y crecimiento por hitos', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), undefined, true)
     expect(estadoDelMes(p, en('2026-01-05', 20))).toBe('huevo')
     p = conDias(p, 'mente', '2026-01-05', 3)
+    // Huevo listo no es estar en el barrio: cuenta desde que lo abres.
+    expect(estadoDelMes(p, en('2026-01-08'))).toBe('naciendo')
+    expect(nacido(p, 'nox', en('2026-01-08'))).toBe(false)
+    p = marcarPresentado(p, en('2026-01-08'))
     expect(nacido(p, 'nox', en('2026-01-08'))).toBe(true)
   })
   it('joven con 4 días de Cuerpo y un proyecto; varias el mismo día cuentan como un día', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), undefined, true)
-    p = conDias(p, 'cuerpo', '2026-01-05', 4, 3)
+    p = marcarPresentado(conDias(p, 'cuerpo', '2026-01-05', 4, 3), en('2026-01-05', 12))
     const ahora = en('2026-01-09')
     expect(diasActivos(p, 'nox', ahora)).toBe(4)
     expect(progreso(p, 'nox', ahora).etapa).toBe(0) // falta el proyecto
@@ -33,7 +37,7 @@ describe('vecinos y crecimiento por hitos', () => {
   })
   it('el siguiente huevo aparece al ser joven, y se incuba cuando quieras', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), undefined, true)
-    p = conDias(p, 'cuerpo', '2026-01-05', 4, 3)
+    p = marcarPresentado(conDias(p, 'cuerpo', '2026-01-05', 4, 3), en('2026-01-05', 12))
     const ahora = en('2026-01-09')
     expect(huevoDisponible(p, ahora, ['nox', 'tuerca'])).toBeNull()
     p = construir(p, 'hoguera', ahora)!

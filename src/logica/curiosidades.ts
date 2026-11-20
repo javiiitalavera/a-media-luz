@@ -27,7 +27,8 @@ export function sorpresa(p: Partida, area: AreaId, ahora: Date, azar: Azar): Cur
   const hoy = dia(ahora)
   if (p.hallazgos.some((x) => dia(x.fecha) === hoy && CURIOSIDADES.some((c) => c.id === x.objetoId && !c.historia))) return null
   if (azar() >= PROBABILIDAD_SORPRESA) return null
-  const libres = CURIOSIDADES.filter((c) => c.vecino === vecino && !c.historia && !tiene(p, c.id))
+  // La piña es de la primera travesura de Nox: no sale en el sorteo.
+  const libres = CURIOSIDADES.filter((c) => c.vecino === vecino && !c.historia && c.id !== 'pina' && !tiene(p, c.id))
   return libres.length ? libres[Math.floor(azar() * libres.length)] : null
 }
 

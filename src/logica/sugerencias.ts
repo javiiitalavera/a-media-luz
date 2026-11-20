@@ -63,10 +63,13 @@ export function sugerencias(perfil: Perfil): Sugerencia[] {
   return lista
 }
 
-/** Añade una sugerencia a tu lista (con su meta ajustada) o la vuelve a hacer tuya si ya la usaste. */
+/** Añade una sugerencia a tu lista (con su meta ajustada) o la vuelve a hacer tuya si ya la usaste.
+ *  Si ya la tenías, cambia la meta pero respeta la versión mínima que hubieras escrito tú. */
 export function anadirSugerencia(p: Partida, s: Sugerencia): Partida {
   const ya = p.acciones.find((a) => a.id === s.id)
   if (!(ya && ya.habitual !== false) && !cabeOtro(p)) return p
-  const nueva = { id: s.id, area: ACCIONES.find((a) => a.id === s.id)!.area, nombre: s.nombre, ...(s.minima ? { minima: s.minima } : {}) }
+  const catalogo = ACCIONES.find((a) => a.id === s.id)!
+  const minima = ya?.minima && ya.minima !== catalogo.minima ? ya.minima : s.minima
+  const nueva = { id: s.id, area: catalogo.area, nombre: s.nombre, ...(minima ? { minima } : {}) }
   return { ...p, acciones: ya ? p.acciones.map((a) => (a.id === s.id ? nueva : a)) : [...p.acciones, nueva] }
 }

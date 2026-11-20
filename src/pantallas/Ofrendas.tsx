@@ -10,6 +10,8 @@ import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { materialYaGastado } from '../logica/casa'
+import { retoQueFalta } from '../logica/pista'
+import { PideReto } from '../componentes/PideReto'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -29,6 +31,7 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
+  const pista = retoQueFalta(partida, ahora)
   const extras = extrasHoy(partida, ahora)
   // Retos puntuales de hoy: se quedan (tachados si los has hecho) hasta que acaba el día.
   const puntuales = puntualesHoy(partida, ahora)
@@ -85,6 +88,9 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
           </button>
         </div>
       </div>
+
+      {/* Si tu lista no tiene nada del área del último vecino, te lo pide (sin eso no crece). */}
+      {pista && <PideReto pista={pista} className="mt-4" />}
 
       {/* El huevo está listo: la invitación se queda hasta que vas a verlo (el último toque es tuyo). */}
       {estadoDelMes(partida, ahora) === 'naciendo' && (

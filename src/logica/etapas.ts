@@ -24,11 +24,16 @@ export const ORDEN_LLEGADA: CompaneroId[] = ['nox', 'tuerca', 'tofu', 'bruma', '
 
 export const vecinoDe = (p: Partida, c: CompaneroId) => mesesDe(p).find((m) => m.companero === c)
 
-/** ¿Ha salido ya del huevo? (en las partidas de antes de los meses, su compañero ya vivía en casa). */
+/**
+ * ¿Está ya en el barrio? Cuenta desde que lo presentas (abres su huevo), no desde que el huevo está listo:
+ * hasta entonces no sale en historias, no regala nada ni se construye para él.
+ * (En partidas antiguas, un vecino anterior al último sin fecha de presentación cuenta desde su eclosión.)
+ */
 export function nacido(p: Partida, c: CompaneroId, ahora: Date): boolean {
   const m = vecinoDe(p, c)
   if (!m) return false
-  return Boolean(m.presentado) || eclosion(p, m, ahora) !== null
+  if (m.presentado) return true
+  return m !== mesesDe(p).at(-1) && eclosion(p, m, ahora) !== null
 }
 
 export const nacidos = (p: Partida, ahora: Date): CompaneroId[] =>

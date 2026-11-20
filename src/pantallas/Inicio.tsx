@@ -76,7 +76,7 @@ export function Inicio() {
           <button type="button" onClick={() => setTodas(!todas)} className="mt-3 min-h-11 w-full rounded-2xl text-[15px] font-semibold text-coral-texto">
             {todas ? UI.arranque.verMenos : UI.arranque.verTodas}
           </button>
-          <p className="mt-1 px-1 text-center text-[13px] text-texto-3">{UI.arranque.cambiarLuego}</p>
+          <p className="mt-1 px-1 text-center text-[13px] text-texto-3">{habituales.length ? UI.arranque.cambiarLuego : T.sinLista}</p>
         </>
       )}
       <div className="sticky bottom-0 -mx-4 mt-4 bg-gradient-to-t from-fondo from-70% to-transparent px-4 pt-6 pb-[max(20px,env(safe-area-inset-bottom))]">

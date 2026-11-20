@@ -3,6 +3,7 @@
 import { AREAS, RITMOS, type AreaId } from '../contenido'
 import { dia, diasEntre, lunes, sumarDias, type Dia } from './fechas'
 import { areaPrincipal, type Ofrenda, type Partida } from './partida'
+import { eclosion } from './meses'
 
 export const TOPE_DIARIO = 3
 export const OFRENDAS_PARA_LLEGAR = 3
@@ -29,8 +30,20 @@ function porDia(ofrendas: Ofrenda[]) {
 
 // ---------- Llegada de compañeros ----------
 
-/** Día en que llegó el compañero de un área (null si aún no). El principal está desde el inicio. */
+/**
+ * Día en que llegó el compañero de un área (null si aún no). En el vecindario, el día en que lo presentaste:
+ * su casa no se descuida (ni recibe intrusos) antes de existir, y nadie anuncia una mudanza que no ha pasado.
+ * En partidas antiguas (sin vecindario): el principal desde el inicio y los demás con 3 ofrendas de su área.
+ */
 export function diaDeLlegada(p: Partida, area: AreaId, ahora: Date): Dia | null {
+  if (p.meses) {
+    const meses = p.meses
+    const m = meses.find((x) => x.companero === AREAS[area].companero)
+    if (!m) return null
+    if (m.presentado) return new Date(m.presentado) <= ahora ? dia(m.presentado) : null
+    const e = m !== meses.at(-1) ? eclosion(p, m, ahora) : null
+    return e ? dia(e) : null
+  }
   if (area === areaPrincipal(p)) return dia(p.inicio)
   const o = ofrendasDe(p, area, ahora)
   return o.length >= OFRENDAS_PARA_LLEGAR ? dia(o[OFRENDAS_PARA_LLEGAR - 1].fecha) : null

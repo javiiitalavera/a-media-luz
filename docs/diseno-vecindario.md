@@ -484,3 +484,13 @@ Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 día
 
 ### Globos bajo los botones de arriba (20/11/2026, rama `dev/globo-arriba`)
 - Un globo de texto (al tocar un objeto o una huella) nunca se mete debajo de la franja de arriba («Barrio», sobre): si no cabe por encima, sale por debajo de esa franja. La franja se marca con `data-tapa-globo`.
+
+### Arreglos de la segunda auditoría (20/11/2026, rama `dev/auditoria-2`)
+- **Nadie se atasca sin saber por qué:** si tu lista no tiene ningún reto del área del último vecino (sin ellos no crece ni hay material para su primer proyecto), él te lo pide con su humor y un botón «Añadir «…»» con un reto fácil (el que sugiere tu cuestionario para esa área o uno sencillo del catálogo). Sale en su casa (se puede dejar para luego) y en Retos. Decidido por Javi: cada vecino sigue ligado a su área.
+- **Un vecino está en el barrio desde que abres su huevo**, no desde que el huevo está listo: hasta entonces no actúa en historias, no regala curiosidades y no se construye para él.
+- **Llegada y cuidado de la casa:** cuentan desde la presentación. Nadie anuncia una mudanza que no ha pasado (tres retos de Mente con solo Nox no traen a Tofu) y una casa nueva no se estrena descuidada ni con intruso.
+- **Escenas diarias:** el sorteo usa dos extracciones de un generador estable por día (si hay escena y cuál); antes iban enganchadas y con dos posibles salía siempre la misma.
+- **Escenas sobre un mueble:** solo salen si el mueble está a la vista (no en el baúl) y se mueven con él si lo cambias de sitio. Las historias siguen pidiendo «haberlo construido».
+- **La piña** solo sale de la primera travesura de Nox, no del sorteo.
+- **Empezar sin lista** vale: si desmarcas todo, empiezas sin retos y apuntas con «Algo más».
+- **Sugerencias:** si el reto ya está en tu lista con otra meta, el botón dice «Cambiar meta», se ve la actual, y se respeta la versión mínima que hubieras escrito.

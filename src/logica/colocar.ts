@@ -58,6 +58,16 @@ export function ordenOriginal(p: Partida, c: CompaneroId): Partida {
 
 /** El baúl: lo guardado no se ve en la casa, pero sigue construido (y cuenta para todo). */
 export const guardado = (p: Partida, id: string) => Boolean(p.guardados?.includes(id))
+/** Construido y a la vista (no en el baúl): lo que necesita una escena que pasa sobre el mueble. */
+export const expuesto = (p: Partida, id: string) => (p.construcciones ?? []).some((c) => c.objetoId === id) && !guardado(p, id)
+
+/** Dónde sale una escena que pasa sobre un mueble: se mueve con él si lo has cambiado de sitio. */
+export function sitioSobre(p: Partida, objetoId: string | undefined, sitio: { x: number; y: number }): { x: number; y: number } {
+  const o = objetoId ? OBJETOS_CASA.find((k) => k.id === objetoId) : undefined
+  if (!o) return sitio
+  const ahora = sitioDe(p, o)
+  return { x: sitio.x + ahora.x - o.sitio.x, y: sitio.y + ahora.y - o.sitio.y }
+}
 export function guardar(p: Partida, id: string): Partida {
   const o = OBJETOS_CASA.find((k) => k.id === id)
   if (!o || !movible(o) || guardado(p, id)) return p

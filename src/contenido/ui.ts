@@ -126,6 +126,17 @@ export const UI = {
     habitualesTitulo: 'Tres cosas para empezar',
     habitualesExplicacion: 'Cosas de tu vida real. Cuando las hagas, las tachas, y eso despierta al huevo. Las metas son orientativas.',
   },
+  // Cuando tu lista no tiene nada del área del último vecino, te lo pide él (logica/pista.ts).
+  pideReto: {
+    nox: 'Las ascuas no se encienden solas. Y yo no crezco porque tú leas. Apunta algo de Energía.',
+    tuerca: 'Sin retos de Orden no hay tornillos. Sin tornillos no hay taller. Es un sistema. Lo he diseñado yo.',
+    tofu: 'Para crecer necesito semillas. Las semillas salen de aprender algo. No lo digo yo, lo pone en el saco.',
+    bruma: 'Me falta rocío. El rocío sale de parar un rato. Tú no paras nunca. Lo he medido.',
+    madeja: 'Sin hilo no tejo, y el hilo sale de hablar con gente. Apunta a alguien. De lo demás me entero yo.',
+    anadir: (reto: string) => `Añadir «${reto}»`,
+    lleno: 'Tu lista está llena: cambia uno en Retos.',
+    luego: 'Luego',
+  },
   casa: {
     ordenar: 'Ordenar la casa',
     ordenarAyuda: 'Arrastra las cosas con el dedo. Al fondo se ven más pequeñas. Al baúl, se guardan.',

@@ -5,7 +5,8 @@ import { UI } from '../contenido'
 import { globoEn } from '../estado/globo'
 import { sfx } from '../sonido'
 
-export function GagEnEscena({ gag, onVisto }: { gag: Gag; onVisto: () => void }) {
+export function GagEnEscena({ gag: original, sitio, onVisto }: { gag: Gag; sitio?: { x: number; y: number }; onVisto: () => void }) {
+  const gag = sitio ? { ...original, sitio } : original
   const [fase, setFase] = useState<'brilla' | 'asoma' | 'fin'>('brilla')
   if (fase === 'fin') return null
   if (fase === 'asoma') {

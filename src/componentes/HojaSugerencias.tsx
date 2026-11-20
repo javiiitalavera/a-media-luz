@@ -30,17 +30,19 @@ export function HojaSugerencias({ partida, onCerrar }: { partida: Partida; onCer
         <ul className="mt-4 flex flex-col gap-2">
           {lista.map((s) => {
             const area = ACCIONES.find((a) => a.id === s.id)!.area
-            const ya = mias.has(s.id) && partida.acciones.find((a) => a.id === s.id)?.nombre === s.nombre
+            const actual = mias.has(s.id) ? partida.acciones.find((a) => a.id === s.id)?.nombre : undefined
+            const ya = actual === s.nombre
             return (
               <li key={s.id} className="flex items-center gap-3 rounded-2xl bg-tarjeta px-3 py-2">
                 <IconoArea area={area} />
                 <span className="flex-1">
                   <span className="block text-[15px] font-semibold">{s.nombre}</span>
-                  <span className="block text-[13px] text-texto-3">{AREAS[area].nombre}</span>
+                  {/* Si ya está en tu lista con otra meta, se dice qué se cambia. */}
+                  <span className="block text-[13px] text-texto-3">{actual && !ya ? T.ahora(actual) : AREAS[area].nombre}</span>
                 </span>
                 {ya ? <span className="shrink-0 text-[13px] font-semibold text-salvia-texto">{T.yaLoTienes}</span> : (
                   <button type="button" disabled={!cabeOtro(partida) && !mias.has(s.id)} onClick={() => ajustar((p) => anadirSugerencia(p, s))}
-                    className="min-h-11 shrink-0 rounded-full bg-ambar px-4 text-[14px] font-bold text-tinta disabled:opacity-40">+ {T.anadir}</button>
+                    className="min-h-11 shrink-0 rounded-full bg-ambar px-4 text-[14px] font-bold text-tinta disabled:opacity-40">{actual ? T.cambiarMeta : `+ ${T.anadir}`}</button>
                 )}
               </li>
             )
