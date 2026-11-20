@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import { COMPANEROS, UI } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
-import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
+import { momentosRecientes, tituloMomento, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
 import { cronicaNueva, curiosidadNueva, momentoNuevo, seccionesNuevas, verCronica, verCuriosidad, verMomento } from '../logica/avisos'
 import { Punto } from '../componentes/Aviso'
@@ -105,7 +105,7 @@ export function Album({ partida, onIr }: { partida: Partida; onIr: (l: Lugar) =>
                 style={{ transform: `rotate(${i % 2 ? 1.2 : -1.2}deg)` }}>
                 {momentoNuevo(partida, m) && <><Punto className="absolute right-1 -top-1 z-10" /><span className="sr-only">{UI.album2.novedad}</span></>}
                 <FotoEscena e={m.escena} />
-                <span className="mt-2 block text-[13px] leading-tight font-bold text-[#3f2a3a]">{m.titulo}</span>
+                <span className="mt-2 block text-[13px] leading-tight font-bold text-[#3f2a3a]">{tituloMomento(m)}</span>
                 <span className="mt-0.5 block text-[11px] text-[#7a6670]">{UI.album2.fecha(m.fecha)}</span>
               </button>
             ))}
@@ -159,10 +159,10 @@ export function Album({ partida, onIr }: { partida: Partida; onIr: (l: Lugar) =>
       )}
       {abierto && createPortal(
         <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setAbierto(null)}>
-          <figure role="dialog" aria-label={abierto.titulo} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
+          <figure role="dialog" aria-label={tituloMomento(abierto)} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
             <FotoEscena e={abierto.escena} />
             <figcaption className="mt-3 px-1">
-              <span className="block text-[17px] font-bold text-[#3f2a3a]">{abierto.titulo}</span>
+              <span className="block text-[17px] font-bold text-[#3f2a3a]">{tituloMomento(abierto)}</span>
               {abierto.texto && <span className="mt-1 block text-[14px] leading-snug text-[#5e4a56] italic">{abierto.texto}</span>}
               <span className="mt-2 block text-[12px] text-[#7a6670]">{UI.album2.fecha(abierto.fecha)}</span>
             </figcaption>

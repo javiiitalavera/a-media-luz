@@ -78,16 +78,19 @@ Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos
 
 **Las frases cambian de foco.** Los vecinos hablan más entre ellos y de los demás («Tuerca ha vuelto a etiquetar mi piedra») que de ti. Te pinchan poco y con gracia.
 
-## 7. Crecer (por hitos, sin barra de cariño)
-| Etapa | Qué hace falta |
-|---|---|
-| Cachorro | Nace así |
-| **Joven** | 15 hazañas de su área **y** terminar su primer proyecto personal |
-| **Adulto** | 40 hazañas de su área **y** terminar 3 proyectos personales |
+## 7. Niveles del personaje
 
-- **Nunca baja.** Lo crecido no se pierde por no entrar.
-- **Celebración al crecer,** como ahora.
-- **Al crecer** se añaden escenas en su casa con otros vecinos y objetos que ya estén a la vista.
+| Nivel | Días con al menos un reto de su área desde que llegó su huevo |
+|---|---|
+| 1 | Empieza aquí al nacer |
+| 2 | 4 |
+| 3 | 10 |
+| 4 | 21 |
+| 5 | 35 |
+
+- Los días se acumulan aunque haya pausas. Los proyectos tienen su propia progresión.
+- Cada nivel se celebra con una frase y una foto. Las tres apariencias existentes se usan en los niveles 1, 2 y 3. Los niveles 4 y 5 conservan la tercera y abren escenas nuevas entre vecinos.
+- Las partidas anteriores conservan los niveles ya celebrados y las fotos que hicieron. Todos los personajes usan la superficie visible del Tuerca inicial como referencia de tamaño en sus casas.
 - **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
 
 ## 8. Proyectos (sustituyen a los retos y al catálogo)

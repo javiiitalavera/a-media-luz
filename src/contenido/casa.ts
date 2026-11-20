@@ -22,23 +22,24 @@ export interface Escena {
 /** Un trozo de suelo: de x[0] a x[1] y de y[0] a y[1] (en % del fondo). */
 export interface Zona { x: [number, number]; y: [number, number] }
 
+/** Anchos por dibujo, ajustados a la superficie visible del primer Tuerca. */
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
-  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [40, 38.7, 37.8],
+  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [36.4, 35.1, 35.6],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true },
     suelo: [{ x: [12, 88], y: [46, 82] }] },
-  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 39.1, 37.6],
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 37.4, 36.5],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 },
     suelo: [{ x: [12, 88], y: [57, 84] }] },
-  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 34.9, 33.7],
+  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [37.8, 36.9, 34.5],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
   // Bruma flota sobre el estanque: sus «pies» son el final de su cola de niebla.
-  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [41.3, 34.4, 33.9],
+  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [37.4, 34.2, 36.3],
     luces: [{ x: 20.5, y: 27 }, { x: 67.5, y: 13 }],
     // La orilla, el embarcadero y los juncos del agua.
     suelo: [{ x: [10, 32], y: [39, 47] }, { x: [32, 66], y: [37.5, 41.5] }, { x: [68, 90], y: [44, 56] }] },
   // La madriguera de lana de Madeja: suelo de madera con alfombra trenzada.
-  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [45.5, 45.3, 45.6],
+  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [35.8, 35.4, 35.8],
     luces: [{ x: 22, y: 16.5 }, { x: 61, y: 25 }],
     suelo: [{ x: [12, 88], y: [56, 84] }] },
 }

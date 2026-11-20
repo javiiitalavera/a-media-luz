@@ -42,6 +42,6 @@ describe('vecinos (guardados como «meses»)', () => {
   })
   it('conserva una etapa ya celebrada aunque se desmarque el reto que la desbloqueó', () => {
     const p = { ...nueva(), etapasVistas: { nox: 1 as const } }
-    expect(progreso(p, 'nox', en('2026-01-05', 20)).etapa).toBe(1)
+    expect(progreso(p, 'nox', en('2026-01-05', 20))).toMatchObject({ nivel: 2, etapa: 1 })
   })
 })

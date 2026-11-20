@@ -692,8 +692,8 @@ export interface Micro {
   casa: CompaneroId
   /** Muebles que tienen que estar a la vista y vecinos que tienen que haber nacido. */
   requiere: string[]
-  /** Etapa mínima del dueño de la casa, si la escena aparece al crecer. */
-  etapaMinima?: 1 | 2
+  /** Nivel mínimo del dueño de la casa. */
+  nivelMinimo?: 2 | 3 | 4 | 5
   texto: string
   /** Si alguien está de visita durante el micro (por ejemplo, Tuerca en el banco de Nox). */
   visita?: CompaneroId
@@ -728,11 +728,21 @@ export const MICROS: Micro[] = [
   { casa: 'nox', requiere: ['madeja'], texto: 'Madeja le está tomando medidas a Nox para unos calcetines. Nox no ha dicho que sí. Nox no ha dicho que no.', visita: 'madeja' },
   { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
   { casa: 'nox', requiere: ['tuerca'], texto: 'Tuerca ha venido a medir la cola de Nox. Nox le ha preguntado si necesita una licencia para llevarla. Tuerca ha sacado papel.', visita: 'tuerca' },
-  { casa: 'nox', etapaMinima: 1, requiere: ['hoguera', 'madeja'], texto: 'Nox ha puesto a Madeja al cargo de las castañas. Ya sabe quién se comió la última y a quién le conviene que no se sepa.', visita: 'madeja', cara: 'contento' },
-  { casa: 'tuerca', etapaMinima: 1, requiere: ['caja', 'nox'], texto: 'Tuerca ha abierto un taller de reparaciones. Nox ha traído una rama partida. Quiere que conserve la garantía del árbol.', visita: 'nox' },
-  { casa: 'tofu', etapaMinima: 2, requiere: ['libros', 'madeja'], texto: 'Tofu ha invitado a Madeja a su club de lectura. Ella ha traído un libro que aún no existe. Ha venido a contarle el final.', visita: 'madeja', cara: 'contento' },
-  { casa: 'bruma', etapaMinima: 1, requiere: ['tetera', 'tuerca'], texto: 'Bruma le ha servido a Tuerca una infusión y le ha pedido que deje enfriar el acta. Ya lleva dos tazas sin tomar notas.', visita: 'tuerca' },
-  { casa: 'madeja', etapaMinima: 2, requiere: ['telefono', 'bruma'], texto: 'Bruma ha venido a preguntar quién la llamó a las cuatro. Madeja ha descolgado el teléfono y ha dicho: «Ha vuelto a preguntar».', visita: 'bruma' },
+  { casa: 'nox', nivelMinimo: 2, requiere: ['hoguera', 'madeja'], texto: 'Nox ha puesto a Madeja al cargo de las castañas. Ya sabe quién se comió la última y a quién le conviene que no se sepa.', visita: 'madeja', cara: 'contento' },
+  { casa: 'tuerca', nivelMinimo: 2, requiere: ['caja', 'nox'], texto: 'Tuerca ha abierto un taller de reparaciones. Nox ha traído una rama partida. Quiere que conserve la garantía del árbol.', visita: 'nox' },
+  { casa: 'tofu', nivelMinimo: 3, requiere: ['libros', 'madeja'], texto: 'Tofu ha invitado a Madeja a su club de lectura. Ella ha traído un libro que aún no existe. Ha venido a contarle el final.', visita: 'madeja', cara: 'contento' },
+  { casa: 'bruma', nivelMinimo: 2, requiere: ['tetera', 'tuerca'], texto: 'Bruma le ha servido a Tuerca una infusión y le ha pedido que deje enfriar el acta. Ya lleva dos tazas sin tomar notas.', visita: 'tuerca' },
+  { casa: 'madeja', nivelMinimo: 3, requiere: ['telefono', 'bruma'], texto: 'Bruma ha venido a preguntar quién la llamó a las cuatro. Madeja ha descolgado el teléfono y ha dicho: «Ha vuelto a preguntar».', visita: 'bruma' },
+  { casa: 'nox', nivelMinimo: 4, requiere: ['bruma'], texto: 'Nox y Bruma están haciendo sombras en la pared. Ella hace un bosque. Él lleva un rato intentando hacer una patata.', visita: 'bruma' },
+  { casa: 'nox', nivelMinimo: 5, requiere: ['tuerca'], texto: 'Nox le ha enseñado a Tuerca a encender una sola brasa. Tuerca ha escrito veintitrés pasos. Nox recuerda tres.', visita: 'tuerca' },
+  { casa: 'tuerca', nivelMinimo: 4, requiere: ['madeja'], texto: 'Tuerca ha intentado ordenar los rumores de Madeja por fecha. Tiene tres versiones de ayer y ninguna coincide.', visita: 'madeja' },
+  { casa: 'tuerca', nivelMinimo: 5, requiere: ['tofu'], texto: 'Tuerca ha hecho una caja con un solo cajón para las cosas que no necesitan archivar. Tofu ha metido su manual de instrucciones.', visita: 'tofu' },
+  { casa: 'tofu', nivelMinimo: 4, requiere: ['nox'], texto: 'Tofu está leyendo en voz alta. Nox protesta cuando para y protesta cuando hay una parte triste. Lleva aquí desde el prólogo.', visita: 'nox' },
+  { casa: 'tofu', nivelMinimo: 5, requiere: ['bruma'], texto: 'Tofu y Bruma se han mandado una historia en barquitos. Hay dos finales flotando. Han decidido dejar que el arroyo escoja.', visita: 'bruma' },
+  { casa: 'bruma', nivelMinimo: 4, requiere: ['tofu'], texto: 'Bruma ha hecho una nube lo bastante baja para que Tofu lea a la sombra. El brote se ha quedado dormido antes de la primera página.', visita: 'tofu' },
+  { casa: 'bruma', nivelMinimo: 5, requiere: ['madeja'], texto: 'Bruma y Madeja ensayan una despedida para las nubes. Madeja se demora en cada adiós. Han vuelto a pasar las mismas tres.', visita: 'madeja' },
+  { casa: 'madeja', nivelMinimo: 4, requiere: ['tuerca'], texto: 'Madeja ha tejido un bolsillo para los tornillos que Tuerca pierde. Él ha pedido un segundo bolsillo para el justificante.', visita: 'tuerca' },
+  { casa: 'madeja', nivelMinimo: 5, requiere: ['nox'], texto: 'Madeja ha cosido un mapa del barrio con retales. Nox ha encontrado su casa por la mancha de hollín. Dice que es realismo.', visita: 'nox' },
 ]
 
 /** Lo que dice un vecino cuando está de visita en casa de otro (tras el puente, o en el banco). */

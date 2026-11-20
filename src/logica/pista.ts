@@ -5,7 +5,7 @@ import { ACCIONES, COMPANEROS, type AreaId, type CompaneroId } from '../contenid
 import type { Partida } from './partida'
 import { cabeOtro, misHazanas } from './hazanas'
 import { mesActual } from './meses'
-import { nacido, progreso } from './etapas'
+import { nacido, NIVEL_MAXIMO, progreso } from './etapas'
 import { sugerencias, type Sugerencia } from './sugerencias'
 import { dia } from './fechas'
 
@@ -15,7 +15,7 @@ const FACIL: Record<AreaId, string> = { cuerpo: 'agua', mente: 'leer', calma: 'a
 export interface Pista { vecino: CompaneroId; area: AreaId; reto: Sugerencia; cabe: boolean }
 
 export function retoQueFalta(p: Partida, ahora: Date, vecino = mesActual(p).companero): Pista | null {
-  if (!nacido(p, vecino, ahora) || progreso(p, vecino, ahora).etapa >= 2) return null
+  if (!nacido(p, vecino, ahora) || progreso(p, vecino, ahora).nivel >= NIVEL_MAXIMO) return null
   // «Luego»: no vuelve a pedirlo hasta mañana (ni en su casa ni en Retos).
   if (p.vistos?.pideReto?.[vecino] === dia(ahora)) return null
   const area = COMPANEROS[vecino].area

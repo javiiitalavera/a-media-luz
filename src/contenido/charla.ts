@@ -10,7 +10,7 @@ export interface Charla {
   semana: { lunes: string[]; viernes: string[]; finde: string[] }
   /** Vuelves tras tres días o más sin tachar nada. Sin reproches. */
   vuelta: string[]
-  /** Según su etapa: cachorro, joven, adulto. */
+  /** Según el dibujo que lleva el vecino. */
   etapa: [string[], string[], string[]]
   /** Sobre lo que tiene construido en su casa (id del objeto). */
   objetos: Record<string, string[]>
@@ -34,7 +34,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
     etapa: [
       ['Soy pequeño. Pero las brasas pequeñas son las que prenden el monte.', 'Cuando sea mayor quiero ser una hoguera. O un incendio. Ya veremos.'],
       ['Estoy en la edad del pavo. Del zorro. Es igual de molesta.', 'Me he dado cuenta de que tengo cuello. Lo uso para mirarte por encima del hombro.'],
-      ['Adulto. Tengo responsabilidades. No las cumplo, pero las tengo.', 'Ya no crezco más. Ahora solo me pongo interesante.'],
+      ['Tengo responsabilidades. No las cumplo, pero las tengo.', 'Me estoy poniendo interesante. Espero que no me pidas pruebas.'],
     ],
     objetos: {
       hoguera: ['Mi hoguera. Le hablo por las noches. Me entiende mejor que nadie.', 'Si el fuego se apaga, me apago yo. Es una metáfora. O no.'],
@@ -68,7 +68,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
     etapa: [
       ['Versión básica. Pocas funciones, pocos fallos. Bueno, algunos fallos.', 'Soy pequeño, pero mis etiquetas son de tamaño estándar.'],
       ['He recibido una actualización. Ahora tengo dos engranajes y el doble de opiniones.', 'Versión intermedia. Funciono. A veces sé por qué.'],
-      ['Versión final. Ya no admito actualizaciones. Solo parches.', 'Adulto y operativo. Con garantía. La garantía ha caducado.'],
+      ['Tengo una actualización pendiente. La he archivado bajo «Luego».', 'Operativo. Con garantía. La garantía ha caducado.'],
     ],
     objetos: {
       caja: ['La caja de herramientas está completa. Menos el destornillador. Siempre menos el destornillador.'],
@@ -101,8 +101,8 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
     vuelta: ['Has vuelto. Te he guardado la página.', 'Unos días fuera. El musgo ha crecido. Yo, no. Te esperaba igual.', 'Bienvenido. No he cambiado nada. Ni de postura.'],
     etapa: [
       ['Soy un brote. Los brotes no tenemos opiniones. Tenemos raíces.', 'Pequeño. Pero denso. Como un buen libro de bolsillo.'],
-      ['He crecido. El brote tiene más hojas. Yo tengo las mismas ideas.', 'Rama joven. Cara seria. Corazón de musgo.'],
-      ['Adulto. Tengo copa. No me da sombra a mí, pero me da sombra.', 'Ya soy mayor. Me caen las hojas. A propósito.'],
+      ['He crecido. El brote tiene más hojas. Yo tengo las mismas ideas.', 'Rama nueva. Cara seria. Corazón de musgo.'],
+      ['Tengo copa. No me da sombra a mí, pero me da sombra.', 'Me caen las hojas. A propósito.'],
     ],
     objetos: {
       libros: ['Mis libros. Los he leído todos. Algunos al revés, para ver si cambiaba el final.', 'He prestado tres libros. He recuperado dos. Uno, chamuscado.'],
@@ -131,8 +131,8 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
     vuelta: ['Has vuelto. Te había echado de menos un poco. Bueno, bastante. Pero bajito.', 'Unos días fuera. A veces hace falta irse para que te apetezca volver.', 'Ya estás aquí. El estanque se ha aclarado solo.'],
     etapa: [
       ['Soy pequeña. Pero tapo el sol igual. Un poquito.', 'Nubecilla. Me deshilacho con nada. Y me rehago con menos.'],
-      ['He crecido. Ahora me caben más cosas dentro. No todas buenas.', 'Joven. Ya sé llover a propósito. No lo uso. Casi nunca.'],
-      ['Adulta. He visto pasar muchas tormentas. Algunas eran mías.', 'Ya no crezco. Ahora solo me espeso.'],
+      ['He crecido. Ahora me caben más cosas dentro. No todas buenas.', 'Ya sé llover a propósito. No lo uso. Casi nunca.'],
+      ['He visto pasar muchas tormentas. Algunas eran mías.', 'Ahora puedo espesarme. Luego ya veré si me disipo.'],
     ],
     objetos: {
       tetera: ['La tetera está caliente. Siempre hay una taza de más. Por si acaso.', 'Mis infusiones hacen hablar. Yo solo sirvo. Lo que salga, sale.'],
@@ -161,8 +161,8 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
     vuelta: ['¡Por fin! ¿Dónde estabas? No, espera, siéntate primero.', 'Unos días fuera. Te he guardado todas las noticias. Son muchas.', 'Has vuelto. Me alegro. No sabes cuánto. Bueno, te lo cuento.'],
     etapa: [
       ['Soy pequeña, pero tengo mucha hebra. Y mucha conversación.', 'Un ovillo pequeño sabe muchas cosas. Las pequeñas, sobre todo.'],
-      ['He crecido. Ahora llevo agujas. Para tejer. Y para señalar.', 'Ovillo joven. Más hebra, más contactos.'],
-      ['Adulta, con bufanda y opiniones. Muchas opiniones.', 'Ya no crezco. Ahora solo me enredo en la vida de los demás.'],
+      ['He crecido. Ahora llevo agujas. Para tejer. Y para señalar.', 'Más hebra, más contactos.'],
+      ['Con bufanda y opiniones. Muchas opiniones.', 'Tengo hilo de sobra para enredarme en la vida de los demás.'],
     ],
     objetos: {
       cesto: ['Estoy tejiendo unos calcetines. No te digo para quién. Para ti.'],

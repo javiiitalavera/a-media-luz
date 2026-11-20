@@ -5,8 +5,10 @@ import type { CompaneroId, Momento } from './tipos'
 export type TipoFrase =
   | 'saludo' // al tocarlo en su casa, según el momento del día
   | 'construir' // acabas de construir algo en su casa
-  | 'crecer1' // acaba de pasar de cachorro a joven
-  | 'crecer2' // acaba de hacerse adulto
+  | 'crecer1' // nivel 2
+  | 'crecer2' // nivel 3
+  | 'crecer3' // nivel 4
+  | 'crecer4' // nivel 5
   | 'ofrenda' // ofrenda de su propia área
   | 'otraArea' // ofrenda de un área cuyo compañero aún no ha llegado (comenta el principal)
   | 'tope' // ya van 3 ofrendas hoy en esa área
@@ -56,8 +58,10 @@ export const FRASES: Record<CompaneroId, Frases> = {
       'Mi casa mejora. Tu vida, a ratos. Algo es algo.',
       'No pienso darte las gracias. Pero lo uso.',
     ],
-    crecer1: ['Me he estirado. No digas nada. Ni una palabra.', 'Más alto, igual de sarcástico. Mejorado, en resumen.'],
-    crecer2: ['Adulto. Con facturas imaginarias y todo. Gracias por nada. Bueno, por todo.', 'Ya está. Ahora soy el zorro que tu fisioterapeuta querría que fueras.'],
+    crecer1: ['Noto algo distinto en la cola. Mira un momento. Ya es suficiente.', 'He subido un nivel. A ver quién se atreve a ponerlo en mi currículum.'],
+    crecer2: ['Ya puedo hacer unas chispas que parecen estrellas. Si las miras de lejos.', 'Nivel tres. Quiero una placa. Comestible.'],
+    crecer3: ['He practicado sombras con la cola. La de patata ya me sale casi redonda.'],
+    crecer4: ['Ya sé encender una sola brasa. Me ha costado aprender a apagar las otras.'],
   },
   tofu: {
     saludo: {
@@ -79,7 +83,9 @@ export const FRASES: Record<CompaneroId, Frases> = {
     sorpresa: ['Esto estaba bajo el musgo. Ahora es tuyo. No me des las gracias.'],
     construir: ['Una cosa nueva. La miraré mucho tiempo antes de usarla.', 'Instalado. El brote opina que bien. Yo no opino.', 'Gracias. Lo digo en voz baja. Es como lo digo todo.', 'Queda bien. No lo voy a repetir.'],
     crecer1: ['He crecido. No lo voy a comentar. El brote, sí.', 'Más hojas. Mismas ideas. Más ordenadas.'],
-    crecer2: ['Adulto. Ya tengo copa. Los pájaros me miran distinto.', 'He llegado a adulto. Sin prisa. Como todo lo bueno.'],
+    crecer2: ['Ya tengo copa. Los pájaros me miran distinto.', 'El brote ha cambiado. Ha tardado lo suyo. Como todo lo bueno.'],
+    crecer3: ['Voy a empezar a leer en voz alta. Si viene Nox, puedo darle la voz del villano.'],
+    crecer4: ['Ya sé acabar una historia. Ahora tengo que aprender a dejar que otro la acabe distinto.'],
   },
   bruma: {
     saludo: {
@@ -90,7 +96,9 @@ export const FRASES: Record<CompaneroId, Frases> = {
     },
     construir: ['Una cosa nueva en el estanque. Me la quedo mirando un rato. Bastante rato.', 'Gracias. No lo digo mucho. Lo pienso más.', 'Lo pondré cerca del agua. Le gustará. A mí, también.', 'Mi casa tiene una cosa más. Y yo un motivo más para quedarme.'],
     crecer1: ['He crecido. Me siento más ligera. Será la humedad.', 'Ahora tapo un poco más de cielo. Lo siento por el cielo.'],
-    crecer2: ['Adulta. Ya puedo llover en serio. No pienso hacerlo. Casi nunca.', 'Me he hecho mayor. Ahora entiendo todo antes de que me lo cuentes. Es agotador.'],
+    crecer2: ['Ya puedo llover en serio. No pienso hacerlo. Casi nunca.', 'Ahora noto cuándo va a llover antes de que me lo cuentes. A veces porque soy yo.'],
+    crecer3: ['Ya puedo bajar una nube lo justo para dar sombra. No le mires mucho que sube.'],
+    crecer4: ['He preparado una despedida para las nubes. Hoy todavía no quiero decirla.'],
     ofrenda: ['Has parado. Lo he notado. Se me ha recompuesto un borde.', 'Floto un poco mejor. Igual es por ti. Igual es el viento. Es por ti.', 'Bien. El estanque está quieto. Tú, casi.', 'Eso ha sido descansar de verdad. Pensaba que ya no sabías.', 'Has parado. Parar también es hacer algo.', 'Así. Más despacio. Mucho mejor.', 'Se te ha soltado algo por dentro. Lo he visto flotar.', 'Un rato tuyo. Te lo has ganado sin tener que ganártelo.'],
     otraArea: ['No es lo mío, pero me alegro. Con moderación, como todo.', 'Lo guardo en la niebla. Ahí no se pierde nada. Ni lo malo, por desgracia.'],
     tope: ['Ya basta por hoy. Hasta la calma cansa si la haces con tanto empeño.'],
@@ -111,8 +119,10 @@ export const FRASES: Record<CompaneroId, Frases> = {
       noche: ['Es tarde para llamar a nadie. Pero no para pensar a quién llamarás mañana.', 'Si alguien duerme a tu lado, apaga esto y habla con él.', 'De noche se cuentan las cosas importantes. Yo estoy despierta. Por si acaso.', 'Duérmete. Mañana me cuentas. Con todo detalle.', 'He tejido una bufanda para alguien. Aún no sé para quién. Ya saldrá.', 'Buenas noches. Si sueñas con alguien, quiero saber con quién.'],
     },
     construir: ['¡Qué bonito! Lo voy a contar por todo el barrio. Ya lo he contado.', 'Una cosa nueva. Vendrán a verla. Vendrán a verme.', 'Gracias, cariño. Esto pide una visita. O tres.', 'Queda precioso. Le voy a hacer una funda de punto. Se la haga o no se la haga.'],
-    crecer1: ['¡He crecido! Ahora llego a las ventanas de los demás. Para nada en especial.', 'Más grande, más lana, más cosas que contar.'],
-    crecer2: ['Adulta. Ya puedo dar consejos que nadie ha pedido. Con autoridad.', 'Me he hecho mayor. Lo sé todo de todos. Antes también, pero ahora con bufanda.'],
+    crecer1: ['Hoy me sale un punto nuevo. El que queda bien incluso si lo haces escuchando.', 'Más lana, más cosas que contar. ¿Tienes un rato largo?'],
+    crecer2: ['Ya puedo dar consejos que nadie ha pedido. Con autoridad.', 'Lo sé todo de todos. Antes también, pero ahora con bufanda.'],
+    crecer3: ['Con este punto puedo tejer bolsillos para los que pierden cosas. Ya tengo una lista.'],
+    crecer4: ['Una bufanda no da para todo el barrio. Un mapa de retales, a lo mejor.'],
     ofrenda: ['Eso se recuerda años. Lo sé yo, que lo recuerdo todo.', 'Un hilo más. Con esto tejo media bufanda.', '¡Por fin noticias! Pensaba que te habías hecho ermitaño.', 'Bien hecho. La gente se olvida de llamar y luego se queja de estar sola.', 'Has estado con alguien. Se te nota en la cara. Y en mis hebras.', 'Eso ha unido dos puntos. Lo sé, es metáfora de punto. Me encanta.', 'Uno más para la red. La red es lo que te sostiene cuando todo se suelta.', 'Lo apunto en mi libreta de cosas bonitas. Es gorda. Pero hoy pesa más.'],
     otraArea: ['No es lo mío, pero lo cuento por ahí igual. Que se sepa.', 'Muy bien, cariño. Se lo diré a todo el barrio.'],
     tope: ['Tres en un día. Más sociable que yo, y eso es mucho decir. Descansa.'],
@@ -150,6 +160,8 @@ export const FRASES: Record<CompaneroId, Frases> = {
       'Montaje completado. Sobra una pieza. La guardo en VARIOS.',
     ],
     crecer1: ['Actualización instalada. Me han salido brazos con articulaciones. Ahora puedo señalarte.', 'Versión 2.0. Mismos bugs, más carisma.'],
-    crecer2: ['Adulto. Totalmente operativo. Lo cual es más de lo que se puede decir de tu bandeja de entrada.', 'Montaje final completado. Me sobraron dos tornillos. Los he guardado por si acaso. Por si acaso qué, no lo sé.'],
+    crecer2: ['Totalmente operativo. Lo cual es más de lo que se puede decir de tu bandeja de entrada.', 'Actualización completada. Me sobraron dos tornillos. Los he guardado por si acaso. Por si acaso qué, no lo sé.'],
+    crecer3: ['Ahora puedo clasificar objetos y rumores. Los objetos se quejan menos.'],
+    crecer4: ['He inventado un cajón para lo que no necesita archivo. Espero que no me pidan un registro.'],
   },
 }

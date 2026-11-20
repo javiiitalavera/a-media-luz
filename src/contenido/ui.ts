@@ -61,10 +61,10 @@ export const UI = {
     retoYMaterial: (area: string, material: string) => `Retos de ${area} · ${material}`,
     huevo: (n: number) => n === 0 ? 'La cáscara cruje. Dale un toque para abrirlo.'
       : `Tres retos cumplidos, de cualquier tipo, lo despiertan. ${n === 1 ? 'Le falta 1.' : `Le faltan ${n}.`}`,
-    paraSer: (etapa: string) => `Para hacerse ${etapa}`,
+    paraNivel: (nivel: number) => `Hacia el nivel ${nivel}`,
     dias: (n: number, de: number, area: string) => `${Math.min(n, de)} de ${de} días con algo de ${area}`,
-    proyectos: (n: number, de: number) => `${Math.min(n, de)} de ${de} proyectos personales`,
-    yaAdulto: 'Adulto. Ya no crece más. Dice que ahora mejora con la edad.',
+    comoSube: 'Los días no tienen que ser seguidos.',
+    alMaximo: 'Ha alcanzado el nivel máximo.',
   },
   sonido: {
     titulo: 'Sonido',
@@ -163,7 +163,7 @@ export const UI = {
     gana: (n: number, material: string) => `+${n} ${material}`,
     dormido: (nombre: string, n: number) => `${nombre} aún no ha llegado. ${n === 1 ? 'Falta 1 cosa' : `Faltan ${n} cosas`} de su área para despertarlo.`,
     nada: 'Aún no has construido nada. Haz cosas de verdad y gana materiales.',
-    etapas: ['Cachorro', 'Joven', 'Adulto'],
+    nivel: (nivel: number) => `Nivel ${nivel}`,
     encontrado: (que: string) => `Encontrado: ${que}`,
     huevo: 'Huevo sospechoso',
     huevoFaltan: (n: number) => (n <= 0 ? 'Eclosión en curso. No toques nada.'
@@ -229,7 +229,7 @@ export const UI = {
       siguiente: 'Que pase el siguiente',
     },
     haciaEtapa: (hecho: number, total: number) => `${hecho} de ${total}`,
-    crecio: (nombre: string, etapa: string) => `${nombre} ya es ${etapa.toLowerCase()}`,
+    subioNivel: (nombre: string, nivel: number) => `${nombre} alcanza el nivel ${nivel}`,
   },
   bosque: {
     hacerOfrenda: 'Hacer una ofrenda',

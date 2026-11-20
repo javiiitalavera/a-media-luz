@@ -1,6 +1,7 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
 import type { MomentoAlbum } from './momentos'
+import type { Nivel } from './etapas'
 import type { Perfil } from '../contenido/cuestionario'
 import type { Lugar } from '../contenido/situaciones'
 import { ACCIONES, AREAS, COMPANEROS, HAZANAS_INICIALES, type Accion, type AreaId, type CompaneroId, type Ritmo } from '../contenido'
@@ -35,6 +36,7 @@ export interface Partida {
   construcciones?: Construccion[]
   /** Última etapa de crecimiento que se ha visto de cada compañero (para celebrarla una vez). */
   etapasVistas?: Partial<Record<CompaneroId, 0 | 1 | 2>>
+  nivelesVistos?: Partial<Record<CompaneroId, Nivel>>
   /** Los vecinos, en orden de llegada (se guardan como «meses» por historia: si falta, el principal ya vivía en casa). */
   meses?: Mes[]
   /** Cómo va cada situación del vecindario. */

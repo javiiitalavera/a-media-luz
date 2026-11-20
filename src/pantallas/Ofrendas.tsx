@@ -11,7 +11,7 @@ import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { materialYaGastado } from '../logica/casa'
 import { retoQueFalta } from '../logica/pista'
-import { proximaLlegada } from '../logica/etapas'
+import { nacido, proximaLlegada, progreso } from '../logica/etapas'
 import { PideReto } from '../componentes/PideReto'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
@@ -67,7 +67,13 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
     const texto = r.sorpresa
       ? `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`
       : frase || (a.soloEl ? UI.ofrendas.retoCumplido : '')
-    if (texto) setReaccion({ texto, n: Date.now(), sorpresa: r.sorpresa?.arte })
+    const vecino = AREAS[r.ofrenda.area].companero
+    const momento = new Date(r.ofrenda.fecha)
+    const nivel = progreso(r.partida, vecino, momento).nivel
+    const subida = nacido(r.partida, vecino, momento) && nivel > progreso(partida, vecino, momento).nivel
+      ? `${UI.casa.subioNivel(COMPANEROS[vecino].nombre, nivel)}.` : ''
+    const mensaje = [subida, texto].filter(Boolean).join(' ')
+    if (mensaje) setReaccion({ texto: mensaje, n: Date.now(), sorpresa: r.sorpresa?.arte })
   }
 
   const guardarPuntual = (datos: DatosReto) => {

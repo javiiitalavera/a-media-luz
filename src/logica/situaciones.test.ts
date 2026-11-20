@@ -140,17 +140,29 @@ describe('situaciones', () => {
     expect(casas(conTofu(['hoguera']))).toContain('tofu')
   })
 
-  it('la visita del club de lectura necesita a Tofu adulto, los libros expuestos y a Madeja', () => {
+  it('la visita del club de lectura necesita a Tofu en nivel 3, los libros expuestos y a Madeja', () => {
     const base = conTofu(['libros'])
     const p = { ...base, meses: [...base.meses!, { companero: 'madeja' as const, inicio: en('2026-01-06').toISOString(), presentado: en('2026-01-06').toISOString() }] }
     const adulto = { ...p, etapasVistas: { tofu: 2 as const } }
     const hayClub = (q: Partida) => Array.from({ length: 90 }, (_, i) => microDeHoy(q, 'tofu', dia(i)))
-      .some((m) => m?.visita === 'madeja' && m.etapaMinima === 2)
+      .some((m) => m?.visita === 'madeja' && m.nivelMinimo === 3)
     expect(hayClub(p)).toBe(false)
     expect(hayClub({ ...adulto, meses: base.meses })).toBe(false)
     expect(hayClub({ ...adulto, construcciones: [] })).toBe(false)
     expect(hayClub({ ...adulto, guardados: ['libros'] })).toBe(false)
     expect(hayClub(adulto)).toBe(true)
+  })
+
+  it('los niveles 4 y 5 abren visitas distintas aunque no hayas construido muebles', () => {
+    const p = conBruma([])
+    const visitas = (nivel: 3 | 4 | 5) => {
+      const conNivel = { ...p, nivelesVistos: { tofu: nivel } }
+      return new Set(Array.from({ length: 120 }, (_, i) => microDeHoy(conNivel, 'tofu', dia(i))?.nivelMinimo))
+    }
+    expect(visitas(3).has(4)).toBe(false)
+    expect(visitas(4).has(4)).toBe(true)
+    expect(visitas(4).has(5)).toBe(false)
+    expect(visitas(5).has(5)).toBe(true)
   })
 
   it('Crónicas: las que están en marcha primero, hasta donde han llegado', () => {

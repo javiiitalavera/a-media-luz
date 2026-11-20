@@ -30,18 +30,18 @@ export function FichaVecino({ partida, c, ahora, enHuevo, faltaHuevo, onCerrar }
                 <h2 className="text-[24px] leading-tight font-bold">{v.nombre}</h2>
                 <p className="text-[14px] text-texto-3">{h?.especie ?? v.humor}</p>
               </div>
-              <span className="mt-1 rounded-full bg-hundido px-3 py-1 text-[13px] font-bold text-texto-2">{UI.casa.etapas[g.etapa]}</span>
+              <span className="mt-1 rounded-full bg-hundido px-3 py-1 text-[13px] font-bold text-texto-2">{UI.casa.nivel(g.nivel)}</span>
             </div>
 
             <p className="mt-3 text-[15px] font-semibold text-texto-2">{F.retoYMaterial(area.nombre, MATERIALES[v.area].nombre)}</p>
             <div className="mt-4 rounded-3xl bg-tarjeta p-3.5">
               {g.siguiente ? (
                 <>
-                  <div className="text-[14px] font-bold">{F.paraSer(UI.casa.etapas[g.etapa + 1].toLowerCase())}</div>
+                  <div className="text-[14px] font-bold">{F.paraNivel(g.siguiente.nivel)}</div>
                   <Barra texto={F.dias(g.dias, g.siguiente.dias, area.nombre)} v={g.dias / g.siguiente.dias} />
-                  <Barra texto={F.proyectos(g.proyectos, g.siguiente.proyectos)} v={g.proyectos / g.siguiente.proyectos} />
+                  <p className="mt-2 text-[13px] text-texto-3">{F.comoSube}</p>
                 </>
-              ) : <p className="text-[15px]">{F.yaAdulto}</p>}
+              ) : <p className="text-[15px]">{F.alMaximo}</p>}
             </div>
 
             {h && <p className="mt-4 px-1 text-[14px] leading-relaxed text-texto-2 italic">{h.historia}</p>}

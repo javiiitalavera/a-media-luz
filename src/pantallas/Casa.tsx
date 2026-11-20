@@ -10,7 +10,7 @@ import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
-import { crecioSinVer, proximaLlegada, progreso } from '../logica/etapas'
+import { dibujoDelNivel, nivelSinVer, nivelVisto, proximaLlegada, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, toqueHeredado, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
@@ -109,7 +109,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const baul = useRef<HTMLButtonElement>(null)
   const [verBaul, setVerBaul] = useState(false)
   const enBaul = OBJETOS_CASA.filter((o) => o.companero === DUENO && guardado(partida, o.id))
-  const verEtapa = useJuego((s) => s.verEtapa)
+  const verNivel = useJuego((s) => s.verNivel)
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
   const presentar = useJuego((s) => s.presentar)
@@ -179,19 +179,19 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
     return () => pasos.forEach(clearTimeout)
   }, [estado, abriendo])
 
-  // Ha crecido desde la última vez: celebración (una sola vez por etapa).
-  const pendiente = vivo && crecioSinVer(partida, DUENO, g.etapa)
+  // El vecino celebra cada nivel una sola vez.
+  const pendiente = vivo && nivelSinVer(partida, DUENO, g.nivel)
   useEffect(() => {
     if (!pendiente) return
     const t = setTimeout(() => {
-      const f = verEtapa(DUENO, g.etapa)
+      const f = verNivel(DUENO, g.nivel)
       sfx.cumplido()
       setCelebra(Date.now())
       setSaltos((n) => n + 1)
       if (f) setHabla({ texto: f.texto, n: Date.now(), contento: true })
     }, 700)
     return () => clearTimeout(t)
-  }, [pendiente, g.etapa, verEtapa])
+  }, [pendiente, g.nivel, verNivel, DUENO])
   useEffect(() => {
     if (!celebra) return
     const t = setTimeout(() => setCelebra(null), 4500)
@@ -285,7 +285,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   // Alto (en % del fondo) de algo que ocupa `ancho` % del ancho con esa proporción.
   const alto = (ancho: number, prop: number) => (ancho * prop * ew) / eh
   // Hasta que se celebra, se sigue viendo la etapa anterior.
-  const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
+  const etapaVista = pendiente ? dibujoDelNivel(nivelVisto(partida, DUENO)) : g.etapa
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora, DUENO)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
@@ -465,7 +465,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
             style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
             {celebra && (
               <span className="animate-entrar rounded-full bg-ambar px-4 py-2 text-[16px] font-bold whitespace-nowrap text-tinta shadow-lg">
-                {nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}
+                {nacer || g.nivel === 1 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.subioNivel(COMPANEROS[DUENO].nombre, g.nivel)}
               </span>
             )}
             {habla && (

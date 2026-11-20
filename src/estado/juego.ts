@@ -14,13 +14,14 @@ import type { Perfil } from '../contenido/cuestionario'
 import { avanzar, decidir as decidirSituacion, empiezaHoyDeTuDiario } from '../logica/situaciones'
 import { leerElDiario } from '../logica/lector'
 import { incubar as incubarHuevo } from '../logica/etapas'
-import { marcarEtapaVista, type Etapa } from '../logica/etapas'
+import { marcarNivelVisto, nacido, nivelSinVer, nivelVisto, progreso, type Nivel } from '../logica/etapas'
 import { estadoDelMes, marcarPresentado, mesActual } from '../logica/meses'
 import { curiosidadesDeHistorias } from '../logica/curiosidades'
-import { momentoCrecer, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
+import { momentoSubirNivel, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
+const FRASE_DE_NIVEL = { 2: 'crecer1', 3: 'crecer2', 4: 'crecer3', 5: 'crecer4' } as const
 
 interface Juego {
   partida: Partida | null
@@ -36,8 +37,8 @@ interface Juego {
   tocar: (c: CompaneroId, sinQuejas?: boolean) => Frase | null
   /** Construye un objeto en la casa; devuelve lo que dice el compañero (o null si no se pudo). */
   construir: (objetoId: string, c: CompaneroId) => { ok: boolean; frase: Frase | null }
-  /** Celebra (una vez) que un compañero ha crecido: marca la etapa como vista y devuelve su frase. */
-  verEtapa: (c: CompaneroId, etapa: Etapa) => Frase | null
+  /** Celebra el nivel alcanzado y devuelve la frase del compañero. */
+  verNivel: (c: CompaneroId, nivel: Nivel) => Frase | null
   /** Avanza el barrio (como mucho una fase de historia al día). */
   avanzarBarrio: () => void
   /** Decide en una situación. Devuelve la respuesta que se cuenta en pantalla. */
@@ -109,15 +110,22 @@ export const useJuego = create<Juego>()(
         set({ partida: { ...hecha, frasesRecientes: r.recientes } })
         return { ok: true, frase: r.frase }
       },
-      verEtapa: (c, etapa) => {
+      verNivel: (c, nivel) => {
         const p = get().partida
-        if (!p) return null
-        const vista = marcarEtapaVista(p, c, etapa)
-        const r = etapa > 0 ? elegirFrase(vista, c, `crecer${etapa}` as 'crecer1' | 'crecer2', azarReal) : null
-        let nueva = r ? { ...vista, frasesRecientes: r.recientes } : vista
-        if (etapa > 0) nueva = momentoCrecer(nueva, c, etapa as 1 | 2, ahora(), r?.frase?.texto)
-        set({ partida: nueva })
-        return r?.frase ?? null
+        const momento = ahora()
+        if (!p || nivel === 1 || !nacido(p, c, momento) || !nivelSinVer(p, c, nivel) || progreso(p, c, momento).nivel < nivel) return null
+        const vista = marcarNivelVisto(p, c, nivel)
+        const r = elegirFrase(vista, c, FRASE_DE_NIVEL[nivel], azarReal)
+        let conFotos = { ...vista, frasesRecientes: r.recientes }
+        // Si ha subido varios niveles entre visitas, se celebra el último y se guardan todos los momentos.
+        const anterior = nivelVisto(p, c)
+        for (const alcanzado of [2, 3, 4, 5] as const) {
+          if (alcanzado > anterior && alcanzado <= nivel) {
+            conFotos = momentoSubirNivel(conFotos, c, alcanzado, momento, alcanzado === nivel ? r.frase?.texto : undefined)
+          }
+        }
+        set({ partida: conFotos })
+        return r.frase
       },
       avanzarBarrio: () => {
         const p = get().partida

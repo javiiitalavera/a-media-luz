@@ -7,7 +7,7 @@ import type { Lugar } from '../contenido/situaciones'
 import type { NoticiaBarrio, Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre, sumarDias } from './fechas'
 import { misHazanas } from './hazanas'
-import { crecioSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
+import { nivelSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
 import { estadoDelMes, mesActual, mesesDe } from './meses'
 import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
@@ -69,7 +69,7 @@ const escenaSinVisitar = (p: Partida, lugar: Lugar, ahora: Date) =>
 /** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
 export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
   if (!nacido(p, c, ahora)) return false
-  return crecioSinVer(p, c, progreso(p, c, ahora).etapa) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
+  return nivelSinVer(p, c, progreso(p, c, ahora).nivel) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
 }
 
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
@@ -80,7 +80,7 @@ export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
 /** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
 export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
   estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0 || pendientesDelSobre(p, ahora) > 0 ||
-  nacidos(p, ahora).some((c) => crecioSinVer(p, c, progreso(p, c, ahora).etapa))
+  nacidos(p, ahora).some((c) => nivelSinVer(p, c, progreso(p, c, ahora).nivel))
 
 /** La pequeña cosa de hoy en una casa, si aún no la has mirado. */
 export function microSinVer(p: Partida, c: CompaneroId, ahora: Date) {
