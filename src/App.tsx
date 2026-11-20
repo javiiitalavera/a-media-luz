@@ -56,12 +56,19 @@ export default function App() {
 
   if (!partida) return <><Inicio /><Sonido momento={momento} apagada={false} /><Entrada noche={noche} /></>
 
-  const irA = (p: Pestana) => { setVerBarrio(false); setCasa(null); setPestana(p) }
+  // Cambiar de pestaña no olvida dónde estabas: al volver a Inicio sigues en el barrio o en la casa en que te quedaste
+  // (decidido por Javi, 20/11/2026). Al abrir la app, en cambio, se empieza en la casa del último en llegar.
+  const irA = (p: Pestana) => setPestana(p)
   const ultimo = mesActual(partida).companero
   const conBarrio = nacidos(partida, ahora).length >= 2
   // Al entrar (y al tocar Inicio) se abre la casa del último vecino en llegar; el barrio, desde su botón.
   const enBarrio = pestana === 'inicio' && !casa && verBarrio
-  const irALugar = (l: Lugar) => { irA('inicio'); if (l === 'barrio') setVerBarrio(true); else setCasa(l) }
+  const irALugar = (l: Lugar) => {
+    setPestana('inicio')
+    if (l === 'barrio') { setCasa(null); setVerBarrio(true) }
+    else if (l === ultimo) { setCasa(null); setVerBarrio(false) }
+    else setCasa(l)
+  }
 
   let pantalla
   if (pestana === 'inicio' && casa)
@@ -76,7 +83,7 @@ export default function App() {
       }} />
   else if (pestana === 'inicio')
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onNovedades={() => setSobre(true)} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
-  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irA('inicio')} />
+  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irALugar(ultimo)} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} onIr={irALugar} />
 
