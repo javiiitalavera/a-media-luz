@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { transicion } from './componentes/transicion'
-import { decisionesPendientes, hayAlbumNuevo, hayAlgoEnInicio, hayHazanasNuevas, leerNoticias } from './logica/avisos'
+import { decisionesPendientes, hayAlbumNuevo, hayAlgoEnInicio, hayHazanasNuevas, leerNoticias, noticiasDelSobre } from './logica/avisos'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
@@ -65,7 +65,7 @@ export default function App() {
 
   let pantalla
   if (pestana === 'inicio' && casa)
-    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita abrirDecision={abrirDecision} onDecisionAbierta={() => setAbrirDecision(false)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
+    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onNovedades={() => setSobre(true)} abrirDecision={abrirDecision} onDecisionAbierta={() => setAbrirDecision(false)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && verBarrio)
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       volverA={conBarrio ? (ultimaCasa ?? ultimo) : ultimo}
@@ -75,7 +75,7 @@ export default function App() {
         transicion('entrar', punto(c), () => { if (c === ultimo) setVerBarrio(false); else setCasa(c) })
       }} />
   else if (pestana === 'inicio')
-    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
+    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onNovedades={() => setSobre(true)} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irA('inicio')} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} ahora={ahora} onIr={irALugar} />
@@ -94,25 +94,36 @@ export default function App() {
 
 /** «Mientras no estabas…»: se abre al tocar el sobre del barrio. Al abrirlo, las novedades quedan leídas. */
 function Novedades({ ahora, onIr, onDecidir, onCerrar }: { ahora: Date; onIr: (l: Lugar) => void; onDecidir: (c: CompaneroId) => void; onCerrar: () => void }) {
-  const noticias = useJuego((s) => s.partida?.noticias) ?? []
   const partida = useJuego((s) => s.partida)
   const decisiones = partida ? decisionesPendientes(partida, ahora) : []
+  const noticias = partida ? noticiasDelSobre(partida, ahora) : []
   const ajustar = useJuego((s) => s.ajustar)
   // Lo que no estaba leído al abrir se ve resaltado mientras el sobre siga abierto.
   const [nuevas] = useState(() => new Set(noticias.filter((n) => !n.leida).map((n) => n.fecha + n.texto)))
   useEffect(() => { sfx.pagina(); ajustar(leerNoticias) }, [ajustar])
+  // Accesibilidad: al abrir, el foco va al diálogo; al cerrar, vuelve a donde estaba. Escape lo cierra.
+  const dialogo = useRef<HTMLElement>(null)
+  const cerrar = useRef(onCerrar)
+  cerrar.current = onCerrar
+  useEffect(() => {
+    const antes = document.activeElement as HTMLElement | null
+    dialogo.current?.focus()
+    const tecla = (e: KeyboardEvent) => { if (e.key === 'Escape') cerrar.current() }
+    window.addEventListener('keydown', tecla)
+    return () => { window.removeEventListener('keydown', tecla); antes?.focus?.() }
+  }, [])
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-start bg-[#2e2030]/35 px-3 pt-[max(16px,calc(env(safe-area-inset-top)+32px))]" onClick={onCerrar}>
-      <section role="dialog" aria-label={UI.barrio.novedades} onClick={(e) => e.stopPropagation()} className="animate-entrar max-h-[80dvh] w-full overflow-y-auto rounded-[28px] bg-fondo p-4 shadow-xl">
-        <h2 className="px-1 text-[20px] font-bold">{UI.barrio.novedades}</h2>
-        {/* Lo que espera tu decisión se queda arriba hasta que decidas: dos toques y estás en la pregunta. */}
+      <section ref={dialogo} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="titulo-novedades" onClick={(e) => e.stopPropagation()} className="animate-entrar max-h-[80dvh] w-full overflow-y-auto rounded-[28px] bg-fondo p-4 shadow-xl outline-none">
+        <h2 id="titulo-novedades" className="px-1 text-[20px] font-bold">{UI.barrio.novedades}</h2>
+        {/* Cada decisión, una sola tarjeta: lo que pasó y la pregunta. Se queda arriba hasta que decidas. */}
         {decisiones.map((d) => (
-          <button key={d.lugar} type="button" onClick={() => { onCerrar(); onDecidir(d.lugar) }}
-            className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-2xl bg-ambar px-3.5 py-2.5 text-left text-[15px] leading-snug font-semibold text-tinta shadow-sm">
-            <span aria-hidden className="text-[18px] font-bold">?</span>
-            <span className="flex-1">{UI.barrio.esperaDecision(COMPANEROS[d.lugar].nombre, d.pregunta)}</span>
-            <span aria-hidden>›</span>
-          </button>
+          <div key={d.lugar} className="mt-2 rounded-2xl bg-ambar px-3.5 py-3 text-tinta shadow-sm">
+            {d.contexto && <p className="text-[15px] leading-snug">{d.contexto}</p>}
+            <p className="mt-1 text-[15px] leading-snug font-bold">{UI.barrio.esperaDecision(COMPANEROS[d.lugar].nombre, d.pregunta)}</p>
+            <button type="button" onClick={() => { onCerrar(); onDecidir(d.lugar) }}
+              className="mt-2 min-h-11 w-full rounded-xl bg-tinta/10 text-[15px] font-bold">{UI.barrio.decidir} ›</button>
+          </div>
         ))}
         {noticias.length === 0 && decisiones.length === 0 && <p className="mt-2 px-1 text-[15px] text-texto-3">{UI.barrio.nadaNuevo}</p>}
         <ul className="mt-2 flex flex-col gap-2">
@@ -122,7 +133,7 @@ function Novedades({ ahora, onIr, onDecidir, onCerrar }: { ahora: Date; onIr: (l
               <li key={i}>
                 <button type="button" onClick={() => { onCerrar(); onIr(n.lugar) }}
                   className={`flex min-h-11 w-full items-center gap-2 rounded-2xl px-3.5 py-2.5 text-left text-[15px] leading-snug ${nueva ? 'bg-tarjeta font-semibold text-texto shadow-sm' : 'bg-hundido/60 text-texto-3'}`}>
-                  {nueva && <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-coral" />}
+                  {nueva && <span className="h-2 w-2 shrink-0 rounded-full bg-coral"><span className="sr-only">{UI.barrio.nueva}</span></span>}
                   <span className="flex-1">{n.texto}</span>
                   <span className="shrink-0 text-[12px] font-medium text-texto-3">{UI.barrio.cuando(diasEntre(dia(n.fecha), dia(ahora)))}</span>
                 </button>

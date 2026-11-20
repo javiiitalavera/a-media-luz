@@ -366,3 +366,12 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 ### La celebración sale del vecino (20/11/2026, rama `dev/celebracion-en-escena`)
 - Las escenitas de un objeto colgado (las campanillas de Bruma) salen del vecino: el objeto queda tan arriba que el globo parecía un aviso.
 - «¡Ha salido…!» y «… ya es joven/adulto» ya no salen en una franja arriba: aparecen sobre el vecino, encima de lo que dice. En la casa ya no queda ningún mensaje fijo arriba; todo sale del vecino, de la visita o del objeto.
+
+### Revisión de los avisos (20/11/2026, rama `dev/avisos-revision`, a partir de la revisión de ChatGPT)
+- **El sobre también está en la casa** (arriba a la derecha, solo si hay algo): como ahora se entra en una casa, lo importante no queda escondido en el mapa.
+- **El botón «Barrio» avisa de lo que pasa en las otras casas:** «?» si otro vecino espera una decisión; punto si en otra casa (o en el barrio) ha pasado algo, alguien ha crecido o tiene un proyecto listo.
+- **Una decisión cuenta una vez:** en el sobre sale una sola tarjeta con lo que pasó, la pregunta y «Decidir», y se queda hasta que respondes; su noticia ya no sale aparte ni suma otra vez en el número.
+- **Entrar en una casa apaga su «!» pero no da sus noticias por leídas:** se leen al abrir el sobre.
+- **Crónicas:** al pasar al aviso de una en una, las que ya estaban leídas siguen leídas (antes, abrir una reactivaba las antiguas).
+- **Menos latidos:** solo late el «?» de una decisión (y el huevo a punto, que ya se mueve). Los puntos, el sobre, los «!», los «…» y el martillo aparecen con un saltito y se quedan quietos.
+- **Accesibilidad del sobre:** al abrirlo el foco va al diálogo y al cerrarlo vuelve a donde estaba; se cierra con Escape; las novedades nuevas se anuncian como «nueva».

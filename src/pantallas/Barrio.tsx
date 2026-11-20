@@ -21,7 +21,7 @@ import { BotonConstruir } from '../componentes/BotonConstruir'
 import { Materiales } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
-import { avisoEnCasa, decisionesPendientes, gagDeHoy, huellaNueva, noticiasSinLeer, verGag, verHuella } from '../logica/avisos'
+import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuella } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
@@ -68,7 +68,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   }
   const ajustar = useJuego((st) => st.ajustar)
   const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
-  const sinLeer = noticiasSinLeer(partida) + decisionesPendientes(partida, ahora).length
+  const sinLeer = pendientesDelSobre(partida, ahora)
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
