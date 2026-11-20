@@ -183,13 +183,13 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         {gag && <GagEnEscena gag={gag} onVisto={() => ajustar((p) => verGag(p, 'barrio', ahora))} />}
 
         {/* Avisos: «!» sobre la casita donde ha pasado algo (por encima del tinte de la noche). */}
-        {casas.map(({ companero, x, y, ancho: anchoCasa }) => {
+        {casas.map(({ companero, huevo, x, y, ancho: anchoCasa }) => {
           if (!avisoEnCasa(partida, companero, ahora)) return null
           const borde = (100 - hueco.ancho) / 2 + 2200 / ancho
           const aLaIzquierda = x + anchoCasa * 0.5 < 50
           const destino = x + anchoCasa * (aLaIzquierda ? 0.87 : 0.13)
           return (
-            <button key={`aviso-${companero}`} type="button" aria-label={UI.barrio.hayAlgo(COMPANEROS[companero].nombre)}
+            <button key={`aviso-${companero}`} type="button" aria-label={huevo ? UI.arranque.algoSeMueve : UI.barrio.hayAlgo(COMPANEROS[companero].nombre)}
               onClick={() => entrar(companero)}
               className="absolute flex min-h-11 min-w-11 -translate-1/2 items-center justify-center"
               style={{ left: `${Math.min(Math.max(destino, borde), 100 - borde)}%`, top: `${y + 1.8}%` }}>

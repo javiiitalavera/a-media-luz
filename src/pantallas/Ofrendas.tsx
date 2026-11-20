@@ -11,6 +11,7 @@ import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
 import { materialYaGastado } from '../logica/casa'
 import { retoQueFalta } from '../logica/pista'
+import { proximaLlegada } from '../logica/etapas'
 import { PideReto } from '../componentes/PideReto'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
@@ -32,6 +33,9 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
   const pista = retoQueFalta(partida, ahora)
+  const llegada = proximaLlegada(partida, ahora)
+  const eclosionPendiente = estadoDelMes(partida, ahora) === 'naciendo'
+  const huevoParaVer = eclosionPendiente ? mesActual(partida).companero : llegada?.faltanDias === 0 ? llegada.vecino : null
   const extras = extrasHoy(partida, ahora)
   // Retos puntuales de hoy: se quedan (tachados si los has hecho) hasta que acaba el día.
   const puntuales = puntualesHoy(partida, ahora)
@@ -89,18 +93,18 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
         </div>
       </div>
 
-      {/* Si tu lista no tiene nada del área del último vecino, te lo pide (sin eso no crece). */}
-      {pista && <PideReto pista={pista} onEditar={() => setHoja('editar')} className="mt-4" />}
-
-      {/* El huevo está listo: la invitación se queda hasta que vas a verlo (el último toque es tuyo). */}
-      {estadoDelMes(partida, ahora) === 'naciendo' && (
+      {huevoParaVer && (
         <button type="button" onClick={onIrACasa}
           className="animate-entrar mt-4 flex min-h-[64px] w-full items-center gap-3 rounded-3xl bg-ambar px-4 py-3 text-left text-tinta shadow-md active:scale-[0.99]">
-          <img src={rutaArte(`huevo/${mesActual(partida).companero}/agrietado`)} alt="" className="anim-inquieto h-11 w-11 shrink-0 object-contain" draggable={false} />
-          <span className="flex-1 text-[16px] font-bold">{UI.arranque.algoSeMueve}</span>
+          <img src={rutaArte(`huevo/${huevoParaVer}/${eclosionPendiente ? 'agrietado' : 'cerrado'}`)} alt="" className="anim-inquieto h-11 w-11 shrink-0 object-contain" draggable={false} />
+          <span className="flex-1 text-[16px] font-bold">{eclosionPendiente ? UI.arranque.algoSeMueve : UI.casa.huevoEnPuerta}</span>
           <span className="shrink-0 rounded-full bg-tinta/10 px-3 py-1.5 text-[14px] font-bold">{UI.arranque.irAVer} ›</span>
         </button>
       )}
+      {llegada && llegada.faltanDias > 0 && (
+        <p className="mt-3 px-1 text-[14px] text-texto-3">{UI.casa.diasParaOtroHuevo(llegada.faltanDias)}</p>
+      )}
+      {pista && !huevoParaVer && <PideReto pista={pista} onEditar={() => setHoja('editar')} className="mt-4" />}
 
       {puntuales.length > 0 && (
         <>

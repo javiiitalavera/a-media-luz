@@ -1,4 +1,4 @@
-// El último vecino te pide un reto de su área si tu lista no tiene ninguno (sin él no crece ni hay material).
+// Un vecino te pide un reto de su área si tu lista no tiene ninguno (sin él no crece ni hay material).
 // «Luego» lo deja hasta mañana, en su casa y en Retos. Con la lista llena, lleva a editarla.
 import { COMPANEROS, UI } from '../contenido'
 import { aplazarPista, type Pista } from '../logica/pista'

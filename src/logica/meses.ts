@@ -8,6 +8,8 @@ export interface Mes {
   companero: CompaneroId
   /** Fecha ISO en que llegó el huevo. */
   inicio: string
+  /** El huevo de la puerta ya está listo cuando lo recoges. */
+  listo?: boolean
   /** Fecha ISO en que se vio su eclosión y su presentación (para enseñarlas una sola vez). */
   presentado?: string
   /** Fecha ISO en que se vio el informe final (y se cerró el mes). */
@@ -43,8 +45,9 @@ function ofrendasDelMes(p: Partida, m: Mes, ahora: Date) {
     .sort((a, b) => a.fecha.localeCompare(b.fecha))
 }
 
-/** Fecha en que eclosionó el huevo (la ofrenda número 3 del mes), o null si aún no. */
+/** Fecha en que el huevo estuvo listo para abrirse, o null si aún no. */
 export function eclosion(p: Partida, m: Mes, ahora: Date): string | null {
+  if (m.listo && new Date(m.inicio) <= ahora) return m.inicio
   return ofrendasDelMes(p, m, ahora)[OFRENDAS_ECLOSION - 1]?.fecha ?? null
 }
 
@@ -62,5 +65,7 @@ export function marcarPresentado(p: Partida, ahora: Date): Partida {
 }
 
 /** Ofrendas que le faltan al huevo para abrirse. */
-export const faltanParaEclosion = (p: Partida, ahora: Date) =>
-  Math.max(0, OFRENDAS_ECLOSION - ofrendasDelMes(p, mesActual(p), ahora).length)
+export function faltanParaEclosion(p: Partida, ahora: Date): number {
+  const m = mesActual(p)
+  return m.listo ? 0 : Math.max(0, OFRENDAS_ECLOSION - ofrendasDelMes(p, m, ahora).length)
+}

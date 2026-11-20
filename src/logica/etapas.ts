@@ -1,6 +1,7 @@
 // Vecinos y crecimiento (docs/diseno-vecindario.md). Los vecinos son para siempre. Crecen por hitos: días
 // distintos con alguna hazaña de su área (desde que llegó su huevo) y proyectos personales terminados.
-// Nunca bajan. El siguiente huevo aparece cuando el último en llegar es joven; se incuba cuando quieras.
+// Nunca bajan. Las llegadas cuentan días con cualquier reto desde la última presentación.
+import { tieneMes } from '../arte/manifiesto'
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { Partida } from './partida'
 import { eclosion, mesActual, mesesDe } from './meses'
@@ -19,8 +20,9 @@ export const UMBRALES: Record<CompaneroId, { joven: number; adulto: number }> = 
 }
 export const PROYECTOS_PARA = { joven: 1, adulto: 3 } as const
 
-/** Orden en que llegan los siguientes (en el prototipo, el segundo siempre es Tuerca). */
+/** Orden de llegada y días activos entre presentaciones. */
 export const ORDEN_LLEGADA: CompaneroId[] = ['nox', 'tuerca', 'tofu', 'bruma', 'madeja']
+const DIAS_PARA_OTRO_HUEVO = 2
 
 export const vecinoDe = (p: Partida, c: CompaneroId) => mesesDe(p).find((m) => m.companero === c)
 
@@ -79,19 +81,28 @@ export const crecioSinVer = (p: Partida, c: CompaneroId, etapa: Etapa) => etapa 
 export const marcarEtapaVista = (p: Partida, c: CompaneroId, etapa: Etapa): Partida =>
   ({ ...p, etapasVistas: { ...p.etapasVistas, [c]: etapa } })
 
-/**
- * El siguiente huevo, si ya puede aparecer: el último en llegar ha nacido, es joven y ha terminado al menos
- * un proyecto suyo. `posibles`: los que tienen su arte listo. Null si no toca o no queda nadie.
- */
-export function huevoDisponible(p: Partida, ahora: Date, posibles: readonly CompaneroId[]): CompaneroId | null {
-  const ultimo = mesActual(p).companero
-  if (!nacido(p, ultimo, ahora)) return null
-  if (progreso(p, ultimo, ahora).etapa < 1 || proyectosHechos(p, ultimo) < 1) return null
+/** Solo cuenta un día si se ha registrado algo después del día en que se presentó al último vecino. */
+export function proximaLlegada(p: Partida, ahora: Date, posibles: readonly CompaneroId[] = ORDEN_LLEGADA.filter(tieneMes)) {
+  const ultimo = mesActual(p)
+  if (!ultimo.presentado) return null
   const usados = new Set(mesesDe(p).map((m) => m.companero))
-  return ORDEN_LLEGADA.find((c) => posibles.includes(c) && !usados.has(c)) ?? null
+  const vecino = ORDEN_LLEGADA.find((c) => posibles.includes(c) && !usados.has(c))
+  if (!vecino) return null
+  const desde = dia(ultimo.presentado)
+  const activos = new Set<string>()
+  for (const o of p.ofrendas) {
+    const fecha = new Date(o.fecha)
+    if (fecha > ahora) continue
+    const d = dia(fecha)
+    if (d > desde) activos.add(d)
+    if (activos.size >= DIAS_PARA_OTRO_HUEVO) return { vecino, faltanDias: 0 }
+  }
+  return { vecino, faltanDias: DIAS_PARA_OTRO_HUEVO - activos.size }
 }
 
-/** Incubar el huevo: llega el siguiente vecino (sale con 3 hazañas, como el primero). */
+/** Recoge el huevo de la puerta, que ya se puede abrir en su parcela. */
 export function incubar(p: Partida, c: CompaneroId, ahora: Date): Partida {
-  return { ...p, meses: [...mesesDe(p), { companero: c, inicio: ahora.toISOString() }] }
+  const llegada = proximaLlegada(p, ahora)
+  if (llegada?.vecino !== c || llegada.faltanDias !== 0) return p
+  return { ...p, meses: [...mesesDe(p), { companero: c, inicio: ahora.toISOString(), listo: true }] }
 }

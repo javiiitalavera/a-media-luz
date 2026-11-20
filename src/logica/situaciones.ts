@@ -6,7 +6,7 @@ import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
 import { expuesto, guardado } from './colocar'
 import { azarConSemilla } from './azar'
-import { nacido, nacidos, vecinoDe } from './etapas'
+import { nacido, nacidos, progreso, vecinoDe } from './etapas'
 import { dia, diasEntre } from './fechas'
 import { PATRONES, rellenar, type DatosPatron } from './patrones'
 
@@ -188,7 +188,8 @@ export function diaDelBarrio(p: Partida, ahora: Date): { micros: Partial<Record<
     const v = vecinoDe(p, casa)
     if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) continue
     // Lo que pasa sobre un mueble necesita el mueble a la vista (no en el baúl); quien viene de visita, estar libre.
-    const posibles = MICROS.filter((m) => m.casa === casa && (!m.visita || !ocupados.has(m.visita)) && m.requiere.every((q) =>
+    const etapa = progreso(p, casa, ahora).etapa
+    const posibles = MICROS.filter((m) => m.casa === casa && etapa >= (m.etapaMinima ?? 0) && (!m.visita || !ocupados.has(m.visita)) && m.requiere.every((q) =>
       q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
     const m = posibles.length ? posibles[Math.floor(r() * posibles.length)] : undefined
     if (!m) continue
