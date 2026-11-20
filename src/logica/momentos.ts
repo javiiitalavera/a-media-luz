@@ -1,13 +1,14 @@
 // Momentos del Álbum (decidido por Javi, 18/11/2026): fotos que hace el propio juego en los hitos
 // (nace un vecino, crece, termina una historia). Se guarda cómo estaba la escena, no una imagen:
 // el Álbum la vuelve a pintar con el arte que ya hay.
-import { COMPANEROS, HISTORIAS, OBJETOS_CASA, PROYECTOS_BARRIO, UI, type CompaneroId, type Momento as MomentoDia } from '../contenido'
-import { SITUACIONES, type Lugar } from '../contenido/situaciones'
+import { COMPANEROS, HISTORIAS, OBJETOS_CASA, PROYECTOS_BARRIO, UI, type CompaneroId, type Momento as MomentoDia, type ObjetoCasa } from '../contenido'
+import { SITUACIONES, type EscenaMicro, type Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { construido } from './casa'
 import { dibujoDelNivel, nacidos, progreso, type Nivel } from './etapas'
 import { momentoDelDia } from './momento'
-import { dondeGregorio, faseDe, huellasEn, visitante } from './situaciones'
+import { diaDelBarrio, dondeGregorio, faseDe, huellasEn } from './situaciones'
+import { sitioDe } from './colocar'
 
 export type Cara = 'base' | 'contento' | 'enfurrunado' | 'dormido'
 
@@ -25,7 +26,10 @@ export interface EscenaFoto {
   momentoDia: MomentoDia
   /** En el barrio: quién vive ya (sus casitas). */
   vecinos?: CompaneroId[]
-  /** Dónde estaban las cosas que habías movido (para que la foto no cambie al reordenar después). */
+  visual?: EscenaMicro
+  /** Encuadre de cada objeto visible, hasta si seguía en su sitio original. */
+  sitios?: Record<string, ObjetoCasa['sitio']>
+  /** Posiciones de objetos movidos en fotos de versiones anteriores. */
   colocados?: Record<string, { x: number; y: number }>
 }
 
@@ -37,26 +41,38 @@ export interface MomentoAlbum {
   escena: EscenaFoto
 }
 
-/** Lo movido en una casa (si hay algo). */
-function colocadosDe(p: Partida, c: CompaneroId) {
-  const propios = Object.entries(p.colocados ?? {}).filter(([id]) => OBJETOS_CASA.find((o) => o.id === id)?.companero === c)
-  return propios.length ? Object.fromEntries(propios) : undefined
-}
-
 /** Cómo está ahora mismo un sitio, para la foto. */
 export function fotoDe(p: Partida, lugar: Lugar, ahora: Date, cara: Cara = 'contento'): EscenaFoto {
   const base = { huellas: huellasEn(p, lugar).map((h) => h.id), momentoDia: momentoDelDia(ahora) }
   if (lugar === 'barrio') return { ...base, lugar, etapa: 0, cara, objetos: PROYECTOS_BARRIO.filter((b) => construido(p, b.id)).map((b) => b.id), gregorio: false, vecinos: nacidos(p, ahora) }
+  const objetos = OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id) && !p.guardados?.includes(o.id))
+  const { micros, visitas } = diaDelBarrio(p, ahora)
+  const visita = visitas[lugar]
+  const visual = micros[lugar]?.visual
   return {
     ...base,
     lugar,
     etapa: progreso(p, lugar, ahora).etapa,
     cara,
-    ...(() => { const v = visitante(p, lugar, ahora); return v ? { visita: v, visitaEtapa: progreso(p, v, ahora).etapa } : {} })(),
-    objetos: OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id) && !p.guardados?.includes(o.id)).map((o) => o.id),
+    ...(visita && { visita, visitaEtapa: progreso(p, visita, ahora).etapa }),
+    ...(visual && { visual }),
+    objetos: objetos.map((o) => o.id),
+    sitios: Object.fromEntries(objetos.map((o) => [o.id, sitioDe(p, o)])),
     gregorio: dondeGregorio(p, ahora) === lugar,
-    ...(colocadosDe(p, lugar) && { colocados: colocadosDe(p, lugar) }),
   }
+}
+
+/** Fija las fotos antiguas en el encuadre que conserva la partida al abrirla. */
+export function fijarFotosDeCasa(p: Partida): Partida {
+  if (!p.momentos?.some(({ escena }) => escena.lugar !== 'barrio' && !escena.sitios)) return p
+  const momentos = p.momentos.map((m) => {
+    const e = m.escena
+    if (e.lugar === 'barrio' || e.sitios) return m
+    const objetos = OBJETOS_CASA.filter((o) => o.companero === e.lugar && e.objetos.includes(o.id))
+    const sitios = Object.fromEntries(objetos.map((o) => [o.id, sitioDe({ colocados: e.colocados }, o)]))
+    return { ...m, escena: { ...e, sitios } }
+  })
+  return { ...p, momentos }
 }
 
 /** Añade un momento (una sola vez por id). */

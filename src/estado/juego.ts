@@ -17,7 +17,7 @@ import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarNivelVisto, nacido, nivelSinVer, nivelVisto, progreso, type Nivel } from '../logica/etapas'
 import { estadoDelMes, marcarPresentado, mesActual } from '../logica/meses'
 import { curiosidadesDeHistorias } from '../logica/curiosidades'
-import { momentoSubirNivel, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
+import { fijarFotosDeCasa, momentoSubirNivel, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
 
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
@@ -174,11 +174,11 @@ export const useJuego = create<Juego>()(
       borrar: () => set({ partida: null, porContar: null}),
     }),
     {
-      name: 'a-media-luz', version: 4, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),
-      // Actualiza el catálogo de retos de las partidas anteriores.
+      name: 'a-media-luz', version: 5, storage: createJSONStorage(() => localStorage), partialize: (s) => ({ partida: s.partida }),
+      // Actualiza los retos y conserva el encuadre de las fotos antiguas.
       migrate: (guardado) => {
         const g = guardado as { partida: Partida | null }
-        return { ...g, partida: g.partida ? migrarHazanas(g.partida) : null } as Juego
+        return { ...g, partida: g.partida ? fijarFotosDeCasa(migrarHazanas(g.partida)) : null } as Juego
       },
     },
   ),

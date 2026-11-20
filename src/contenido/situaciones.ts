@@ -45,7 +45,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         noticia: 'Tuerca ha clavado un cartel junto a la hoguera de Nox.',
         lugar: 'nox',
         frases: {
-          nox: ['Un cartel de madera. Junto a un fuego. Tuerca no ha pensado esto muy bien.', 'Lo he leído. Dos veces. Sigo sin estar de acuerdo.'],
+          nox: ['Un cartel de madera. Junto a un fuego. Tuerca no ha pensado esto muy bien.', 'Si Tuerca pregunta, estabas conmigo. Espera, ¿tú de qué lado estás?'],
           tuerca: ['Artículo 1: prohibido hacer fuego. Lo he redactado yo. Está muy bien redactado.'],
         },
       },
@@ -53,7 +53,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         noticia: 'Nox asa salchichas justo detrás del cartel. Tuerca ha añadido el artículo 1 bis: «salchichas incluidas».',
         lugar: 'nox',
         frases: {
-          nox: ['Técnicamente el fuego está detrás del cartel. Delante no hay nada prohibido.', '¿Quieres una? Está muy prohibida. Está buenísima.'],
+          nox: ['Técnicamente el fuego está detrás del cartel. Delante no hay nada prohibido.', '¿Quieres una? Si dices que no, te la dejo aquí para que la vigiles.'],
           tuerca: ['He tenido que ampliar la normativa. Los vacíos legales me dan urticaria.'],
         },
       },
@@ -62,7 +62,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         lugar: 'nox',
         frases: {
           nox: ['Accidente. Lo juro por mi cola.', 'El extintor es feo. Pero tiene un fuego dibujado. Lo respeto.'],
-          tuerca: ['Expediente 001. Tengo pruebas. Tengo olor a salchicha.'],
+          tuerca: ['Puedes dejar tu versión por escrito. Lo de «pasaba por aquí» ya lo he puesto yo.'],
         },
       },
     ],
@@ -75,7 +75,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
       {
         noticia: 'Tuerca ha colgado una convocatoria en su tablón: «Se aceptan sugerencias para mejorar el vecindario».',
         lugar: 'tuerca',
-        frases: { tuerca: ['Buzón de sugerencias abierto. Las espero con los brazos abiertos. Y con una plantilla.'] },
+        frases: { tuerca: ['Tu sugerencia puede ser anónima. Deja el nombre al dorso para comprobarlo.'] },
       },
       {
         noticia: 'Nadie ha dejado ninguna sugerencia. Tuerca ha presentado tres propuestas propias y las ha aprobado por unanimidad.',
@@ -187,6 +187,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
   {
     id: 'prestamo',
     titulo: 'El préstamo',
+    ecos: { tofu: ['He prestado tres libros. He recuperado dos. Uno, chamuscado.'] },
     requiere: { vecinos: ['nox', 'tofu'], construido: ['libros'] },
     fases: [
       {
@@ -688,7 +689,11 @@ const HUELLAS_DEL_BARRIO: Huella[] = [
 ]
 
 /** Pequeñas cosas que pasan en una casa sin historia detrás. Se ven de vez en cuando al entrar. */
+export const ESCENAS_MICRO = ['sombras', 'manual'] as const
+export type EscenaMicro = typeof ESCENAS_MICRO[number]
+
 export interface Micro {
+  visual?: EscenaMicro
   casa: CompaneroId
   /** Muebles que tienen que estar a la vista y vecinos que tienen que haber nacido. */
   requiere: string[]
@@ -733,10 +738,10 @@ export const MICROS: Micro[] = [
   { casa: 'tofu', nivelMinimo: 3, requiere: ['libros', 'madeja'], texto: 'Tofu ha invitado a Madeja a su club de lectura. Ella ha traído un libro que aún no existe. Ha venido a contarle el final.', visita: 'madeja', cara: 'contento' },
   { casa: 'bruma', nivelMinimo: 2, requiere: ['tetera', 'tuerca'], texto: 'Bruma le ha servido a Tuerca una infusión y le ha pedido que deje enfriar el acta. Ya lleva dos tazas sin tomar notas.', visita: 'tuerca' },
   { casa: 'madeja', nivelMinimo: 3, requiere: ['telefono', 'bruma'], texto: 'Bruma ha venido a preguntar quién la llamó a las cuatro. Madeja ha descolgado el teléfono y ha dicho: «Ha vuelto a preguntar».', visita: 'bruma' },
-  { casa: 'nox', nivelMinimo: 4, requiere: ['bruma'], texto: 'Nox y Bruma están haciendo sombras en la pared. Ella hace un bosque. Él lleva un rato intentando hacer una patata.', visita: 'bruma' },
+  { casa: 'nox', nivelMinimo: 4, requiere: ['bruma'], visual: 'sombras', texto: 'Bruma hizo un bosque. Nox dice que lo suyo es un lobo visto desde muy arriba.', visita: 'bruma' },
   { casa: 'nox', nivelMinimo: 5, requiere: ['tuerca'], texto: 'Nox le ha enseñado a Tuerca a encender una sola brasa. Tuerca ha escrito veintitrés pasos. Nox recuerda tres.', visita: 'tuerca' },
   { casa: 'tuerca', nivelMinimo: 4, requiere: ['madeja'], texto: 'Tuerca ha intentado ordenar los rumores de Madeja por fecha. Tiene tres versiones de ayer y ninguna coincide.', visita: 'madeja' },
-  { casa: 'tuerca', nivelMinimo: 5, requiere: ['tofu'], texto: 'Tuerca ha hecho una caja con un solo cajón para las cosas que no necesitan archivar. Tofu ha metido su manual de instrucciones.', visita: 'tofu' },
+  { casa: 'tuerca', nivelMinimo: 5, requiere: ['tofu'], visual: 'manual', texto: 'Tuerca hizo una caja para lo que no necesita archivar. Tofu ya ha metido dentro el manual de Tuerca.', visita: 'tofu' },
   { casa: 'tofu', nivelMinimo: 4, requiere: ['nox'], texto: 'Tofu está leyendo en voz alta. Nox protesta cuando para y protesta cuando hay una parte triste. Lleva aquí desde el prólogo.', visita: 'nox' },
   { casa: 'tofu', nivelMinimo: 5, requiere: ['bruma'], texto: 'Tofu y Bruma se han mandado una historia en barquitos. Hay dos finales flotando. Han decidido dejar que el arroyo escoja.', visita: 'bruma' },
   { casa: 'bruma', nivelMinimo: 4, requiere: ['tofu'], texto: 'Bruma ha hecho una nube lo bastante baja para que Tofu lea a la sombra. El brote se ha quedado dormido antes de la primera página.', visita: 'tofu' },

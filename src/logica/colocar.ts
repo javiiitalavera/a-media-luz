@@ -42,7 +42,7 @@ export function encajar(o: ObjetoCasa, x: number, y: number): { x: number; y: nu
 }
 
 /** Dónde está un objeto ahora (y su ancho, con la perspectiva). */
-export function sitioDe(p: Partida, o: ObjetoCasa, pos = p.colocados?.[o.id]): ObjetoCasa['sitio'] {
+export function sitioDe(p: Pick<Partida, 'colocados'>, o: ObjetoCasa, pos = p.colocados?.[o.id]): ObjetoCasa['sitio'] {
   if (!pos || !movible(o)) return o.sitio
   const escala = o.sitio.colgado ? 1 : limitar(1 + (pos.y - o.sitio.y) * PERSPECTIVA, ESCALA)
   return { ...o.sitio, x: pos.x, y: pos.y, ancho: o.sitio.ancho * escala }

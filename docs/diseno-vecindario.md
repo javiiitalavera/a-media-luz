@@ -80,18 +80,21 @@ Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos
 
 ## 7. Niveles del personaje
 
-| Nivel | Días con al menos un reto de su área desde que llegó su huevo |
-|---|---|
-| 1 | Empieza aquí al nacer |
-| 2 | 4 |
-| 3 | 10 |
-| 4 | 21 |
-| 5 | 35 |
+Días acumulados con al menos un reto de su área desde la llegada del huevo.
 
-- Los días se acumulan aunque haya pausas. Los proyectos tienen su propia progresión.
+| Nivel | Energía | Mente | Calma | Vínculos | Orden |
+|---|---:|---:|---:|---:|---:|
+| 1 (al nacer) | 0 | 0 | 0 | 0 | 0 |
+| 2 | 4 | 3 | 3 | 2 | 2 |
+| 3 | 10 | 6 | 6 | 4 | 3 |
+| 4 | 21 | 12 | 12 | 7 | 5 |
+| 5 | 35 | 20 | 20 | 12 | 8 |
+
+- Los días se acumulan aunque haya pausas. Los umbrales reflejan la frecuencia habitual de los retos. El ajuste del ritmo personal sigue afectando al deterioro del rincón. Los proyectos tienen su propia progresión.
 - Cada nivel se celebra con una frase y una foto. Las tres apariencias existentes se usan en los niveles 1, 2 y 3. Los niveles 4 y 5 conservan la tercera y abren escenas nuevas entre vecinos.
 - Las partidas anteriores conservan los niveles ya celebrados y las fotos que hicieron. Todos los personajes usan la superficie visible del Tuerca inicial como referencia de tamaño en sus casas.
-- **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
+- **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas. El libro chamuscado de Tofu se comenta después del Préstamo.
+- Dos escenas muestran el remate en la casa antes de abrir el texto: el bosque y la sombra de Nox, y el manual de Tuerca. Las fotos fijan la posición y el tamaño de los muebles visibles y capturan el remate visual cuando está presente.
 
 ## 8. Proyectos (sustituyen a los retos y al catálogo)
 **Personales:** una cadena por vecino, de 4 a 6 proyectos, que transforma su casa. Cada uno pide sobre todo el material de su área, más algo de otras.
@@ -538,3 +541,7 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 
 - El primer objeto de cada casa se ofrece solo. Después se muestran hasta dos pendientes, con preferencia por incluir uno que se pueda construir solo con el material de su personaje. Cada ficha dice cuánto falta y las construcciones nuevas recuerdan lo que se pagó. Las antiguas siguen descontando su coste original.
 - Vínculos incluye enviar una foto, preguntar a alguien cómo está y dar las gracias. Jugar fuera pasa a Energía desde el próximo registro. Las acciones anteriores conservan el área y el material originales.
+
+### Tono de las conversaciones
+
+En los saludos, el paseo y las reacciones a retos alternamos respuestas breves, observaciones de la escena y pullas ocasionales al jugador. El chiste sale de tomarse en serio un problema ridículo o dejar que alguien se contradiga. En los días malos y al volver se puede hacer humor sobre lo que pasa en la casa. Las horas o los retos pendientes sirven de contexto para hablar, sin convertir la conversación en un recordatorio de tareas.

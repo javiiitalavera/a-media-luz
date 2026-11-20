@@ -1,6 +1,6 @@
 // Los niveles cuentan días con retos de su área. Las llegadas cuentan días con cualquier reto.
 import { tieneMes } from '../arte/manifiesto'
-import { COMPANEROS, type CompaneroId } from '../contenido'
+import { COMPANEROS, type AreaId, type CompaneroId } from '../contenido'
 import type { Partida } from './partida'
 import { eclosion, mesActual, mesesDe } from './meses'
 import { queRecompensan } from './casa'
@@ -11,7 +11,14 @@ export type Etapa = 0 | 1 | 2
 export type Nivel = 1 | 2 | 3 | 4 | 5
 
 export const NIVEL_MAXIMO = 5
-const DIAS_POR_NIVEL: Record<Nivel, number> = { 1: 0, 2: 4, 3: 10, 4: 21, 5: 35 }
+// Días activos acumulados. Los umbrales siguen la frecuencia habitual de cada tipo de reto.
+const DIAS_POR_NIVEL: Record<AreaId, Record<Nivel, number>> = {
+  cuerpo: { 1: 0, 2: 4, 3: 10, 4: 21, 5: 35 },
+  mente: { 1: 0, 2: 3, 3: 6, 4: 12, 5: 20 },
+  calma: { 1: 0, 2: 3, 3: 6, 4: 12, 5: 20 },
+  vinculos: { 1: 0, 2: 2, 3: 4, 4: 7, 5: 12 },
+  orden: { 1: 0, 2: 2, 3: 3, 4: 5, 5: 8 },
+}
 const NIVELES = [5, 4, 3, 2, 1] as const
 const DIBUJOS: Record<Nivel, Etapa> = { 1: 0, 2: 1, 3: 2, 4: 2, 5: 2 }
 const NIVELES_ANTIGUOS = [1, 2, 3] as const
@@ -62,9 +69,10 @@ export const nivelVisto = (p: Partida, c: CompaneroId): Nivel =>
 export function progreso(p: Partida, c: CompaneroId, ahora: Date): Progreso {
   const dias = diasActivos(p, c, ahora)
   const visto = nivelVisto(p, c)
-  const nivel = NIVELES.find((n) => n <= visto || dias >= DIAS_POR_NIVEL[n]) ?? 1
+  const umbrales = DIAS_POR_NIVEL[COMPANEROS[c].area]
+  const nivel = NIVELES.find((n) => n <= visto || dias >= umbrales[n]) ?? 1
   const proximo = NIVELES.find((n) => n === nivel + 1)
-  const siguiente = proximo ? { nivel: proximo, dias: DIAS_POR_NIVEL[proximo] } : null
+  const siguiente = proximo ? { nivel: proximo, dias: umbrales[proximo] } : null
   return { nivel, etapa: dibujoDelNivel(nivel), dias, siguiente }
 }
 

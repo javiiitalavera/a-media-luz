@@ -251,3 +251,77 @@
   .hebra-de-madeja { display: none; }
   .anim-madeja-escucha, .anim-madeja-brinco { animation: none; }
 }
+
+/* Detalles de las escenas breves. Las sombras se proyectan sobre el porche de Nox. */
+.sombras-breves {
+  position: absolute;
+  pointer-events: none;
+  left: 27%;
+  top: 44%;
+  width: 26%;
+  height: 9%;
+  color: #472739;
+  mix-blend-mode: multiply;
+  opacity: .7;
+  filter: blur(1.4px);
+}
+.sombras-breves i {
+  position: absolute;
+  bottom: 10%;
+  width: 21%;
+  height: 64%;
+  background: currentColor;
+  clip-path: polygon(50% 0, 73% 32%, 64% 32%, 86% 58%, 75% 58%, 100% 84%, 58% 84%, 58% 100%, 43% 100%, 43% 84%, 0 84%, 24% 58%, 13% 58%, 36% 32%, 27% 32%);
+}
+.sombras-breves i:nth-child(1) { left: 4%; height: 46%; }
+.sombras-breves i:nth-child(2) { left: 18%; }
+.sombras-breves i:nth-child(3) { left: 33%; height: 50%; }
+.sombras-breves span {
+  position: absolute;
+  bottom: 11%;
+  left: 68%;
+  width: 29%;
+  height: 26%;
+  background: currentColor;
+  border-radius: 61% 40% 49% 48% / 49% 61% 37% 55%;
+  transform: rotate(-14deg);
+}
+.manual-breve {
+  position: absolute;
+  pointer-events: none;
+  left: 66%;
+  top: 65%;
+  width: 13%;
+  z-index: 1;
+  filter: drop-shadow(0 2px 1px #4630266b);
+}
+.manual-breve img { display: block; width: 100%; }
+.manual-breve .manual-breve-papeles {
+  position: absolute;
+  width: 65%;
+  left: 15%;
+  bottom: 53%;
+  transform: rotate(-17deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sombras-breves:not([data-quietud]) i { animation: bosque-proyectado 5s ease-out both; transform-origin: 50% 100%; }
+  .sombras-breves:not([data-quietud]) span { animation: sombra-de-nox 5s ease-in-out both; }
+  .manual-breve:not([data-quietud]) .manual-breve-papeles { animation: manual-en-caja 3s ease-in-out both; }
+}
+@keyframes bosque-proyectado {
+  0% { opacity: 0; scale: .9 .4; }
+  25% { opacity: 1; scale: 1; }
+  100% { opacity: 1; scale: 1; }
+}
+@keyframes sombra-de-nox {
+  0%, 26% { opacity: 0; transform: rotate(25deg) scale(.4, 1.3); }
+  42% { opacity: 1; transform: rotate(35deg) scale(.6, 1.5); }
+  62% { transform: rotate(-29deg) scale(1.2, .75); }
+  78%, 100% { transform: rotate(-14deg) scale(1); }
+}
+@keyframes manual-en-caja {
+  0% { opacity: 0; transform: translateY(-110%) rotate(15deg); }
+  24% { opacity: 1; transform: translateY(-110%) rotate(15deg); }
+  58% { transform: translateY(13%) rotate(-24deg); }
+  72%, 100% { transform: rotate(-17deg); }
+}

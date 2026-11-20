@@ -83,6 +83,17 @@ describe('vecinos y crecimiento por hitos', () => {
     }
     expect(progreso(p, 'nox', en(largos[34])).siguiente).toBeNull()
   })
+  it('los días de Vínculos y Orden se acumulan a ritmos distintos de Energía', () => {
+    let p = crearPartida('madeja', en('2026-01-05', 8), ['preguntar', 'planificar', 'pasos'], true)
+    p = { ...p, meses: [...p.meses!, { companero: 'tuerca', inicio: p.inicio, presentado: p.inicio },
+      { companero: 'nox', inicio: p.inicio, presentado: p.inicio }] }
+    p = conDias(conDias(conDias(p, 'vinculos', '2026-01-05', 12), 'orden', '2026-01-05', 8), 'cuerpo', '2026-01-05', 12)
+    expect(progreso(p, 'madeja', en('2026-01-15'))).toMatchObject({ nivel: 4, siguiente: { nivel: 5, dias: 12 } })
+    expect(progreso(p, 'madeja', en('2026-01-16')).nivel).toBe(5)
+    expect(progreso(p, 'tuerca', en('2026-01-12')).nivel).toBe(5)
+    expect(progreso(p, 'nox', en('2026-01-16')).nivel).toBe(3)
+  })
+
   it('la celebración aparece una vez y el nivel visto se conserva', () => {
     let p = crearPartida('nox', en('2026-01-05', 8))
     expect(nivelSinVer(p, 'nox', 4)).toBe(true)
