@@ -4,6 +4,8 @@ import type { CSSProperties } from 'react'
 import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, type CompaneroId } from '../contenido'
 import { colocarCasita } from '../logica/mapaBarrio'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
+import { sitioDe } from '../logica/colocar'
+import type { Partida } from '../logica/partida'
 import { HUELLAS } from '../contenido/situaciones'
 import { rutaArte, rutaCompanero } from '../arte/manifiesto'
 import type { EscenaFoto } from '../logica/momentos'
@@ -33,6 +35,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
   const arriba = Math.min(Math.max(esc.pies.y + 7 - altoRel, 0), 100 - altoRel)
   const izquierda = Math.min(Math.max(50 - esc.pies.x * ZOOM, 100 - ZOOM * 100), 0)
   const objetos = OBJETOS_CASA.filter((o) => e.objetos.includes(o.id) && rutaArte(`casa/${o.companero}/objeto/${o.id}`))
+    .map((o) => ({ ...o, sitio: sitioDe({ colocados: e.colocados } as Partida, o) }))
   const aspiradora = OBJETOS_CASA.find((o) => o.id === 'aspiradora')!
   const capas: { y: number; nodo: React.ReactNode }[] = [
     ...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, nodo: (

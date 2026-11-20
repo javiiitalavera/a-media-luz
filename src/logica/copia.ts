@@ -22,7 +22,7 @@ function escena(v: unknown) {
     ['base', 'contento', 'enfurrunado', 'dormido'].some((c) => c === v.cara) &&
     ['amanecer', 'mediodia', 'atardecer', 'noche'].some((m) => m === v.momentoDia) &&
     lista(v.objetos, texto) && lista(v.huellas, texto) && booleano(v.gregorio) &&
-    opcional(v.visita, vecino) && opcional(v.vecinos, (l) => lista(l, vecino))
+    opcional(v.visita, vecino) && opcional(v.vecinos, (l) => lista(l, vecino)) && opcional(v.colocados, posiciones)
 }
 
 function situaciones(v: unknown) {
@@ -33,6 +33,9 @@ function situaciones(v: unknown) {
     return dia(e.dia) && opcional(e.fin, booleano) && opcional(e.decision, texto)
   })
 }
+
+const numero = (v: unknown) => typeof v === 'number' && Number.isFinite(v)
+const posiciones = (v: unknown) => objeto(v) && Object.values(v).every((x) => objeto(x) && numero(x.x) && numero(x.y))
 
 function perfil(v: unknown) {
   return objeto(v) &&
@@ -75,6 +78,7 @@ export function importarCopia(contenido: string): Partida | null {
       opcional(p.situaciones, situaciones) && opcional(p.perfil, perfil) && opcional(p.vistos, vistos) &&
       opcional(p.etapasVistas, (e) => objeto(e) && Object.values(e).every(etapa)) &&
       opcional(p.diaMalo, dia) &&
+      opcional(p.colocados, posiciones) &&
       opcional(p.noticias, (l) => lista(l, (n) => objeto(n) && texto(n.texto) && lugar(n.lugar) && fecha(n.fecha) &&
         opcional(n.leida, booleano) && opcional(n.visitada, booleano))) &&
       opcional(p.momentos, (l) => lista(l, (m) => objeto(m) && texto(m.id) && texto(m.titulo) &&
