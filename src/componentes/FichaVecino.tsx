@@ -1,27 +1,16 @@
-// Ficha de un vecino (se abre al tocar su nombre en casa): quién es, cuánto le falta para crecer,
-// cómo está, su casa y sus historias. Sustituye al antiguo «rincón».
 import { createPortal } from 'react-dom'
-import { AREAS, COMPANEROS, HISTORIAS, UI, type CompaneroId } from '../contenido'
-import { SITUACIONES } from '../contenido/situaciones'
+import { AREAS, COMPANEROS, HISTORIAS, MATERIALES, UI, type CompaneroId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { progreso } from '../logica/etapas'
-import { proyectosDe, construido } from '../logica/casa'
-import { cronicas } from '../logica/situaciones'
-import { loQueSabe } from '../logica/lector'
 
-export function FichaVecino({ partida, c, ahora, fase, faltanParaArreglar, enHuevo, faltaHuevo, onCerrar }: {
-  partida: Partida; c: CompaneroId; ahora: Date; fase: number; faltanParaArreglar: number
+export function FichaVecino({ partida, c, ahora, enHuevo, faltaHuevo, onCerrar }: {
+  partida: Partida; c: CompaneroId; ahora: Date
   enHuevo: boolean; faltaHuevo: number; onCerrar: () => void
 }) {
   const v = COMPANEROS[c]
   const h = HISTORIAS[c]
   const area = AREAS[v.area]
   const g = progreso(partida, c, ahora)
-  const proyectos = proyectosDe(c)
-  const hechos = proyectos.filter((o) => construido(partida, o.id))
-  const siguiente = proyectos.find((o) => !construido(partida, o.id))
-  const suyas = new Set(SITUACIONES.filter((s) => s.requiere.vecinos.includes(c)).map((s) => s.id))
-  const historias = cronicas(partida).filter((x) => suyas.has(x.id))
   const F = UI.ficha
 
   return createPortal(
@@ -39,12 +28,12 @@ export function FichaVecino({ partida, c, ahora, fase, faltanParaArreglar, enHue
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h2 className="text-[24px] leading-tight font-bold">{v.nombre}</h2>
-                <p className="text-[14px] text-texto-3">{h?.especie ?? v.humor} · {area.nombre}</p>
+                <p className="text-[14px] text-texto-3">{h?.especie ?? v.humor}</p>
               </div>
               <span className="mt-1 rounded-full bg-hundido px-3 py-1 text-[13px] font-bold text-texto-2">{UI.casa.etapas[g.etapa]}</span>
             </div>
 
-            {/* Crecer */}
+            <p className="mt-3 text-[15px] font-semibold text-texto-2">{F.retoYMaterial(area.nombre, MATERIALES[v.area].nombre)}</p>
             <div className="mt-4 rounded-3xl bg-tarjeta p-3.5">
               {g.siguiente ? (
                 <>
@@ -54,44 +43,6 @@ export function FichaVecino({ partida, c, ahora, fase, faltanParaArreglar, enHue
                 </>
               ) : <p className="text-[15px]">{F.yaAdulto}</p>}
             </div>
-
-            {/* Lo que sabe de ti: sale de tu diario, cada vecino a lo suyo. */}
-            <div className="mt-2 rounded-3xl bg-tarjeta p-3.5">
-              <div className="text-[14px] font-bold">{F.sabe}</div>
-              <ul className="mt-1 flex flex-col gap-1">
-                {loQueSabe(partida, c, ahora).map((t) => <li key={t} className="text-[14px] leading-snug text-texto-2">{t}</li>)}
-              </ul>
-            </div>
-
-            {/* Cómo está (solo el último en llegar se descuida) */}
-            {fase > 0 && (
-              <div className="mt-2 rounded-3xl bg-tarjeta p-3.5">
-                <div className="text-[14px] font-bold text-peligro">{UI.bosque.fases[fase]}</div>
-                <p className="mt-0.5 text-[14px] text-texto-2">{F.seLePasa(faltanParaArreglar, area.nombre)}</p>
-              </div>
-            )}
-
-            {/* Su casa */}
-            <div className="mt-2 rounded-3xl bg-tarjeta p-3.5">
-              <div className="text-[14px] font-bold">{F.casa}</div>
-              <p className="mt-0.5 text-[14px] text-texto-2">{hechos.length ? hechos.map((o) => o.nombre).join(' · ') : F.nadaAun}</p>
-              {siguiente && <p className="mt-1 text-[13px] text-texto-3">{F.siguiente(siguiente.nombre)}</p>}
-            </div>
-
-            {/* Historias */}
-            {historias.length > 0 && (
-              <div className="mt-2 rounded-3xl bg-tarjeta p-3.5">
-                <div className="text-[14px] font-bold">{F.historias}</div>
-                <ul className="mt-1 flex flex-col gap-1">
-                  {historias.map((x) => (
-                    <li key={x.id} className="flex items-center gap-2 text-[14px] text-texto-2">
-                      <span className="flex-1">{x.titulo}</span>
-                      {x.enMarcha && <span className="rounded-full bg-ambar px-2 py-0.5 text-[11px] font-bold text-tinta">{UI.barrio.enMarcha}</span>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
             {h && <p className="mt-4 px-1 text-[14px] leading-relaxed text-texto-2 italic">{h.historia}</p>}
           </>

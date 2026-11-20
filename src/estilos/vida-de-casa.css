@@ -233,10 +233,9 @@
   .anim-gesto-de-objeto[data-gesto] { animation: none; }
 }
 
-/* Madeja: un ovillo cruza la madriguera rodando y deja hilo; ella escucha inclinándose y, al tocarla, brinca. */
+/* Madeja: un ovillo cruza la madriguera rodando; ella escucha inclinándose y, al tocarla, brinca. */
 .paseo-de-ovillo { position: absolute; left: 0; width: 100%; top: 80%; opacity: 0; animation: ovillo-en-fuga 30s -9s linear infinite; }
 .paseo-de-ovillo img { width: 6.5%; margin-left: 12%; transform: translate(-50%, -100%); animation: ovillo-rueda 30s -9s linear infinite; filter: drop-shadow(0 2px 1px #5d42274d); }
-.hilo-de-ovillo { position: absolute; top: -3px; left: 0; width: 12%; height: 2px; border-radius: 2px; background: #e8737a; transform-origin: 100% 50%; animation: hilo-se-estira 30s -9s linear infinite; }
 @keyframes ovillo-en-fuga {
   0%, 20% { opacity: 0; transform: translateX(0); }
   23%, 52% { opacity: 1; }
@@ -244,7 +243,6 @@
   56%, 100% { opacity: 0; transform: translateX(72%); }
 }
 @keyframes ovillo-rueda { 20% { rotate: 0deg; } 45% { rotate: 540deg; } 56% { rotate: 700deg; } }
-@keyframes hilo-se-estira { 20% { scale: 0 1; } 45% { scale: 4.6 1; } 56%, 100% { scale: 6 1; } }
 
 @keyframes madeja-escucha {
   0%, 30%, 100% { transform: rotate(0); }

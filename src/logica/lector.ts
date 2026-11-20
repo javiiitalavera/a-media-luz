@@ -1,9 +1,9 @@
 // El lector (Dirección A): cada día, como mucho, una lectura suelta de tu diario en boca de un vecino,
-// el informe semanal de Tuerca y «Lo que sabe de ti» en las fichas. Funciones puras: todo sale del historial.
+// y el informe semanal de Tuerca. Todo sale del historial.
 // Reglas: una lectura al día y tres por semana; una lectura no se repite en 14 días (los hitos, nunca);
 // solo habla un vecino que ya está en el barrio; con «Que no lean mi lista» activado, nadie lee nada.
 import { AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, type AreaId, type CompaneroId } from '../contenido'
-import { LECTURAS_SUELTAS as L, LO_QUE_SABE as S, INFORME, AL_CALLARLOS, type Franja } from '../contenido/lecturas-sueltas'
+import { LECTURAS_SUELTAS as L, INFORME, AL_CALLARLOS, type Franja } from '../contenido/lecturas-sueltas'
 import type { NoticiaBarrio, Ofrenda, Partida } from './partida'
 import { dia, diasEntre, lunes, sumarDias } from './fechas'
 import { nacido } from './etapas'
@@ -21,14 +21,6 @@ const hasta = (p: Partida, ahora: Date) => p.ofrendas.filter((o) => new Date(o.f
 const enVentana = (os: Ofrenda[], ahora: Date, dias = 7) => { const hoy = dia(ahora); return os.filter((o) => { const d = diasEntre(dia(o.fecha), hoy); return d >= 0 && d < dias }) }
 const diasDe = (os: Ofrenda[]) => new Set(os.map((o) => dia(o.fecha))).size
 const franjaDe = (f: string): Franja => { const h = new Date(f).getHours(); return h < 12 ? 'manana' : h < 20 ? 'tarde' : 'noche' }
-const nombreDe = (p: Partida, accionId: string) => p.acciones.find((a) => a.id === accionId)?.nombre
-/** El reto que más repites de un área (por días distintos). */
-function favorito(p: Partida, os: Ofrenda[]): string | undefined {
-  const cuenta = new Map<string, Set<string>>()
-  for (const o of os) cuenta.set(o.accionId, (cuenta.get(o.accionId) ?? new Set()).add(dia(o.fecha)))
-  const [id] = [...cuenta.entries()].sort((a, b) => b[1].size - a[1].size)[0] ?? []
-  return id ? nombreDe(p, id) : undefined
-}
 /** La franja en la que caen al menos 7 de cada 10 registros (con 8 o más). */
 function franjaFija(os: Ofrenda[]): Franja | null {
   if (os.length < 8) return null
@@ -153,41 +145,4 @@ export function ponerPrivado(p: Partida, activo: boolean, ahora: Date): Partida 
   const quien: CompaneroId = nacido(p, 'madeja', ahora) ? 'madeja' : 'nox'
   const noticia: NoticiaBarrio = { texto: conNombre(quien, AL_CALLARLOS[quien]!), lugar: quien, fecha: ahora.toISOString() }
   return { ...p, privado: true, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) }
-}
-
-/** «Lo que sabe de ti»: hasta tres líneas que salen de tu diario, cada vecino a lo suyo. */
-export function loQueSabe(p: Partida, c: CompaneroId, ahora: Date): string[] {
-  if (p.privado) return [S.privado]
-  const todas = hasta(p, ahora)
-  const semana = enVentana(todas, ahora)
-  const area = (a: AreaId) => todas.filter((o) => o.area === a)
-  const lineas: (string | undefined | false | null)[] = []
-  if (c === 'nox') {
-    const f = franjaFija(area('cuerpo').slice(-20))
-    const n = diasDe(semana.filter((o) => o.area === 'cuerpo'))
-    const fav = favorito(p, area('cuerpo'))
-    lineas.push(f && S.nox.franja(f), n > 0 && S.nox.semana(n), fav && S.nox.favorito(fav))
-  } else if (c === 'tuerca') {
-    const areas = new Set(semana.map((o) => o.area)).size
-    lineas.push(todas.length > 0 && S.tuerca.paginas(todas.length), areas > 0 && S.tuerca.areas(areas), todas.length > 0 && S.tuerca.mes(diasDe(enVentana(todas, ahora, 30))))
-  } else if (c === 'tofu') {
-    const propias = p.acciones.filter((a) => a.id.startsWith('propia-')).length
-    const mente = area('mente')
-    const fav = favorito(p, mente)
-    const ult = mente.at(-1) && nombreDe(p, mente.at(-1)!.accionId)
-    lineas.push(propias > 0 && S.tofu.propios(propias), fav && S.tofu.favorito(fav), ult && ult !== fav && S.tofu.ultimo(ult))
-  } else if (c === 'bruma') {
-    const n = diasDe(semana.filter((o) => o.area === 'calma'))
-    const malos = new Set(todas.filter((o) => o.diaMalo).map((o) => dia(o.fecha))).size
-    const fav = favorito(p, area('calma'))
-    lineas.push(n > 0 && S.bruma.semana(n), malos > 0 && S.bruma.diaMalo(malos), fav && S.bruma.favorito(fav))
-  } else {
-    const d = dupla(todas)
-    const dias = [...new Set(todas.map((o) => dia(o.fecha)))]
-    const finde = dias.filter((x) => [0, 6].includes(new Date(`${x}T12:00:00`).getDay())).length
-    const fav = favorito(p, area('vinculos'))
-    lineas.push(d && d.dias >= 2 && S.madeja.dupla(AREAS[d.a].nombre, AREAS[d.b].nombre), dias.length >= 7 && finde > 0 && S.madeja.finde(finde, dias.length), fav && S.madeja.favorito(fav))
-  }
-  const hay = lineas.filter((x): x is string => Boolean(x)).slice(0, 3)
-  return hay.length ? hay : [S.nada]
 }

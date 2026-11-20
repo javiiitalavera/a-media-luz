@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { crearPartida, type Partida } from './partida'
 import { marcarPresentado } from './meses'
-import { informeSemanal, lecturaDeHoy, leerElDiario, loQueSabe, ponerPrivado } from './lector'
+import { informeSemanal, lecturaDeHoy, leerElDiario, ponerPrivado } from './lector'
 import { en } from './test-utils'
 import { sumarDias } from './fechas'
 import type { AreaId } from '../contenido'
@@ -81,16 +81,5 @@ describe('el lector', () => {
     expect(p.noticias!.at(-1)!.texto).toMatch(/^Nox: /)
     expect(ponerPrivado(p, true, en('2026-01-05', 13))).toBe(p)
     expect(leerElDiario(p, en('2026-01-12', 21)).nuevas).toHaveLength(0)
-    expect(loQueSabe(p, 'nox', en('2026-01-05'))[0]).toMatch(/no lea tu lista/)
-  })
-
-  it('«Lo que sabe de ti»: cada vecino a lo suyo, y sin datos lo dice con ganas', () => {
-    expect(loQueSabe(barrio(), 'tofu', en('2026-01-02'))).toEqual(['Aún no sabe casi nada de ti. Lo está deseando.'])
-    let p = barrio()
-    for (const d of ['2026-01-05', '2026-01-06', '2026-01-07']) p = reg(reg(p, 'pasos', 'cuerpo', d, 8), 'leer', 'mente', d, 21)
-    const nox = loQueSabe(p, 'nox', en('2026-01-07', 22))
-    expect(nox.join(' ')).toMatch(/3 días/)
-    expect(nox.join(' ')).toMatch(/Andar/)
-    expect(loQueSabe(p, 'tuerca', en('2026-01-07', 22))[0]).toBe('Tu archivo tiene 6 páginas.')
   })
 })

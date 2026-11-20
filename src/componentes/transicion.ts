@@ -1,10 +1,15 @@
 // El origen se expresa en la escena de juego, también cuando está centrada en un escritorio.
 import { flushSync } from 'react-dom'
 
-export function transicion(tipo: 'entrar' | 'salir', punto: { x: number; y: number }, cambiar: () => void) {
+export function transicion(tipo: 'entrar' | 'salir' | 'cambiar', punto: { x: number; y: number }, cambiar: () => void) {
   const escena = document.querySelector<HTMLElement>('.escena-vecindario')
-  if (!document.startViewTransition || !escena || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!escena || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     cambiar()
+    return
+  }
+  if (!document.startViewTransition) {
+    flushSync(cambiar)
+    document.querySelector('.escena-vecindario')?.animate?.([{ opacity: 0.5 }, { opacity: 1 }], { duration: 250, easing: 'ease-out' })
     return
   }
 
