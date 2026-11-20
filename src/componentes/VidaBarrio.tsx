@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { COMPANEROS, UI, type CompaneroId } from '../contenido'
 import { PASEOS_BARRIO, type PuntoMapa } from '../contenido/barrio'
-import { rutaCompanero } from '../arte/manifiesto'
+import { rutaArte, rutaCompanero } from '../arte/manifiesto'
 import type { Etapa } from '../logica/etapas'
 import { sfx } from '../sonido'
 import { globoEn } from '../estado/globo'
@@ -70,6 +70,35 @@ export function HojasAlViento() {
   )
 }
 
-export function HumoDeCasa({ vecino }: { vecino: 'tuerca' | 'nox' }) {
-  return <span aria-hidden className="humo-de-casa" data-humo={vecino}><i /><i /><i /></span>
+export function VidaDeCasita({ vecino }: { vecino: CompaneroId }) {
+  switch (vecino) {
+    case 'tuerca':
+      return (
+        <span aria-hidden className="humo-de-chimenea">
+          <i /><i /><i />
+        </span>
+      )
+    case 'nox':
+      return (
+        <span aria-hidden className="calor-de-casita">
+          <i /><i /><i />
+        </span>
+      )
+    case 'tofu':
+      return (
+        <span aria-hidden className="maceta-inquieta">
+          <img src={rutaArte('casa/tofu/objeto/maceta')} alt="" draggable={false} />
+          <i />
+        </span>
+      )
+    case 'bruma':
+      return (
+        <span aria-hidden className="estanque-de-casita">
+          <i /><i />
+          <img src={rutaArte('casa/bruma/objeto/barquito')} alt="" draggable={false} />
+        </span>
+      )
+    default:
+      return null
+  }
 }
