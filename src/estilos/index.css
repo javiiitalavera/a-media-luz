@@ -149,6 +149,11 @@ body {
 /* Avisos: laten suave hasta que los tocas. Las huellas nuevas brillan. */
 @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 .anim-latido { animation: latido 1.6s ease-in-out infinite; }
+/* Ordenar la casa: lo que se puede mover lleva un contorno claro; lo que arrastras, además, se levanta. */
+.objeto-movible { filter: drop-shadow(0 0 1.5px #fff8e8) drop-shadow(0 0 1.5px #fff8e8); cursor: grab; }
+@keyframes ayuda-ordenar { 0% { opacity: 0; } 8%, 75% { opacity: 1; } 100% { opacity: 0; } }
+.anim-ayuda-ordenar { animation: ayuda-ordenar 4.5s ease-out both; }
+.objeto-arrastrado { filter: drop-shadow(0 0 2px #fff8e8) drop-shadow(0 6px 6px #2e203066); scale: 1.06; cursor: grabbing; }
 @keyframes aviso-entra { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
 .anim-aviso { animation: aviso-entra 420ms ease-out both; }
 @keyframes brillo-nuevo { 0%, 100% { filter: drop-shadow(0 0 0 #ffd27a00); } 50% { filter: drop-shadow(0 0 7px #ffd27a) drop-shadow(0 0 2px #fff3b0); } }
