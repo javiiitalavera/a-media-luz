@@ -368,3 +368,36 @@
   @keyframes rebuscar { 25%, 65% { transform: rotate(7deg) scaleY(.95); } 45% { transform: rotate(-3deg); } }
   @keyframes soplar { 45%, 80% { transform: translateY(-4%) rotate(5deg); } }
 }
+
+/* La pose también cuenta el encuentro con movimiento reducido. */
+[data-encuentro][data-paso] { position: relative; animation: none; transform-origin: 50% 92%; }
+[data-encuentro="nox"][data-paso="reposo"] { transform: rotate(9deg) scaleY(.82); }
+[data-encuentro="nox"][data-paso="segundo"] { transform: rotate(-7deg) scaleY(.85); }
+[data-encuentro="tofu"][data-paso="reposo"] { transform: rotate(-16deg) scaleY(.86); }
+[data-encuentro="madeja"][data-paso="reposo"] { transform: rotate(24deg) translateY(5%); }
+.hallazgo-del-cesto { pointer-events: none; position: absolute; bottom: 10%; right: 13%; width: 24%; }
+[data-mueble-en-uso="libros"][data-paso="segundo"]::after {
+  content: ''; position: absolute; width: 42%; height: 24%; top: 9%; left: 31%; border-radius: 55% 12% 14% 6%;
+  background: #f7e6be; border-bottom: 2px solid #876344; transform: rotate(-13deg);
+}
+[data-mueble-en-uso="cajonera"][data-paso="primero"] img { transform: translateX(-5%) rotate(-3deg); }
+[data-encuentro="tuerca"][data-paso="reposo"] { transform: skewX(-7deg); }
+[data-encuentro="tuerca"][data-paso="primero"] { transform: translate(-12%, -3%) rotate(-9deg); }
+[data-encuentro="bruma"] { transform: rotate(-9deg); }
+[data-encuentro="bruma"][data-paso="primero"] { transform: rotate(11deg); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-encuentro="bruma"][data-paso], [data-mueble-en-uso="hamaca"][data-paso] { animation: mecer-encuentro 3s ease-in-out infinite alternate; }
+  [data-encuentro="bruma"][data-paso="primero"], [data-mueble-en-uso="hamaca"][data-paso="primero"] { animation-duration: 1.1s; }
+  [data-mueble-en-uso="libros"][data-paso="segundo"]::after { animation: pasar-hoja .7s ease-out; }
+  [data-encuentro="tuerca"][data-paso="primero"] { animation: soltar-cajon .55s ease-out; }
+  @keyframes pasar-hoja { from { transform: rotateY(85deg) rotate(12deg); } }
+  @keyframes soltar-cajon { 30% { transform: translate(-20%,-9%) rotate(-15deg); } }
+  @keyframes mecer-encuentro { from { rotate: -4deg; } to { rotate: 4deg; } }
+}
+[data-mueble-en-uso="cajonera"] .frente-del-cajon {
+  position: absolute; inset: 0; width: 100%; pointer-events: none;
+  clip-path: inset(42% 11% 41% 14% round 5%); transform: translate(-5%, 6%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-encuentro][data-merendando] { animation: masticar .48s .6s 3; }
+}

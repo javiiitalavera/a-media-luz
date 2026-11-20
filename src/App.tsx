@@ -40,6 +40,8 @@ export default function App() {
     const p = useJuego.getState().partida
     return Boolean(p && nacidos(p, reloj()).length >= 2)
   })
+  const [proyecto, setProyecto] = useState<string>()
+  useEffect(() => { if (proyecto) setProyecto(undefined) }, [proyecto])
   const [sobre, setSobre] = useState(false)
   const [abrirDecision, setAbrirDecision] = useState<{ lugar: CompaneroId; situacion: string } | null>(null)
   const [contextoVisita, setContextoVisita] = useState<{ lugar: Lugar; texto: string } | null>(null)
@@ -123,7 +125,7 @@ export default function App() {
 
   let pantalla
   if (pestana === 'inicio' && casa)
-    pantalla = <Casa key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onNovedades={() => setSobre(true)} onRecogerHuevo={recogerHuevo} {...peticionDeDecision(casa)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
+    pantalla = <Casa proyectoInicial={proyecto} key={`c-${casa}`} partida={partida} ahora={ahora} dueno={casa} visita onNovedades={() => setSobre(true)} onRecogerHuevo={recogerHuevo} {...peticionDeDecision(casa)} onBarrio={() => transicion('salir', punto(casa), () => { setCasa(null); setVerBarrio(true) })} />
   else if (pestana === 'inicio' && verBarrio)
     pantalla = <Barrio partida={partida} ahora={ahora} onNovedades={() => setSobre(true)} onCasa={(c, p) => { if (p) puntos.current[c] = p; transicion('entrar', punto(c), () => setCasa(c)) }}
       volverA={conBarrio ? (ultimaCasa ?? ultimo) : ultimo}
@@ -133,8 +135,8 @@ export default function App() {
         transicion('entrar', punto(c), () => { if (c === ultimo) setVerBarrio(false); else setCasa(c) })
       }} />
   else if (pestana === 'inicio')
-    pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onNovedades={() => setSobre(true)} onRecogerHuevo={recogerHuevo} {...peticionDeDecision(ultimo)} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
-  else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irALugar(ultimo)} />
+    pantalla = <Casa proyectoInicial={proyecto} key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onNovedades={() => setSobre(true)} onRecogerHuevo={recogerHuevo} {...peticionDeDecision(ultimo)} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
+  else if (pestana === 'ofrendas') pantalla = <Ofrendas onVerProyecto={(o) => { setProyecto(o.id); irALugar(o.companero) }} partida={partida} ahora={ahora} onIrACasa={() => irALugar(ultimo)} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
   else pantalla = <Album partida={partida} onIr={irALugar} />
 

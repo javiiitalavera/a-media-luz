@@ -548,3 +548,6 @@ En los saludos, el paseo y las reacciones a retos alternamos respuestas breves, 
 
 ### Merendar y pasar el rato en casa
 Cada vecino acepta su merienda desde que sale del huevo. Si hoy has registrado un reto de su área, recibe un segundo bocado. Merendar es un gesto libre, sin contador, coste ni recompensa. Cuando lo dejas tranquilo, se acerca a alguno de sus muebles construidos y expuestos. El sobre conserva las decisiones pendientes y los comentarios del diario. Las fases de las historias se consultan en las Crónicas.
+
+### Encontrarlos al entrar
+Según la franja del día puedes encontrar al vecino ya ocupado con un mueble expuesto. En su encuentro, tocar al vecino o el mueble cambia el gesto. El cojín, los libros, la hamaca, el cesto y la cajonera tienen una reacción propia. También hay visitas tranquilas. La escena cotidiana se descubre tocando al personaje y el interrogante queda para decisiones pendientes. Al completar un reto que permite construir un mueble por primera vez, puedes abrir el catálogo de esa casa con el proyecto delante.
