@@ -13,6 +13,8 @@ import { materialYaGastado, proyectoRecienDisponible } from '../logica/casa'
 import { retoQueFalta } from '../logica/pista'
 import { nacido, proximaLlegada, progreso } from '../logica/etapas'
 import { PideReto } from '../componentes/PideReto'
+import { PropuestaMeta } from '../componentes/PropuestaMeta'
+import { propuestaDeMeta } from '../logica/subir'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -33,6 +35,7 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
   const pista = retoQueFalta(partida, ahora)
+  const propuesta = propuestaDeMeta(partida, ahora)
   const llegada = proximaLlegada(partida, ahora)
   const eclosionPendiente = estadoDelMes(partida, ahora) === 'naciendo'
   const huevoParaVer = eclosionPendiente ? mesActual(partida).companero : llegada?.faltanDias === 0 ? llegada.vecino : null
@@ -112,6 +115,7 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
         <p className="mt-3 px-1 text-[14px] text-texto-3">{UI.casa.diasParaOtroHuevo(llegada.faltanDias)}</p>
       )}
       {pista && !huevoParaVer && <PideReto pista={pista} onEditar={() => setHoja('editar')} className="mt-4" />}
+      {!pista && !huevoParaVer && propuesta && <PropuestaMeta propuesta={propuesta} className="mt-4" />}
 
       {puntuales.length > 0 && (
         <>

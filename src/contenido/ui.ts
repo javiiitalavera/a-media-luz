@@ -123,6 +123,16 @@ export const UI = {
     habitualesTitulo: 'Tres cosas para empezar',
     habitualesExplicacion: 'Cosas de tu vida real. Cuando las hagas, las tachas, y eso despierta al huevo. Que te cuesten un poco: si no, no cuentan ni para ti.',
   },
+  // Cuando un reto con número ya te sale solo, el vecino de su área propone subirlo (logica/subir.ts).
+  subirMeta: {
+    nox: (a: string, n: string) => `Eso de “${a}” ya no te despeina. ¿Probamos “${n}”? Yo te espero sentado.`,
+    tuerca: (a: string, n: string) => `Expediente “${a}”: diez veces cumplido. Artículo 4: lo que se cumple sin sudar, se revisa. Propongo “${n}”.`,
+    tofu: (a: string, n: string) => `Lo de “${a}” ya lo haces dormido. ¿Lo subimos a “${n}”? El brote dice que sí. Yo no digo nada.`,
+    bruma: (a: string, n: string) => `Lo de “${a}” ya te sale sin pensar. Podrías probar “${n}”. O no. Pero podrías.`,
+    madeja: (a: string, n: string) => `Me han dicho que “${a}” ya te sabe a poco. Me lo han dicho a mí, que lo sé todo. ¿Pasamos a “${n}”?`,
+    subir: (n: string) => `Subir a «${n}»`,
+    asi: 'Así está bien',
+  },
   // Cuando tu lista no tiene nada del área de un vecino, te lo pide él (logica/pista.ts).
   pideReto: {
     nox: 'Las ascuas no se encienden solas. Y yo no crezco porque tú leas. Apunta algo de Energía.',

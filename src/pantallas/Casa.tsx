@@ -37,6 +37,8 @@ import { avisoFuera, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, ver
 import { EscenaBreve } from '../componentes/EscenaBreve'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { PideReto } from '../componentes/PideReto'
+import { PropuestaMeta } from '../componentes/PropuestaMeta'
+import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
@@ -337,6 +339,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const etapaVista = pendiente ? dibujoDelNivel(nivelVisto(partida, DUENO)) : g.etapa
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora, DUENO)
+  const propuesta = propuestaDeMeta(partida, ahora)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
@@ -546,6 +549,12 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
       {pista && !otroHuevo && vivo && !ordenando && !celebra && (
         <div data-tapa-globo className="pointer-events-none absolute inset-x-3 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+60px)] z-30 flex justify-center">
           <PideReto pista={pista} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
+        </div>
+      )}
+      {/* Si no pide nada, puede proponer subir la meta de un reto suyo que ya te sale solo. */}
+      {!pista && propuesta?.vecino === DUENO && !otroHuevo && vivo && !ordenando && !celebra && (
+        <div data-tapa-globo className="pointer-events-none absolute inset-x-3 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+60px)] z-30 flex justify-center">
+          <PropuestaMeta propuesta={propuesta} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
         </div>
       )}
 
