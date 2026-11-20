@@ -34,5 +34,7 @@ export interface Accion {
   minima?: string
   /** false: no está en «Mis hazañas»; solo se apuntó alguna vez desde «Algo más». */
   habitual?: boolean
+  /** Día local en que se puede completar un reto puntual. */
+  soloEl?: string
 }
 

@@ -220,6 +220,7 @@ Los objetos que ya tenemos dibujados (cojín, banco, farolillo, estantería, fle
 - **Mis hazañas:** tu lista se queda a la vista hasta que la cambias. Cada mañana empiezan sin tachar (no hay que planificar cada día).
 - **Tachar:** un toque la tacha (raya que se dibuja, círculo con ✓ y sonido de lápiz con campanita); otro toque la desmarca.
 - **Algo más:** lo que has hecho fuera de tu lista, del catálogo o escrito a mano. Cuenta igual (sale en «Además, hoy») y no entra en tu lista.
+- **Para hoy:** un reto puntual con nombre y área («Llevar el coche al taller»). Se crea con «+ Para hoy», junto a «+ Algo más», y sale arriba en «Solo hoy». Al tacharlo cuenta como cualquier reto y se queda tachado hasta que acaba el día (otro toque lo desmarca). Si no da tiempo, desaparece al día siguiente sin penalización. Para lo que ya has hecho fuera de tu lista sigue estando «Algo más» (ajustado por Claude a petición de Javi, 20/11/2026).
 - **Hazañas propias** con nombre, área y mínima opcional. **Catálogo** de unas 6–8 por área (`src/contenido/acciones.ts`). Al empezar vienen marcadas: pasos, leer, escribir a mis padres y diario.
 - **Recompensa:** 1 material por hazaña, con el tope de 3 por área y día (sin inflar). Las de tu lista traen la **reacción propia** del vecino del área («¿8000 pasos? Yo he dado 8001. Por ganar.»).
 - **El área de Nox se llama Energía** (antes Cuerpo; el identificador interno sigue siendo `cuerpo`).
