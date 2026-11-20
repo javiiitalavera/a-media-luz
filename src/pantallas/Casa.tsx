@@ -397,13 +397,21 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
             </div>
           )
         })()}
-        {habla && (
-          <div key={habla.n} role="status" className="absolute z-30"
+        {/* Sobre el vecino: la celebración (nace o crece) y, debajo, lo que dice. Todo sale de él. */}
+        {(habla || celebra) && (
+          <div key={`${habla?.n ?? ''}-${celebra ?? ''}`} role="status" className="absolute z-30 flex flex-col items-center gap-2"
             style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
-            <div className="animate-entrar relative mx-auto w-fit rounded-[22px] bg-tarjeta px-3.5 py-2 text-center text-[15px] leading-snug text-texto shadow-md">
-              {habla.texto}
-              <span aria-hidden className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-tarjeta" />
-            </div>
+            {celebra && (
+              <span className="animate-entrar rounded-full bg-ambar px-4 py-2 text-[16px] font-bold whitespace-nowrap text-tinta shadow-lg">
+                {nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}
+              </span>
+            )}
+            {habla && (
+              <div className="animate-entrar relative mx-auto w-fit rounded-[22px] bg-tarjeta px-3.5 py-2 text-center text-[15px] leading-snug text-texto shadow-md">
+                {habla.texto}
+                <span aria-hidden className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-tarjeta" />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -439,11 +447,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         </div>
       </div>
 
-      {celebra && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
-        </div>
-      )}
 
       {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} fase={r.fase} faltanParaArreglar={r.faltanParaArreglar} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
       {nacer === 'ficha' && <Ficha c={DUENO} partida={partida} onCerrar={() => { setNacer(null); presentar() }} />}
