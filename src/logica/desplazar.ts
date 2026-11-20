@@ -1,7 +1,7 @@
 // Modo de prueba: al «volver a hoy», todo lo apuntado con el reloj adelantado se mueve los mismos días
 // hacia atrás, para que la partida siga igual (vecinos nacidos, historias, fotos…) en la fecha real.
 import type { Partida } from './partida'
-import { sumarDias } from './fechas'
+import { lunes, sumarDias } from './fechas'
 
 /** Mueve todas las fechas de la partida `dias` días (negativo: hacia atrás). Admite fracciones (horas):
  *  entonces los instantes se mueven exactos y los días sueltos (YYYY-MM-DD) se redondean. */
@@ -22,6 +22,8 @@ export function desplazarPartida(p: Partida, dias: number): Partida {
     ...(p.construcciones && { construcciones: p.construcciones.map(fechado) }),
     ...(p.noticias && { noticias: p.noticias.map(fechado) }),
     ...(p.momentos && { momentos: p.momentos.map(fechado) }),
+    ...(p.lecturas && { lecturas: p.lecturas.map(fechado) }),
+    ...(p.informes && { informes: p.informes.map((x) => lunes(dia(x))) }),
     ...(p.meses && { meses: p.meses.map((m) => ({
       ...m, inicio: fecha(m.inicio),
       ...(m.presentado && { presentado: fecha(m.presentado) }),

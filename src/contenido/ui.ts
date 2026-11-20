@@ -58,6 +58,7 @@ export const UI = {
     piña: 'Piña sospechosa',
   },
   ficha: {
+    sabe: 'Lo que sabe de ti',
     huevo: (n: number) => `Tres retos cumplidos, de cualquier tipo, lo despiertan. ${n <= 0 ? 'Ya se mueve: está a punto.' : n === 1 ? 'Le falta 1.' : `Le faltan ${n}.`}`,
     paraSer: (etapa: string) => `Para hacerse ${etapa}`,
     dias: (n: number, de: number, area: string) => `${Math.min(n, de)} de ${de} días con algo de ${area}`,
@@ -315,6 +316,9 @@ export const UI = {
     paciencia: 'Paciencia de los vecinos',
     pacienciaExplicacion: 'Si el último en llegar pasa este tiempo sin una hazaña de lo suyo, se enfurruña. Se le pasa con un par de hazañas. Los demás ya no se enfadan: viven tranquilos.',
     aguanta: (ritmo: string) => `Quiere algo ${ritmo.charAt(0).toLowerCase()}${ritmo.slice(1)}`,
+    diario: 'Tu diario',
+    privado: 'Que no lean mi lista',
+    privadoExplicacion: 'Los vecinos no comentarán lo que apuntas: ni lecturas, ni el informe de Tuerca, ni historias que nacen de tu diario. Todo sigue solo en tu móvil.',
     inicioDia: 'Tu día empieza a las…',
     inicioDiaExplicacion: 'Si te acuestas tarde: lo que hagas de madrugada cuenta para el día anterior.',
     medianoche: 'Medianoche',

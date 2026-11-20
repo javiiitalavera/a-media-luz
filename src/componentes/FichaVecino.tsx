@@ -7,6 +7,7 @@ import type { Partida } from '../logica/partida'
 import { progreso } from '../logica/etapas'
 import { proyectosDe, construido } from '../logica/casa'
 import { cronicas } from '../logica/situaciones'
+import { loQueSabe } from '../logica/lector'
 
 export function FichaVecino({ partida, c, ahora, fase, faltanParaArreglar, enHuevo, faltaHuevo, onCerrar }: {
   partida: Partida; c: CompaneroId; ahora: Date; fase: number; faltanParaArreglar: number
@@ -52,6 +53,14 @@ export function FichaVecino({ partida, c, ahora, fase, faltanParaArreglar, enHue
                   <Barra texto={F.proyectos(g.proyectos, g.siguiente.proyectos)} v={g.proyectos / g.siguiente.proyectos} />
                 </>
               ) : <p className="text-[15px]">{F.yaAdulto}</p>}
+            </div>
+
+            {/* Lo que sabe de ti: sale de tu diario, cada vecino a lo suyo. */}
+            <div className="mt-2 rounded-3xl bg-tarjeta p-3.5">
+              <div className="text-[14px] font-bold">{F.sabe}</div>
+              <ul className="mt-1 flex flex-col gap-1">
+                {loQueSabe(partida, c, ahora).map((t) => <li key={t} className="text-[14px] leading-snug text-texto-2">{t}</li>)}
+              </ul>
             </div>
 
             {/* Cómo está (solo el último en llegar se descuida) */}
