@@ -3,13 +3,13 @@
 // «Algo más» apunta lo que has hecho fuera de tu lista. «Editar» ajusta la lista (las mínimas van por defecto).
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type Accion, type AreaId } from '../contenido'
+import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type ObjetoCasa, type Accion, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
 import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, puntualesHoy, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
-import { materialYaGastado } from '../logica/casa'
+import { materialYaGastado, proyectoRecienDisponible } from '../logica/casa'
 import { retoQueFalta } from '../logica/pista'
 import { nacido, proximaLlegada, progreso } from '../logica/etapas'
 import { PideReto } from '../componentes/PideReto'
@@ -26,7 +26,7 @@ import { TEXTOS_CUESTIONARIO as TC } from '../contenido/cuestionario'
 const nuevoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 const campo = 'h-11 w-full rounded-2xl border-2 border-borde bg-fondo px-3 text-base focus:border-coral focus:outline-none'
 
-export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahora: Date; onIrACasa: () => void }) {
+export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida: Partida; ahora: Date; onIrACasa: () => void; onVerProyecto: (o: ObjetoCasa) => void }) {
   const ofrecer = useJuego((s) => s.ofrecer)
   const quitarUna = useJuego((s) => s.quitarUna)
   const ponerDiaMalo = useJuego((s) => s.ponerDiaMalo)
@@ -41,13 +41,13 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const puntuales = puntualesHoy(partida, ahora)
   const hechas = mias.filter((a) => hechaHoy(partida, a.id, ahora)).length
   const [hoja, setHoja] = useState<'editar' | 'algo' | 'puntual' | 'sugerencias' | null>(null)
-  const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string } | null>(null)
+  const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string; proyecto?: ObjetoCasa } | null>(null)
   // Abrir Hazañas apaga el aviso del día nuevo.
   const ajustar = useJuego((s) => s.ajustar)
   useEffect(() => { ajustar((p) => verHazanas(p, ahora)) }, [ajustar, ahora])
   useEffect(() => {
     if (!reaccion) return
-    const t = setTimeout(() => setReaccion(null), reaccion.sorpresa ? 6500 : 4500)
+    const t = setTimeout(() => setReaccion(null), reaccion.proyecto ? 12000 : reaccion.sorpresa ? 6500 : 4500)
     const sonido = reaccion.sorpresa ? setTimeout(() => sfx.sorpresa(), 250) : undefined
     return () => { clearTimeout(t); clearTimeout(sonido) }
   }, [reaccion])
@@ -73,7 +73,8 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
     const subida = nacido(r.partida, vecino, momento) && nivel > progreso(partida, vecino, momento).nivel
       ? `${UI.casa.subioNivel(COMPANEROS[vecino].nombre, nivel)}.` : ''
     const mensaje = [subida, texto].filter(Boolean).join(' ')
-    if (mensaje) setReaccion({ texto: mensaje, n: Date.now(), sorpresa: r.sorpresa?.arte })
+    const proyecto = proyectoRecienDisponible(partida, r.partida, vecino, momento)
+    if (proyecto || mensaje) setReaccion({ texto: proyecto && !r.sorpresa ? subida : mensaje, proyecto, n: Date.now(), sorpresa: r.sorpresa?.arte })
   }
 
   const guardarPuntual = (datos: DatosReto) => {
@@ -156,6 +157,10 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
         <div key={reaccion.n} className="animate-entrar pointer-events-none fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-[430px] justify-center px-4">
           <span className="flex items-center gap-3 rounded-2xl bg-[#2e2030]/88 px-4 py-2.5 text-[14px] leading-snug text-[#fbefe4] shadow-lg backdrop-blur-sm">
             {reaccion.sorpresa && <img src={reaccion.sorpresa} alt="" className="anim-brotar h-12 w-12 shrink-0 object-contain" />}
+            {reaccion.proyecto && <button type="button" onClick={() => onVerProyecto(reaccion.proyecto!)}
+              className="pointer-events-auto min-h-11 rounded-xl bg-ambar px-3 py-2 text-left font-bold text-tinta">
+              {UI.ofrendas.proyectoListo(reaccion.proyecto.nombre, COMPANEROS[reaccion.proyecto.companero].nombre)} ›
+            </button>}
             <span role="status" className={reaccion.sorpresa ? '' : 'text-center'}>{reaccion.texto}</span>
           </span>
         </div>

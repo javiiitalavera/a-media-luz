@@ -252,6 +252,7 @@ export const UI = {
     ritmo: 'Ritmo',
   },
   ofrendas: {
+    proyectoListo: (objeto: string, vecino: string) => `Construir «${objeto}» en casa de ${vecino}`,
     titulo: 'Retos',
     subtitulo: 'Se reinician cada día.',
     hechas: (n: number, de: number) => `${n} de ${de} cumplidos hoy`,

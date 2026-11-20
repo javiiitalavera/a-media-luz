@@ -4,7 +4,7 @@ import { AREAS, COMPANEROS, OBJETOS_CASA, PROYECTOS_BARRIO, type AreaId, type Co
 import type { Ofrenda, Partida } from './partida'
 import { TOPE_DIARIO } from './reglas'
 import { dia } from './fechas'
-import { nacido } from './etapas'
+import { nacido, nacidos } from './etapas'
 
 export type Materiales = Record<AreaId, number>
 const ceros = (): Materiales => Object.fromEntries(Object.keys(AREAS).map((a) => [a, 0])) as Materiales
@@ -113,4 +113,14 @@ export function construir(p: Partida, id: string, ahora: Date, barrioDisponible 
     : false
   if (!ok) return null
   return { ...p, construcciones: [...(p.construcciones ?? []), { objetoId: id, fecha: ahora.toISOString(), coste: proyecto.coste }] }
+}
+
+/** La bolsa es común. Si el mismo reto abre varios proyectos, prioriza su vecino. */
+export function proyectoRecienDisponible(antes: Partida, despues: Partida, preferido: CompaneroId, ahora: Date) {
+  const casas = nacidos(despues, ahora).sort((a, b) => Number(b === preferido) - Number(a === preferido))
+  for (const c of casas) {
+    const nuevo = proyectosVisibles(despues, c).find((o) =>
+      puedeConstruir(despues, o, ahora) && !puedeConstruir(antes, o, ahora))
+    if (nuevo) return nuevo
+  }
 }

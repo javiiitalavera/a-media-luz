@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { construir, disponibles, faltan, ganados, gastados, proyectosBarrioVisibles, proyectosVisibles, queRecompensan } from './casa'
+import { proyectoRecienDisponible, construir, disponibles, faltan, ganados, gastados, proyectosBarrioVisibles, proyectosVisibles, queRecompensan } from './casa'
 import { COMPANEROS, OBJETOS_CASA, PROYECTOS_BARRIO } from '../contenido'
 import { con, en, nueva } from './test-utils'
 import type { Partida } from './partida'
@@ -62,6 +62,14 @@ describe('proyectos', () => {
     }
   })
 
+  it('el enlace aparece justo al reunir el último material para un proyecto visible', () => {
+    const ahora = en('2026-01-07', 23)
+    const antes = con(con(nueva(), 'cuerpo', '2026-01-05'), 'cuerpo', '2026-01-06')
+    const despues = con(antes, 'cuerpo', '2026-01-07')
+    expect(proyectoRecienDisponible(nueva(), antes, 'nox', ahora)).toBeUndefined()
+    expect(proyectoRecienDisponible(antes, despues, 'nox', ahora)?.id).toBe('hoguera')
+    expect(proyectoRecienDisponible(despues, despues, 'nox', ahora)).toBeUndefined()
+  })
   it('dice lo que falta', () => {
     const p = con(nueva(), 'cuerpo', '2026-01-05')
     expect(faltan(p, objeto('hoguera'), en('2026-01-05', 23))).toEqual({ cuerpo: 2 })
