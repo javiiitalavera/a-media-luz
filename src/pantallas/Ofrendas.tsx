@@ -66,10 +66,9 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
     const r = ofrecer(a.id)
     if (!r) return
     sfx.tachar(a.area)
-    const frase = r.frase && `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`
-    const texto = r.sorpresa
-      ? `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`
-      : frase || (a.soloEl ? UI.ofrendas.retoCumplido : '')
+    // Al tachar no habla el vecino (decidido por Javi, 20/11/2026: cargaba de más). Solo se avisa de lo que cambia algo:
+    // un hallazgo, una subida de nivel o un proyecto que ya se puede construir.
+    const texto = r.sorpresa ? UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre) : ''
     const vecino = AREAS[r.ofrenda.area].companero
     const momento = new Date(r.ofrenda.fecha)
     const nivel = progreso(r.partida, vecino, momento).nivel
@@ -186,19 +185,17 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
 
 /** Una hazaña: icono de su área, texto (tachado si está hecha), de quién es y el círculo. */
 function Fila({ a, hecha, texto, onToque }: { a: Accion; hecha: boolean; texto: string; onToque: () => void }) {
-  const area = AREAS[a.area]
   return (
     <li>
       <button type="button" onClick={onToque} aria-pressed={hecha} aria-label={hecha ? UI.ofrendas.desmarcar(texto) : UI.ofrendas.marcar(texto)}
-        className="flex min-h-[64px] w-full items-center gap-3 px-4 py-2.5 text-left active:bg-hundido/60">
-        <IconoArea area={a.area} />
+        className="flex min-h-[52px] w-full items-center gap-3 px-4 py-1.5 text-left active:bg-hundido/60">
+        {/* Sin subtítulo de área (decidido por Javi, 20/11/2026): la lista más compacta, para verla entera de un vistazo. El icono ya dice el área. */}
+        <IconoArea area={a.area} pequeno />
         <span className="min-w-0 flex-1">
           <span className={`relative inline-block text-[16px] leading-snug font-semibold transition-colors ${hecha ? 'text-texto-3' : 'text-texto'}`}>
             {texto}
             <span aria-hidden className={`tachon absolute top-1/2 left-0 h-[2px] rounded-full bg-texto-3 ${hecha ? 'tachon-si' : ''}`} />
           </span>
-          {/* Solo el área: el vecino puede no haber llegado todavía (decidido por Javi, 20/11/2026). */}
-          <span className="block text-[13px] text-texto-3">{area.nombre}</span>
         </span>
         <Circulo hecha={hecha} />
       </button>
