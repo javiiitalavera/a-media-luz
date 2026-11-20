@@ -1,0 +1,234 @@
+/* Un carril ocupa el ancho de la escena: los viajes conservan su longitud al recortar el fondo. */
+.paseo-de-salchicha, .paseo-de-planta, .paseo-de-tornillo, .paseo-de-barquito {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+}
+.paseo-de-salchicha { top: 78%; animation: salchicha-en-fuga 28s -3s linear infinite; }
+.paseo-de-salchicha img {
+  width: 8%;
+  margin-left: 14%;
+  transform: translate(-50%, -100%);
+  animation: salchicha-rebota 28s -3s ease-out infinite;
+  filter: drop-shadow(0 3px 1px #5d422762);
+}
+@keyframes salchicha-en-fuga {
+  0%, 16% { opacity: 0; transform: translateX(-13%); }
+  19%, 40% { opacity: 1; }
+  26% { transform: translateX(32%); }
+  31% { transform: translateX(34%); }
+  43%, 100% { opacity: 0; transform: translateX(82%); }
+}
+@keyframes salchicha-rebota {
+  16% { transform: translate(-50%, -100%) rotate(-30deg); }
+  22% { transform: translate(-50%, -185%) rotate(92deg); }
+  26%, 31% { transform: translate(-50%, -100%) rotate(200deg); }
+  37% { transform: translate(-50%, -145%) rotate(280deg); }
+  43% { transform: translate(-50%, -100%) rotate(430deg); }
+}
+.rafaga-del-porche i {
+  position: absolute;
+  top: 38%;
+  left: 12%;
+  width: 2.2%;
+  aspect-ratio: 1.65;
+  border-radius: 82% 0 82% 0;
+  background: linear-gradient(130deg, #ed9c74, #a5514e);
+  transform-origin: 22% 62%;
+  animation: hoja-por-el-porche 21s -4s ease-in-out infinite;
+}
+.rafaga-del-porche i:nth-child(2) { top: 45%; left: 21%; animation-delay: -6s; }
+.rafaga-del-porche i:nth-child(3) { top: 42%; left: 36%; animation-delay: -5.2s; }
+@keyframes hoja-por-el-porche {
+  0%, 24% { opacity: 0; transform: translate(0, 0) rotate(20deg); }
+  29% { opacity: .9; }
+  40% { transform: translate(720%, 18px) rotate(125deg) scaleX(.72); }
+  51%, 100% { opacity: 0; transform: translate(1500%, 46px) rotate(260deg); }
+}
+
+.paseo-de-planta { top: 77%; animation: mata-fugitiva 32s -6s linear infinite; }
+.planta-rodadora {
+  position: absolute;
+  left: 15%;
+  top: 0;
+  width: 10%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #66754d 16%, #82965ac9 46%, transparent 72%);
+  animation: rueda-la-mata 32s -6s linear infinite;
+}
+.planta-rodadora i {
+  position: absolute;
+  inset: 2% 33% 51%;
+  transform-origin: 50% 102%;
+  border-radius: 90% 8% 76% 24%;
+  border: 1px solid #4b5e3e;
+  background: linear-gradient(145deg, #bad07c, #718d51);
+}
+.planta-rodadora i:nth-child(2) { rotate: 60deg; }
+.planta-rodadora i:nth-child(3) { rotate: 120deg; }
+.planta-rodadora i:nth-child(4) { rotate: 180deg; }
+.planta-rodadora i:nth-child(5) { rotate: 240deg; }
+.planta-rodadora i:nth-child(6) { rotate: 300deg; }
+.sombra-de-escenita {
+  position: absolute;
+  left: 15%;
+  top: 0;
+  width: 9%;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, #422f2652, transparent 70%);
+}
+@keyframes mata-fugitiva {
+  0%, 22% { transform: translate(-10%, 0); opacity: 0; }
+  26%, 50% { opacity: 1; }
+  36%, 41% { transform: translate(32%, 7px); }
+  55%, 100% { transform: translate(82%, 22px); opacity: 0; }
+}
+@keyframes rueda-la-mata {
+  22% { transform: translate(-50%, -100%) rotate(0deg); }
+  36%, 41% { transform: translate(-50%, -100%) rotate(280deg); }
+  55% { transform: translate(-50%, -100%) rotate(680deg); }
+}
+
+.paseo-de-tornillo { top: 78%; animation: tornillo-en-fuga 26s -1.8s linear infinite; }
+.paseo-de-tornillo img {
+  width: 6%;
+  margin-left: 15%;
+  animation: tornillo-rebota 26s -1.8s ease-out infinite;
+}
+@keyframes tornillo-en-fuga {
+  0%, 14% { transform: translateX(80%); opacity: 0; }
+  19%, 39% { opacity: 1; }
+  30%, 34% { transform: translateX(37%); }
+  45%, 100% { transform: translateX(-10%); opacity: 0; }
+}
+@keyframes tornillo-rebota {
+  14% { transform: translate(-50%, -100%) rotate(30deg); }
+  19% { transform: translate(-50%, -220%) rotate(-175deg); }
+  24% { transform: translate(-50%, -100%) rotate(-300deg); }
+  27% { transform: translate(-50%, -140%) rotate(-370deg); }
+  30%, 34% { transform: translate(-50%, -100%) rotate(-480deg); }
+  45% { transform: translate(-50%, -100%) rotate(-890deg); }
+}
+
+.paseo-de-barquito { top: 52%; animation: deriva-en-el-estanque 40s -3s ease-in-out infinite; }
+.paseo-de-barquito img {
+  position: relative;
+  width: 12%;
+  margin-left: 17%;
+  animation: balanceo-de-barquito 3.6s ease-in-out infinite;
+}
+.estela-de-barquito {
+  position: absolute;
+  top: 0;
+  left: 17%;
+  width: 29%;
+  aspect-ratio: 6;
+  transform: translate(-68%, -50%);
+  background:
+    radial-gradient(ellipse at 54% 45%, transparent 35%, #d9faff85 40%, transparent 52%),
+    radial-gradient(ellipse at 66% 59%, transparent 36%, #d9faff5e 45%, transparent 54%);
+}
+@keyframes deriva-en-el-estanque {
+  0%, 12% { transform: translate(-17%, 0); opacity: 0; }
+  21%, 57% { opacity: .97; }
+  39% { transform: translate(36%, 23px); }
+  66%, 100% { transform: translate(82%, 38px); opacity: 0; }
+}
+@keyframes balanceo-de-barquito {
+  0%, 100% { transform: translate(-50%, -95%) rotate(-6deg); }
+  50% { transform: translate(-50%, -105%) rotate(7deg); }
+}
+
+/* El botón permanece fijo. Los gestos solo mueven el dibujo y sus partículas. */
+.anim-gesto-de-objeto {
+  animation: objeto-responde .64s ease-out;
+  transform-origin: 50% 94%;
+  --gesto-giro: 7deg;
+}
+.anim-gesto-de-objeto[data-gesto='libros'], .anim-gesto-de-objeto[data-gesto='gregorio'] {
+  animation-name: objeto-se-escapa;
+}
+.anim-gesto-de-objeto[data-gesto='rebote'], .anim-gesto-de-objeto[data-gesto='semilla'] {
+  animation-name: objeto-pega-un-bote;
+}
+.anim-gesto-de-objeto[data-gesto='campanillas'], .anim-gesto-de-objeto[data-gesto='hamaca'] {
+  --gesto-giro: 17deg;
+  animation-duration: .95s;
+  transform-origin: 50% 12%;
+}
+.anim-gesto-de-objeto[data-gesto='reloj'] { --gesto-giro: 12deg; }
+@keyframes objeto-responde {
+  22% { transform: rotate(var(--gesto-giro)); }
+  49% { transform: rotate(calc(var(--gesto-giro) * -.57)); }
+  76% { transform: rotate(calc(var(--gesto-giro) * .25)); }
+}
+@keyframes objeto-se-escapa {
+  30% { transform: translate(16%, -5%) rotate(7deg); }
+  57% { transform: translate(-6%, 1%) rotate(-4deg); }
+}
+@keyframes objeto-pega-un-bote {
+  18% { transform: scale(1.08, .83); }
+  46% { transform: translateY(-12%) scale(.95, 1.06); }
+  72% { transform: scale(1.05, .90); }
+}
+
+.efecto-de-objeto { position: absolute; pointer-events: none; }
+.objeto-escupe {
+  left: 45%;
+  top: 22%;
+  width: 24%;
+  opacity: 0;
+  animation: objeto-lanza-algo .98s linear both;
+}
+@keyframes objeto-lanza-algo {
+  0%, 10% { opacity: 0; transform: none; }
+  23% { opacity: 1; }
+  40% { transform: translate(105%, -190%) rotate(90deg); }
+  72% { opacity: 1; transform: translate(235%, 165%) rotate(230deg); }
+  83% { transform: translate(266%, 118%) rotate(280deg); }
+  100% { opacity: 0; transform: translate(310%, 200%) rotate(370deg); }
+}
+.destellos-de-objeto { inset: 12% 8% 35%; }
+.destellos-de-objeto i {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  width: 8%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff5b7;
+  box-shadow: 0 0 5px 1px #ffa350;
+  animation: objeto-destella .76s ease-out both;
+  --vuelo-x: -20px;
+}
+.destellos-de-objeto i:nth-child(2) { --vuelo-x: 3px; animation-delay: .09s; }
+.destellos-de-objeto i:nth-child(3) { --vuelo-x: 24px; animation-delay: .13s; }
+@keyframes objeto-destella {
+  0% { opacity: 0; transform: scale(.3); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--vuelo-x), -29px) scale(.5); }
+}
+.vapor-de-tetera { left: 46%; top: 25%; width: 38%; aspect-ratio: 1; }
+.vapor-de-tetera i, .vapor-de-tetera b {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #fdf1e799 5%, #f8f1ff60 40%, transparent 72%);
+  animation: vapor-sube 3.9s ease-out infinite;
+}
+.vapor-de-tetera i:nth-child(2) { animation-delay: -1.3s; }
+.vapor-de-tetera i:nth-child(3) { animation-delay: -2.6s; }
+.vapor-de-tetera b { animation: vapor-sube 1.45s ease-out both; scale: 1.45; }
+@keyframes vapor-sube {
+  0% { opacity: 0; transform: translate(-30%, -20%) scale(.48); }
+  23% { opacity: 1; }
+  100% { opacity: 0; transform: translate(55%, -220%) scale(1.65); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vida-de-casa, .efecto-de-objeto { display: none; }
+  .anim-gesto-de-objeto[data-gesto] { animation: none; }
+}

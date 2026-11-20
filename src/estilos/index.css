@@ -2,6 +2,7 @@
 @import '@fontsource/fredoka/500.css';
 @import '@fontsource/fredoka/600.css';
 @import '@fontsource/fredoka/700.css';
+@import './vida-de-casa.css';
 
 /* Colores de interfaz a partir de la paleta aprobada (docs/direccion-artistica.md).
    Contraste de textos comprobado (WCAG ≥ 4,5). */
