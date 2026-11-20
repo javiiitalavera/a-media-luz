@@ -16,7 +16,6 @@ import { useJuego } from '../estado/juego'
 import { cronicas } from '../logica/situaciones'
 import { desfaseDias, inicioDia, ponerDesfase, ponerInicioDia } from '../logica/reloj'
 import { desplazarPartida } from '../logica/desplazar'
-import { ponerPrivado } from '../logica/lector'
 import { BotonSecundario, Interruptor, Pantalla, Tarjeta } from '../componentes/comunes'
 import { HojaSugerencias } from '../componentes/HojaSugerencias'
 import { TEXTOS_CUESTIONARIO as TC } from '../contenido/cuestionario'
@@ -175,9 +174,8 @@ export function Album({ partida, onIr }: { partida: Partida; onIr: (l: Lugar) =>
   )
 }
 
-export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
+export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
   const sustituir = useJuego((s) => s.sustituir)
-  const ajustar = useJuego((s) => s.ajustar)
   const borrar = useJuego((s) => s.borrar)
   const archivo = useRef<HTMLInputElement>(null)
   const ultimaLectura = useRef(0)
@@ -222,10 +220,6 @@ export function Ajustes({ partida, ahora }: { partida: Partida; ahora: Date }) {
       <p className="mb-2 px-1 text-[13px] text-texto-3">{TC.ajustesExplicacion}</p>
       <BotonSecundario onClick={() => setSugerencias(true)}>{TC.ajustesBoton}</BotonSecundario>
       {sugerencias && <HojaSugerencias partida={partida} onCerrar={() => setSugerencias(false)} />}
-
-      <h2 className="mt-6 mb-2 px-1 font-bold">{UI.ajustes.diario}</h2>
-      <Interruptor titulo={UI.ajustes.privado} explicacion={UI.ajustes.privadoExplicacion} activo={Boolean(partida.privado)}
-        onCambiar={(v) => ajustar((p) => ponerPrivado(p, v, ahora))} />
 
       <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.inicioDia}</h2>
       <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.inicioDiaExplicacion}</p>

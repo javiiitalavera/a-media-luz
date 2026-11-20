@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { crearPartida, type Partida } from './partida'
 import { marcarPresentado } from './meses'
-import { informeSemanal, lecturaDeHoy, leerElDiario, ponerPrivado } from './lector'
+import { informeSemanal, lecturaDeHoy, leerElDiario } from './lector'
 import { en } from './test-utils'
 import { sumarDias } from './fechas'
 import type { AreaId } from '../contenido'
@@ -75,11 +75,4 @@ describe('el lector', () => {
     expect(informeSemanal(r.partida, en('2026-01-13', 9))).toBeNull()
   })
 
-  it('con «Que no lean mi lista» nadie lee nada (y lo comentan una vez)', () => {
-    let p = reg(barrio(), 'leer', 'mente', '2026-01-05')
-    p = ponerPrivado(p, true, en('2026-01-05', 12))
-    expect(p.noticias!.at(-1)!.texto).toMatch(/^Nox: /)
-    expect(ponerPrivado(p, true, en('2026-01-05', 13))).toBe(p)
-    expect(leerElDiario(p, en('2026-01-12', 21)).nuevas).toHaveLength(0)
-  })
 })

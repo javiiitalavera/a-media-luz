@@ -407,6 +407,7 @@ function FormularioPropia({ boton, onCrear, puntual = false, areasDisponibles = 
       <label className="block text-[13px] font-semibold text-texto-3">{puntual ? UI.ofrendas.nombrePuntual : UI.ofrendas.nombre}
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={puntual ? UI.ofrendas.ejemploPuntual : UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
       </label>
+      {!puntual && <p className="mt-1 px-1 text-[13px] text-texto-3">{UI.ofrendas.nombreAyuda}</p>}
       <div className="mt-2 text-[13px] font-semibold text-texto-3">{UI.ofrendas.area}</div>
       <div className="mt-1 flex flex-wrap gap-1.5">
         {ORDEN_AREAS.map((a) => (

@@ -1,9 +1,9 @@
 // El lector (Dirección A): cada día, como mucho, una lectura suelta de tu diario en boca de un vecino,
 // y el informe semanal de Tuerca. Todo sale del historial.
 // Reglas: una lectura al día y tres por semana; una lectura no se repite en 14 días (los hitos, nunca);
-// solo habla un vecino que ya está en el barrio; con «Que no lean mi lista» activado, nadie lee nada.
+// solo habla un vecino que ya está en el barrio.
 import { AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, type AreaId, type CompaneroId } from '../contenido'
-import { LECTURAS_SUELTAS as L, INFORME, AL_CALLARLOS, type Franja } from '../contenido/lecturas-sueltas'
+import { LECTURAS_SUELTAS as L, INFORME, type Franja } from '../contenido/lecturas-sueltas'
 import type { NoticiaBarrio, Ofrenda, Partida } from './partida'
 import { dia, diasEntre, lunes, sumarDias } from './fechas'
 import { nacido } from './etapas'
@@ -78,7 +78,6 @@ const unaVez = (clave: string) => /^(debut|hito|propios|finde)\|/.test(clave)
 
 /** La lectura de hoy, si toca (null si no). */
 export function lecturaDeHoy(p: Partida, ahora: Date): Lectura | null {
-  if (p.privado) return null
   const hechas = p.lecturas ?? []
   const hoy = dia(ahora)
   if (hechas.some((l) => dia(l.fecha) === hoy)) return null
@@ -124,7 +123,7 @@ const conNombre = (c: CompaneroId, texto: string) => `${COMPANEROS[c].nombre}: �
 export function leerElDiario(p: Partida, ahora: Date, conHistoriaDeTuDiario = false): { partida: Partida; nuevas: NoticiaBarrio[] } {
   let q = p
   const nuevas: NoticiaBarrio[] = []
-  const inf = p.privado ? null : informeSemanal(p, ahora)
+  const inf = informeSemanal(p, ahora)
   if (inf) {
     q = { ...q, informes: [...(q.informes ?? []), inf.semana].slice(-60) }
     if (inf.texto) nuevas.push({ origen: 'diario', texto: conNombre('tuerca', inf.texto), lugar: 'tuerca', fecha: ahora.toISOString() })
@@ -136,13 +135,4 @@ export function leerElDiario(p: Partida, ahora: Date, conHistoriaDeTuDiario = fa
   }
   if (!nuevas.length) return { partida: q, nuevas }
   return { partida: { ...q, noticias: [...(q.noticias ?? []), ...nuevas].slice(-NOTICIAS_GUARDADAS) }, nuevas }
-}
-
-/** «Que no lean mi lista»: al activarlo lo comentan una vez (y se respeta). */
-export function ponerPrivado(p: Partida, activo: boolean, ahora: Date): Partida {
-  if (Boolean(p.privado) === activo) return p
-  if (!activo) return { ...p, privado: false }
-  const quien: CompaneroId = nacido(p, 'madeja', ahora) ? 'madeja' : 'nox'
-  const noticia: NoticiaBarrio = { origen: 'diario', texto: conNombre(quien, AL_CALLARLOS[quien]!), lugar: quien, fecha: ahora.toISOString() }
-  return { ...p, privado: true, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) }
 }
