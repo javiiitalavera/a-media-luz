@@ -136,6 +136,7 @@ export const UI = {
     madeja: 'Sin hilo no tejo, y el hilo sale de hablar con gente. Apunta a alguien. De lo demás me entero yo.',
     anadir: (reto: string) => `Añadir «${reto}»`,
     lleno: 'Tu lista está llena: cambia uno en Retos.',
+    editar: 'Editar retos',
     luego: 'Luego',
   },
   casa: {

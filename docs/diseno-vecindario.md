@@ -503,3 +503,10 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - **Informe del domingo de Tuerca:** cierra la semana (desde el domingo a las 19 h, o al abrir después): días con algo, retos, áreas, material ingresado y páginas del archivo, con su coletilla. Una semana sin nada se cierra en silencio, sin reproche.
 - **«Lo que sabe de ti»** en la ficha de cada vecino: hasta tres líneas que salen de tu diario, cada uno a lo suyo.
 - **«Que no lean mi lista»** (Ajustes · Tu diario): nadie lee nada (ni lecturas, ni informe, ni historias que nacen de tu diario). Al activarlo, Madeja (o Nox) lo comenta una vez.
+
+### Arreglos de la tercera auditoría (20/11/2026, rama `dev/auditoria-3`)
+- **Gregorio:** «La planta» no empieza hasta que se ha decidido con quién se queda Gregorio (nuevo requisito `terminadas` en las historias).
+- **Un vecino, un sitio:** cada día se sortea una agenda del barrio (`diaDelBarrio`): primero las escenas que traen a alguien de visita y luego, tras el puente, las visitas sueltas con quien quede libre. Nadie está en dos casas a la vez, y quien está de visita no pasea por el mapa. Es estable al recargar y en cualquier orden de visita.
+- **Fotos:** usan la misma visita que la casa y guardan cómo era el visitante (su etapa); las fotos antiguas lo dibujan de cachorro, como antes.
+- **Hallazgos:** cada día hay un vecino «con suerte», el que lleva más tiempo sin encontrar nada entre las áreas que estás haciendo. Lo encuentra (con un 50 %) con el primer reto de su área ese día. Así no importa en qué orden taches y la colección crece pareja. Sigue habiendo uno al día como mucho.
+- **«Luego»:** la petición de un reto de su área se deja hasta mañana, en su casa y en Retos. Con la lista llena, en Retos ofrece «Editar retos».
