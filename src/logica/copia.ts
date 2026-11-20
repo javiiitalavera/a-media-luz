@@ -95,7 +95,10 @@ function leerCopia(contenido: string): Partida | null {
       opcional(p.noticias, (l) => lista(l, (n) => objeto(n) && texto(n.texto) && lugar(n.lugar) && fecha(n.fecha) &&
         opcional(n.leida, booleano) && opcional(n.visitada, booleano))) &&
       opcional(p.momentos, (l) => lista(l, (m) => objeto(m) && texto(m.id) && texto(m.titulo) &&
-        texto(m.texto) && fecha(m.fecha) && escena(m.escena)))
+        texto(m.texto) && fecha(m.fecha) && escena(m.escena))) &&
+      opcional(p.lecturas, (l) => lista(l, (x) => objeto(x) && texto(x.clave) && clave(x.vecino, COMPANEROS) && texto(x.texto) && fecha(x.fecha))) &&
+      opcional(p.informes, (l) => lista(l, dia)) &&
+      opcional(p.privado, booleano)
     if (!ok) return null
     const partida = p as unknown as Partida
     return migrarHazanas({

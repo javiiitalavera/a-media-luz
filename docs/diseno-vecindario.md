@@ -494,3 +494,12 @@ Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 día
 - **La piña** solo sale de la primera travesura de Nox, no del sorteo.
 - **Empezar sin lista** vale: si desmarcas todo, empiezas sin retos y apuntas con «Algo más».
 - **Sugerencias:** si el reto ya está en tu lista con otra meta, el botón dice «Cambiar meta», se ve la actual, y se respeta la versión mínima que hubieras escrito.
+
+### El barrio lee tu diario: lecturas, informe y «Lo que sabe de ti» (20/11/2026, rama `dev/lecturas`)
+Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la opinión en la conversación del 20/11/2026). La economía no cambia: los materiales siguen llegando al tachar.
+- **Lecturas sueltas** (`src/logica/lector.ts`, textos en `src/contenido/lecturas-sueltas.ts`): frases cortas de un vecino sobre tu temporada que llegan al sobre. Como mucho una al día y tres por semana; una lectura no se repite en 14 días y los hitos, nunca. Si ese día empieza una historia que nace de tu diario, no hay lectura suelta.
+- **Quién lee qué:** Nox cuándo y cuánto te mueves; Tuerca las cuentas (es la única que dice cifras); Tofu tus retos propios; Bruma la calma y el modo día malo; Madeja cruza datos (dos áreas el mismo día, el fin de semana). La primera vez que haces algo de un área lo dice su vecino (o Nox, si aún no ha llegado), y solo si de verdad acaba de pasar.
+- **Solo se lee lo que haces**, nunca lo que no haces: no hay lecturas de «huecos» (regla base del juego).
+- **Informe del domingo de Tuerca:** cierra la semana (desde el domingo a las 19 h, o al abrir después): días con algo, retos, áreas, material ingresado y páginas del archivo, con su coletilla. Una semana sin nada se cierra en silencio, sin reproche.
+- **«Lo que sabe de ti»** en la ficha de cada vecino: hasta tres líneas que salen de tu diario, cada uno a lo suyo.
+- **«Que no lean mi lista»** (Ajustes · Tu diario): nadie lee nada (ni lecturas, ni informe, ni historias que nacen de tu diario). Al activarlo, Madeja (o Nox) lo comenta una vez.

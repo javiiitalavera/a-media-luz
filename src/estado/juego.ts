@@ -11,7 +11,8 @@ import { ahora } from '../logica/reloj'
 import { hechaHoy, migrarHazanas } from '../logica/hazanas'
 import { anadirSugerencia, type Sugerencia } from '../logica/sugerencias'
 import type { Perfil } from '../contenido/cuestionario'
-import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
+import { avanzar, decidir as decidirSituacion, empiezaHoyDeTuDiario } from '../logica/situaciones'
+import { leerElDiario } from '../logica/lector'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
 import { marcarPresentado, mesActual } from '../logica/meses'
@@ -123,7 +124,10 @@ export const useJuego = create<Juego>()(
         const momento = ahora()
         const r = avanzar(p, momento)
         // También las fases sin noticia (los remates que se descubren paseando) avanzan y se guardan.
-        if (r.partida !== p) set({ partida: curiosidadesDeHistorias(p, momentosDeHistorias(p, r.partida, momento), momento) })
+        let q = r.partida !== p ? curiosidadesDeHistorias(p, momentosDeHistorias(p, r.partida, momento), momento) : p
+        // Y el barrio lee tu diario: el informe de Tuerca y, si hoy no ha empezado una historia tuya, una lectura suelta.
+        q = leerElDiario(q, momento, empiezaHoyDeTuDiario(p, r.partida, momento)).partida
+        if (q !== p) set({ partida: q })
       },
       decidir: (situacion, opcion) => {
         const p = get().partida
