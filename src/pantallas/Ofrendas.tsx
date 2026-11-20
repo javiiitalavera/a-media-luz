@@ -165,7 +165,8 @@ function Fila({ a, hecha, texto, onToque }: { a: Accion; hecha: boolean; texto: 
             {texto}
             <span aria-hidden className={`tachon absolute top-1/2 left-0 h-[2px] rounded-full bg-texto-3 ${hecha ? 'tachon-si' : ''}`} />
           </span>
-          <span className="block text-[13px] text-texto-3">{COMPANEROS[area.companero].nombre} · {area.nombre}</span>
+          {/* Solo el área: el vecino puede no haber llegado todavía (decidido por Javi, 20/11/2026). */}
+          <span className="block text-[13px] text-texto-3">{area.nombre}</span>
         </span>
         <Circulo hecha={hecha} />
       </button>
@@ -185,13 +186,15 @@ function Circulo({ hecha }: { hecha: boolean }) {
 
 function Hoja({ titulo, explicacion, onCerrar, children }: { titulo: string; explicacion?: string; onCerrar: () => void; children: ReactNode }) {
   return createPortal(
-    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
+    // El fondo no se desplaza (en el móvil, arrastrar dentro de la hoja movía la lista de detrás).
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] touch-none flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
       <section role="dialog" aria-label={titulo} onClick={(e) => e.stopPropagation()}
-        className="anim-hoja max-h-[88dvh] overflow-y-auto rounded-t-[28px] bg-fondo px-4 pt-3 pb-[max(20px,env(safe-area-inset-bottom))]">
+        className="anim-hoja max-h-[88dvh] touch-pan-y overflow-y-auto overscroll-contain rounded-t-[28px] bg-fondo px-4 pt-3 pb-[max(20px,env(safe-area-inset-bottom))]">
         <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-borde" />
         <div className="flex items-center justify-between">
           <h2 className="text-[22px] font-bold">{titulo}</h2>
-          <button type="button" onClick={onCerrar} className="min-h-11 px-2 font-semibold text-texto-3">{UI.ofrendas.listo}</button>
+          {/* Sin quitar el foco al tocarlo: en el iPhone, al cerrarse el teclado se movía el botón y el toque se perdía. */}
+          <button type="button" onPointerDown={(e) => e.preventDefault()} onClick={onCerrar} className="min-h-11 px-2 font-semibold text-texto-3">{UI.ofrendas.listo}</button>
         </div>
         {explicacion && <p className="mt-0.5 text-[14px] text-texto-3">{explicacion}</p>}
         {children}
@@ -368,7 +371,7 @@ function FormularioPropia({ boton, onCrear, puntual = false }: { boton: string; 
   return (
     <form className="rounded-3xl bg-tarjeta p-3" onSubmit={(e) => { e.preventDefault(); crear(onCrear) }}>
       <label className="block text-[13px] font-semibold text-texto-3">{puntual ? UI.ofrendas.nombrePuntual : UI.ofrendas.nombre}
-        <input autoFocus={puntual} value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={puntual ? UI.ofrendas.ejemploPuntual : UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
+        <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={puntual ? UI.ofrendas.ejemploPuntual : UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
       </label>
       <div className="mt-2 text-[13px] font-semibold text-texto-3">{UI.ofrendas.area}</div>
       <div className="mt-1 flex flex-wrap gap-1.5">

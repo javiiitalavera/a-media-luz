@@ -410,3 +410,7 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Mariposa del claro (20/11/2026, PR 10)
 - De día, una mariposa ámbar (dibujada por código) revolotea un rato por la plaza y se posa; la luz del bosque matiza los márgenes del mapa y cambia al atardecer. De noche no sale; con movimiento reducido se queda quieta.
+
+### Retos: sin nombres de vecinos y hojas más estables (20/11/2026, rama `dev/retos-arreglos`)
+- Bajo cada reto solo sale su área (Energía, Mente…), no el vecino: podían salir vecinos que aún no han llegado.
+- «Para hoy» ya no abre el teclado solo (movía la hoja y la lista de detrás); la lista de detrás no se desplaza mientras hay una hoja abierta, y «Listo» cierra a la primera aunque el teclado esté abierto.
