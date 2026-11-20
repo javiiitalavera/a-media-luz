@@ -407,3 +407,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### «Para hoy» arriba (20/11/2026, rama `dev/para-hoy-arriba`)
 - En Retos, «+ Para hoy» va arriba, junto a «Editar», en ámbar para que se vea. «Sugerencias» baja junto a «+ Algo más».
+
+### Mariposa del claro (20/11/2026, PR 10)
+- De día, una mariposa ámbar (dibujada por código) revolotea un rato por la plaza y se posa; la luz del bosque matiza los márgenes del mapa y cambia al atardecer. De noche no sale; con movimiento reducido se queda quieta.
