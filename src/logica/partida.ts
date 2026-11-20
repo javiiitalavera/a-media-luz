@@ -54,6 +54,8 @@ export interface Partida {
 }
 
 export interface EstadoSituacion {
+  /** Lo que se leyó en tu diario al empezar (si nace de un patrón): «{dias}» y compañía. */
+  datos?: Record<string, number>
   /** Última fase que ha ocurrido. */
   fase: number
   /** Día (AAAA-MM-DD) en que ocurrió. */

@@ -439,3 +439,19 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
   Cada uno con su frase al tocarlo y su sonido. Con esto las casas tienen de 9 a 16 proyectos.
 - **Proyectos del barrio:** después del puente, también de uno en uno: fuente, tablón del barrio, columpio, pérgola con farolillos, horno del barrio y buzón. Se ven en el mapa alrededor de la plaza, cuentan algo al tocarlos y salen en las fotos del Álbum. Sus ids no coinciden con los de las casas (`tablon-plaza`, `horno-plaza`…).
 - **Curiosidades de Bruma:** ocho que encuentra por sorpresa al tachar retos de Calma (gota de rocío, pluma lila, concha vacía, nube en una cajita, piedra de río, loto cerrado, reloj de arena y llave de cristal).
+
+## Dirección A · Tu vida es el guion (20/11/2026, rama `dev/tu-vida-es-el-guion`)
+Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 días simulados): lo que engancha no es tachar retos, sino lo que los vecinos hacen con lo que tachas. El barrio lee patrones de tu diario, los malinterpreta y monta una pequeña comedia que deja huella. La complicidad tras una semana real sigue siendo una hipótesis a probar.
+
+- **Lector de patrones** (`src/logica/patrones.ts`, con pruebas): reglas sencillas sobre el historial de retos, por días distintos dentro de una ventana de 7 días (varios registros el mismo día no son costumbre):
+  - *caminante*: andar (pasos o paseo) 4 días distintos;
+  - *lector*: algo de Mente 4 días;
+  - *protocolo*: 2 días de Orden y 2 de Calma;
+  - *contactos*: Vínculos 3 días;
+  - *secreto*: retos escritos por ti 3 días (solo se mira que son tuyos y su área; nunca se copian sus títulos);
+  - *reencuentro*: vuelves tras 4 días o más sin registrar nada, con un diario de al menos 5 días.
+- **Seis historias escritas a mano** (`src/contenido/lecturas.ts`): La asesoría de paseos (Nox se atribuye tus paseos y monta una asesoría; Tuerca pide datos), El club de lectura (Tofu concluye cosas que nadie le ha preguntado), El protocolo de descanso (Tuerca redacta cuarenta páginas; Bruma lo desarma con una frase y lo convierte en barco de papel), La red de contactos (Madeja une dos hechos sin relación y se lo cuenta a medio barrio), El reto secreto (Madeja y Tuerca investigan lo que haces que no está en el catálogo, sin saber qué es) y El reencuentro (cartel de SE BUSCA dibujado por Nox; decides a quién cuentas primero dónde estabas).
+- **Estructura de cada una:** una pista (noticia y huella), un intercambio entre vecinos (frases en su casa), una consecuencia visible (huella en el barrio o en una casa) y un **remate sin noticia en el sobre**, que se descubre paseando (la huella nueva brilla) y queda en la Crónica. Después, los vecinos la recuerdan en su charla («ecos») sin volver a contarla entera.
+- **Memoria:** al empezar se guarda lo que se leyó (por ejemplo, cuántos días) y la historia sigue aunque cambie tu diario; cada historia ocurre una vez. Si coinciden varios patrones, va el primero de la lista. Tienen prioridad sobre las historias del barrio: si su patrón se cumple y hay hueco (como mucho dos en marcha), empiezan ese día y lo demás sigue al siguiente.
+- **Tono de las ausencias:** desde lo que los vecinos pueden saber («En el archivador no consta ningún registro desde hace 6 días»), como reencuentro, sin deuda ni reproche.
+- **Arreglo de paso:** el barrio no guardaba una fase que no traía noticia; ahora sí.

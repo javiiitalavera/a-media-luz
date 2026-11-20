@@ -139,7 +139,7 @@ export function decisionesPendientes(p: Partida, ahora: Date): { lugar: Companer
     const d = decisionPendiente(p, c)
     const s = d && SITUACIONES.find((x) => x.id === d.situacion)
     const e = d && p.situaciones?.[d.situacion]
-    return d && s && e ? [{ lugar: c, pregunta: d.pregunta, contexto: faseDe(s, e.fase, e.decision).noticia }] : []
+    return d && s && e ? [{ lugar: c, pregunta: d.pregunta, contexto: faseDe(s, e.fase, e.decision, e.datos).noticia }] : []
   })
 }
 

@@ -3,6 +3,7 @@
 // Textos: propuestas de Claude, pendientes de revisión de Javi. El humor sale de ellos, no de meterse
 // con el jugador.
 import type { CompaneroId } from './tipos'
+import { HUELLAS_LECTURAS, LECTURAS } from './lecturas'
 
 /** Dónde ocurre algo: en la casa de un vecino o en el barrio. */
 export type Lugar = CompaneroId | 'barrio'
@@ -15,6 +16,8 @@ export interface Fase {
   frases?: Partial<Record<CompaneroId, string[]>>
   /** Si en esta fase decides tú algo. La historia espera a que decidas. */
   decision?: { pregunta: string; opciones: { id: string; texto: string; respuesta: string }[] }
+  /** Si la noticia está vacía, la fase no avisa en el sobre (se descubre paseando); esto es lo que cuenta la Crónica. */
+  recuerdo?: string
   /** Variantes de esta fase según lo que decidiste antes. */
   segun?: Record<string, { noticia: string; frases?: Partial<Record<CompaneroId, string[]>> }>
 }
@@ -24,10 +27,14 @@ export interface Situacion {
   titulo: string
   /** Vecinos que tienen que haber nacido y cosas que tienen que estar construidas. */
   requiere: { vecinos: CompaneroId[]; construido: string[] }
+  /** Si nace de un patrón de tu diario (logica/patrones.ts): solo empieza cuando el patrón se cumple. */
+  patron?: string
   fases: Fase[]
+  /** Lo que recuerdan los vecinos después, de vez en cuando, cuando ya ha terminado. */
+  ecos?: Partial<Record<CompaneroId, string[]>>
 }
 
-export const SITUACIONES: Situacion[] = [
+const SITUACIONES_DEL_BARRIO: Situacion[] = [
   {
     id: 'normativa',
     titulo: 'La normativa',
@@ -616,7 +623,7 @@ export const SITUACIONES: Situacion[] = [
   },
 ]
 
-export type ArteHuella = 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito'
+export type ArteHuella = 'corcho' | 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {
@@ -638,7 +645,7 @@ export interface Huella {
   toque?: string
 }
 
-export const HUELLAS: Huella[] = [
+const HUELLAS_DEL_BARRIO: Huella[] = [
   { id: 'cartel-fuego', situacion: 'normativa', desde: 0, hasta: 1, lugar: 'nox', arte: 'cartel', sitio: { x: 17, y: 51, ancho: 13 }, proporcion: 1.1,
     texto: 'PROHIBIDO\nEL FUEGO', toque: 'Debajo, en pequeñito: «art. 1. Firmado: Tuerca».' },
   { id: 'cartel-quemado', situacion: 'normativa', desde: 2, lugar: 'nox', arte: 'cartel-quemado', sitio: { x: 17, y: 51, ancho: 13 }, proporcion: 1.1,
@@ -724,3 +731,7 @@ export const FRASES_VISITA: Partial<Record<CompaneroId, string[]>> = {
   bruma: ['He venido a ver cómo estabas. Ya lo sé. No hace falta que me lo digas.', 'Qué casa tan llena de cosas. Y de ruido. Me quedo un poco.', 'No me hagas caso. Soy niebla de paso.'],
   madeja: ['¡Pasaba por aquí! Bueno, venía aposta. ¿Qué hay de nuevo?', 'Qué bonito lo tienes. ¿Quién te lo ha regalado? Cuéntamelo.', 'Me quedo un ratito. Un ratito largo.'],
 }
+
+/** Todas las historias: primero las que nacen de tu diario (tienen prioridad si su patrón se cumple). */
+export const SITUACIONES: Situacion[] = [...LECTURAS, ...SITUACIONES_DEL_BARRIO]
+export const HUELLAS: Huella[] = [...HUELLAS_DEL_BARRIO, ...HUELLAS_LECTURAS]

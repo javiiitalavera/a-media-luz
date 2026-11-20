@@ -85,7 +85,7 @@ export function momentosDeHistorias(antes: Partida, despues: Partida, ahora: Dat
   for (const s of SITUACIONES) {
     const e = despues.situaciones?.[s.id]
     if (!e?.fin || antes.situaciones?.[s.id]?.fin) continue
-    const ultima = faseDe(s, e.fase, e.decision)
+    const ultima = faseDe(s, e.fase, e.decision, e.datos)
     p = anadirMomento(p, {
       id: `historia-${s.id}`, fecha: ahora.toISOString(), titulo: s.titulo, texto: ultima.noticia,
       escena: fotoDe(p, ultima.lugar, ahora, 'base'),
