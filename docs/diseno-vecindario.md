@@ -557,3 +557,7 @@ Según la franja del día puedes encontrar al vecino ya ocupado con un mueble ex
 - **Se retira «Que no lean mi lista»** de Ajustes: el barrio siempre lee tu diario. Las partidas que lo tenían activado vuelven a leerse.
 - **El catálogo se queda como estaba** (Javi prefirió las versiones anteriores). Tras mirar otras apps de hábitos (Finch, Fabulous, Habitica…), el esfuerzo llega por **progresión**, no por un catálogo duro:
 - **Subir la meta** (`src/logica/subir.ts`, decidido por Javi, 20/11/2026): para cualquier reto fijo con número (del catálogo o propio), tras 10 días cumplido desde la última vez que se tocó, el vecino de su área propone subirlo un escalón (pasos +1000, páginas +5, minutos +5, otros números +25 %). Una propuesta al día como mucho; «Así está bien» la aparca 14 días. No se proponen los retos sin número ni las horas de sueño o los litros. La versión mínima no cambia. Sale en Retos y en la casa de ese vecino, si no hay antes un huevo que recoger ni un vecino pidiendo un reto de su área.
+
+### Lista de retos más compacta y sin mensaje al tachar (20/11/2026, rama `dev/retos-compactos`, decidido por Javi)
+- Las filas de la lista de retos ya no llevan el subtítulo del área (el icono ya la indica) y son más bajas: con 10 retos se ven todos de golpe en un móvil de 360 × 780.
+- Al tachar un reto ya no habla el vecino (cargaba de más). Solo sale un aviso cuando pasa algo que importa: un hallazgo, una subida de nivel, un proyecto que ya se puede construir, o que al desmarcar el material ya estaba gastado.
