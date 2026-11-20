@@ -470,7 +470,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
       </div>
 
       {/* Arriba: a la izquierda, al barrio (con aviso si pasa algo en otra casa); a la derecha, el sobre. */}
-      <header className={`pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))] ${ordenando ? 'hidden' : ''}`}>
+      <header data-tapa-globo className={`pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))] ${ordenando ? 'hidden' : ''}`}>
         <h1 className="sr-only">{conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre}</h1>
         <span className="pointer-events-auto relative">
           <BotonPastilla etiqueta={fuera === 'pregunta' ? UI.barrio.esperanFuera : fuera ? UI.barrio.hayAlgoFuera : undefined} onToque={onBarrio}>
