@@ -69,8 +69,9 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
           <p className="mt-1 text-[14px] text-texto-3">{UI.ofrendas.subtitulo}</p>
         </div>
         <div className="flex shrink-0 gap-1.5">
-          <button type="button" onClick={() => setHoja('sugerencias')} className="min-h-11 rounded-full bg-hundido px-3.5 text-[14px] font-semibold text-texto-2">
-            {TC.boton}
+          {/* Arriba y a la vista: apuntar algo para hoy (decidido por Javi, 20/11/2026). */}
+          <button type="button" onClick={() => setHoja('puntual')} className="min-h-11 rounded-full bg-ambar px-3.5 text-[14px] font-bold text-tinta shadow-sm">
+            + {UI.ofrendas.paraHoy}
           </button>
           <button type="button" onClick={() => setHoja('editar')} className="min-h-11 rounded-full bg-hundido px-3.5 text-[14px] font-semibold text-texto-2">
             {UI.ofrendas.editar}
@@ -105,8 +106,8 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
         <div className="border-t border-borde/60 px-4 py-2.5">
           <span className="block text-[14px] text-texto-3">{UI.ofrendas.hechas(hechas, mias.length)}</span>
           <div className="mt-2 grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => setHoja('puntual')} className="min-h-11 rounded-full border-2 border-borde px-3 text-[15px] font-semibold text-texto-2">
-              + {UI.ofrendas.paraHoy}
+            <button type="button" onClick={() => setHoja('sugerencias')} className="min-h-11 rounded-full border-2 border-borde px-3 text-[15px] font-semibold text-texto-2">
+              {TC.boton}
             </button>
             <button type="button" onClick={() => setHoja('algo')} className="min-h-11 rounded-full border-2 border-borde px-3 text-[15px] font-semibold text-texto-2">
               + {UI.ofrendas.algoMas}

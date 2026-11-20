@@ -404,3 +404,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Al abrir, el barrio (20/11/2026, rama `dev/abrir-en-barrio`; sustituye a «Al entrar, la última casa»)
 - Al abrir la app se empieza en el barrio si ya hay dos vecinos o más; mientras solo hay uno, en su casa. Al cambiar de pestaña y volver a Inicio, sigues donde te quedaste.
+
+### «Para hoy» arriba (20/11/2026, rama `dev/para-hoy-arriba`)
+- En Retos, «+ Para hoy» va arriba, junto a «Editar», en ámbar para que se vea. «Sugerencias» baja junto a «+ Algo más».
