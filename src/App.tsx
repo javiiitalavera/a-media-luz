@@ -148,7 +148,7 @@ export default function App() {
           <p className="mt-1 text-[15px] leading-snug text-texto">{contextoVisita.texto}</p>
         </aside>
       )}
-      {sobre && <Novedades partida={partida} ahora={ahora} lugarActual={lugarActual} onVisitar={visitarNovedad} onCerrar={() => setSobre(false)} />}
+      {sobre && <Novedades partida={partida} ahora={ahora} onVisitar={visitarNovedad} onCerrar={() => setSobre(false)} />}
       <Sonido momento={momento} apagada={false} />
       <Entrada noche={noche} />
       <GloboFlotante />

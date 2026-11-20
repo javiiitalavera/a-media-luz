@@ -9,10 +9,9 @@ import { dia, diasEntre, sumarDias } from './fechas'
 import { misHazanas } from './hazanas'
 import { nivelSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
 import { estadoDelMes, mesActual, mesesDe } from './meses'
-import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
 import type { MomentoAlbum } from './momentos'
-import { decisionPendiente, dondeGregorio, faseDe, huellasEn, microDeHoy } from './situaciones'
+import { decisionPendiente, dondeGregorio, huellasEn, microDeHoy } from './situaciones'
 import { expuesto } from './colocar'
 import { azarConSemilla } from './azar'
 
@@ -29,22 +28,10 @@ function noticiasRecientes(p: Partida, ahora: Date): NoticiaBarrio[] {
   return (p.noticias ?? []).filter((n) => dia(n.fecha) >= desde && new Date(n.fecha) <= ahora)
 }
 
-/** La noticia que planteó una decisión se muestra en su tarjeta. Las decisiones esperan lo que haga falta. */
+/** Las fases viven en Crónicas. Los mensajes antiguos del diario llevan la firma del vecino. */
 export function noticiasDelSobre(p: Partida, ahora: Date) {
-  const decisiones = decisionesPendientes(p, ahora)
-  return noticiasRecientes(p, ahora).filter((n) => !decisiones.some((d) =>
-    d.lugar === n.lugar && d.dia === dia(n.fecha) && d.contexto === n.texto))
-}
-
-/** Solo se puede ir a ver una escena si el barrio sigue en esa fase de la historia. */
-export function puedeVisitarNoticia(p: Partida, n: NoticiaBarrio): boolean {
-  const fecha = dia(n.fecha)
-  return SITUACIONES.some((s) => {
-    const e = p.situaciones?.[s.id]
-    if (!e || e.dia !== fecha) return false
-    const f = faseDe(s, e.fase, e.decision, e.datos)
-    return !f.decision && f.lugar === n.lugar && f.noticia === n.texto
-  })
+  return noticiasRecientes(p, ahora).filter((n) => n.origen ? n.origen === 'diario'
+    : n.lugar !== 'barrio' && n.texto.startsWith(`${COMPANEROS[n.lugar].nombre}: «`))
 }
 
 export const noticiasSinLeer = (p: Partida, ahora: Date) => noticiasDelSobre(p, ahora).filter((n) => !n.leida).length
@@ -52,7 +39,7 @@ export const noticiasSinLeer = (p: Partida, ahora: Date) => noticiasDelSobre(p, 
 export const pendientesDelSobre = (p: Partida, ahora: Date) => noticiasSinLeer(p, ahora) + decisionesPendientes(p, ahora).length
 /** Abrir el sobre da por leída la actualidad, también la que aparece junto a una pregunta pendiente. */
 export function leerNoticias(p: Partida, ahora: Date): Partida {
-  const nuevas = new Set(noticiasRecientes(p, ahora).filter((n) => !n.leida))
+  const nuevas = new Set(noticiasDelSobre(p, ahora).filter((n) => !n.leida))
   return nuevas.size ? { ...p, noticias: p.noticias?.map((n) => nuevas.has(n) ? { ...n, leida: true } : n) } : p
 }
 /** Entrar en un sitio apaga su «!»; las novedades siguen sin leer en el sobre hasta que lo abres
@@ -63,9 +50,6 @@ export function visitarLugar(p: Partida, lugar: Lugar): Partida {
     ? { ...p, noticias: n.map((x) => (x.lugar === lugar ? { ...x, visitada: true } : x)) } : p
 }
 
-const escenaSinVisitar = (p: Partida, lugar: Lugar, ahora: Date) =>
-  noticiasRecientes(p, ahora).some((n) => n.lugar === lugar && !n.visitada && puedeVisitarNoticia(p, n))
-
 /** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
 export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
   if (!nacido(p, c, ahora)) return false
@@ -75,7 +59,7 @@ export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolea
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
 export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
   (c === mesActual(p).companero && (estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0)) ||
-  escenaSinVisitar(p, c, ahora) || Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
+  Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
 
 /** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
 export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
@@ -166,7 +150,7 @@ export function decisionesPendientes(p: Partida, ahora: Date): { lugar: Companer
 export function avisoFuera(p: Partida, casa: CompaneroId, ahora: Date): 'pregunta' | 'punto' | null {
   if (decisionesPendientes(p, ahora).some((d) => d.lugar !== casa)) return 'pregunta'
   const otras = mesesDe(p).map((m) => m.companero).filter((c) => c !== casa)
-  if (otras.some((c) => avisoEnCasa(p, c, ahora)) || escenaSinVisitar(p, 'barrio', ahora)) return 'punto'
+  if (otras.some((c) => avisoEnCasa(p, c, ahora))) return 'punto'
   return null
 }
 

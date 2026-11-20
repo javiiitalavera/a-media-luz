@@ -545,3 +545,6 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 ### Tono de las conversaciones
 
 En los saludos, el paseo y las reacciones a retos alternamos respuestas breves, observaciones de la escena y pullas ocasionales al jugador. El chiste sale de tomarse en serio un problema ridículo o dejar que alguien se contradiga. En los días malos y al volver se puede hacer humor sobre lo que pasa en la casa. Las horas o los retos pendientes sirven de contexto para hablar, sin convertir la conversación en un recordatorio de tareas.
+
+### Merendar y pasar el rato en casa
+Cada vecino acepta su merienda desde que sale del huevo. Si hoy has registrado un reto de su área, recibe un segundo bocado. Merendar es un gesto libre, sin contador, coste ni recompensa. Cuando lo dejas tranquilo, se acerca a alguno de sus muebles construidos y expuestos. El sobre conserva las decisiones pendientes y los comentarios del diario. Las fases de las historias se consultan en las Crónicas.

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, UI } from '../contenido'
 import type { Lugar } from '../contenido/situaciones'
-import { decisionesPendientes, leerNoticias, noticiasDelSobre, puedeVisitarNoticia } from '../logica/avisos'
+import { decisionesPendientes, leerNoticias, noticiasDelSobre } from '../logica/avisos'
 import { dia, diasEntre } from '../logica/fechas'
 import type { NoticiaBarrio, Partida } from '../logica/partida'
 import { sfx } from '../sonido'
@@ -11,8 +11,8 @@ import { useJuego } from '../estado/juego'
 const clave = (n: NoticiaBarrio) => `${n.fecha}|${n.lugar}|${n.texto}`
 export const nombreDelLugar = (lugar: Lugar) => lugar === 'barrio' ? UI.barrio.titulo : UI.barrio.casaDe(COMPANEROS[lugar].nombre)
 
-export function Novedades({ partida, ahora, lugarActual, onVisitar, onCerrar }: {
-  partida: Partida; ahora: Date; lugarActual: Lugar | null
+export function Novedades({ partida, ahora, onVisitar, onCerrar }: {
+  partida: Partida; ahora: Date
   onVisitar: (lugar: Lugar, contexto: string, situacion?: string) => void
   onCerrar: () => void
 }) {
@@ -62,10 +62,7 @@ export function Novedades({ partida, ahora, lugarActual, onVisitar, onCerrar }: 
                     <span>{UI.barrio.cuando(diasEntre(dia(n.fecha), dia(ahora)))}</span>
                   </div>
                   <p className="mt-1 text-[15px] leading-snug">{n.texto}</p>
-                  {lugarActual !== n.lugar && puedeVisitarNoticia(partida, n) && (
-                    <button type="button" onClick={() => onVisitar(n.lugar, n.texto)}
-                      className="mt-2 min-h-11 w-full rounded-xl bg-hundido px-3 text-left text-[14px] font-semibold">{UI.barrio.verEscena(nombre)} ›</button>
-                  )}
+
                 </li>
               )
             })}

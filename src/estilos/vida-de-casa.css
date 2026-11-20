@@ -325,3 +325,46 @@
   58% { transform: translateY(13%) rotate(-24deg); }
   72%, 100% { transform: rotate(-17deg); }
 }
+
+.vecino-en-casa { transition: left 1.25s ease-in-out, top 1.25s ease-in-out, width .8s ease; }
+[data-usando] { transform-origin: 50% 94%; animation: atender-mueble 2s 1.2s 2; }
+[data-usando="cojin"], [data-usando="hamaca"], [data-usando="mecedora"] { animation-name: acomodarse; }
+@keyframes atender-mueble { 45%, 65% { transform: rotate(-7deg) translateY(2%); } }
+@keyframes acomodarse { 50%, 80% { transform: rotate(8deg) scaleY(.93); } }
+[data-merendando] { transform-origin: 50% 95%; animation: masticar .48s .6s 3; }
+@keyframes masticar { 50% { transform: scale(1.035,.955) rotate(-2deg); } }
+.bocado-en-casa { position: absolute; z-index: 2; top: 53%; left: 43%; pointer-events: none; }
+.muestra-bocado { position: relative; width: 18px; height: 18px; }
+.bocado-en-casa i, .muestra-bocado i { display: block; width: 17px; height: 15px; border: 2px solid #795039; border-radius: 45%; background: #e5b26d; }
+[data-forma="galleta"] i { background: radial-gradient(circle at 32% 34%, #83513a 1px, transparent 2px), radial-gradient(circle at 67% 67%, #83513a 1px, transparent 2px), #e5b26d; }
+[data-forma="tostada"] i { border-radius: 48% 48% 22% 22%; box-shadow: inset 0 0 0 2px #c68e57; }
+[data-forma="semillas"] i { width: 11px; height: 14px; background: #b1bd77; border-radius: 90% 15% 80% 22%; }
+[data-forma="baya"] i { background: radial-gradient(circle at 35% 30%, #e5b0ca 1px, transparent 3px), #98547e; }
+[data-forma="aceite"] i { background: #e7b747; border-radius: 80% 10% 65% 55%; transform: rotate(-38deg); }
+.bocado-en-casa i { position: absolute; animation: acercar-bocado 1.15s both; }
+.bocado-en-casa i + i { animation-delay: .65s; }
+@keyframes acercar-bocado {
+  0% { opacity: 0; transform: translate(22px,12px) rotate(15deg); }
+  28%, 68% { opacity: 1; }
+  100% { opacity: 0; transform: translate(0,-2px) scale(.45); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vecino-en-casa { transition: none; }
+  [data-merendando], [data-usando] { animation: none; }
+  .bocado-en-casa i { animation: none; }
+  .bocado-en-casa i + i { left: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-mueble-en-uso] { transform-origin: 50% 90%; animation: roce-de-mueble 1.3s 1.4s 2; }
+  @keyframes roce-de-mueble { 35% { transform: rotate(2deg); } 55% { transform: rotate(-1deg); } }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-usando="libros"], [data-usando="maceta"] { animation-name: mirar-de-cerca; }
+  [data-usando="caja"], [data-usando="cajonera"] { animation-name: tirar-del-cajon; }
+  [data-usando="cesto"] { animation-name: rebuscar; }
+  [data-usando="tetera"] { animation-name: soplar; }
+  @keyframes mirar-de-cerca { 35%, 75% { transform: translateY(5%) rotate(-10deg); } 85% { transform: rotate(3deg); } }
+  @keyframes tirar-del-cajon { 30%, 65% { transform: skewX(-6deg) scaleY(.96); } 72% { transform: translateY(-6%) rotate(5deg); } }
+  @keyframes rebuscar { 25%, 65% { transform: rotate(7deg) scaleY(.95); } 45% { transform: rotate(-3deg); } }
+  @keyframes soplar { 45%, 80% { transform: translateY(-4%) rotate(5deg); } }
+}

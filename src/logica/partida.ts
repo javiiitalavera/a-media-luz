@@ -75,6 +75,7 @@ export interface EstadoSituacion {
 }
 
 export interface NoticiaBarrio {
+  origen?: 'diario' | 'cronica'
   texto: string
   lugar: Lugar
   fecha: string

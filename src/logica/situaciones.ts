@@ -89,7 +89,7 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
   const f = faseDe(s, nuevo.fase, nuevo.decision, nuevo.datos)
   // Una fase sin noticia (el remate) no avisa en el sobre: se descubre paseando por el barrio o entrando en una casa.
   if (!f.noticia) return { partida: { ...p, situaciones: { ...est, [s.id]: nuevo } }, nuevas: [] }
-  const noticia: NoticiaBarrio = { texto: f.noticia, lugar: f.lugar, fecha: ahora.toISOString() }
+  const noticia: NoticiaBarrio = { origen: 'cronica', texto: f.noticia, lugar: f.lugar, fecha: ahora.toISOString() }
   return {
     partida: { ...p, situaciones: { ...est, [s.id]: nuevo }, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) },
     nuevas: [noticia],
