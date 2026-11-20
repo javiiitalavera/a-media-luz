@@ -438,3 +438,4 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
   - **Bruma:** tarro de luciérnagas, columpio en el embarcadero, cometa de nube (colgada), lámpara de loto flotando, manta en la piedra y farolillo de papel (colgado).
   Cada uno con su frase al tocarlo y su sonido. Con esto las casas tienen de 9 a 16 proyectos.
 - **Proyectos del barrio:** después del puente, también de uno en uno: fuente, tablón del barrio, columpio, pérgola con farolillos, horno del barrio y buzón. Se ven en el mapa alrededor de la plaza, cuentan algo al tocarlos y salen en las fotos del Álbum. Sus ids no coinciden con los de las casas (`tablon-plaza`, `horno-plaza`…).
+- **Curiosidades de Bruma:** ocho que encuentra por sorpresa al tachar retos de Calma (gota de rocío, pluma lila, concha vacía, nube en una cajita, piedra de río, loto cerrado, reloj de arena y llave de cristal).

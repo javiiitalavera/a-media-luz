@@ -39,7 +39,15 @@ export const CURIOSIDADES: Curiosidad[] = [
   { id: 'libro-quemado', vecino: 'tofu', nombre: 'Libro chamuscado', arte: h('libro-quemado'), historia: 'prestamo', texto: '«Paciencia». Lo que queda de ella. Tofu dice que ahora tiene más carácter.' },
   { id: 'lupa', vecino: 'tofu', nombre: 'Lupa de Tuerca', arte: h('lupa'), historia: 'planta', texto: 'Se la dejó en casa de Tofu durante el interrogatorio. Huele a planta.' },
   { id: 'archivador', vecino: 'tofu', nombre: 'Archivador «Fórmulas»', arte: h('archivador'), historia: 'pizarra', texto: 'Dentro, la fórmula versión 1. Derogada. Archivada. Intacta.' },
-  // Bruma (por ahora solo las que dejan sus historias)
+  // Bruma
+  { id: 'rocio', vecino: 'bruma', nombre: 'Gota de rocío gigante', arte: c('rocio'), texto: 'La encontró al amanecer. No se evapora. Bruma dice que es de las que se quedan.' },
+  { id: 'pluma', vecino: 'bruma', nombre: 'Pluma lila', arte: c('pluma'), texto: 'No es de ningún pájaro del barrio. Bruma dice que es de una nube que pasó deprisa.' },
+  { id: 'concha', vecino: 'bruma', nombre: 'Concha vacía', arte: c('concha'), texto: 'Era del caracol que se instaló en el estanque. Se mudó. Dejó la casa limpia.' },
+  { id: 'nube-cajita', vecino: 'bruma', nombre: 'Nube en una cajita', arte: c('nube-cajita'), texto: 'Un trozo de Bruma de un día bueno. Lo guarda por si vienen días malos.' },
+  { id: 'piedra-rio', vecino: 'bruma', nombre: 'Piedra de río', arte: c('piedra-rio'), texto: 'Lisa de tanto dejar pasar el agua. Bruma la toca cuando necesita calma. Funciona.' },
+  { id: 'loto-cerrado', vecino: 'bruma', nombre: 'Loto cerrado', arte: c('loto-cerrado'), texto: 'Se abrirá cuando quiera. Bruma no tiene prisa. El loto, menos.' },
+  { id: 'reloj-arena', vecino: 'bruma', nombre: 'Reloj de arena', arte: c('reloj-arena'), texto: 'Bruma le da la vuelta cuando alguien tiene prisa. Nadie sabe para qué. Funciona.' },
+  { id: 'llave-cristal', vecino: 'bruma', nombre: 'Llave de cristal', arte: c('llave-cristal'), texto: 'No abre nada. Bruma dice que abre algo que todavía no existe.' },
   { id: 'frasco', vecino: 'bruma', nombre: 'Frasco de niebla', arte: b('frasco'), historia: 'frasco', texto: 'Vacío. La etiqueta dice «Muestra 1. VARIOS». Tuerca jura que no lo abre por las noches.' },
   { id: 'paraguas', vecino: 'bruma', nombre: 'Paraguas de interior', arte: b('paraguas'), historia: 'hamaca', texto: 'Tuerca lo abrió en el taller por si Bruma lloraba. Sigue abierto. Por si acaso.' },
   { id: 'barquito', vecino: 'bruma', nombre: 'Barquito de papel', arte: b('barquito'), historia: 'barquitos', texto: 'Dentro pone «Sí». Tardaron tres horas en escribirlo. Tofu dice que no es suyo.' },
