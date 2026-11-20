@@ -364,4 +364,5 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - Al abrir la app (y al tocar Inicio) se abre la casa del último vecino en llegar, aunque ya haya barrio. El barrio se abre con su botón, arriba a la izquierda; su flecha devuelve a la casa de la que venías.
 
 ### La celebración sale del vecino (20/11/2026, rama `dev/celebracion-en-escena`)
+- Las escenitas de un objeto colgado (las campanillas de Bruma) salen del vecino: el objeto queda tan arriba que el globo parecía un aviso.
 - «¡Ha salido…!» y «… ya es joven/adulto» ya no salen en una franja arriba: aparecen sobre el vecino, encima de lo que dice. En la casa ya no queda ningún mensaje fijo arriba; todo sale del vecino, de la visita o del objeto.

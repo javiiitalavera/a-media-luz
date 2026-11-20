@@ -118,8 +118,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const microVisible = Boolean(micro)
   const verCosita = () => {
     if (!micro) return
-    // Sale de la visita, del objeto del que va o, si no, del propio vecino.
-    setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO)))
+    // Sale de la visita, del objeto del que va (si está en el suelo: los colgados quedan arriba, junto a la
+    // cabecera, y parecería un aviso) o, si no, del propio vecino.
+    setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO && !o.sitio.colgado)))
     ajustar((p) => verMicro(p, DUENO, ahora))
   }
   const [decisionAbierta, setDecisionAbierta] = useState(abrirDecision)
@@ -380,7 +381,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         {nota && !habla && !celebra && (() => {
           const o = typeof nota.de === 'string' && nota.de !== 'vecino' && nota.de !== 'visita' ? objetos.find((x) => x.id === nota.de) : undefined
           const sv = nota.de === 'visita' && deVisita ? sitioVisita(DUENO, deVisita) : undefined
-          const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 7 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
+          const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 1 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
             : sv ? { x: sv.x, y: sv.y - alto(sv.ancho, 1) - 1, abajo: false }
             : { x: NOX.x, y: NOX.y - altoNox - 1, abajo: false }
           // Que no se salga por los lados: el globo se centra en el punto pero se queda dentro de la pantalla.
