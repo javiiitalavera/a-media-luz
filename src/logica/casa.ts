@@ -75,12 +75,18 @@ export const proyectosHechos = (p: Partida, c: CompaneroId) => proyectosDe(c).fi
 export const puedeConstruir = (p: Partida, o: ObjetoCasa, ahora: Date) =>
   proyectosVisibles(p, o.companero).some((x) => x.id === o.id) && !construido(p, o.id) && Object.keys(faltan(p, o, ahora)).length === 0
 
+/** Proyectos del barrio que se ven: los hechos y el siguiente (de uno en uno, como los de las casas). */
+export function proyectosBarrioVisibles(p: Partida) {
+  const siguiente = PROYECTOS_BARRIO.findIndex((b) => !construido(p, b.id))
+  return siguiente < 0 ? PROYECTOS_BARRIO : PROYECTOS_BARRIO.slice(0, siguiente + 1)
+}
+
 /** Construye un proyecto personal (o del barrio, si `barrio`) si se puede; si no, devuelve null. */
 export function construir(p: Partida, id: string, ahora: Date, barrioDisponible = false): Partida | null {
   const o = OBJETOS_CASA.find((x) => x.id === id)
   const b = PROYECTOS_BARRIO.find((x) => x.id === id)
   const ok = o ? puedeConstruir(p, o, ahora)
-    : b ? barrioDisponible && !construido(p, b.id) && Object.keys(faltan(p, b, ahora)).length === 0
+    : b ? barrioDisponible && proyectosBarrioVisibles(p).some((x) => x.id === b.id) && !construido(p, b.id) && Object.keys(faltan(p, b, ahora)).length === 0
     : false
   if (!ok) return null
   return { ...p, construcciones: [...(p.construcciones ?? []), { objetoId: id, fecha: ahora.toISOString() }] }

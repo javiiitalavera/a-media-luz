@@ -17,6 +17,7 @@ export type ClaveArte =
   | `casita/${Id}`
   | 'barrio/mapa'
   | 'barrio/puente'
+  | `barrio/proyecto/${string}`
   | `huella/${ArteHuella}`
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
@@ -29,15 +30,16 @@ const objetos = (c: Id, ids: string[]) => Object.fromEntries(ids.map((i) => [`ca
 
 export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casa/nox/fondo': '/arte/casa/nox/fondo.webp',
-  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta', 'zapatillas', 'bufanda', 'farol-luna', 'horno']),
+  ...objetos('nox', ['hoguera', 'farolillo', 'banco', 'cojin', 'estanteria', 'seta', 'zapatillas', 'bufanda', 'farol-luna', 'horno', 'saco', 'mancuernas', 'comba', 'parrilla', 'colchoneta', 'bici']),
   'huevo/nox/cerrado': '/arte/huevos/nox/cerrado.webp',
   'huevo/nox/agrietado': '/arte/huevos/nox/agrietado.webp',
   'casa/tuerca/fondo': '/arte/casa/tuerca/fondo.webp',
-  ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj', 'medalla', 'tablon', 'tuerquita']),
+  ...objetos('tuerca', ['caja', 'aspiradora', 'flexo', 'cajonera', 'estanteria-tarros', 'reloj', 'medalla', 'tablon', 'tuerquita', 'archivador', 'maquina', 'corcho', 'balanza', 'lampara', 'cajas']),
   'huevo/tuerca/cerrado': '/arte/huevos/tuerca/cerrado.webp',
   'huevo/tuerca/agrietado': '/arte/huevos/tuerca/agrietado.webp',
   'barrio/mapa': '/arte/barrio/mapa.webp',
   'barrio/puente': '/arte/barrio/puente.webp',
+  ...Object.fromEntries(['fuente', 'tablon', 'columpio', 'pergola', 'horno', 'buzon'].map((b) => [`barrio/proyecto/${b}`, `/arte/barrio/proyectos/${b}.webp`])),
   ...Object.fromEntries(['cartel', 'cartel-quemado', 'extintor', 'expediente', 'puente', 'libro-quemado', 'archivador', 'lupa'].map((h) => [`huella/${h}`, `/arte/huellas/${h}.webp`])),
   // Huellas que reutilizan otros dibujos.
   'huella/salchicha': '/arte/curiosidades/salchicha.webp',
@@ -46,7 +48,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casita/tuerca': '/arte/casitas/tuerca.webp',
   'casa/tofu/fondo': '/arte/casa/tofu/fondo.webp',
   ...personaje('tofu'),
-  ...objetos('tofu', ['libros', 'pizarra', 'maceta']),
+  ...objetos('tofu', ['libros', 'pizarra', 'maceta', 'telescopio', 'globo', 'atril', 'caballete', 'ajedrez', 'gramofono']),
   'huevo/tofu/cerrado': '/arte/huevos/tofu/cerrado.webp',
   'huevo/tofu/agrietado': '/arte/huevos/tofu/agrietado.webp',
   'casita/tofu': '/arte/casitas/tofu.webp',
@@ -59,7 +61,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'huevo/madeja/cerrado': '/arte/huevos/madeja/cerrado.webp',
   'huevo/madeja/agrietado': '/arte/huevos/madeja/agrietado.webp',
   ...personaje('bruma'),
-  ...objetos('bruma', ['tetera', 'campanillas', 'hamaca', 'frasco', 'paraguas', 'barquito']),
+  ...objetos('bruma', ['tetera', 'campanillas', 'hamaca', 'frasco', 'paraguas', 'barquito', 'tarro', 'columpio', 'cometa', 'loto', 'manta', 'farol-papel']),
   'huevo/bruma/cerrado': '/arte/huevos/bruma/cerrado.webp',
   'huevo/bruma/agrietado': '/arte/huevos/bruma/agrietado.webp',
   // Huellas de las historias de Bruma (sus propios objetos).
