@@ -149,6 +149,8 @@ body {
 /* Avisos: laten suave hasta que los tocas. Las huellas nuevas brillan. */
 @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 .anim-latido { animation: latido 1.6s ease-in-out infinite; }
+@keyframes aviso-entra { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
+.anim-aviso { animation: aviso-entra 420ms ease-out both; }
 @keyframes brillo-nuevo { 0%, 100% { filter: drop-shadow(0 0 0 #ffd27a00); } 50% { filter: drop-shadow(0 0 7px #ffd27a) drop-shadow(0 0 2px #fff3b0); } }
 .anim-nuevo { animation: brillo-nuevo 1.8s ease-in-out infinite; }
 
@@ -378,7 +380,7 @@ body {
   .anim-asoma { animation: gag-quieto 4s linear both; }
   .animate-entrar, .animate-aparecer { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
-  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
+  .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-aviso, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
 
 /* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */

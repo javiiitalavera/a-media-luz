@@ -3,6 +3,10 @@ export const UI = {
   app: 'A media luz',
   nav: { inicio: 'Inicio', ofrendas: 'Retos', album: 'Álbum', ajustes: 'Ajustes' },
   barrio: {
+    decidir: 'Decidir',
+    nueva: 'nueva',
+    hayAlgoFuera: 'Barrio (hay novedades fuera de esta casa)',
+    esperanFuera: 'Barrio (otro vecino espera tu decisión)',
     volverA: (nombre: string) => `Volver con ${nombre}`,
     titulo: 'Barrio',
     proyectos: 'Proyectos',

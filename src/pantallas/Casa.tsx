@@ -29,7 +29,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
-import { fichaNueva, gagDeHoy, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { avisoFuera, fichaNueva, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
@@ -58,9 +58,11 @@ function useTamano() {
 }
 
 
-export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDecision = false, onDecisionAbierta }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNovedades, abrirDecision = false, onDecisionAbierta }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
   onBarrio: () => void
+  /** Abre el sobre («Mientras no estabas…»). */
+  onNovedades: () => void
   /** Venir del sobre a decidir: la pregunta sale abierta. */
   abrirDecision?: boolean; onDecisionAbierta?: () => void
 }) {
@@ -118,8 +120,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const microVisible = Boolean(micro)
   const verCosita = () => {
     if (!micro) return
-    // Sale de la visita, del objeto del que va o, si no, del propio vecino.
-    setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO)))
+    // Sale de la visita, del objeto del que va (si está en el suelo: los colgados quedan arriba, junto a la
+    // cabecera, y parecería un aviso) o, si no, del propio vecino.
+    setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO && !o.sitio.colgado)))
     ajustar((p) => verMicro(p, DUENO, ahora))
   }
   const [decisionAbierta, setDecisionAbierta] = useState(abrirDecision)
@@ -251,6 +254,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
   const deVisita = (microVisible && micro?.visita) || visitante(partida, DUENO, ahora)
   const otroHuevo = esUltimo && vivo ? huevoDisponible(partida, ahora, ORDEN_COMPANEROS.filter(tieneMes)) : null
   const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
+  const fuera = avisoFuera(partida, DUENO, ahora)
+  const pendientes = pendientesDelSobre(partida, ahora)
   // Lo de abajo se pinta delante: se ordena por la altura de los pies.
   const capas = [...objetos.map((o) => ({ y: o.sitio.colgado ? 0 : o.sitio.y, o })), { y: NOX.y, o: null }].sort((a, b) => a.y - b.y)
   // Alto (en % del fondo) de algo que ocupa `ancho` % del ancho con esa proporción.
@@ -380,7 +385,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         {nota && !habla && !celebra && (() => {
           const o = typeof nota.de === 'string' && nota.de !== 'vecino' && nota.de !== 'visita' ? objetos.find((x) => x.id === nota.de) : undefined
           const sv = nota.de === 'visita' && deVisita ? sitioVisita(DUENO, deVisita) : undefined
-          const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 7 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
+          const p = o ? { x: o.sitio.x, y: o.sitio.colgado ? o.sitio.y + alto(o.sitio.ancho, o.proporcion) + 1 : o.sitio.y - alto(o.sitio.ancho, o.proporcion) - 1, abajo: Boolean(o.sitio.colgado) }
             : sv ? { x: sv.x, y: sv.y - alto(sv.ancho, 1) - 1, abajo: false }
             : { x: NOX.x, y: NOX.y - altoNox - 1, abajo: false }
           // Que no se salga por los lados: el globo se centra en el punto pero se queda dentro de la pantalla.
@@ -397,23 +402,42 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
             </div>
           )
         })()}
-        {habla && (
-          <div key={habla.n} role="status" className="absolute z-30"
+        {/* Sobre el vecino: la celebración (nace o crece) y, debajo, lo que dice. Todo sale de él. */}
+        {(habla || celebra) && (
+          <div key={`${habla?.n ?? ''}-${celebra ?? ''}`} role="status" className="absolute z-30 flex flex-col items-center gap-2"
             style={{ left: `${NOX.x}%`, top: `${NOX.y - altoNox - 1}%`, width: Math.min(w - 48, 290), transform: 'translate(-50%, -100%)' }}>
-            <div className="animate-entrar relative mx-auto w-fit rounded-[22px] bg-tarjeta px-3.5 py-2 text-center text-[15px] leading-snug text-texto shadow-md">
-              {habla.texto}
-              <span aria-hidden className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-tarjeta" />
-            </div>
+            {celebra && (
+              <span className="animate-entrar rounded-full bg-ambar px-4 py-2 text-[16px] font-bold whitespace-nowrap text-tinta shadow-lg">
+                {nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}
+              </span>
+            )}
+            {habla && (
+              <div className="animate-entrar relative mx-auto w-fit rounded-[22px] bg-tarjeta px-3.5 py-2 text-center text-[15px] leading-snug text-texto shadow-md">
+                {habla.texto}
+                <span aria-hidden className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-tarjeta" />
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Arriba a la izquierda: al barrio. */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
+      {/* Arriba: a la izquierda, al barrio (con aviso si pasa algo en otra casa); a la derecha, el sobre. */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <h1 className="sr-only">{conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre}</h1>
-        <span className="pointer-events-auto">
-          <BotonPastilla onToque={onBarrio}><Icono d={visita ? ICONOS.atras : ICONOS.mapa} tam={22} />{UI.casa.alBarrio}</BotonPastilla>
+        <span className="pointer-events-auto relative">
+          <BotonPastilla etiqueta={fuera === 'pregunta' ? UI.barrio.esperanFuera : fuera ? UI.barrio.hayAlgoFuera : undefined} onToque={onBarrio}>
+            <Icono d={visita ? ICONOS.atras : ICONOS.mapa} tam={22} />{UI.casa.alBarrio}
+          </BotonPastilla>
+          {fuera === 'pregunta' ? <span className="pointer-events-none absolute -top-2 -right-2"><Aviso tipo="pregunta" tam={22} /></span>
+            : fuera && <Punto className="pointer-events-none absolute -top-0.5 -right-0.5" />}
         </span>
+        {pendientes > 0 && (
+          <span className="pointer-events-auto">
+            <BotonRedondo etiqueta={UI.barrio.abrirNovedades(pendientes)} onToque={onNovedades}>
+              <Aviso tipo="sobre" tam={34} numero={pendientes} />
+            </BotonRedondo>
+          </span>
+        )}
       </header>
 
       {/* Abajo: materiales y construir, encima de la navegación. */}
@@ -439,11 +463,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, abrirDec
         </div>
       </div>
 
-      {celebra && (
-        <div role="status" className="animate-entrar absolute inset-x-0 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+76px)] z-30 flex justify-center px-4">
-          <span className="rounded-full bg-ambar px-5 py-2.5 text-[16px] font-bold text-tinta shadow-lg">{nacer || g.etapa === 0 ? UI.casa.nacio(COMPANEROS[DUENO].nombre) : UI.casa.crecio(COMPANEROS[DUENO].nombre, UI.casa.etapas[g.etapa])}</span>
-        </div>
-      )}
 
       {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} fase={r.fase} faltanParaArreglar={r.faltanParaArreglar} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
       {nacer === 'ficha' && <Ficha c={DUENO} partida={partida} onCerrar={() => { setNacer(null); presentar() }} />}

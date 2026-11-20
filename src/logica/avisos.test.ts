@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fichaNueva, hayAlgoEnInicio, hayAlgoQueHacer, verFicha, gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
+import { avisoFuera, decisionesPendientes, noticiasDelSobre, pendientesDelSobre, fichaNueva, hayAlgoEnInicio, hayAlgoQueHacer, verFicha, gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -90,5 +90,35 @@ describe('avisos', () => {
     p = verFicha(p, 'nox')
     p = avanzar(p, en('2026-01-07', 10)).partida // empieza «La normativa»
     expect(fichaNueva(p, 'nox')).toBe(true)
+  })
+
+  it('una decisión cuenta una vez en el sobre, con la noticia que la planteó como contexto', () => {
+    let p = barrio(['aspiradora'])
+    for (const d of ['07', '08', '09']) p = avanzar(p, en(`2026-01-${d}`, 10)).partida // Gregorio llega a la custodia
+    const ahora = en('2026-01-09', 12)
+    const [d] = decisionesPendientes(p, ahora)
+    expect(d.lugar).toBe('nox')
+    expect(d.contexto).toMatch(/custodia/)
+    expect(noticiasDelSobre(p, ahora).map((n) => n.texto)).not.toContain(d.contexto)
+    expect(pendientesDelSobre(p, ahora)).toBe(3) // dos noticias anteriores + la decisión (no cuatro)
+    p = leerNoticias(p)
+    expect(pendientesDelSobre(p, ahora)).toBe(1) // la decisión sigue esperando
+  })
+
+  it('entrar en una casa apaga su «!» pero no da las noticias por leídas', () => {
+    let p = avanzar(barrio(['hoguera']), en('2026-01-07', 10)).partida
+    p = visitarLugar(p, 'nox')
+    expect(avisoEnCasa(p, 'nox', en('2026-01-07', 10))).toBe(false)
+    expect(noticiasSinLeer(p)).toBe(1)
+  })
+
+  it('el botón Barrio de una casa avisa de lo que pasa en las otras («?» si esperan una decisión)', () => {
+    let p = barrio(['aspiradora'])
+    for (const d of ['07', '08', '09']) p = avanzar(p, en(`2026-01-${d}`, 10)).partida
+    const ahora = en('2026-01-09', 12)
+    expect(avisoFuera(p, 'tuerca', ahora)).toBe('pregunta') // la decisión es en casa de Nox
+    expect(avisoFuera(p, 'nox', ahora)).toBe('punto') // en el taller pasó algo que no has visto
+    p = visitarLugar(p, 'tuerca')
+    expect(avisoFuera(p, 'nox', ahora)).toBeNull()
   })
 })

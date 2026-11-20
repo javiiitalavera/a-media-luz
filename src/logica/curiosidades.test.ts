@@ -61,4 +61,16 @@ describe('curiosidades', () => {
     expect(p.vistos?.pina).toBe('aqui')
     expect(curiosidadesTenidas(p).map((x) => x.c.id)).toEqual(['pina'])
   })
+
+  it('al pasar a leer las crónicas de una en una, las ya leídas no vuelven a avisar', () => {
+    // Partida con el aviso antiguo: lo leído se sabía por la fecha en que se miraron las Crónicas.
+    let p = barrio(['hoguera'])
+    p = { ...p, situaciones: { normativa: { fase: 2, dia: '2026-01-05', fin: true }, tablon: { fase: 0, dia: '2026-01-10' } },
+      vistos: { albumSec: { cronicas: en('2026-01-08').toISOString() } } }
+    expect(cronicaNueva(p, 'normativa')).toBe(false)
+    expect(cronicaNueva(p, 'tablon')).toBe(true)
+    p = verCronica(p, 'tablon')
+    expect(cronicaNueva(p, 'normativa')).toBe(false)
+    expect(seccionesNuevas(p)).toEqual([])
+  })
 })
