@@ -45,7 +45,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         noticia: 'Tuerca ha clavado un cartel junto a la hoguera de Nox.',
         lugar: 'nox',
         frases: {
-          nox: ['Un cartel de madera. Junto a un fuego. Tuerca no ha pensado esto muy bien.', 'Lo he leído. Dos veces. Sigo sin estar de acuerdo.'],
+          nox: ['Un cartel de madera. Junto a un fuego. Tuerca no ha pensado esto muy bien.', 'Si Tuerca pregunta, estabas conmigo. Espera, ¿tú de qué lado estás?'],
           tuerca: ['Artículo 1: prohibido hacer fuego. Lo he redactado yo. Está muy bien redactado.'],
         },
       },
@@ -53,7 +53,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         noticia: 'Nox asa salchichas justo detrás del cartel. Tuerca ha añadido el artículo 1 bis: «salchichas incluidas».',
         lugar: 'nox',
         frases: {
-          nox: ['Técnicamente el fuego está detrás del cartel. Delante no hay nada prohibido.', '¿Quieres una? Está muy prohibida. Está buenísima.'],
+          nox: ['Técnicamente el fuego está detrás del cartel. Delante no hay nada prohibido.', '¿Quieres una? Si dices que no, te la dejo aquí para que la vigiles.'],
           tuerca: ['He tenido que ampliar la normativa. Los vacíos legales me dan urticaria.'],
         },
       },
@@ -62,7 +62,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
         lugar: 'nox',
         frases: {
           nox: ['Accidente. Lo juro por mi cola.', 'El extintor es feo. Pero tiene un fuego dibujado. Lo respeto.'],
-          tuerca: ['Expediente 001. Tengo pruebas. Tengo olor a salchicha.'],
+          tuerca: ['Puedes dejar tu versión por escrito. Lo de «pasaba por aquí» ya lo he puesto yo.'],
         },
       },
     ],
@@ -75,7 +75,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
       {
         noticia: 'Tuerca ha colgado una convocatoria en su tablón: «Se aceptan sugerencias para mejorar el vecindario».',
         lugar: 'tuerca',
-        frases: { tuerca: ['Buzón de sugerencias abierto. Las espero con los brazos abiertos. Y con una plantilla.'] },
+        frases: { tuerca: ['Tu sugerencia puede ser anónima. Deja el nombre al dorso para comprobarlo.'] },
       },
       {
         noticia: 'Nadie ha dejado ninguna sugerencia. Tuerca ha presentado tres propuestas propias y las ha aprobado por unanimidad.',

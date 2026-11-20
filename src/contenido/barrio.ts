@@ -59,8 +59,8 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
     descanso: punto(52, 63),
     segundos: 42, desfase: 5,
     frases: [
-      'Estoy haciendo la ronda. Si ves una salchicha, avísame.',
-      'He salido para despejarme. Ahora mismo estoy pensando en dos cenas.',
+      '¿Vamos al mismo sitio o estás haciendo como que no me sigues?',
+      'Buenas. Voy hasta el arroyo.',
       'Esa piedra me ha mirado raro. He dado un rodeo por educación.',
       '¿Hueles a humo? Es mi manera de decir que voy llegando.',
       'Doy otra vuelta y me voy. Eso dije hace tres vueltas.',
@@ -72,8 +72,8 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
     segundos: 51, desfase: 32,
     frases: [
       'El camino tiene cuatro curvas. He contado cinco por si acaso.',
-      'Estoy inspeccionando el camino. El polvo se niega a colaborar.',
-      'He numerado las piedras. Alguien ha movido la siete. Se abrirá expediente.',
+      'Pasa tú primero. Por aquí cabemos.',
+      '¿Ese era tu atajo? He llegado antes por el camino largo.',
       'Se admiten atajos. Hay que solicitarlos con dos días de antelación.',
       'He salido a no hacer nada. Llevo apuntados los minutos.',
     ],
@@ -85,7 +85,7 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
     frases: [
       'He salido a leer. El brote ha salido a mirar.',
       'Me he traído un libro corto. Llevo dos vueltas por la misma frase.',
-      'El musgo del camino va mejor que el mío. Fingiré que no lo he visto.',
+      'Si vas a leer por encima de mi hombro, avísame cuando acabe la página.',
       'Me gusta pasar por aquí. Puedo saludar sin dejar de andar.',
       'No busco inspiración. Si aparece, que haga poco ruido.',
     ],
@@ -99,7 +99,7 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
       'Aquí el agua suena distinta. O yo escucho más despacio.',
       'He venido a sentarme. Lo de andar ha sido un trámite.',
       'Vi una nube con mi forma. La dejé seguir.',
-      'Si vas deprisa no se nota, pero el sendero da tiempo a pensar.',
+      'Si tenías tanta prisa, puedes adelantarme. Llevo un rato formando cola.',
     ],
   },
   madeja: {
@@ -108,10 +108,10 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
     segundos: 46, desfase: 26,
     frases: [
       'Voy a la plaza a enterarme de algo. Si no hay nada, me lo invento.',
-      'Me he cruzado con Tofu en mi cabeza. Me ha contado poquísimo, como siempre.',
+      'Paseo corto. Luego vuelvo a casa.',
       'Tengo un recado para cada casa. A mitad de camino ya no sé cuál era para mí.',
       'El barrio parece tranquilo. Eso también es sospechoso.',
-      'Si te veo dos veces en la misma vuelta, te cuento lo que iba a callarme.',
+      '¿«Nos vemos» quería decir ahora? Has vuelto más rápido de lo que esperaba.',
     ],
   },
 }

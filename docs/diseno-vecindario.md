@@ -541,3 +541,7 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 
 - El primer objeto de cada casa se ofrece solo. Después se muestran hasta dos pendientes, con preferencia por incluir uno que se pueda construir solo con el material de su personaje. Cada ficha dice cuánto falta y las construcciones nuevas recuerdan lo que se pagó. Las antiguas siguen descontando su coste original.
 - Vínculos incluye enviar una foto, preguntar a alguien cómo está y dar las gracias. Jugar fuera pasa a Energía desde el próximo registro. Las acciones anteriores conservan el área y el material originales.
+
+### Tono de las conversaciones
+
+En los saludos, el paseo y las reacciones a retos alternamos respuestas breves, observaciones de la escena y pullas ocasionales al jugador. El chiste sale de tomarse en serio un problema ridículo o dejar que alguien se contradiga. En los días malos y al volver se puede hacer humor sobre lo que pasa en la casa. Las horas o los retos pendientes sirven de contexto para hablar, sin convertir la conversación en un recordatorio de tareas.
