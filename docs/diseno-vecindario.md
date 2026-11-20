@@ -414,3 +414,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 ### Retos: sin nombres de vecinos y hojas más estables (20/11/2026, rama `dev/retos-arreglos`)
 - Bajo cada reto solo sale su área (Energía, Mente…), no el vecino: podían salir vecinos que aún no han llegado.
 - «Para hoy» ya no abre el teclado solo (movía la hoja y la lista de detrás); la lista de detrás no se desplaza mientras hay una hoja abierta, y «Listo» cierra a la primera aunque el teclado esté abierto.
+
+### Casitas habitadas (20/11/2026, PR 11)
+- Cada casita del mapa tiene su gesto: humo en bocanadas por la chimenea de Tuerca, luz cálida y brasas en la de Nox, la maceta de Tofu que da dos brincos y suelta una hoja, y un barquito que deriva por el estanque de Bruma dejando ondas. Con movimiento reducido se quedan quietos.
