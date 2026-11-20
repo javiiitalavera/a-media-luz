@@ -93,6 +93,46 @@ describe('el barrio lee tu diario', () => {
     expect(p.noticias!.at(-1)!.texto).toMatch(/Tofu ha guardado/)
   })
 
+  it('lee ensayos en días distintos y cuentas y agradecimientos dentro de la misma semana', () => {
+    const hoy = en('2026-01-10', 20)
+    let p = registro(barrio(), 'instrumento', 'mente', '2026-01-04')
+    p = registro(p, 'instrumento', 'mente', '2026-01-04', 18)
+    expect(PATRONES.ensayo(p, hoy)).toBeNull()
+    p = registro(p, 'instrumento', 'mente', '2026-01-10')
+    expect(PATRONES.ensayo(p, hoy)).toEqual({ dias: 2 })
+    p = registro(p, 'gastos', 'orden', '2026-01-03')
+    p = registro(p, 'gracias', 'vinculos', '2026-01-10')
+    expect(PATRONES.cortesia(p, hoy)).toBeNull()
+    p = registro(p, 'gastos', 'orden', '2026-01-04')
+    expect(PATRONES.cortesia(p, hoy)).toEqual({ gastos: 1, gracias: 1 })
+  })
+
+  it('el pronóstico cuenta coincidencias en dos fechas y descarta duplicados y fechas fuera de ventana', () => {
+    let p = barrio()
+    for (const d of ['2026-01-03', '2026-01-08', '2026-01-10', '2026-01-11']) p = registro(p, 'agua', 'cuerpo', d)
+    for (const d of ['2026-01-03', '2026-01-08', '2026-01-08', '2026-01-09', '2026-01-11']) p = registro(p, 'aire', 'calma', d)
+    const hoy = en('2026-01-10', 20)
+    expect(PATRONES.pronostico(p, hoy)).toBeNull()
+    expect(PATRONES.pronostico(registro(p, 'aire', 'calma', '2026-01-10'), hoy)).toEqual({ dias: 2 })
+  })
+
+  it.each(['bis', 'entera'])('lleva el concierto del diario al álbum con la decisión %s', (opcion) => {
+    let p = barrio()
+    p.meses = p.meses!.map((m, i) => ({ ...m, companero: i ? 'madeja' : 'tofu' }))
+    for (const d of ['2026-01-08', '2026-01-10']) p = registro(p, 'instrumento', 'mente', d)
+    p = avanzar(p, en('2026-01-10', 20)).partida
+    expect(p.noticias!.at(-1)!.texto).toContain('2 días de instrumento')
+    p = avanzar(p, en('2026-01-11')).partida
+    expect(decisionPendiente(p, 'tofu')?.situacion).toBe('bis')
+    p = decidir(p, 'bis', opcion)!
+    p = avanzar(p, en('2026-01-12')).partida
+    expect(p.noticias!.at(-1)!.texto).toContain(opcion === 'bis' ? 'dos entradas' : 'derechos de autor')
+    const fin = avanzar(p, en('2026-01-13'))
+    expect(fin.nuevas).toHaveLength(0)
+    expect(huellasEn(fin.partida, 'tofu').map(h => h.id)).toContain('disco-firmado')
+    expect(cronicas(fin.partida).find(c => c.id === 'bis')?.fases).toHaveLength(4)
+  })
+
   it('rellena los datos y deja como están las llaves que no conoce', () => {
     expect(rellenar('{dias} días, {otra}', { dias: 3 })).toBe('3 días, {otra}')
   })

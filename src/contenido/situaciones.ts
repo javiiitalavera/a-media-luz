@@ -623,7 +623,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
   },
 ]
 
-export type ArteHuella = 'corcho' | 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito'
+export type ArteHuella = 'corcho' | 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito' | 'gramofono' | 'balanza'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {

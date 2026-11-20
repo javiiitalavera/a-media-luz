@@ -50,6 +50,20 @@ export const PATRONES: Record<string, Patron> = {
     const dias = diasCon(p, ahora, (o) => o.accionId.startsWith('propia-'))
     return dias >= 3 ? { dias } : null
   },
+  ensayo: (p, ahora) => {
+    const dias = diasCon(p, ahora, (o) => o.accionId === 'instrumento')
+    return dias >= 2 ? { dias } : null
+  },
+  pronostico: (p, ahora) => {
+    const aire = new Set(p.ofrendas.filter((o) => o.accionId === 'aire').map((o) => dia(o.fecha)))
+    const dias = diasCon(p, ahora, (o) => o.accionId === 'agua' && aire.has(dia(o.fecha)))
+    return dias >= 2 ? { dias } : null
+  },
+  cortesia: (p, ahora) => {
+    const gastos = diasCon(p, ahora, (o) => o.accionId === 'gastos')
+    const gracias = diasCon(p, ahora, (o) => o.accionId === 'gracias')
+    return gastos && gracias ? { gastos, gracias } : null
+  },
   /** Vuelves tras cuatro días o más sin registrar nada, con un diario que ya tenía historia. */
   reencuentro: (p, ahora) => {
     const hoy = dia(ahora)
