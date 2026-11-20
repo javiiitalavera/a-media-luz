@@ -1,4 +1,4 @@
-// El vecino que acaba de llegar crece con días de su área y su primer proyecto se paga con su material.
+// Cada vecino crece con días de su área y su primer proyecto se paga con su material.
 // Si tu lista no tiene nada de esa área, te lo pide él (con un reto fácil que se añade con un toque),
 // para que nadie se quede haciendo cosas sin avanzar y sin saber por qué.
 import { ACCIONES, COMPANEROS, type AreaId, type CompaneroId } from '../contenido'
@@ -14,8 +14,7 @@ const FACIL: Record<AreaId, string> = { cuerpo: 'agua', mente: 'leer', calma: 'a
 
 export interface Pista { vecino: CompaneroId; area: AreaId; reto: Sugerencia; cabe: boolean }
 
-export function retoQueFalta(p: Partida, ahora: Date): Pista | null {
-  const vecino = mesActual(p).companero
+export function retoQueFalta(p: Partida, ahora: Date, vecino = mesActual(p).companero): Pista | null {
   if (!nacido(p, vecino, ahora) || progreso(p, vecino, ahora).etapa >= 2) return null
   // «Luego»: no vuelve a pedirlo hasta mañana (ni en su casa ni en Retos).
   if (p.vistos?.pideReto?.[vecino] === dia(ahora)) return null

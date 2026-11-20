@@ -24,6 +24,15 @@ describe('copias de seguridad', () => {
     expect(importarCopia(envolver(antigua))).toMatchObject({ principal: 'nox', hazanas: 3, construcciones: [] })
   })
 
+  it('conserva un huevo recogido y listo para abrir al recuperar una copia', () => {
+    const p = crearPartida('nox', ahora, undefined, true)
+    const lista = { ...p, meses: [
+      { ...p.meses![0], presentado: ahora.toISOString() },
+      { companero: 'tuerca' as const, inicio: ahora.toISOString(), listo: true },
+    ] }
+    expect(importarCopia(exportarCopia(lista, ahora))).toEqual(lista)
+  })
+
   it('rechaza datos incompletos que romperían el barrio o el Álbum', () => {
     const p = crearPartida('nox', ahora, undefined, true)
     for (const campos of [

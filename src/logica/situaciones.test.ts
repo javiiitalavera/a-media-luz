@@ -140,6 +140,19 @@ describe('situaciones', () => {
     expect(casas(conTofu(['hoguera']))).toContain('tofu')
   })
 
+  it('la visita del club de lectura necesita a Tofu adulto, los libros expuestos y a Madeja', () => {
+    const base = conTofu(['libros'])
+    const p = { ...base, meses: [...base.meses!, { companero: 'madeja' as const, inicio: en('2026-01-06').toISOString(), presentado: en('2026-01-06').toISOString() }] }
+    const adulto = { ...p, etapasVistas: { tofu: 2 as const } }
+    const hayClub = (q: Partida) => Array.from({ length: 90 }, (_, i) => microDeHoy(q, 'tofu', dia(i)))
+      .some((m) => m?.visita === 'madeja' && m.etapaMinima === 2)
+    expect(hayClub(p)).toBe(false)
+    expect(hayClub({ ...adulto, meses: base.meses })).toBe(false)
+    expect(hayClub({ ...adulto, construcciones: [] })).toBe(false)
+    expect(hayClub({ ...adulto, guardados: ['libros'] })).toBe(false)
+    expect(hayClub(adulto)).toBe(true)
+  })
+
   it('Crónicas: las que están en marcha primero, hasta donde han llegado', () => {
     let p = avanzar(barrio(['hoguera', 'tablon']), dia(0)).partida
     expect(cronicas(p)).toEqual([{ id: 'normativa', titulo: expect.any(String), fases: [expect.stringMatching(/cartel/)], enMarcha: true }])

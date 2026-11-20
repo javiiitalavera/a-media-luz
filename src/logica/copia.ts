@@ -86,7 +86,7 @@ function leerCopia(contenido: string): Partida | null {
       lista(p.hallazgos, (h) => objeto(h) && texto(h.objetoId) && fecha(h.fecha)) &&
       opcional(p.construcciones, (l) => lista(l, (c) => objeto(c) && texto(c.objetoId) && fecha(c.fecha))) &&
       opcional(p.meses, (l) => Array.isArray(l) && l.length > 0 && l.every((m) =>
-        objeto(m) && clave(m.companero, ESCENAS) && fecha(m.inicio) && opcional(m.presentado, fecha) && opcional(m.cerrado, fecha))) &&
+        objeto(m) && clave(m.companero, ESCENAS) && fecha(m.inicio) && opcional(m.listo, booleano) && opcional(m.presentado, fecha) && opcional(m.cerrado, fecha))) &&
       opcional(p.situaciones, situaciones) && opcional(p.perfil, perfil) && opcional(p.vistos, vistos) &&
       opcional(p.etapasVistas, (e) => objeto(e) && Object.values(e).every(etapa)) &&
       opcional(p.diaMalo, dia) &&

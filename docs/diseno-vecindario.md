@@ -25,9 +25,9 @@ Los cinco de la lámina, **para siempre**. No se van, no caducan y no pierden lo
 
 **Cómo llegan:**
 - **El primero es Nox:** llega en un huevo que se abre con tus 3 primeras hazañas, igual que ahora.
-- **Cuando el último en llegar se hace joven,** aparece un huevo nuevo en su puerta.
-- **El huevo se queda ahí todo el tiempo que quieras.** Lo incubas cuando decides tocarlo y elegir «Que pase». A partir de ahí, se abre con 3 hazañas.
-- **El orden es al azar** entre los que ya tienen su arte. Ni la llegada ni la eclosión tienen fecha.
+- **Dos días con algún reto** después del día de la última presentación hacen que aparezca otro huevo en su puerta. Cuenta cualquier área.
+- **El huevo se queda ahí todo el tiempo que quieras.** Al recogerlo, ya puedes abrirlo en su parcela.
+- **Orden:** Nox, Tuerca, Tofu, Bruma y Madeja.
 - **Ficha al nacer:** al salir, el vecino se presenta con su ficha, en tono de comedia.
 
 ## 3. Pantallas
@@ -87,7 +87,7 @@ Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos
 
 - **Nunca baja.** Lo crecido no se pierde por no entrar.
 - **Celebración al crecer,** como ahora.
-- **De joven,** además, aparece el siguiente huevo (ver el apartado 2).
+- **Al crecer** se añaden escenas en su casa con otros vecinos y objetos que ya estén a la vista.
 - **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
 
 ## 8. Proyectos (sustituyen a los retos y al catálogo)
@@ -510,3 +510,9 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - **Fotos:** usan la misma visita que la casa y guardan cómo era el visitante (su etapa); las fotos antiguas lo dibujan de cachorro, como antes.
 - **Hallazgos:** cada día hay un vecino «con suerte», el que lleva más tiempo sin encontrar nada entre las áreas que estás haciendo. Lo encuentra (con un 50 %) con el primer reto de su área ese día. Así no importa en qué orden taches y la colección crece pareja. Sigue habiendo uno al día como mucho.
 - **«Luego»:** la petición de un reto de su área se deja hasta mañana, en su casa y en Retos. Con la lista llena, en Retos ofrece «Editar retos».
+
+### Primero, conocer al barrio
+
+- Las presentaciones pueden caer en los días 1, 3, 5, 7 y 9 si juegas a diario y abres cada huevo al encontrarlo. El progreso se ve en Retos y el mapa señala dónde hay un huevo que recoger o abrir. Cada huevo de la puerta trae una pista distinta.
+- El crecimiento sigue dependiendo de los días con retos de su área y de los proyectos personales. Cada vecino puede sugerirte un reto de su área al visitar su casa.
+- Desde cachorro hay visitas, incluida la primera inspección de Tuerca en casa de Nox. Al crecer se suman cinco escenas con muebles a la vista: las castañas de Nox, el taller de Tuerca, el club de Tofu, la infusión de Bruma y la llamada de Madeja.

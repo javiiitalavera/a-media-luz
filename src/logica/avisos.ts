@@ -7,8 +7,8 @@ import type { Lugar } from '../contenido/situaciones'
 import type { Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre } from './fechas'
 import { misHazanas } from './hazanas'
-import { crecioSinVer, nacido, nacidos, progreso } from './etapas'
-import { estadoDelMes } from './meses'
+import { crecioSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
+import { estadoDelMes, mesActual, mesesDe } from './meses'
 import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
 import { decisionPendiente, dondeGregorio, faseDe, huellasEn, microDeHoy } from './situaciones'
@@ -55,11 +55,12 @@ export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolea
 
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
 export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
+  (c === mesActual(p).companero && (estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0)) ||
   (p.noticias ?? []).some((n) => n.lugar === c && !n.visitada) || Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
 
 /** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
 export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
-  estadoDelMes(p, ahora) === 'naciendo' || pendientesDelSobre(p, ahora) > 0 ||
+  estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0 || pendientesDelSobre(p, ahora) > 0 ||
   nacidos(p, ahora).some((c) => crecioSinVer(p, c, progreso(p, c, ahora).etapa))
 
 /** Lo que enseña la ficha y puede cambiar: el siguiente proyecto y las historias en las que sale. */
@@ -148,7 +149,7 @@ export function decisionesPendientes(p: Partida, ahora: Date): { lugar: Companer
 /** Avisos fuera de esta casa (para el botón «Barrio»): «?» si otro vecino espera una decisión; si no, punto. */
 export function avisoFuera(p: Partida, casa: CompaneroId, ahora: Date): 'pregunta' | 'punto' | null {
   if (decisionesPendientes(p, ahora).some((d) => d.lugar !== casa)) return 'pregunta'
-  const otras = nacidos(p, ahora).filter((c) => c !== casa)
+  const otras = mesesDe(p).map((m) => m.companero).filter((c) => c !== casa)
   if (otras.some((c) => avisoEnCasa(p, c, ahora)) || (p.noticias ?? []).some((n) => n.lugar === 'barrio' && !n.visitada)) return 'punto'
   return null
 }

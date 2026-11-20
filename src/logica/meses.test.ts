@@ -25,10 +25,20 @@ describe('vecinos (guardados como «meses»)', () => {
   })
   it('conserva al vecino de una partida antigua al incubar el siguiente huevo', () => {
     const { meses: _meses, ...antigua } = nueva()
-    const ahora = en('2026-01-06', 20)
-    const p = incubar(antigua, 'tuerca', ahora)
+    const ahora = en('2026-01-07', 20)
+    const p = incubar(con(con(antigua, 'mente', '2026-01-06'), 'mente', '2026-01-07'), 'tuerca', ahora)
     expect(nacido(p, 'nox', ahora)).toBe(true)
-    expect(estadoDelMes(p, ahora)).toBe('huevo')
+    expect(mesActual(p).companero).toBe('tuerca')
+    expect(estadoDelMes(p, ahora)).toBe('naciendo')
+  })
+  it('un huevo ya incubado en una partida antigua conserva sus avances', () => {
+    const p = { ...nueva(), meses: [
+      { companero: 'nox' as const, inicio: en('2026-01-05').toISOString(), presentado: en('2026-01-05').toISOString() },
+      { companero: 'tuerca' as const, inicio: en('2026-01-08', 8).toISOString() },
+    ] }
+    const dos = con(p, 'mente', '2026-01-08', 2)
+    expect(estadoDelMes(dos, en('2026-01-08'))).toBe('huevo')
+    expect(estadoDelMes(con(dos, 'mente', '2026-01-09'), en('2026-01-09'))).toBe('naciendo')
   })
   it('conserva una etapa ya celebrada aunque se desmarque el reto que la desbloqueó', () => {
     const p = { ...nueva(), etapasVistas: { nox: 1 as const } }

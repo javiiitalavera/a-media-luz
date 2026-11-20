@@ -690,8 +690,10 @@ const HUELLAS_DEL_BARRIO: Huella[] = [
 /** Pequeñas cosas que pasan en una casa sin historia detrás. Se ven de vez en cuando al entrar. */
 export interface Micro {
   casa: CompaneroId
-  /** Lo que tiene que estar construido (o el nombre de un vecino si tiene que haber nacido). */
+  /** Muebles que tienen que estar a la vista y vecinos que tienen que haber nacido. */
   requiere: string[]
+  /** Etapa mínima del dueño de la casa, si la escena aparece al crecer. */
+  etapaMinima?: 1 | 2
   texto: string
   /** Si alguien está de visita durante el micro (por ejemplo, Tuerca en el banco de Nox). */
   visita?: CompaneroId
@@ -725,6 +727,12 @@ export const MICROS: Micro[] = [
   { casa: 'madeja', requiere: ['tofu'], texto: 'Tofu está de visita. Madeja habla. Tofu escucha. Los dos parecen encantados.', visita: 'tofu' },
   { casa: 'nox', requiere: ['madeja'], texto: 'Madeja le está tomando medidas a Nox para unos calcetines. Nox no ha dicho que sí. Nox no ha dicho que no.', visita: 'madeja' },
   { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
+  { casa: 'nox', requiere: ['tuerca'], texto: 'Tuerca ha venido a medir la cola de Nox. Nox le ha preguntado si necesita una licencia para llevarla. Tuerca ha sacado papel.', visita: 'tuerca' },
+  { casa: 'nox', etapaMinima: 1, requiere: ['hoguera', 'madeja'], texto: 'Nox ha puesto a Madeja al cargo de las castañas. Ya sabe quién se comió la última y a quién le conviene que no se sepa.', visita: 'madeja', cara: 'contento' },
+  { casa: 'tuerca', etapaMinima: 1, requiere: ['caja', 'nox'], texto: 'Tuerca ha abierto un taller de reparaciones. Nox ha traído una rama partida. Quiere que conserve la garantía del árbol.', visita: 'nox' },
+  { casa: 'tofu', etapaMinima: 2, requiere: ['libros', 'madeja'], texto: 'Tofu ha invitado a Madeja a su club de lectura. Ella ha traído un libro que aún no existe. Ha venido a contarle el final.', visita: 'madeja', cara: 'contento' },
+  { casa: 'bruma', etapaMinima: 1, requiere: ['tetera', 'tuerca'], texto: 'Bruma le ha servido a Tuerca una infusión y le ha pedido que deje enfriar el acta. Ya lleva dos tazas sin tomar notas.', visita: 'tuerca' },
+  { casa: 'madeja', etapaMinima: 2, requiere: ['telefono', 'bruma'], texto: 'Bruma ha venido a preguntar quién la llamó a las cuatro. Madeja ha descolgado el teléfono y ha dicho: «Ha vuelto a preguntar».', visita: 'bruma' },
 ]
 
 /** Lo que dice un vecino cuando está de visita en casa de otro (tras el puente, o en el banco). */

@@ -59,7 +59,8 @@ export const UI = {
   },
   ficha: {
     sabe: 'Lo que sabe de ti',
-    huevo: (n: number) => `Tres retos cumplidos, de cualquier tipo, lo despiertan. ${n <= 0 ? 'Ya se mueve: está a punto.' : n === 1 ? 'Le falta 1.' : `Le faltan ${n}.`}`,
+    huevo: (n: number) => n === 0 ? 'La cáscara cruje. Dale un toque para abrirlo.'
+      : `Tres retos cumplidos, de cualquier tipo, lo despiertan. ${n === 1 ? 'Le falta 1.' : `Le faltan ${n}.`}`,
     paraSer: (etapa: string) => `Para hacerse ${etapa}`,
     dias: (n: number, de: number, area: string) => `${Math.min(n, de)} de ${de} días con algo de ${area}`,
     proyectos: (n: number, de: number) => `${Math.min(n, de)} de ${de} proyectos de su casa`,
@@ -127,7 +128,7 @@ export const UI = {
     habitualesTitulo: 'Tres cosas para empezar',
     habitualesExplicacion: 'Cosas de tu vida real. Cuando las hagas, las tachas, y eso despierta al huevo. Las metas son orientativas.',
   },
-  // Cuando tu lista no tiene nada del área del último vecino, te lo pide él (logica/pista.ts).
+  // Cuando tu lista no tiene nada del área de un vecino, te lo pide él (logica/pista.ts).
   pideReto: {
     nox: 'Las ascuas no se encienden solas. Y yo no crezco porque tú leas. Apunta algo de Energía.',
     tuerca: 'Sin retos de Orden no hay tornillos. Sin tornillos no hay taller. Es un sistema. Lo he diseñado yo.',
@@ -203,8 +204,16 @@ export const UI = {
     luego: 'Luego',
     deVisita: (nombre: string) => `${nombre}, de visita`,
     huevoEnPuerta: 'Hay un huevo en la puerta',
-    huevoPregunta: 'Nadie sabe quién lo ha dejado. Si lo incubas, se abrirá con tus tres próximos retos. Puede esperar lo que haga falta.',
-    queVenga: 'Que pase',
+    huevoPregunta: {
+      nox: 'La cáscara está tibia y huele a tostada. Ya se puede abrir.',
+      tuerca: 'Alguien ha pegado a la cáscara una etiqueta torcida: «FRÁGIL». Por dentro suena un clic. Ya se puede abrir.',
+      tofu: 'Le ha salido un brote a la cáscara. Se inclina hacia la luz, aunque esté anocheciendo. Ya se puede abrir.',
+      bruma: 'La cáscara está empañada. Desde dentro han dibujado un círculo en el vaho. Ya se puede abrir.',
+      madeja: 'Un hilo sale de la cáscara y se ha enredado en el llamador. Alguien tira desde dentro. Ya se puede abrir.',
+    },
+    diasParaOtroHuevo: (n: number) => n === 1 ? 'Falta un día con algún reto para que llegue otro huevo.'
+      : `Faltan ${n} días con algún reto para que llegue otro huevo.`,
+    queVenga: 'Recoger el huevo',
     ahoraNo: 'Ahora no',
     masProyectos: 'Hay más proyectos. Se desvelan al terminar este.',
     proyectosBarrio: 'Proyectos del barrio',

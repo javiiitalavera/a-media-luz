@@ -15,7 +15,7 @@ import { avanzar, decidir as decidirSituacion, empiezaHoyDeTuDiario } from '../l
 import { leerElDiario } from '../logica/lector'
 import { incubar as incubarHuevo } from '../logica/etapas'
 import { marcarEtapaVista, type Etapa } from '../logica/etapas'
-import { marcarPresentado, mesActual } from '../logica/meses'
+import { estadoDelMes, marcarPresentado, mesActual } from '../logica/meses'
 import { curiosidadesDeHistorias } from '../logica/curiosidades'
 import { momentoCrecer, momentoNacimiento, momentosDeHistorias } from '../logica/momentos'
 import { elegirFrase } from '../logica/ofrendas'
@@ -42,8 +42,8 @@ interface Juego {
   avanzarBarrio: () => void
   /** Decide en una situación. Devuelve la respuesta que se cuenta en pantalla. */
   decidir: (situacion: string, opcion: string, respuesta: string) => void
-  /** Incuba el huevo que espera en la puerta. */
-  incubar: (c: CompaneroId) => void
+  /** Recoge el huevo que espera en la puerta. */
+  incubar: (c: CompaneroId) => boolean
   /** Construye un proyecto del barrio. */
   construirBarrio: (id: string) => boolean
   /** Ya se ha visto nacer y presentarse al compañero del mes. */
@@ -136,7 +136,11 @@ export const useJuego = create<Juego>()(
       },
       incubar: (c) => {
         const p = get().partida
-        if (p) set({ partida: incubarHuevo(p, c, ahora()), porContar: null })
+        if (!p) return false
+        const nueva = incubarHuevo(p, c, ahora())
+        if (nueva === p) return false
+        set({ partida: nueva, porContar: null })
+        return true
       },
       construirBarrio: (id) => {
         const p = get().partida
@@ -146,7 +150,10 @@ export const useJuego = create<Juego>()(
       },
       presentar: () => {
         const p = get().partida
-        if (p) set({ partida: momentoNacimiento(marcarPresentado(p, ahora()), mesActual(p).companero, ahora()) })
+        const momento = ahora()
+        if (p && estadoDelMes(p, momento) === 'naciendo') {
+          set({ partida: momentoNacimiento(marcarPresentado(p, momento), mesActual(p).companero, momento) })
+        }
       },
       ajustar: (cambio) => {
         const p = get().partida

@@ -4,13 +4,13 @@ import type React from 'react'
 // Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, PARCELAS, PROPORCION_BARRIO, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, MATERIALES, OBJETOS_CASA, PARCELAS, PROPORCION_BARRIO, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
-import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
+import { crecioSinVer, proximaLlegada, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, toqueHeredado, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
@@ -36,7 +36,7 @@ import { PideReto } from '../componentes/PideReto'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
-import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
+import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
@@ -64,11 +64,12 @@ function useTamano() {
 }
 
 
-export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNovedades, abrirDecision = false, onDecisionAbierta }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNovedades, onRecogerHuevo, abrirDecision = false, onDecisionAbierta }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
   onBarrio: () => void
   /** Abre el sobre («Mientras no estabas…»). */
   onNovedades: () => void
+  onRecogerHuevo: (c: CompaneroId) => void
   /** Venir del sobre a decidir: la pregunta sale abierta. */
   abrirDecision?: boolean; onDecisionAbierta?: () => void
 }) {
@@ -80,7 +81,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const ANCHO_NOX = esc.anchos
   const LUCES_FONDO = esc.luces
   const decidir = useJuego((s) => s.decidir)
-  const incubar = useJuego((s) => s.incubar)
   const tocar = useJuego((s) => s.tocar)
   const ajustar = useJuego((s) => s.ajustar)
   const construirObjeto = useJuego((s) => s.construir)
@@ -267,7 +267,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const huellas = huellasEn(partida, DUENO)
   const decision = decisionPendiente(partida, DUENO)
   const deVisita = estado === 'vivo' ? visitante(partida, DUENO, ahora) : null
-  const otroHuevo = esUltimo && vivo ? huevoDisponible(partida, ahora, ORDEN_COMPANEROS.filter(tieneMes)) : null
+  const llegada = esUltimo && vivo ? proximaLlegada(partida, ahora) : null
+  const otroHuevo = llegada?.faltanDias === 0 ? llegada.vecino : null
   const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
   const fuera = avisoFuera(partida, DUENO, ahora)
   const pendientes = pendientesDelSobre(partida, ahora)
@@ -281,7 +282,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   // Hasta que se celebra, se sigue viendo la etapa anterior.
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
   // Mientras no ha salido, en su sitio está el huevo.
-  const pista = retoQueFalta(partida, ahora)
+  const pista = retoQueFalta(partida, ahora, DUENO)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
@@ -370,7 +371,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         ) })()}
         {otroHuevo && (
           <button type="button" aria-label={UI.casa.huevoEnPuerta} onClick={(e) => { e.stopPropagation(); setPreguntaHuevo(true) }}
-            className="absolute z-10" style={{ left: '81%', top: '71%', width: '12%', transform: 'translate(-50%, -100%)' }}>
+            className="absolute z-10 flex min-h-11 min-w-11 items-end" style={{ left: '81%', top: '71%', width: '12%', transform: 'translate(-50%, -100%)' }}>
             <img src={rutaArte(`huevo/${otroHuevo}/cerrado`)} alt="" draggable={false} className="anim-mecer block w-full" />
           </button>
         )}
@@ -490,8 +491,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           </span>
         )}
       </header>
-      {/* El último vecino te pide un reto de su área si tu lista no tiene ninguno (si no, no crece). */}
-      {pista && esUltimo && !conHuevo && !ordenando && !celebra && (
+      {/* En su casa, cada vecino puede pedir un reto de su área para crecer. */}
+      {pista && !otroHuevo && vivo && !ordenando && !celebra && (
         <div data-tapa-globo className="pointer-events-none absolute inset-x-3 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+60px)] z-30 flex justify-center">
           <PideReto pista={pista} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
         </div>
@@ -531,9 +532,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           onFondo={() => setPreguntaPiña(false)} />
       )}
       {preguntaHuevo && otroHuevo && (
-        <Pregunta titulo={UI.casa.huevoEnPuerta} texto={UI.casa.huevoPregunta}
+        <Pregunta titulo={UI.casa.huevoEnPuerta} texto={UI.casa.huevoPregunta[otroHuevo]}
           si={UI.casa.queVenga} no={UI.casa.ahoraNo}
-          onSi={() => { sfx.elegir(); setPreguntaHuevo(false); incubar(otroHuevo) }} onNo={() => setPreguntaHuevo(false)} />
+          onSi={() => { sfx.elegir(); setPreguntaHuevo(false); onRecogerHuevo(otroHuevo) }} onNo={() => setPreguntaHuevo(false)} />
       )}
 
       {hoja && <Catalogo dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir}
