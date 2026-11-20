@@ -39,6 +39,15 @@ export const CURIOSIDADES: Curiosidad[] = [
   { id: 'libro-quemado', vecino: 'tofu', nombre: 'Libro chamuscado', arte: h('libro-quemado'), historia: 'prestamo', texto: '«Paciencia». Lo que queda de ella. Tofu dice que ahora tiene más carácter.' },
   { id: 'lupa', vecino: 'tofu', nombre: 'Lupa de Tuerca', arte: h('lupa'), historia: 'planta', texto: 'Se la dejó en casa de Tofu durante el interrogatorio. Huele a planta.' },
   { id: 'archivador', vecino: 'tofu', nombre: 'Archivador «Fórmulas»', arte: h('archivador'), historia: 'pizarra', texto: 'Dentro, la fórmula versión 1. Derogada. Archivada. Intacta.' },
+  // Madeja
+  { id: 'boton', vecino: 'madeja', nombre: 'Botón de madera', arte: c('boton'), texto: 'De una chaqueta que ya no existe. Madeja sabe de quién. No lo dice. Sí lo dice.' },
+  { id: 'dedal', vecino: 'madeja', nombre: 'Dedal', arte: c('dedal'), texto: 'Madeja dice que protege de pinchazos. De los de aguja y de los otros.' },
+  { id: 'calcetin', vecino: 'madeja', nombre: 'Calcetín suelto', arte: c('calcetin'), texto: 'Su pareja la tiene Nox. Nox dice que no. Nox tiene un pie más abrigado.' },
+  { id: 'carta', vecino: 'madeja', nombre: 'Carta lacrada', arte: c('carta'), texto: 'Sin abrir. Madeja no sabe de quién es. Es lo que más le ha costado no hacer en su vida.' },
+  { id: 'foto', vecino: 'madeja', nombre: 'Foto en blanco', arte: c('foto'), texto: 'Madeja dice que es de un momento tan bonito que no salió nada. Tofu dice que estaba tapada.' },
+  { id: 'ovillo', vecino: 'madeja', nombre: 'Ovillo de colores', arte: c('ovillo'), texto: 'Un trocito de hilo de cada conversación de la semana. Pesa más de lo que parece.' },
+  { id: 'aguja', vecino: 'madeja', nombre: 'Aguja con hebra', arte: c('aguja'), texto: 'Se quedó a medias en un punto. Madeja dice que algunas cosas se terminan otro día.' },
+  { id: 'llave-lazo', vecino: 'madeja', nombre: 'Llave con lazo', arte: c('llave-lazo'), texto: 'Abre una caja que Madeja no encuentra. Lo que hay dentro, en cambio, lo sabe todo el barrio.' },
   // Bruma
   { id: 'rocio', vecino: 'bruma', nombre: 'Gota de rocío gigante', arte: c('rocio'), texto: 'La encontró al amanecer. No se evapora. Bruma dice que es de las que se quedan.' },
   { id: 'pluma', vecino: 'bruma', nombre: 'Pluma lila', arte: c('pluma'), texto: 'No es de ningún pájaro del barrio. Bruma dice que es de una nube que pasó deprisa.' },

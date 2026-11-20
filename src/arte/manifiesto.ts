@@ -57,7 +57,7 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casita/bruma': '/arte/casitas/bruma.webp',
   'casa/madeja/fondo': '/arte/casa/madeja/fondo.webp',
   ...personaje('madeja'),
-  ...objetos('madeja', ['cesto', 'telefono', 'mecedora', 'album', 'guirnalda', 'buzon']),
+  ...objetos('madeja', ['cesto', 'telefono', 'mecedora', 'album', 'guirnalda', 'buzon', 'tetera-rosa', 'costurero', 'sofa', 'marco', 'alfombra', 'farol-punto']),
   'casita/madeja': '/arte/casitas/madeja.webp',
   'huevo/madeja/cerrado': '/arte/huevos/madeja/cerrado.webp',
   'huevo/madeja/agrietado': '/arte/huevos/madeja/agrietado.webp',

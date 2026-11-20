@@ -62,6 +62,12 @@ export const TOQUES_OBJETO: Record<string, string[]> = {
   mecedora: ['La mecedora de Madeja. Quien se sienta, acaba contando algo.', 'Cruje un poco. Madeja dice que es para que no te duermas a mitad de historia.'],
   album: ['Un álbum de fotos. Madeja lo va llenando con vecinos que no sabían que posaban.', 'Hay una foto de Nox dormido. Nox no sabe que existe.'],
   guirnalda: ['Banderines de lana. Madeja celebra hasta los martes.', 'Cada banderín es por alguien. Hay uno vacío. Es para quien venga.'],
+  'tetera-rosa': ['Dos tazas que no hacen juego. Madeja dice que así se habla mejor.', 'La tetera está siempre caliente. Madeja nunca sabe quién va a venir. Siempre viene alguien.'],
+  costurero: ['Hilos de todos los colores. Madeja cose y escucha a la vez.', 'Hay un carrete con una etiqueta: «Para Tuerca, cuando se rompa algo». Ya se ha roto.'],
+  sofa: ['Un sofá para dos. Madeja se sienta siempre en medio.', 'Nox se ha dormido aquí tres veces. Madeja tiene fotos.'],
+  marco: ['Un marco vacío. Madeja dice que la foto perfecta aún no ha pasado.', 'Ha probado con una de Tofu. Tofu salió igual que siempre. Ha vuelto a quitarla.'],
+  alfombra: ['Un retal de cada vecino. El de Tuerca está muy bien cortado. El de Nox, chamuscado.', 'Bruma la pisa flotando. Por respeto.'],
+  'farol-punto': ['Un farolillo de punto. Da luz y abriga a la vez.', 'De noche, la madriguera parece un jersey encendido.'],
   buzon: ['El buzón de Madeja. Cartas de verdad, con letra torcida.', 'Hay una carta de Tuerca. Es un formulario. Madeja la guarda igual.'],
 }
 

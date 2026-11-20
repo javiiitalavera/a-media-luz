@@ -80,6 +80,7 @@ export function importarCopia(contenido: string): Partida | null {
       opcional(p.etapasVistas, (e) => objeto(e) && Object.values(e).every(etapa)) &&
       opcional(p.diaMalo, dia) &&
       opcional(p.colocados, posiciones) &&
+      opcional(p.guardados, (l) => lista(l, texto)) &&
       opcional(p.noticias, (l) => lista(l, (n) => objeto(n) && texto(n.texto) && lugar(n.lugar) && fecha(n.fecha) &&
         opcional(n.leida, booleano) && opcional(n.visitada, booleano))) &&
       opcional(p.momentos, (l) => lista(l, (m) => objeto(m) && texto(m.id) && texto(m.titulo) &&
