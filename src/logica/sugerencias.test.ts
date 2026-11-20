@@ -6,8 +6,8 @@ import { en } from './test-utils'
 const ids = (p: Parameters<typeof sugerencias>[0]) => sugerencias(p).map((s) => s.id)
 
 describe('sugerencias del cuestionario', () => {
-  it('sin responder nada: tres retos que cuestan algo', () => {
-    expect(ids({ mejorar: [] })).toEqual(['pasos', 'leer', 'amigo'])
+  it('sin responder nada: tres retos sencillos', () => {
+    expect(ids({ mejorar: [] })).toEqual(['pasos', 'leer', 'preguntar'])
   })
   it('los pasos se ajustan a lo que te mueves y a la edad', () => {
     expect(metaPasos('poco', false)).toBe(4000)
@@ -29,7 +29,7 @@ describe('sugerencias del cuestionario', () => {
   it('distingue la actividad en solitario de las opciones sociales breves', () => {
     const p = crearPartida('nox', en('2026-01-05'), ids({ edad: 'menor', mejorar: ['moverme', 'gente'] }))
     expect(p.acciones.find((a) => a.id === 'jugar-fuera')?.area).toBe('cuerpo')
-    expect(p.acciones.find((a) => a.id === 'cena')?.area).toBe('vinculos')
+    expect(p.acciones.find((a) => a.id === 'compartir-foto')?.area).toBe('vinculos')
   })
   it('añadir una sugerencia guarda su meta ajustada', () => {
     const p = anadirSugerencia(crearPartida('nox', en('2026-01-05'), ['leer']), { id: 'pasos', nombre: 'Andar 4000 pasos', minima: 'Andar 1000 pasos' })
@@ -38,7 +38,7 @@ describe('sugerencias del cuestionario', () => {
   it('propone alternativas de varias áreas sin seleccionarlas como primera lista', () => {
     const perfil = { edad: '18-29', mejorar: ['aprender', 'gente'], actividad: 'poco' } as const
     const p = { ...perfil, mejorar: [...perfil.mejorar] }
-    expect(ids(p).slice(0, 2)).toEqual(['idioma', 'quedar'])
+    expect(ids(p).slice(0, 2)).toEqual(['idioma', 'amigo'])
     const alternativas = sugerencias(p, 8).map(({ id }) => id)
     expect(alternativas).toHaveLength(8)
     expect(alternativas).toContain('gastos')
