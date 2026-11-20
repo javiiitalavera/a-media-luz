@@ -1,4 +1,4 @@
-import type { CompaneroId, Momento } from './tipos'
+import type { CompaneroId } from './tipos'
 
 // El mapa del barrio (public/arte/barrio/mapa.webp, 1024 × 1536). Posiciones en % del mapa, localizadas
 // automáticamente en el dibujo.
@@ -34,7 +34,6 @@ export const PASO_ARROYO = { x: 49.3, y: 56.6, ancho: 12.8, giro: 7 }
 export const PLAZA = {
   banco: { x: 59, y: 38.4, ancho: 8.5 },
   farol: { x: 63.4, y: 39.1, ancho: 3.8 },
-  encuentro: { x: 54.8, y: 44.0, ancho: 9.2 },
 }
 
 /** Luces ya dibujadas en el mapa (farolillos, ventanas, setas), para que brillen de noche. */
@@ -42,10 +41,41 @@ export const LUCES_BARRIO = [
   { x: 33, y: 83.6 }, { x: 58.6, y: 83.6 }, { x: 21, y: 11 }, { x: 13, y: 23.5 }, { x: 77.3, y: 41.4 }, { x: 81, y: 76 },
 ]
 
-/** Quién pasa por la plaza según el momento del día (si ya vive en el barrio) y lo que dice al tocarlo. */
-export const VISITA_PLAZA: Partial<Record<Momento, CompaneroId>> = { amanecer: 'bruma', mediodia: 'tofu', atardecer: 'nox' }
-export const FRASES_PLAZA: Partial<Record<CompaneroId, string>> = {
-  nox: 'Estoy vigilando el puente. El banco es por motivos de seguridad.',
-  tofu: 'He venido a leer. El brote ha venido a mirar.',
-  bruma: 'He dejado un poco de niebla en el agua. Se seca sola.',
+export type PuntoMapa = { x: number; y: number }
+const punto = (x: number, y: number): PuntoMapa => ({ x, y })
+
+/** Recorridos sobre los senderos pintados, desde el punto de apoyo de los pies. */
+export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
+  puntos: PuntoMapa[]
+  sinPuente?: PuntoMapa[]
+  descanso: PuntoMapa
+  segundos: number
+  desfase: number
+  frase: string
+}>> = {
+  nox: {
+    puntos: [punto(50, 72), punto(53, 67), punto(51, 62), punto(49.3, 57), punto(50.5, 53), punto(54, 48), punto(54.8, 44)],
+    sinPuente: [punto(49, 74), punto(53, 68), punto(51.5, 63), punto(50.5, 60)],
+    descanso: punto(52, 63),
+    segundos: 42, desfase: 5,
+    frase: 'Estoy haciendo la ronda. Si ves una salchicha, avísame.',
+  },
+  tuerca: {
+    puntos: [punto(49, 75.8), punto(46, 79), punto(45.5, 83), punto(47.4, 87)],
+    descanso: punto(46, 82),
+    segundos: 51, desfase: 32,
+    frase: 'El camino tiene cuatro curvas. He contado cinco por si acaso.',
+  },
+  tofu: {
+    puntos: [punto(32, 31.7), punto(40, 33.2), punto(46, 34.5), punto(50, 33.4), punto(52.7, 37.4), punto(59.7, 42)],
+    descanso: punto(56, 41),
+    segundos: 48, desfase: 12,
+    frase: 'He salido a leer. El brote ha salido a mirar.',
+  },
+  bruma: {
+    puntos: [punto(62, 17.7), punto(55, 18.3), punto(50, 20.6), punto(52, 24), punto(55, 26.5), punto(53, 29.5)],
+    descanso: punto(54, 22),
+    segundos: 54, desfase: 21,
+    frase: 'He dejado un poco de niebla en el agua. Se seca sola.',
+  },
 }

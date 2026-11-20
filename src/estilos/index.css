@@ -273,32 +273,133 @@ body {
   background: radial-gradient(ellipse, #30272575 5%, #3b302c35 48%, transparent 72%);
 }
 .mueble-plaza { filter: drop-shadow(0 2px 1px #58432d52); }
-.vecino-en-plaza { animation: llegar-a-la-plaza 1.8s ease-out both; }
-.vecino-en-plaza img { filter: drop-shadow(0 2px 1px #58432d66); }
-@keyframes llegar-a-la-plaza {
-  0%, 22% { opacity: 0; transform: translateY(-5%); }
-  100% { opacity: 1; transform: none; }
+/* Los pies se apoyan sobre el sendero. Las pausas al inicio y al final forman parte del paseo. */
+.vecino-de-paseo {
+  left: var(--paseo-reposo-x);
+  top: var(--paseo-reposo-y);
+  width: 8.2%;
+  translate: -50% -100%;
+  -webkit-tap-highlight-color: transparent;
 }
+.vecino-de-paseo::before {
+  content: '';
+  position: absolute;
+  inset: auto 18% 0;
+  height: 16%;
+  background: radial-gradient(ellipse, #4e392e65 0%, transparent 72%);
+}
+.vecino-de-paseo img { filter: drop-shadow(0 1px 1px #58432d50); }
+@supports (offset-path: path('M 0 0 L 1 1')) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vecino-de-paseo {
+      left: 0;
+      top: 0;
+      translate: none;
+      offset-path: var(--paseo-camino);
+      offset-anchor: 50% 100%;
+      offset-rotate: 0deg;
+      animation: paseo-del-barrio var(--paseo-duracion) var(--paseo-retardo) linear infinite;
+    }
+    .vecino-de-paseo img { animation: paso-del-barrio .46s ease-in-out infinite; }
+    .vecino-de-paseo:is(:active, :focus-visible),
+    .vecino-de-paseo:is(:active, :focus-visible) img { animation-play-state: paused; }
+  }
+}
+@keyframes paseo-del-barrio {
+  0%, 9%, 86%, 100% { offset-distance: 0%; }
+  43%, 57% { offset-distance: 100%; }
+}
+@keyframes paso-del-barrio { 50% { transform: translateY(-1.5px) rotate(-2deg); } }
+
 .barrio-arroyo {
   clip-path: polygon(0 53%, 18% 53%, 29% 52.5%, 42% 54.5%, 50% 54.3%, 56% 53%, 67% 52%, 81% 51%, 100% 50%, 100% 58%, 82% 58%, 72% 59.4%, 55% 61%, 47% 58.4%, 40% 60%, 27% 60.6%, 16% 59.3%, 0 61%);
+  background: linear-gradient(0deg, #75ced516, #acf1eb20 50%, #75ced513);
 }
-.barrio-arroyo span {
+.barrio-arroyo i {
   position: absolute;
-  left: 12%;
-  top: 56.6%;
-  width: 13%;
-  height: .37%;
-  background: radial-gradient(ellipse, #e3ffffa1, #ffeabb54 48%, transparent 72%);
-  animation: reflejo-del-arroyo 11s linear infinite;
+  left: 103%;
+  top: 54%;
+  width: 11%;
+  height: .42%;
+  background: radial-gradient(ellipse, #efffffd9, #b5eadb6e 44%, transparent 74%);
+  animation: reflejo-del-arroyo 10s linear infinite;
 }
-.barrio-arroyo span:nth-child(2) { top: 55.4%; width: 9%; animation-delay: -4s; }
-.barrio-arroyo span:nth-child(3) { top: 57.6%; width: 7%; animation-delay: -8s; }
+.barrio-arroyo i:nth-child(2) { top: 55.6%; animation-delay: -4.2s; animation-duration: 13s; }
+.barrio-arroyo i:nth-child(3) { top: 56.8%; animation-delay: -7s; }
+.barrio-arroyo i:nth-child(4) { top: 57%; animation-delay: -2.4s; animation-duration: 14s; }
+.barrio-arroyo i:nth-child(5) { top: 54.9%; animation-delay: -1.2s; animation-duration: 12s; }
 @keyframes reflejo-del-arroyo {
-  0% { opacity: 0; transform: translateX(0) scaleX(.6); }
-  28% { opacity: .65; }
-  72% { opacity: .5; }
-  100% { opacity: 0; transform: translate(620%, -5px) scaleX(1.1); }
+  0% { opacity: 0; transform: translateX(0) scaleX(.55); }
+  20%, 74% { opacity: .8; }
+  100% { opacity: 0; transform: translate(-1080%, 1.2vh) scaleX(1.08); }
 }
+.barrio-cascada {
+  position: absolute;
+  inset: 31% 5% auto auto;
+  width: 7.5%;
+  height: 7%;
+  overflow: hidden;
+  clip-path: polygon(25% 0, 98% 0, 81% 52%, 63% 82%, 30% 100%, 0 86%, 21% 55%);
+}
+.barrio-cascada i {
+  position: absolute;
+  left: 54%;
+  top: -20%;
+  width: 9%;
+  height: 38%;
+  border-radius: 50%;
+  background: linear-gradient(transparent, #f2ffffac 65%, transparent);
+  animation: agua-de-cascada 1.5s linear infinite;
+}
+.barrio-cascada i:nth-child(2) { left: 68%; animation-delay: -.53s; }
+.barrio-cascada i:nth-child(3) { left: 43%; animation-delay: -1.04s; }
+@keyframes agua-de-cascada {
+  0% { opacity: 0; transform: translate(10%, 0); }
+  28% { opacity: .75; }
+  100% { opacity: 0; transform: translate(-170%, 300%); }
+}
+.hojas-del-barrio i {
+  position: absolute;
+  width: clamp(5px, 1.5%, 10px);
+  aspect-ratio: 1.9;
+  border-radius: 85% 0 85% 0;
+  background: linear-gradient(145deg, #e99b67, #a8564a);
+  box-shadow: 0 1px 2px #65402c55;
+  animation: hoja-del-barrio 18s ease-in-out infinite;
+}
+.hojas-del-barrio i:nth-child(even) { background: linear-gradient(145deg, #e5c86a, #9c9250); }
+@keyframes hoja-del-barrio {
+  0%, 50% { opacity: 0; transform: translate(0, 0) rotate(var(--hoja-giro)); }
+  57% { opacity: .9; }
+  71% { transform: translate(180%, 13px) rotate(95deg) scaleX(.6); }
+  85% { transform: translate(360%, 26px) rotate(175deg); opacity: .75; }
+  100% { opacity: 0; transform: translate(610%, 47px) rotate(230deg) scaleX(.7); }
+}
+.humo-de-casa {
+  position: absolute;
+  left: 77%;
+  top: 13%;
+  width: 18%;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+.humo-de-casa[data-humo='nox'] { left: 60%; top: 23%; width: 14%; }
+.humo-de-casa i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #fff3dccc 8%, #eacbd98c 41%, transparent 73%);
+  animation: humo-del-barrio 5.4s ease-out infinite;
+}
+.humo-de-casa i:nth-child(2) { animation-delay: -1.8s; }
+.humo-de-casa i:nth-child(3) { animation-delay: -3.6s; }
+@keyframes humo-del-barrio {
+  0% { opacity: 0; transform: translate(-50%, -40%) scale(.42); }
+  19% { opacity: .62; }
+  53% { transform: translate(4%, -115%) scale(.92); }
+  100% { opacity: 0; transform: translate(118%, -235%) scale(1.65); }
+}
+
 .luz-puerta {
   width: 44%;
   aspect-ratio: 1;
@@ -315,11 +416,6 @@ body {
   100% { opacity: .25; scale: 1.1; }
 }
 .gesto-de-casa { position: absolute; pointer-events: none; }
-[data-vecino='tuerca'] .gesto-de-casa {
-  left: 76%; top: 6%; width: 22%; height: 13%;
-  background: radial-gradient(ellipse, #ffe7c9b8, transparent 73%);
-  animation: humo-del-taller 13s -3s ease-out infinite;
-}
 [data-vecino='bruma'] .gesto-de-casa {
   left: 10%; bottom: 18%; width: 71%; height: 14%;
   background: radial-gradient(ellipse, #e6bbf696, transparent 68%);
@@ -329,11 +425,6 @@ body {
   left: 31%; top: 36%; width: 39%; height: 25%;
   background: radial-gradient(ellipse, #fff1b08c, transparent 69%);
   animation: cristal-del-invernadero 15s -1s ease-in-out infinite;
-}
-@keyframes humo-del-taller {
-  0%, 76% { opacity: 0; transform: none; }
-  83% { opacity: .72; }
-  100% { opacity: 0; transform: translate(38%, -78%) scale(1.38); }
 }
 @keyframes niebla-del-estanque {
   0%, 68% { opacity: 0; transform: translateX(-12%); }
@@ -347,8 +438,7 @@ body {
 .navegacion-barrio { background: color-mix(in srgb, var(--color-tarjeta) 86%, var(--color-fondo)); }
 
 @media (prefers-reduced-motion: reduce) {
-  .barrio-arroyo span, .gesto-de-casa, .luz-puerta-activa { display: none; }
-  .vecino-en-plaza { animation: none; }
+  .barrio-arroyo i, .barrio-cascada, .hojas-del-barrio, .humo-de-casa, .gesto-de-casa, .luz-puerta-activa { display: none; }
 }
 .sombra-vecino {
   position: absolute;

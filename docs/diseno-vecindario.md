@@ -350,9 +350,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Plaza y ambiente del barrio
 
-- Un banco y un farol quedan junto al borde de la plaza. Si ya viven en el barrio, Bruma pasa al amanecer, Tofu al mediodía y Nox al atardecer. Al tocarles dicen una frase.
+- El banco y el farol quedan junto al borde de la plaza. De día, los vecinos que ya han salido del huevo recorren sus senderos con pausas y ritmos distintos. De noche Nox hace la ronda. Si el puente aún no está construido, se queda en la orilla. Al tocar un vecino, dice una frase.
 - El puente sigue el paso del sendero. Sus carteles se apoyan en las orillas y al tocarlos se lee el texto completo. Los caminos de las casas tienen pequeñas piedras delante de las entradas.
-- El arroyo tiene reflejos. La chimenea de Tuerca, la niebla de Bruma y el cristal de Tofu se animan a destiempo. Al entrar en una casa, su puerta se ilumina antes del viaje de cámara. Con movimiento reducido, el barrio queda quieto y se entra directamente.
+- La corriente y la cascada se mueven dentro de su cauce. El viento arrastra alguna hoja. Sale humo de la chimenea de Tuerca y de la casa de Nox cuando tiene hoguera. La niebla de Bruma y el reflejo del cristal de Tofu se animan a destiempo. Al entrar en una casa, su puerta se ilumina antes del viaje de cámara. Con movimiento reducido, los vecinos quedan quietos en sus senderos y siguen siendo tocables.
 - Al revisarlo (Claude): los textos de la plaza pasan a `src/contenido/barrio.ts`, el puente a WebP, y los botones del barrio mantienen la altura y el tamaño de los de la casa (el martillo, 56 px).
 
 ### Música y sonidos del barrio
