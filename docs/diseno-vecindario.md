@@ -377,9 +377,18 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Menos latidos:** solo late el «?» de una decisión (y el huevo a punto, que ya se mueve). Los puntos, el sobre, los «!», los «…» y el martillo aparecen con un saltito y se quedan quietos.
 - **Accesibilidad del sobre:** al abrirlo el foco va al diálogo y al cerrarlo vuelve a donde estaba; se cierra con Escape; las novedades nuevas se anuncian como «nueva».
 
+### Colocación de las casas
+
+- Cada casita se apoya donde termina su entrada. Los nombres se centran bajo el dibujo y quedan fuera del cálculo de posición.
+- En pantallas estrechas las casas se reducen antes de desplazarse hacia el interior del recorte. Tofu se sitúa más abajo para dejar aire al estanque de Bruma. El claro superior derecho mantiene su parcela.
+- Los avisos y la luz de las ventanas acompañan el dibujo. Las fotos del Álbum comparten las referencias de colocación del barrio.
+
 ### Ordenar la casa (20/11/2026, rama `dev/ordenar-casa`)
 - **Libre, sin baúl todavía** (decidido por Javi). En la hoja del martillo, «Ordenar la casa»: los objetos que se pueden mover llevan un contorno claro y se arrastran con el dedo; abajo, «Como al principio» (los devuelve a su sitio de siempre) y «Listo». La ayuda sale unos segundos y se va (arriba cuelgan cosas). Mientras ordenas, tocar un objeto no habla, el vecino y las visitas no estorban y la interfaz se aparta.
 - **Dónde:** cada casa tiene su suelo (Nox: el prado; Tuerca y Tofu: el suelo del taller y del invernadero; Bruma: la orilla, el embarcadero y los juncos). Si sueltas algo fuera, encaja en el punto de suelo más cercano. Lo colgado (farolillo, campanillas) solo se mueve de lado.
 - **Perspectiva:** al llevarlo al fondo se ve un poco más pequeño y al acercarlo, más grande (entre el 75 % y el 130 %). Lo de delante tapa a lo de detrás.
 - **No se mueven:** el vecino, Gregorio, las huellas de las historias y lo que está en la pared (el tablón, el reloj y el flexo del taller).
 - Se guarda en la partida (y en las copias). Las fotos del Álbum guardan cómo estaba la casa en ese momento.
+
+### Aviso del barrio (20/11/2026, rama `dev/aviso-barrio`)
+- Entrar en el barrio da por vistas sus novedades (las del puente, los barquitos…), igual que entrar en una casa. Antes no se marcaban nunca y el punto de «Barrio» se quedaba encendido sin nada que hacer.
