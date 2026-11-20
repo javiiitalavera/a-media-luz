@@ -70,8 +70,7 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
   let s: Situacion | undefined
   let nuevo: EstadoSituacion | undefined
   // Lo que nace de tu diario va primero: si un patrón se cumple y hay hueco, empieza hoy (lo demás sigue mañana).
-  // Con «Que no lean mi lista», tampoco empiezan historias que nacen de tu diario.
-  const deTuDiario = enMarcha.length < EN_MARCHA_MAX && !p.privado
+  const deTuDiario = enMarcha.length < EN_MARCHA_MAX
     ? SITUACIONES.find((x) => x.patron && !est[x.id] && !choca(x, 0) && cumpleRequisitos(p, x, ahora)) : undefined
   if (deTuDiario) {
     s = deTuDiario

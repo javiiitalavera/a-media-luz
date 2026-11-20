@@ -2,7 +2,7 @@
 // Solo leen lo que haces (nunca lo que no haces). Cada vecino lee una cosa: Nox cuándo te mueves,
 // Tuerca las cuentas (es la única que dice cifras), Tofu tus retos propios, Bruma la calma y los días malos,
 // Madeja cruza datos de todos. Textos: propuestas de Claude, pendientes de revisión de Javi.
-import type { AreaId, CompaneroId } from './tipos'
+import type { AreaId } from './tipos'
 
 export type Franja = 'manana' | 'tarde' | 'noche'
 
@@ -43,12 +43,6 @@ export const LECTURAS_SUELTAS = {
   diaMalo: 'Hoy en mínimo, y cuenta igual. Ya decía yo que estaba bien así.',
   /** Algo el sábado y el domingo (Madeja). */
   finde: 'Este fin de semana también has hecho cosas. He preguntado por ahí. Nadie te ha visto descansar. Yo tampoco.',
-}
-
-/** Madeja, una vez, cuando pides que no lean tu lista. */
-export const AL_CALLARLOS: Partial<Record<CompaneroId, string>> = {
-  madeja: 'Sin datos no hay cotilleo. Qué barrio tan aburrido. Lo respetamos. Con los dientes apretados.',
-  nox: 'Vale, no leemos tu lista. Yo tampoco sabía leer. Bueno, sí. Pero no la leemos.',
 }
 
 /** El informe del domingo de Tuerca (cierra la semana; los materiales siguen llegando al tachar). */

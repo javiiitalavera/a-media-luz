@@ -108,7 +108,7 @@ function leerCopia(contenido: string): Partida | null {
         texto(m.texto) && fecha(m.fecha) && escena(m.escena))) &&
       opcional(p.lecturas, (l) => lista(l, (x) => objeto(x) && texto(x.clave) && clave(x.vecino, COMPANEROS) && texto(x.texto) && fecha(x.fecha))) &&
       opcional(p.informes, (l) => lista(l, dia)) &&
-      opcional(p.privado, booleano)
+      opcional(p.metas, (m) => objeto(m) && opcional(m.dia, dia) && opcional(m.subidas, (x) => objeto(x) && Object.values(x).every(dia)) && opcional(m.rechazos, (x) => objeto(x) && Object.values(x).every(dia)))
     if (!ok) return null
     const partida = p as unknown as Partida
     return fijarFotosDeCasa(migrarHazanas({

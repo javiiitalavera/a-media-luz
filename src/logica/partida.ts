@@ -57,10 +57,10 @@ export interface Partida {
   noticias?: NoticiaBarrio[]
   /** Lecturas sueltas que ha hecho el barrio de tu diario (logica/lector.ts). */
   lecturas?: { clave: string; vecino: CompaneroId; texto: string; fecha: string }[]
+  /** Subir la meta de un reto (logica/subir.ts): cuándo se subió o se dijo que no a cada uno, y el día de la última respuesta. */
+  metas?: { dia?: string; subidas?: Record<string, string>; rechazos?: Record<string, string> }
   /** Semanas (su lunes) que Tuerca ya ha informado. */
   informes?: string[]
-  /** «Que no lean mi lista»: nadie lee tu diario (ni lecturas, ni informe, ni historias que nacen de él). */
-  privado?: boolean
 }
 
 export interface EstadoSituacion {

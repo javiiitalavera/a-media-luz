@@ -13,6 +13,8 @@ import { materialYaGastado, proyectoRecienDisponible } from '../logica/casa'
 import { retoQueFalta } from '../logica/pista'
 import { nacido, proximaLlegada, progreso } from '../logica/etapas'
 import { PideReto } from '../componentes/PideReto'
+import { PropuestaMeta } from '../componentes/PropuestaMeta'
+import { propuestaDeMeta } from '../logica/subir'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -33,6 +35,7 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
   const pista = retoQueFalta(partida, ahora)
+  const propuesta = propuestaDeMeta(partida, ahora)
   const llegada = proximaLlegada(partida, ahora)
   const eclosionPendiente = estadoDelMes(partida, ahora) === 'naciendo'
   const huevoParaVer = eclosionPendiente ? mesActual(partida).companero : llegada?.faltanDias === 0 ? llegada.vecino : null
@@ -112,6 +115,7 @@ export function Ofrendas({ partida, ahora, onIrACasa, onVerProyecto }: { partida
         <p className="mt-3 px-1 text-[14px] text-texto-3">{UI.casa.diasParaOtroHuevo(llegada.faltanDias)}</p>
       )}
       {pista && !huevoParaVer && <PideReto pista={pista} onEditar={() => setHoja('editar')} className="mt-4" />}
+      {!pista && !huevoParaVer && propuesta && <PropuestaMeta propuesta={propuesta} className="mt-4" />}
 
       {puntuales.length > 0 && (
         <>
@@ -407,6 +411,7 @@ function FormularioPropia({ boton, onCrear, puntual = false, areasDisponibles = 
       <label className="block text-[13px] font-semibold text-texto-3">{puntual ? UI.ofrendas.nombrePuntual : UI.ofrendas.nombre}
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={puntual ? UI.ofrendas.ejemploPuntual : UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
       </label>
+      {!puntual && <p className="mt-1 px-1 text-[13px] text-texto-3">{UI.ofrendas.nombreAyuda}</p>}
       <div className="mt-2 text-[13px] font-semibold text-texto-3">{UI.ofrendas.area}</div>
       <div className="mt-1 flex flex-wrap gap-1.5">
         {ORDEN_AREAS.map((a) => (

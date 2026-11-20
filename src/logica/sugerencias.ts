@@ -1,6 +1,7 @@
 // Reglas para sugerir retos a partir del cuestionario (edad, qué quieres mejorar, tu día y cuánto te mueves).
-// Propuesta de Claude, pendiente de revisión de Javi con criterio médico. Metas prudentes: mejor empezar
-// por algo que se cumple que por algo que se abandona.
+// Propuesta de Claude, pendiente de revisión de Javi con criterio médico. Espíritu del juego (Javi, 20/11/2026):
+// retos que pidan algo de esfuerzo, no cosas que harías igualmente. La meta se ajusta a la persona (edad,
+// actividad) para que cueste sin ser imposible; la versión mínima queda solo para el modo día malo.
 import type { Actividad, Perfil } from '../contenido/cuestionario'
 import { ACCIONES } from '../contenido'
 import type { Partida } from './partida'

@@ -508,7 +508,7 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - **Solo se lee lo que haces**, nunca lo que no haces: no hay lecturas de «huecos» (regla base del juego).
 - **Informe del domingo de Tuerca:** cierra la semana (desde el domingo a las 19 h, o al abrir después): días con algo, retos, áreas, material ingresado y páginas del archivo, con su coletilla. Una semana sin nada se cierra en silencio, sin reproche.
 - **«Lo que sabe de ti»** en la ficha de cada vecino: hasta tres líneas que salen de tu diario, cada uno a lo suyo.
-- **«Que no lean mi lista»** (Ajustes · Tu diario): nadie lee nada (ni lecturas, ni informe, ni historias que nacen de tu diario). Al activarlo, Madeja (o Nox) lo comenta una vez.
+- ~~«Que no lean mi lista»~~: retirado el 20/11/2026 (decidido por Javi: no hace falta).
 
 ### Arreglos de la tercera auditoría (20/11/2026, rama `dev/auditoria-3`)
 - **Gregorio:** «La planta» no empieza hasta que se ha decidido con quién se queda Gregorio (nuevo requisito `terminadas` en las historias).
@@ -551,3 +551,9 @@ Cada vecino acepta su merienda desde que sale del huevo. Si hoy has registrado u
 
 ### Encontrarlos al entrar
 Según la franja del día puedes encontrar al vecino ya ocupado con un mueble expuesto. En su encuentro, tocar al vecino o el mueble cambia el gesto. El cojín, los libros, la hamaca, el cesto y la cajonera tienen una reacción propia. También hay visitas tranquilas. La escena cotidiana se descubre tocando al personaje y el interrogante queda para decisiones pendientes. Al completar un reto que permite construir un mueble por primera vez, puedes abrir el catálogo de esa casa con el proyecto delante.
+
+### Retos con esfuerzo y fuera «Que no lean mi lista» (20/11/2026, rama `dev/retos-con-esfuerzo`, decidido por Javi)
+- **Espíritu del juego: retos que pidan algo de esfuerzo,** no cosas que harías igualmente. Se pide al elegirlos (arranque, Sugerencias, «Mis retos» y al crear uno propio: «Si lo harías igualmente, no es un reto»). Cuando un vecino te pide un reto de su área, ofrece uno que cueste algo (andar, leer, meditar, llamar a un amigo, una gestión pendiente), no el más fácil. La versión mínima queda para el modo día malo.
+- **Se retira «Que no lean mi lista»** de Ajustes: el barrio siempre lee tu diario. Las partidas que lo tenían activado vuelven a leerse.
+- **El catálogo se queda como estaba** (Javi prefirió las versiones anteriores). Tras mirar otras apps de hábitos (Finch, Fabulous, Habitica…), el esfuerzo llega por **progresión**, no por un catálogo duro:
+- **Subir la meta** (`src/logica/subir.ts`, decidido por Javi, 20/11/2026): para cualquier reto fijo con número (del catálogo o propio), tras 10 días cumplido desde la última vez que se tocó, el vecino de su área propone subirlo un escalón (pasos +1000, páginas +5, minutos +5, otros números +25 %). Una propuesta al día como mucho; «Así está bien» la aparca 14 días. No se proponen los retos sin número ni las horas de sueño o los litros. La versión mínima no cambia. Sale en Retos y en la casa de ese vecino, si no hay antes un huevo que recoger ni un vecino pidiendo un reto de su área.
