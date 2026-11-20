@@ -720,7 +720,7 @@ export const MICROS: Micro[] = [
   { casa: 'bruma', requiere: ['hamaca', 'nox'], texto: 'Nox espera en el embarcadero a que la hamaca quede libre. Bruma ha decidido no volver a levantarse.', visita: 'nox', cara: 'enfurrunado' },
   { casa: 'tuerca', requiere: ['bruma'], texto: 'Se ha colado niebla en el taller. Tuerca la está intentando archivar.', visita: 'bruma' },
   { casa: 'madeja', requiere: [], texto: 'Madeja está tejiendo algo para alguien. No dice para quién. Mira mucho hacia tu lado.' },
-  { casa: 'madeja', requiere: ['telefono'], texto: 'El teléfono de Madeja suena. Es Madeja, desde el teléfono de Tuerca, para probar si suena.' },
+  { casa: 'madeja', requiere: ['telefono'], texto: 'Madeja levanta el auricular y dice «¿Diga?». No hay nadie. Lo vuelve a colgar. Lleva toda la tarde ensayando.' },
   { casa: 'madeja', requiere: ['mecedora', 'bruma'], texto: 'Bruma está en la mecedora. Madeja la mece. Ninguna de las dos habla. Es raro. Es bonito.', visita: 'bruma' },
   { casa: 'madeja', requiere: [], texto: 'Madeja se ha quedado dormida en mitad de una frase. Era una frase muy larga.', cara: 'dormido' },
   { casa: 'madeja', requiere: ['nox'], texto: 'Nox ha venido a por algo de comer y lleva una hora escuchando cotilleos. Ya no se acuerda de qué venía a comer.', visita: 'nox' },

@@ -45,11 +45,11 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
       : joven ? [del('idioma'), del('crear')] : [del('leer'), del('idioma')],
     calma: [del('meditar', act === 'poco' || mayor ? 'Meditar 5 minutos' : undefined),
       perfil.dia === 'sentado' ? del('estirar', 'Estirar 5 minutos') : perfil.dia === 'cuido' ? del('para-mi') : del('paseo')],
-    gente: menor ? [del('cena', 'Cenar en familia sin móviles'), del('amigo')]
-      : mayor ? [del('amigo', 'Llamar a alguien que quiero'), del('quedar', 'Proponer un paseo en compañía')]
-      : perfil.dia === 'cuido' ? [del('amigo', 'Escribir a alguien con quien pueda hablar'), del('gracias')]
-      : joven ? [del('amigo', 'Mandar un mensaje a un amigo'), del('quedar')]
-      : [del('padres'), del('quedar')],
+    gente: menor ? [del('compartir-foto'), del('cena', 'Cenar en familia sin móviles')]
+      : mayor ? [del('amigo', 'Llamar a alguien que quiero'), del('preguntar')]
+      : perfil.dia === 'cuido' ? [del('preguntar'), del('gracias')]
+      : joven ? [del('amigo', 'Mandar un mensaje a un amigo'), del('compartir-foto')]
+      : [del('preguntar'), del('gracias')],
     orden: menor ? [del('ayudar-casa'), del('planificar', 'Preparar la mochila de mañana', 'Mirar el horario de mañana')]
       : perfil.dia === 'estudio' ? [del('planificar'), del('ordenar', 'Preparar el sitio para estudiar')]
       : perfil.dia === 'sentado' ? [del('correo', 'Resolver tres correos pendientes'), del('gestion')]

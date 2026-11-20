@@ -17,9 +17,10 @@ export interface Escena {
   luzPropia?: { x: number; y: number; tam: number; chispas?: boolean }
   /** Dónde se pueden dejar las cosas al ordenar la casa (los pies): rectángulos en % del fondo. */
   suelo: Zona[]
+  mesa?: Zona[]
 }
 
-/** Un trozo de suelo: de x[0] a x[1] y de y[0] a y[1] (en % del fondo). */
+/** Una superficie de apoyo: de x[0] a x[1] y de y[0] a y[1] (en % del fondo). */
 export interface Zona { x: [number, number]; y: [number, number] }
 
 /** Anchos por dibujo, ajustados a la superficie visible del primer Tuerca. */
@@ -29,7 +30,7 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
     suelo: [{ x: [12, 88], y: [46, 82] }] },
   tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 37.4, 36.5],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 },
-    suelo: [{ x: [12, 88], y: [57, 84] }] },
+    suelo: [{ x: [12, 88], y: [57, 84] }], mesa: [{ x: [48, 84], y: [43.5, 44.5] }] },
   tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [37.8, 36.9, 34.5],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
@@ -41,7 +42,8 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
   // La madriguera de lana de Madeja: suelo de madera con alfombra trenzada.
   madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [35.8, 35.4, 35.8],
     luces: [{ x: 22, y: 16.5 }, { x: 61, y: 25 }],
-    suelo: [{ x: [12, 88], y: [56, 84] }] },
+    suelo: [{ x: [12, 88], y: [56, 84] }],
+    mesa: [{ x: [15, 36], y: [43, 44] }, { x: [65, 76], y: [42.5, 43.5] }] },
 }
 
 export interface Material {
@@ -61,7 +63,7 @@ export const MATERIALES: Record<AreaId, Material> = {
   cuerpo: { area: 'cuerpo', nombre: 'Ascuas', singular: 'ascua', plural: 'ascuas', color: '#f08a3c', explicacion: 'Ascuas: salen de moverte y comer como una persona. Nox jura que no se las come.' },
   mente: { area: 'mente', nombre: 'Semillas', singular: 'semilla', plural: 'semillas', color: '#8fae6b', explicacion: 'Semillas: de leer, aprender o crear algo. Tofu las planta. No dice qué sale.' },
   calma: { area: 'calma', nombre: 'Rocío', singular: 'gota de rocío', plural: 'gotas de rocío', color: '#a99be0', explicacion: 'Rocío: de dormir bien y parar un rato sin pantallas. Se evapora si lo miras mucho. Es broma. Casi.' },
-  vinculos: { area: 'vinculos', nombre: 'Hilo', singular: 'hebra de hilo', plural: 'hebras de hilo', color: '#e8737a', explicacion: 'Hilo: de quedar, llamar o abrazar a alguien. Tuerca lo usa para atar expedientes.' },
+  vinculos: { area: 'vinculos', nombre: 'Hilo', singular: 'hebra de hilo', plural: 'hebras de hilo', color: '#e8737a', explicacion: 'Hilo: de compartir algo, escribir a alguien o quedar. Tuerca lo usa para atar expedientes.' },
   orden: { area: 'orden', nombre: 'Tornillos', singular: 'tornillo', plural: 'tornillos', color: '#7fa7b0', explicacion: 'Tornillos: de cerrar pendientes y poner orden. Tuerca los cuenta. Dos veces.' },
 }
 
@@ -72,11 +74,14 @@ export interface ObjetoCasa {
   /** Lo que dice el dueño de la casa sobre él (en el catálogo). */
   descripcion: string
   coste: Partial<Record<AreaId, number>>
+  /** Lo que pagaban las partidas antes de guardar el coste en cada construcción. */
+  costeAnterior?: Partial<Record<AreaId, number>>
+  apoyo?: 'mesa' | 'fijo'
   /** Dónde va en la escena, en % del fondo: centro horizontal, base (pies) y ancho. */
   sitio: { x: number; y: number; ancho: number; colgado?: boolean }
   /** Alto/ancho de su imagen, para colocar su luz. */
   proporcion: number
-  /** Si es un proyecto personal: su posición en la cadena de su casa (se desvelan de uno en uno). */
+  /** Si es un proyecto personal: su prioridad en el catálogo de su casa. */
   orden?: number
   /** Qué abre al terminarlo (se ve en el panel de proyectos). */
   abre?: string
@@ -91,7 +96,7 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'hoguera', companero: 'nox', orden: 1, abre: 'Enciende la casa. Y problemas con la normativa.', nombre: 'Hoguera', descripcion: 'Competencia directa. La toleraré.',
     coste: { cuerpo: 3 }, sitio: { x: 24, y: 58, ancho: 22 }, proporcion: 0.81, luz: { x: 50, y: 40, color: '#ffb347' } },
   { id: 'cojin', companero: 'nox', orden: 4, nombre: 'Cojín de cuadros', descripcion: 'Para mí. Tú te sientas en el suelo.',
-    coste: { cuerpo: 2, vinculos: 2 }, sitio: { x: 77, y: 67, ancho: 15 }, proporcion: 0.83 },
+    coste: { cuerpo: 4 }, costeAnterior: { cuerpo: 2, vinculos: 2 }, sitio: { x: 77, y: 67, ancho: 15 }, proporcion: 0.83 },
   { id: 'banco', companero: 'nox', orden: 2, abre: 'Un sitio para que se siente alguien de visita. Aunque nadie lo haya invitado.', nombre: 'Banco de tronco', descripcion: 'Un sitio para sentarse a juzgar a los demás.',
     coste: { cuerpo: 5, vinculos: 1 }, sitio: { x: 80, y: 57, ancho: 26 }, proporcion: 0.67 },
   { id: 'farolillo', companero: 'nox', orden: 5, nombre: 'Farolillo', descripcion: 'Más luz. Para leer de noche. No leo de noche, pero queda bien.',
@@ -110,21 +115,21 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'pizarra', companero: 'tofu', orden: 2, abre: 'Ciencia. Y un problema administrativo.', nombre: 'Pizarra', descripcion: 'Para escribir cosas importantes. O fórmulas. A veces coinciden.',
     coste: { mente: 4, orden: 2 }, sitio: { x: 72, y: 58, ancho: 19 }, proporcion: 0.99 },
   { id: 'maceta', companero: 'tofu', orden: 3, abre: 'Una planta con apetito.', nombre: 'Maceta grande', descripcion: 'Es una planta. Come poco. Casi siempre.',
-    coste: { mente: 5, calma: 2 }, sitio: { x: 21, y: 72, ancho: 20 }, proporcion: 0.95 },
+    coste: { mente: 6 }, costeAnterior: { mente: 5, calma: 2 }, sitio: { x: 21, y: 72, ancho: 20 }, proporcion: 0.95 },
   // Estanque de Bruma: casi todo pide rocío (Calma).
   { id: 'tetera', companero: 'bruma', orden: 1, abre: 'Infusiones. Y confesiones, que vienen incluidas.', nombre: 'Tetera de barro', descripcion: 'Una infusión relaja. Dos te hacen contar cosas. Yo solo sirvo.',
     coste: { calma: 3 }, sitio: { x: 47, y: 40.5, ancho: 13 }, proporcion: 0.93 },
   { id: 'campanillas', companero: 'bruma', orden: 2, abre: 'Música de viento. Y una queja formal.', nombre: 'Campanillas de viento', descripcion: 'Suenan cuando pasa el aire. O cuando paso yo, que es casi lo mismo.',
     coste: { calma: 4, orden: 2 }, sitio: { x: 47, y: 4, ancho: 13, colgado: true }, proporcion: 1.15 },
   { id: 'hamaca', companero: 'bruma', orden: 3, abre: 'Siestas sobre el agua. Y un okupa.', nombre: 'Hamaca de nenúfar', descripcion: 'Para flotar sin esfuerzo. Que es lo que hago siempre, pero tumbada.',
-    coste: { calma: 5, cuerpo: 2 }, sitio: { x: 80, y: 50, ancho: 21 }, proporcion: 0.93 },
+    coste: { calma: 6 }, costeAnterior: { calma: 5, cuerpo: 2 }, sitio: { x: 80, y: 50, ancho: 21 }, proporcion: 0.93 },
   // Madriguera de Madeja: casi todo pide hilo (Vínculos).
   { id: 'cesto', companero: 'madeja', orden: 1, abre: 'Labores. Y calcetines para quien no los ha pedido.', nombre: 'Cesto de costura', descripcion: 'Agujas, ovillos y un cotilleo a medio tejer.',
     coste: { vinculos: 3 }, sitio: { x: 80, y: 67, ancho: 17 }, proporcion: 0.9 },
   { id: 'telefono', companero: 'madeja', orden: 2, abre: 'Una línea directa con todo el barrio. A cualquier hora.', nombre: 'Teléfono de rueda', descripcion: 'Para llamar. Para que me llamen. Sobre todo para llamar.',
-    coste: { vinculos: 4, orden: 2 }, sitio: { x: 42, y: 46, ancho: 11 }, proporcion: 0.84 },
+    coste: { vinculos: 4, orden: 2 }, apoyo: 'mesa', sitio: { x: 33, y: 44, ancho: 11 }, proporcion: 0.84 },
   { id: 'mecedora', companero: 'madeja', orden: 3, abre: 'Un sitio para escuchar. Y para que te escuchen, si te dejas.', nombre: 'Mecedora', descripcion: 'Me meces y te cuento. O me cuentas y te meces.',
-    coste: { vinculos: 5, calma: 2 }, sitio: { x: 20, y: 72, ancho: 21 }, proporcion: 1.13 },
+    coste: { vinculos: 6 }, costeAnterior: { vinculos: 5, calma: 2 }, sitio: { x: 20, y: 72, ancho: 21 }, proporcion: 1.13 },
   { id: 'album', companero: 'madeja', orden: 4, nombre: 'Álbum de fotos', descripcion: 'Todavía en blanco. Por poco tiempo.',
     coste: { vinculos: 4, mente: 2 }, sitio: { x: 34, y: 82, ancho: 15 }, proporcion: 0.76 },
   { id: 'guirnalda', companero: 'madeja', orden: 5, nombre: 'Guirnalda de banderines', descripcion: 'Para celebrar. Ya encontraremos el qué.',
@@ -132,13 +137,13 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'buzon', companero: 'madeja', orden: 6, nombre: 'Buzón de cartas', descripcion: 'Cartas de verdad. Con sello y con letra torcida.',
     coste: { vinculos: 6, orden: 2 }, sitio: { x: 79, y: 82, ancho: 15 }, proporcion: 1.03 },
   { id: 'tetera-rosa', companero: 'madeja', orden: 7, nombre: 'Tetera rosa', descripcion: 'Dos tazas desparejadas. Como las parejas que más duran.',
-    coste: { vinculos: 5, calma: 2 }, sitio: { x: 30, y: 49, ancho: 11 }, proporcion: 0.95 },
+    coste: { vinculos: 5, calma: 2 }, apoyo: 'mesa', sitio: { x: 18, y: 44, ancho: 11 }, proporcion: 0.95 },
   { id: 'costurero', companero: 'madeja', orden: 8, nombre: 'Costurero', descripcion: 'Hilos para coser. Y para atar cabos sueltos de los vecinos.',
-    coste: { vinculos: 6, orden: 2 }, sitio: { x: 58, y: 83, ancho: 12 }, proporcion: 1.01 },
+    coste: { vinculos: 7 }, costeAnterior: { vinculos: 6, orden: 2 }, sitio: { x: 58, y: 83, ancho: 12 }, proporcion: 1.01 },
   { id: 'sofa', companero: 'madeja', orden: 9, nombre: 'Sofá de dos plazas', descripcion: 'Para dos. Si viene uno solo, me siento yo al lado.',
     coste: { vinculos: 7, cuerpo: 2 }, sitio: { x: 84, y: 58, ancho: 19 }, proporcion: 0.71 },
   { id: 'marco', companero: 'madeja', orden: 10, nombre: 'Marco de fotos', descripcion: 'Vacío. Esperando a la foto adecuada. Tengo varias candidatas.',
-    coste: { vinculos: 6, mente: 2 }, sitio: { x: 77, y: 45, ancho: 7 }, proporcion: 1.11 },
+    coste: { vinculos: 6, mente: 2 }, apoyo: 'mesa', sitio: { x: 75, y: 43, ancho: 7 }, proporcion: 1.11 },
   { id: 'alfombra', companero: 'madeja', orden: 11, nombre: 'Alfombra de retales', descripcion: 'Un retal de cada vecino. Algunos no saben que han donado.',
     coste: { vinculos: 7, calma: 2 }, sitio: { x: 16, y: 84, ancho: 15 }, proporcion: 0.78 },
   { id: 'farol-punto', companero: 'madeja', orden: 12, nombre: 'Farolillo de punto', descripcion: 'Luz tejida. Calienta un poco. Sobre todo, la conversación.',
@@ -146,11 +151,11 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'caja', companero: 'tuerca', orden: 1, abre: 'Las primeras reparaciones del taller. Y las primeras búsquedas de herramientas.', nombre: 'Caja de herramientas', descripcion: 'Arreglo cualquier cosa. El cajón de las herramientas sigue atascado.',
     coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', orden: 3, abre: 'Una aspiradora con ideas propias.', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',
-    coste: { orden: 5, cuerpo: 2 }, sitio: { x: 75, y: 72, ancho: 17 }, proporcion: 0.87 },
+    coste: { orden: 5, cuerpo: 2 }, apoyo: 'fijo', sitio: { x: 75, y: 72, ancho: 17 }, proporcion: 0.87 },
   { id: 'flexo', companero: 'tuerca', orden: 4, nombre: 'Flexo', descripcion: 'Luz de trabajo. La apunto a lo que no estoy haciendo.',
-    coste: { orden: 3, mente: 2 }, sitio: { x: 52, y: 44.2, ancho: 11 }, proporcion: 1.1, luz: { x: 70, y: 68, color: '#ffd27a' } },
+    coste: { orden: 3, mente: 2 }, apoyo: 'mesa', sitio: { x: 52, y: 44.2, ancho: 11 }, proporcion: 1.1, luz: { x: 70, y: 68, color: '#ffd27a' } },
   { id: 'cajonera', companero: 'tuerca', orden: 5, nombre: 'Cajonera', descripcion: 'Tres cajones. Uno pone VARIOS. Los otros dos, también.',
-    coste: { orden: 4, calma: 1 }, sitio: { x: 84, y: 63, ancho: 15 }, proporcion: 1.22 },
+    coste: { orden: 5 }, costeAnterior: { orden: 4, calma: 1 }, sitio: { x: 84, y: 63, ancho: 15 }, proporcion: 1.22 },
   { id: 'estanteria-tarros', companero: 'tuerca', orden: 6, nombre: 'Estante de tarros', descripcion: 'Tornillos clasificados por tamaño, color y rencor.',
     coste: { orden: 4, vinculos: 2 }, sitio: { x: 14, y: 62, ancho: 17 }, proporcion: 1.05 },
   { id: 'reloj', companero: 'tuerca', orden: 7, nombre: 'Reloj de engranajes', descripcion: 'Va cuatro minutos adelantado. Por si acaso. No sé por si acaso qué.',
@@ -166,13 +171,13 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'parrilla', companero: 'nox', orden: 14, nombre: 'Parrilla', descripcion: 'Para salchichas. Con normativa o sin ella.',
     coste: { cuerpo: 7, orden: 2 }, sitio: { x: 15, y: 57, ancho: 13 }, proporcion: 0.79, luz: { x: 50, y: 40, color: '#ffb347' } },
   { id: 'colchoneta', companero: 'nox', orden: 15, nombre: 'Colchoneta de musgo', descripcion: 'Para estirar. O para la siesta. Más bien para la siesta.',
-    coste: { cuerpo: 6, calma: 3 }, sitio: { x: 60, y: 83, ancho: 14 }, proporcion: 0.81 },
+    coste: { cuerpo: 6, calma: 3 }, sitio: { x: 60, y: 80, ancho: 14 }, proporcion: 0.81 },
   { id: 'bici', companero: 'nox', orden: 16, nombre: 'Bicicleta de madera', descripcion: 'No tiene frenos. Tiene confianza.',
     coste: { cuerpo: 9, orden: 2 }, sitio: { x: 84, y: 76, ancho: 17 }, proporcion: 0.86 },
   { id: 'archivador', companero: 'tuerca', orden: 10, nombre: 'Archivador', descripcion: 'Tres cajones. Etiquetas en blanco. Potencial infinito.',
     coste: { orden: 6, mente: 1 }, sitio: { x: 87, y: 80, ancho: 12 }, proporcion: 1.44 },
   { id: 'maquina', companero: 'tuerca', orden: 11, nombre: 'Máquina de escribir', descripcion: 'Clac, clac, ding. Escribo formularios por placer.',
-    coste: { orden: 6, mente: 2 }, sitio: { x: 63, y: 44.2, ancho: 12 }, proporcion: 0.97 },
+    coste: { orden: 6, mente: 2 }, apoyo: 'mesa', sitio: { x: 63, y: 44.2, ancho: 12 }, proporcion: 0.97 },
   { id: 'corcho', companero: 'tuerca', orden: 12, nombre: 'Corcho de pistas', descripcion: 'Hilo rojo entre notas. Aún no sé qué investigo.',
     coste: { orden: 5, mente: 3 }, sitio: { x: 81, y: 27, ancho: 13 }, proporcion: 0.81 },
   { id: 'balanza', companero: 'tuerca', orden: 13, nombre: 'Balanza', descripcion: 'Lo peso todo. Hasta las decisiones. Sobre todo las decisiones.',
@@ -215,7 +220,7 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'medalla', companero: 'tuerca', orden: 8, nombre: 'Medalla de engranaje', descripcion: 'Al mérito en la gestión de pendientes. Me la he dado yo. Me la merecía.',
     coste: { orden: 6, mente: 2 }, sitio: { x: 89, y: 41, ancho: 8 }, proporcion: 1.29 },
   { id: 'tablon', companero: 'tuerca', orden: 2, abre: 'Sugerencias, expedientes y conflictos administrativos.', nombre: 'Tablón de planificación', descripcion: 'Todo planificado. Lo imprevisto, en la columna VARIOS.',
-    coste: { orden: 4, mente: 2 }, sitio: { x: 33, y: 23.5, ancho: 13 }, proporcion: 0.94 },
+    coste: { orden: 5 }, costeAnterior: { orden: 4, mente: 2 }, sitio: { x: 33, y: 23.5, ancho: 13 }, proporcion: 0.94 },
   { id: 'tuerquita', companero: 'tuerca', orden: 9, nombre: 'Tuerquita', descripcion: 'Una versión pequeña de mí. Igual de insufrible, la mitad de alta.',
     coste: { orden: 7, vinculos: 2 }, sitio: { x: 39, y: 74, ancho: 9 }, proporcion: 1.13 },
 ]

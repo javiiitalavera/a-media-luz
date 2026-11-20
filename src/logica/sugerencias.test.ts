@@ -7,7 +7,7 @@ const ids = (p: Parameters<typeof sugerencias>[0]) => sugerencias(p).map((s) => 
 
 describe('sugerencias del cuestionario', () => {
   it('sin responder nada: tres retos sencillos', () => {
-    expect(ids({ mejorar: [] })).toEqual(['pasos', 'leer', 'padres'])
+    expect(ids({ mejorar: [] })).toEqual(['pasos', 'leer', 'preguntar'])
   })
   it('los pasos se ajustan a lo que te mueves y a la edad', () => {
     expect(metaPasos('poco', false)).toBe(4000)
@@ -22,6 +22,11 @@ describe('sugerencias del cuestionario', () => {
     expect(ids({ edad: '65+', mejorar: ['moverme'], actividad: 'poco' })).toContain('equilibrio')
     expect(ids({ edad: '30-49', mejorar: ['dormir'], dia: 'sentado' })).toContain('estirar')
     expect(ids({ edad: '30-49', mejorar: ['moverme', 'dormir', 'calma'], dia: 'sentado', actividad: 'poco' }).length).toBeLessThanOrEqual(5)
+  })
+  it('distingue la actividad en solitario de las opciones sociales breves', () => {
+    const p = crearPartida('nox', en('2026-01-05'), ids({ edad: 'menor', mejorar: ['moverme', 'gente'] }))
+    expect(p.acciones.find((a) => a.id === 'jugar-fuera')?.area).toBe('cuerpo')
+    expect(p.acciones.find((a) => a.id === 'compartir-foto')?.area).toBe('vinculos')
   })
   it('añadir una sugerencia guarda su meta ajustada', () => {
     const p = anadirSugerencia(crearPartida('nox', en('2026-01-05'), ['leer']), { id: 'pasos', nombre: 'Andar 4000 pasos', minima: 'Andar 1000 pasos' })

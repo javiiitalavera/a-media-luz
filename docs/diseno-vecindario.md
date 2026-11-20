@@ -387,10 +387,10 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - Los avisos y la luz de las ventanas acompañan el dibujo. Las fotos del Álbum comparten las referencias de colocación del barrio.
 
 ### Ordenar la casa (20/11/2026, rama `dev/ordenar-casa`)
-- **Libre, sin baúl todavía** (decidido por Javi). En la hoja del martillo, «Ordenar la casa»: los objetos que se pueden mover llevan un contorno claro y se arrastran con el dedo; abajo, «Como al principio» (los devuelve a su sitio de siempre) y «Listo». La ayuda sale unos segundos y se va (arriba cuelgan cosas). Mientras ordenas, tocar un objeto no habla, el vecino y las visitas no estorban y la interfaz se aparta.
-- **Dónde:** cada casa tiene su suelo (Nox: el prado; Tuerca y Tofu: el suelo del taller y del invernadero; Bruma: la orilla, el embarcadero y los juncos). Si sueltas algo fuera, encaja en el punto de suelo más cercano. Lo colgado (farolillo, campanillas) solo se mueve de lado.
+- **Ordenar y guardar.** En la hoja del martillo, «Ordenar la casa»: los objetos que se pueden mover llevan un contorno claro y se arrastran con el dedo; abajo, «Como al principio» (los devuelve a su sitio de siempre) y «Listo». Suelta un objeto sobre el baúl para guardarlo y toca el baúl para recuperarlo. La ayuda sale unos segundos y se va (arriba cuelgan cosas). Mientras ordenas, tocar un objeto no habla, el vecino y las visitas no estorban y la interfaz se aparta.
+- **Dónde:** cada casa tiene su suelo (Nox: el prado; Tuerca y Tofu: el suelo del taller y del invernadero; Bruma: la orilla, el embarcadero y los juncos). Los objetos de sobremesa, como el teléfono de Madeja y el flexo de Tuerca, se deslizan por los apoyos del mobiliario. Al soltarlos se ajustan al apoyo compatible más cercano. Lo colgado (farolillo, campanillas) solo se mueve de lado.
 - **Perspectiva:** al llevarlo al fondo se ve un poco más pequeño y al acercarlo, más grande (entre el 75 % y el 130 %). Lo de delante tapa a lo de detrás.
-- **No se mueven:** el vecino, Gregorio, las huellas de las historias y lo que está en la pared (el tablón, el reloj y el flexo del taller).
+- **No se mueven:** el vecino, Gregorio, las huellas de las historias y lo que está en la pared (el tablón y el reloj del taller).
 - Se guarda en la partida (y en las copias). Las fotos del Álbum guardan cómo estaba la casa en ese momento.
 
 ### Aviso del barrio (20/11/2026, rama `dev/aviso-barrio`)
@@ -431,10 +431,10 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Casita del mapa** (madriguera de punto con ovillo) en la quinta parcela, arriba a la derecha. Madeja llega cuando Bruma es joven y tiene un proyecto: su huevo aparece en la puerta del estanque.
 - **Proyectos de Madeja** (casi todo pide hilo): cesto de costura (abre «Los calcetines»), teléfono de rueda (abre «La línea directa»), mecedora, álbum de fotos, guirnalda de banderines (colgada) y buzón.
 - **Historias nuevas:** *Los calcetines* (calcetines para todo el barrio: los de Nox se chamuscan, Tofu los lleva en el brote, Tuerca los archiva sin estrenar) y *La línea directa* (Madeja llama a todos a las seis, Tuerca impone un horario y tú decides a quién llama de noche: a Bruma o a nadie). Micros nuevos con el teléfono y la mecedora.
-- **Catálogo completo:** los objetos que estaban dibujados pero no se podían construir (cojín, farolillo, seta, estantería, zapatillas, bufanda y farol de luna de Nox; flexo, cajonera, estante de tarros, reloj, medalla y Tuerquita de Tuerca) siguen ahora la cadena de proyectos de su casa, después de los tres primeros, de uno en uno. La estantería de Nox cambia de sitio para no quedar detrás del horno.
+- **Catálogo completo:** los objetos que estaban dibujados pero no se podían construir (cojín, farolillo, seta, estantería, zapatillas, bufanda y farol de luna de Nox; flexo, cajonera, estante de tarros, reloj, medalla y Tuerquita de Tuerca) se incorporan al catálogo de proyectos de su casa. La estantería de Nox cambia de sitio para no quedar detrás del horno.
 
 ### Más objetos y la plaza (20/11/2026, rama `dev/mas-objetos`)
-- **24 objetos nuevos** que siguen la cadena de proyectos de cada casa, de uno en uno:
+- **24 objetos nuevos** para los catálogos de las casas:
   - **Nox:** saco de hojas (colgado), mancuernas de piedra, comba, parrilla, colchoneta de musgo y bicicleta de madera.
   - **Tuerca:** archivador, máquina de escribir, corcho de pistas (en la pared), balanza, lámpara de piezas y cajas apiladas.
   - **Tofu:** telescopio, globo terráqueo, atril, caballete, tablero de ajedrez y gramófono.
@@ -533,3 +533,8 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - En el porche de Nox flotan ascuas. En el invernadero de Tofu una semilla cae y rueda por las losas. En casa de Madeja un botón rueda hacia la alfombra.
 - Cada vecino de paseo tiene cinco frases. Van rotando al tocarlo.
 - La lista admite hasta diez retos fijos y tres por área. Las listas antiguas se conservan y los retos puntuales quedan fuera de ese límite. El cuestionario ofrece alternativas que se pueden marcar según edad, rutina, actividad y preferencias.
+
+### Opciones de construcción y retos breves
+
+- El primer objeto de cada casa se ofrece solo. Después se muestran hasta dos pendientes, con preferencia por incluir uno que se pueda construir solo con el material de su personaje. Cada ficha dice cuánto falta y las construcciones nuevas recuerdan lo que se pagó. Las antiguas siguen descontando su coste original.
+- Vínculos incluye enviar una foto, preguntar a alguien cómo está y dar las gracias. Jugar fuera pasa a Energía desde el próximo registro. Las acciones anteriores conservan el área y el material originales.

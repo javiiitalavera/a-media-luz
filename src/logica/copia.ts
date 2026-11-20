@@ -38,6 +38,7 @@ function situaciones(v: unknown) {
 }
 
 const numero = (v: unknown) => typeof v === 'number' && Number.isFinite(v)
+const coste = (v: unknown) => objeto(v) && Object.entries(v).every(([a, n]) => clave(a, AREAS) && typeof n === 'number' && Number.isInteger(n) && n > 0)
 const posiciones = (v: unknown) => objeto(v) && Object.values(v).every((x) => objeto(x) && numero(x.x) && numero(x.y))
 
 function perfil(v: unknown) {
@@ -86,7 +87,7 @@ function leerCopia(contenido: string): Partida | null {
       lista(p.ofrendas, (o) => objeto(o) && texto(o.id) && texto(o.accionId) &&
         clave(o.area, AREAS) && fecha(o.fecha) && opcional(o.diaMalo, booleano)) &&
       lista(p.hallazgos, (h) => objeto(h) && texto(h.objetoId) && fecha(h.fecha)) &&
-      opcional(p.construcciones, (l) => lista(l, (c) => objeto(c) && texto(c.objetoId) && fecha(c.fecha))) &&
+      opcional(p.construcciones, (l) => lista(l, (c) => objeto(c) && texto(c.objetoId) && fecha(c.fecha) && opcional(c.coste, coste))) &&
       opcional(p.meses, (l) => Array.isArray(l) && l.length > 0 && l.every((m) =>
         objeto(m) && clave(m.companero, ESCENAS) && fecha(m.inicio) && opcional(m.listo, booleano) && opcional(m.presentado, fecha) && opcional(m.cerrado, fecha))) &&
       opcional(p.situaciones, situaciones) && opcional(p.perfil, perfil) && opcional(p.vistos, vistos) &&

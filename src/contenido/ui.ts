@@ -137,7 +137,7 @@ export const UI = {
   },
   casa: {
     ordenar: 'Ordenar la casa',
-    ordenarAyuda: 'Arrastra las cosas con el dedo. Al fondo se ven más pequeñas. Al baúl, se guardan.',
+    ordenarAyuda: 'Arrastra cada cosa a su sitio o suéltala sobre el baúl para guardarla.',
     baul: (n: number) => (n ? `Baúl (${n} guardados)` : 'Baúl'),
     baulTitulo: 'El baúl',
     baulVacio: 'Está vacío. Arrastra algo encima para guardarlo.',
@@ -210,7 +210,8 @@ export const UI = {
       : `Faltan ${n} días con algún reto para que llegue otro huevo.`,
     queVenga: 'Recoger el huevo',
     ahoraNo: 'Ahora no',
-    masProyectos: 'Hay más proyectos. Se desvelan al terminar este.',
+    masProyectos: 'Al construir, irá apareciendo el resto.',
+    faltaMaterial: (n: number, material: string) => `Falta${n === 1 ? '' : 'n'} ${n} ${material}`,
     proyectosBarrio: 'Proyectos del barrio',
     barrioNecesita: 'Hace falta que Nox y Tuerca hayan nacido y hayan terminado un proyecto cada uno.',
     alaCasa: 'Casa',
