@@ -126,6 +126,11 @@ export const UI = {
     habitualesExplicacion: 'Cosas de tu vida real. Cuando las hagas, las tachas, y eso despierta al huevo. Las metas son orientativas.',
   },
   casa: {
+    ordenar: 'Ordenar la casa',
+    ordenarAyuda: 'Arrastra las cosas con el dedo. Al fondo se ven más pequeñas.',
+    comoAlPrincipio: 'Como al principio',
+    listo: 'Listo',
+    moverObjeto: (nombre: string) => `Mover ${nombre}`,
     de: (nombre: string) => `Casa de ${nombre}`,
     construir: 'Construir',
     catalogo: 'Construir en casa',

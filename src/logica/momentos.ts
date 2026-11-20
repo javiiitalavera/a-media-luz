@@ -23,6 +23,8 @@ export interface EscenaFoto {
   momentoDia: MomentoDia
   /** En el barrio: quién vive ya (sus casitas). */
   vecinos?: CompaneroId[]
+  /** Dónde estaban las cosas que habías movido (para que la foto no cambie al reordenar después). */
+  colocados?: Record<string, { x: number; y: number }>
 }
 
 export interface MomentoAlbum {
@@ -31,6 +33,12 @@ export interface MomentoAlbum {
   titulo: string
   texto: string
   escena: EscenaFoto
+}
+
+/** Lo movido en una casa (si hay algo). */
+function colocadosDe(p: Partida, c: CompaneroId) {
+  const propios = Object.entries(p.colocados ?? {}).filter(([id]) => OBJETOS_CASA.find((o) => o.id === id)?.companero === c)
+  return propios.length ? Object.fromEntries(propios) : undefined
 }
 
 /** Cómo está ahora mismo un sitio, para la foto. */
@@ -45,6 +53,7 @@ export function fotoDe(p: Partida, lugar: Lugar, ahora: Date, cara: Cara = 'cont
     visita: visitante(p, lugar, ahora) ?? undefined,
     objetos: OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id)).map((o) => o.id),
     gregorio: dondeGregorio(p, ahora) === lugar,
+    ...(colocadosDe(p, lugar) && { colocados: colocadosDe(p, lugar) }),
   }
 }
 
