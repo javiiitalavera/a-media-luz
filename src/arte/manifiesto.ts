@@ -21,11 +21,10 @@ export type ClaveArte =
   | `huella/${ArteHuella}`
 
 const EXPRESIONES: Expresion[] = ['base', 'contento', 'enfurrunado', 'dormido']
-/** Los dibujos × 4 expresiones de un compañero, recortados con la herramienta (mismo encuadre). Los niveles 4 y 5
- *  solo de quien ya los tiene dibujados; a los demás les sirve el adulto. */
-const CON_NIVELES_ALTOS: Id[] = ['nox', 'tuerca', 'tofu']
+/** Los 5 dibujos (cachorro, joven, adulto, niveles 4 y 5) × 4 expresiones de un compañero, recortados con la
+ *  herramienta (mismo encuadre). Si un día falta alguno, rutaCompanero usa el anterior. */
 const personaje = (c: Id) => Object.fromEntries(
-  (['', 'joven/', 'adulto/', ...(CON_NIVELES_ALTOS.includes(c) ? ['nivel4/', 'nivel5/'] as const : [])] as const)
+  (['', 'joven/', 'adulto/', 'nivel4/', 'nivel5/'] as const)
     .flatMap((e) => EXPRESIONES.map((x) => [`companero/${c}/${e}${x}`, `/arte/personajes/${c}/${e}${x}.webp`])),
 )
 

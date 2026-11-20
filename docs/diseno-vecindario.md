@@ -567,5 +567,5 @@ Según la franja del día puedes encontrar al vecino ya ocupado con un mueble ex
 - **Visitas:** si hay alguien de visita en la casa, el dueño no se acerca a su mueble favorito (se montaban uno encima del otro); se queda en su sitio.
 
 ### Dibujos de los niveles 4 y 5 (20/11/2026, rama `dev/niveles-4-5`)
-- Cada nivel tiene su dibujo: cachorro (1), joven (2), adulto (3), nivel 4 y nivel 5 (`public/arte/personajes/<vecino>/nivel4|nivel5/`). Ya están Nox (bufanda con broche; capa con farol), Tuerca (cinturón de herramientas; gafas y capa) y Tofu (más hojas y flores). Bruma y Madeja, encargados a ChatGPT; mientras tanto usan el adulto.
+- Cada nivel tiene su dibujo: cachorro (1), joven (2), adulto (3), nivel 4 y nivel 5 (`public/arte/personajes/<vecino>/nivel4|nivel5/`). Nox (bufanda con broche; capa con farol), Tuerca (cinturón de herramientas; gafas y capa), Tofu (más hojas y flores), Bruma (farolillo de papel y rocío; corona de nenúfar) y Madeja (agujas de punto y teléfono colgado; gafas de cotilla y chal).
 - Su tamaño en casa se calcula para que ocupen lo mismo que el primer Tuerca (como el resto). La antena de Tuerca sigue parpadeando en sus dibujos nuevos.

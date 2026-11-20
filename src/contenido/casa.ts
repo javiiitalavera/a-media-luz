@@ -35,12 +35,12 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
   // Bruma flota sobre el estanque: sus «pies» son el final de su cola de niebla.
-  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [37.4, 34.2, 36.3],
+  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [37.4, 34.2, 36.3, 35.9, 35.7],
     luces: [{ x: 20.5, y: 27 }, { x: 67.5, y: 13 }],
     // La orilla, el embarcadero y los juncos del agua.
     suelo: [{ x: [10, 32], y: [39, 47] }, { x: [32, 66], y: [37.5, 41.5] }, { x: [68, 90], y: [44, 56] }] },
   // La madriguera de lana de Madeja: suelo de madera con alfombra trenzada.
-  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [35.8, 35.4, 35.8],
+  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [35.8, 35.4, 35.8, 35, 35],
     luces: [{ x: 22, y: 16.5 }, { x: 61, y: 25 }],
     suelo: [{ x: [12, 88], y: [56, 84] }],
     mesa: [{ x: [15, 36], y: [43, 44] }, { x: [65, 76], y: [42.5, 43.5] }] },
