@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fotoDe, momentoCrecer, momentoNacimiento, momentosDeHistorias, momentosRecientes } from './momentos'
+import { fotoDe, momentoSubirNivel, momentoNacimiento, momentosDeHistorias, momentosRecientes, tituloMomento } from './momentos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -24,9 +24,12 @@ describe('momentos del Álbum', () => {
   it('nacer y crecer dejan su foto, una sola vez', () => {
     let p = momentoNacimiento(barrio([]), 'tuerca', en('2026-01-06', 12))
     p = momentoNacimiento(p, 'tuerca', en('2026-01-07', 12))
-    p = momentoCrecer(p, 'tuerca', 1, en('2026-01-08', 12), 'Joven.')
-    expect(momentosRecientes(p).map((m) => m.id)).toEqual(['crece-tuerca-1', 'nace-tuerca'])
+    p = momentoSubirNivel(p, 'tuerca', 2, en('2026-01-08', 12))
+    p = momentoSubirNivel(p, 'tuerca', 5, en('2026-02-10', 12))
+    expect(momentosRecientes(p).map((m) => m.id)).toEqual(['crece-tuerca-4', 'crece-tuerca-1', 'nace-tuerca'])
     expect(p.momentos![1].escena.etapa).toBe(1)
+    expect(p.momentos![2].escena.etapa).toBe(2)
+    expect(tituloMomento({ ...p.momentos![1], titulo: 'Tuerca ya es joven' })).toBe('Tuerca alcanza el nivel 2')
   })
 
   it('una historia que termina deja su foto en el sitio de su final', () => {

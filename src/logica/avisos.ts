@@ -7,10 +7,11 @@ import type { Lugar } from '../contenido/situaciones'
 import type { NoticiaBarrio, Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre, sumarDias } from './fechas'
 import { misHazanas } from './hazanas'
-import { crecioSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
+import { nivelSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
 import { estadoDelMes, mesActual, mesesDe } from './meses'
 import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
+import type { MomentoAlbum } from './momentos'
 import { decisionPendiente, dondeGregorio, faseDe, huellasEn, microDeHoy } from './situaciones'
 import { expuesto } from './colocar'
 import { azarConSemilla } from './azar'
@@ -68,7 +69,7 @@ const escenaSinVisitar = (p: Partida, lugar: Lugar, ahora: Date) =>
 /** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
 export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
   if (!nacido(p, c, ahora)) return false
-  return crecioSinVer(p, c, progreso(p, c, ahora).etapa) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
+  return nivelSinVer(p, c, progreso(p, c, ahora).nivel) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
 }
 
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
@@ -79,7 +80,7 @@ export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
 /** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
 export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
   estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0 || pendientesDelSobre(p, ahora) > 0 ||
-  nacidos(p, ahora).some((c) => crecioSinVer(p, c, progreso(p, c, ahora).etapa))
+  nacidos(p, ahora).some((c) => nivelSinVer(p, c, progreso(p, c, ahora).nivel))
 
 /** La pequeña cosa de hoy en una casa, si aún no la has mirado. */
 export function microSinVer(p: Partida, c: CompaneroId, ahora: Date) {
@@ -99,16 +100,35 @@ export function huellaNueva(p: Partida, id: string, ahora: Date): boolean {
 export const verHuella = (p: Partida, id: string): Partida =>
   vistos(p).huellas?.includes(id) ? p : { ...p, vistos: { ...vistos(p), huellas: [...(vistos(p).huellas ?? []), id] } }
 
-/** Álbum: cada parte (momentos, crónicas, curiosidades) avisa de lo nuevo desde la última vez que la miraste. */
+/** Lo que ya se había visto por sección en partidas anteriores. */
 const SECCIONES: SeccionAlbum[] = ['momentos', 'cronicas', 'curiosidades']
 const vistoEn = (p: Partida, s: SeccionAlbum) => vistos(p).albumSec?.[s] ?? vistos(p).album ?? ''
 export function seccionesNuevas(p: Partida): SeccionAlbum[] {
   return SECCIONES.filter((s) => {
-    const visto = vistoEn(p, s)
-    if (s === 'momentos') return (p.momentos ?? []).some((m) => m.fecha > visto)
-    if (s === 'curiosidades') return curiosidadesTenidas(p).some((x) => x.fecha > visto)
+    if (s === 'momentos') return (p.momentos ?? []).some((m) => momentoNuevo(p, m))
+    if (s === 'curiosidades') return curiosidadesTenidas(p).some(({ c, fecha }) => curiosidadNueva(p, c.id, fecha))
     return Object.keys(p.situaciones ?? {}).some((id) => cronicaNueva(p, id))
   })
+}
+
+const firmaMomento = (m: MomentoAlbum) => JSON.stringify([m.titulo, m.texto, m.escena])
+export const momentoNuevo = (p: Partida, m: MomentoAlbum) => p.vistos?.momentos
+  ? p.vistos.momentos[m.id] !== firmaMomento(m) : m.fecha > vistoEn(p, 'momentos')
+export const curiosidadNueva = (p: Partida, id: string, fecha: string) => p.vistos?.curiosidades
+  ? p.vistos.curiosidades[id] !== fecha : fecha > vistoEn(p, 'curiosidades')
+
+export function verMomento(p: Partida, m: MomentoAlbum): Partida {
+  if (!momentoNuevo(p, m)) return p
+  const previos = p.vistos?.momentos ?? Object.fromEntries((p.momentos ?? [])
+    .filter((x) => !momentoNuevo(p, x)).map((x) => [x.id, firmaMomento(x)]))
+  return { ...p, vistos: { ...p.vistos, momentos: { ...previos, [m.id]: firmaMomento(m) } } }
+}
+
+export function verCuriosidad(p: Partida, id: string, fecha: string): Partida {
+  if (!curiosidadNueva(p, id, fecha)) return p
+  const previas = p.vistos?.curiosidades ?? Object.fromEntries(curiosidadesTenidas(p)
+    .filter((x) => !curiosidadNueva(p, x.c.id, x.fecha)).map((x) => [x.c.id, x.fecha]))
+  return { ...p, vistos: { ...p.vistos, curiosidades: { ...previas, [id]: fecha } } }
 }
 
 /** Lo que tiene una crónica hasta ahora (fase y decisión): si cambia, hay novedad. */
@@ -133,15 +153,6 @@ export const verCronica = (p: Partida, id: string): Partida => {
   return { ...p, vistos: { ...vistos(p), cronicas: { ...previas, [id]: firmaCronica(e) } } }
 }
 export const hayAlbumNuevo = (p: Partida) => seccionesNuevas(p).length > 0
-/** Mirar una parte del Álbum apaga su aviso. */
-export const verSeccion = (p: Partida, s: SeccionAlbum, ahora: Date): Partida => {
-  if (!seccionesNuevas(p).includes(s)) return p
-  // Las crónicas se apagan de una en una (al abrirlas); aquí, todas a la vez.
-  if (s === 'cronicas') return Object.keys(p.situaciones ?? {}).reduce(verCronica, p)
-  return { ...p, vistos: { ...vistos(p), albumSec: { ...vistos(p).albumSec, [s]: ahora.toISOString() } } }
-}
-/** Mirarlo todo. */
-export const verAlbum = (p: Partida, ahora: Date): Partida => SECCIONES.reduce((q, s) => verSeccion(q, s, ahora), p)
 
 /** Decisiones que te esperan (para el sobre): en qué casa, qué se pregunta y la noticia que la planteó. */
 export function decisionesPendientes(p: Partida, ahora: Date): { lugar: CompaneroId; situacion: string; pregunta: string; contexto: string; dia: string }[] {

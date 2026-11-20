@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, pendientesHoy, puntualesHoy, quitarHazana, textoHazana } from './hazanas'
+import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, pendientesHoy, puntualesHoy, quitarHazana, seleccionarHabituales, textoHazana } from './hazanas'
 import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { estadoRincon } from './reglas'
@@ -129,10 +129,26 @@ describe('hazañas', () => {
   it('la lista sale ordenada por área y no pasa de 10 retos', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), ['padres', 'leer', 'pasos'])
     expect(misHazanas(p).map((a) => a.id)).toEqual(['pasos', 'leer', 'padres'])
-    for (const id of ['correr', 'bici', 'fuerza', 'estirar', 'verdura', 'agua', 'idioma', 'meditar']) p = anadirHazana(p, id)
+    for (const id of ['correr', 'bici', 'fuerza', 'idioma', 'meditar', 'aire', 'gestion', 'detalle']) p = anadirHazana(p, id)
     expect(misHazanas(p)).toHaveLength(MAX_RETOS)
     expect(cabeOtro(p)).toBe(false)
     expect(crearHazana(p, { nombre: 'Nadar', area: 'cuerpo' }, 'x')).toBe(p)
     expect(misHazanas(quitarHazana(p, 'bici'))).toHaveLength(MAX_RETOS - 1)
+  })
+
+  it('el máximo por área se aplica a retos nuevos y a cambios de área, sin recortar las listas antiguas', () => {
+    const ids = ['pasos', 'correr', 'bici', 'fuerza', 'leer']
+    expect(seleccionarHabituales(ids)).toEqual(['pasos', 'correr', 'bici', 'leer'])
+    const p = crearPartida('nox', en('2026-01-05'), ids)
+    expect(misHazanas(p)).toHaveLength(5)
+    expect(anadirHazana(p, 'estirar')).toBe(p)
+    const conExtra = anadirHazana(p, 'estirar', false)
+    expect(conExtra.acciones.at(-1)?.habitual).toBe(false)
+    expect(anadirHazana(conExtra, 'estirar')).toBe(conExtra)
+    const conPropio = crearHazana(p, { nombre: 'Escribir una nota', area: 'mente' }, 'nota')
+    expect(editarHazana(conPropio, 'propia-nota', { area: 'cuerpo' }).acciones.at(-1)?.area).toBe('mente')
+    expect(editarHazana(conPropio, 'propia-nota', { area: 'orden' }).acciones.at(-1)?.area).toBe('orden')
+    const puntual = crearHazana(p, { nombre: 'Nadar', area: 'cuerpo', soloEl: '2026-01-05' }, 'nadar')
+    expect(puntualesHoy(puntual, en('2026-01-05')).map((a) => a.nombre)).toEqual(['Nadar'])
   })
 })

@@ -27,4 +27,16 @@ describe('sugerencias del cuestionario', () => {
     const p = anadirSugerencia(crearPartida('nox', en('2026-01-05'), ['leer']), { id: 'pasos', nombre: 'Andar 4000 pasos', minima: 'Andar 1000 pasos' })
     expect(p.acciones.find((a) => a.id === 'pasos')!.nombre).toBe('Andar 4000 pasos')
   })
+  it('propone alternativas de varias áreas sin seleccionarlas como primera lista', () => {
+    const perfil = { edad: '18-29', mejorar: ['aprender', 'gente'], actividad: 'poco' } as const
+    const p = { ...perfil, mejorar: [...perfil.mejorar] }
+    expect(ids(p).slice(0, 2)).toEqual(['idioma', 'amigo'])
+    const alternativas = sugerencias(p, 8).map(({ id }) => id)
+    expect(alternativas).toHaveLength(8)
+    expect(alternativas).toContain('gastos')
+    expect(alternativas).toContain('paseo')
+    const mayor = sugerencias({ edad: '65+', mejorar: ['aprender', 'gente'], dia: 'jubilado' }, 8)
+    expect(mayor.slice(0, 2).map(({ id }) => id)).toEqual(['curso', 'amigo'])
+    expect(mayor.some(({ id }) => id === 'podcast')).toBe(true)
+  })
 })

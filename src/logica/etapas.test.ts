@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { crecioSinVer, diasActivos, incubar, marcarEtapaVista, nacido, nacidos, proximaLlegada, progreso } from './etapas'
-import { construir } from './casa'
+import { diasActivos, incubar, marcarNivelVisto, nacido, nacidos, nivelSinVer, proximaLlegada, progreso } from './etapas'
 import { estadoDelMes, marcarPresentado, mesActual } from './meses'
 import { crearPartida, type Partida } from './partida'
 import { con, en } from './test-utils'
@@ -27,14 +26,12 @@ describe('vecinos y crecimiento por hitos', () => {
     p = marcarPresentado(p, en('2026-01-08'))
     expect(nacido(p, 'nox', en('2026-01-08'))).toBe(true)
   })
-  it('joven con 4 días de Cuerpo y un proyecto; varias el mismo día cuentan como un día', () => {
+  it('sube de nivel por días distintos de su área, sin depender de las construcciones', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), undefined, true)
     p = marcarPresentado(conDias(p, 'cuerpo', '2026-01-05', 4, 3), en('2026-01-05', 12))
     const ahora = en('2026-01-09')
     expect(diasActivos(p, 'nox', ahora)).toBe(4)
-    expect(progreso(p, 'nox', ahora).etapa).toBe(0) // falta el proyecto
-    p = construir(p, 'hoguera', ahora)!
-    expect(progreso(p, 'nox', ahora)).toMatchObject({ etapa: 1, siguiente: { dias: 12, proyectos: 3 } })
+    expect(progreso(p, 'nox', ahora)).toMatchObject({ nivel: 2, etapa: 1, siguiente: { nivel: 3, dias: 10 } })
   })
   it('la llegada cuenta días distintos de cualquier área, después de presentar al vecino', () => {
     let p = crearPartida('nox', en('2026-01-05', 8), ['leer', 'aire'], true)
@@ -75,10 +72,23 @@ describe('vecinos y crecimiento por hitos', () => {
     expect(progreso(p, 'nox', en('2026-01-13')).etapa).toBe(0)
     expect(proximaLlegada(p, en('2026-01-13'))).toBeNull()
   })
-  it('la celebración sale una vez por etapa', () => {
+  it('cada nivel tiene su umbral y los días sin reto no interrumpen el progreso', () => {
+    let p = crearPartida('nox', en('2026-01-05', 8), ['pasos', 'leer'], true)
+    p = marcarPresentado(p, en('2026-01-05', 8))
+    const largos = Array.from({ length: 35 }, (_, n) => sumarDias('2026-01-05', n * 2))
+    for (const d of largos) p = con(p, 'cuerpo', d)
+    p = con(p, 'mente', '2026-01-06', 3)
+    for (const [dia, nivel] of [[3, 1], [4, 2], [10, 3], [21, 4], [35, 5]]) {
+      expect(progreso(p, 'nox', en(largos[dia - 1])).nivel).toBe(nivel)
+    }
+    expect(progreso(p, 'nox', en(largos[34])).siguiente).toBeNull()
+  })
+  it('la celebración aparece una vez y el nivel visto se conserva', () => {
     let p = crearPartida('nox', en('2026-01-05', 8))
-    expect(crecioSinVer(p, 'nox', 1)).toBe(true)
-    p = marcarEtapaVista(p, 'nox', 1)
-    expect(crecioSinVer(p, 'nox', 1)).toBe(false)
+    expect(nivelSinVer(p, 'nox', 4)).toBe(true)
+    p = marcarNivelVisto(p, 'nox', 4)
+    expect(nivelSinVer(p, 'nox', 4)).toBe(false)
+    expect(marcarNivelVisto(p, 'nox', 3)).toBe(p)
+    expect(progreso(p, 'nox', en('2026-01-05')).nivel).toBe(4)
   })
 })

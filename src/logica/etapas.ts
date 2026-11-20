@@ -1,24 +1,21 @@
-// Vecinos y crecimiento (docs/diseno-vecindario.md). Los vecinos son para siempre. Crecen por hitos: días
-// distintos con alguna hazaña de su área (desde que llegó su huevo) y proyectos personales terminados.
-// Nunca bajan. Las llegadas cuentan días con cualquier reto desde la última presentación.
+// Los niveles cuentan días con retos de su área. Las llegadas cuentan días con cualquier reto.
 import { tieneMes } from '../arte/manifiesto'
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { Partida } from './partida'
 import { eclosion, mesActual, mesesDe } from './meses'
-import { proyectosHechos, queRecompensan } from './casa'
+import { queRecompensan } from './casa'
 import { dia } from './fechas'
 
+/** Variante gráfica guardada en el Álbum. Los niveles pueden compartir dibujo. */
 export type Etapa = 0 | 1 | 2
+export type Nivel = 1 | 2 | 3 | 4 | 5
 
-/** Días distintos con hazañas de su área para ser joven y adulto (valores iniciales, se ajustarán jugando). */
-export const UMBRALES: Record<CompaneroId, { joven: number; adulto: number }> = {
-  nox: { joven: 4, adulto: 12 },
-  tofu: { joven: 3, adulto: 9 },
-  bruma: { joven: 3, adulto: 9 },
-  madeja: { joven: 2, adulto: 6 },
-  tuerca: { joven: 2, adulto: 6 },
-}
-export const PROYECTOS_PARA = { joven: 1, adulto: 3 } as const
+export const NIVEL_MAXIMO = 5
+const DIAS_POR_NIVEL: Record<Nivel, number> = { 1: 0, 2: 4, 3: 10, 4: 21, 5: 35 }
+const NIVELES = [5, 4, 3, 2, 1] as const
+const DIBUJOS: Record<Nivel, Etapa> = { 1: 0, 2: 1, 3: 2, 4: 2, 5: 2 }
+const NIVELES_ANTIGUOS = [1, 2, 3] as const
+export const dibujoDelNivel = (nivel: Nivel): Etapa => DIBUJOS[nivel]
 
 /** Orden de llegada y días activos entre presentaciones. */
 export const ORDEN_LLEGADA: CompaneroId[] = ['nox', 'tuerca', 'tofu', 'bruma', 'madeja']
@@ -52,34 +49,29 @@ export function diasActivos(p: Partida, c: CompaneroId, ahora: Date): number {
 }
 
 export interface Progreso {
+  nivel: Nivel
   etapa: Etapa
   dias: number
-  proyectos: number
-  /** Lo que pide la siguiente etapa (null si ya es adulto). */
-  siguiente: { dias: number; proyectos: number } | null
-  /** Cuánto lleva hacia la siguiente, de 0 a 1 (mitad días, mitad proyectos), para la barra. */
-  fraccion: number
+  siguiente: { nivel: Nivel; dias: number } | null
 }
+
+/** Las apariencias que ya se celebraron equivalen a los primeros tres niveles. */
+export const nivelVisto = (p: Partida, c: CompaneroId): Nivel =>
+  p.nivelesVistos?.[c] ?? NIVELES_ANTIGUOS[p.etapasVistas?.[c] ?? 0]
 
 export function progreso(p: Partida, c: CompaneroId, ahora: Date): Progreso {
   const dias = diasActivos(p, c, ahora)
-  const proyectos = proyectosHechos(p, c)
-  const u = UMBRALES[c]
-  const ganada: Etapa = dias >= u.adulto && proyectos >= PROYECTOS_PARA.adulto ? 2
-    : dias >= u.joven && proyectos >= PROYECTOS_PARA.joven ? 1 : 0
-  const vista = p.etapasVistas?.[c] ?? 0
-  const etapa = vista > ganada ? vista : ganada
-  const siguiente = etapa === 0 ? { dias: u.joven, proyectos: PROYECTOS_PARA.joven }
-    : etapa === 1 ? { dias: u.adulto, proyectos: PROYECTOS_PARA.adulto } : null
-  const fraccion = siguiente ? (Math.min(1, dias / siguiente.dias) + Math.min(1, proyectos / siguiente.proyectos)) / 2 : 1
-  return { etapa, dias, proyectos, siguiente, fraccion }
+  const visto = nivelVisto(p, c)
+  const nivel = NIVELES.find((n) => n <= visto || dias >= DIAS_POR_NIVEL[n]) ?? 1
+  const proximo = NIVELES.find((n) => n === nivel + 1)
+  const siguiente = proximo ? { nivel: proximo, dias: DIAS_POR_NIVEL[proximo] } : null
+  return { nivel, etapa: dibujoDelNivel(nivel), dias, siguiente }
 }
 
-/** ¿Ha crecido desde la última vez que se vio su casa? (para la celebración). */
-export const crecioSinVer = (p: Partida, c: CompaneroId, etapa: Etapa) => etapa > (p.etapasVistas?.[c] ?? 0)
+export const nivelSinVer = (p: Partida, c: CompaneroId, nivel: Nivel) => nivel > nivelVisto(p, c)
 
-export const marcarEtapaVista = (p: Partida, c: CompaneroId, etapa: Etapa): Partida =>
-  ({ ...p, etapasVistas: { ...p.etapasVistas, [c]: etapa } })
+export const marcarNivelVisto = (p: Partida, c: CompaneroId, nivel: Nivel): Partida =>
+  nivelSinVer(p, c, nivel) ? { ...p, nivelesVistos: { ...p.nivelesVistos, [c]: nivel } } : p
 
 /** Solo cuenta un día si se ha registrado algo después del día en que se presentó al último vecino. */
 export function proximaLlegada(p: Partida, ahora: Date, posibles: readonly CompaneroId[] = ORDEN_LLEGADA.filter(tieneMes)) {

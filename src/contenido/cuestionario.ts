@@ -28,7 +28,7 @@ export const TEXTOS_CUESTIONARIO = {
   saltar: 'Saltar',
   seguir: 'Ver mis retos',
   sugeridosTitulo: 'Tus retos para empezar',
-  sugeridosExplicacion: 'Sugeridos por lo que has contado. Quita o añade los que quieras: las metas son orientativas.',
+  sugeridosExplicacion: 'Hemos marcado algunas ideas para empezar. Puedes cambiarlas o elegir entre las alternativas.',
   menor: 'Como eres menor de edad, elige tus retos con tu madre, tu padre o un adulto de confianza. Os llevará cinco minutos y saldrán mejor.',
   hojaTitulo: 'Retos sugeridos para ti',
   hojaExplicacion: '¿Han cambiado las cosas, o te equivocaste? Cambia tus respuestas y mira qué te sugerimos ahora.',

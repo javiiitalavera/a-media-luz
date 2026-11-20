@@ -9,7 +9,7 @@ import { BotonPrincipal, Pantalla } from '../componentes/comunes'
 import { Cuestionario } from '../componentes/Cuestionario'
 import { TEXTOS_CUESTIONARIO as T, type Perfil } from '../contenido/cuestionario'
 import { sugerencias, type Sugerencia } from '../logica/sugerencias'
-import { MAX_RETOS } from '../logica/hazanas'
+import { cabeEnLista } from '../logica/hazanas'
 import { importarCopia } from '../logica/copia'
 import { inicioDia } from '../logica/reloj'
 
@@ -22,11 +22,17 @@ export function Inicio() {
   const [perfil, setPerfil] = useState<Perfil>({ mejorar: [] })
   const [sugeridos, setSugeridos] = useState<Sugerencia[]>([])
   const [habituales, setHabituales] = useState<string[]>(HAZANAS_INICIALES)
-  const verRetos = (p: Perfil) => { const s = sugerencias(p); setSugeridos(s); setHabituales(s.map((x) => x.id)); setPaso(3) }
+  const verRetos = (p: Perfil) => {
+    setSugeridos(sugerencias(p, 8))
+    setHabituales(sugerencias(p).map((x) => x.id))
+    setPaso(3)
+  }
   const nombreDe = (id: string, nombre: string) => sugeridos.find((x) => x.id === id)?.nombre ?? nombre
   const [todas, setTodas] = useState(false)
   useEffect(() => { window.scrollTo(0, 0) }, [paso])
-  const alternar = (id: string) => setHabituales((h) => (h.includes(id) ? h.filter((x) => x !== id) : h.length >= MAX_RETOS ? h : [...h, id]))
+  const puedeMarcar = (id: string, area: AreaId) => habituales.includes(id) ||
+    cabeEnLista(ACCIONES.filter((a) => habituales.includes(a.id)), area)
+  const alternar = (id: string) => setHabituales((h) => h.includes(id) ? h.filter((x) => x !== id) : [...h, id])
 
   return (
     <Pantalla>
@@ -55,8 +61,8 @@ export function Inicio() {
           {perfil.edad === 'menor' && <p className="mt-3 rounded-2xl bg-tarjeta p-3 text-[15px] leading-snug font-medium">{T.menor}</p>}
           {!todas ? (
             <div className="mt-5 flex flex-col gap-2">
-              {ACCIONES.filter((a) => sugeridos.some((x) => x.id === a.id) || habituales.includes(a.id)).map((a) => (
-                <Opcion key={a.id} nombre={nombreDe(a.id, a.nombre)} area={a.area} activa={habituales.includes(a.id)} onToque={() => alternar(a.id)} />
+              {[...new Set([...sugeridos.map((s) => s.id), ...habituales])].map((id) => ACCIONES.find((a) => a.id === id)!).map((a) => (
+                <Opcion key={a.id} nombre={nombreDe(a.id, a.nombre)} area={a.area} activa={habituales.includes(a.id)} bloqueada={!puedeMarcar(a.id, a.area)} onToque={() => alternar(a.id)} />
               ))}
             </div>
           ) : (
@@ -66,7 +72,7 @@ export function Inicio() {
                   <h2 className="mb-2 flex items-center gap-1.5 px-1 text-[15px] font-bold"><IconoArea area={area} pequeno />{AREAS[area].nombre}</h2>
                   <div className="flex flex-col gap-2">
                     {ACCIONES.filter((a) => a.area === area).map((a) => (
-                      <Opcion key={a.id} nombre={nombreDe(a.id, a.nombre)} area={a.area} activa={habituales.includes(a.id)} onToque={() => alternar(a.id)} />
+                      <Opcion key={a.id} nombre={nombreDe(a.id, a.nombre)} area={a.area} activa={habituales.includes(a.id)} bloqueada={!puedeMarcar(a.id, a.area)} onToque={() => alternar(a.id)} />
                     ))}
                   </div>
                 </section>
@@ -77,6 +83,7 @@ export function Inicio() {
             {todas ? UI.arranque.verMenos : UI.arranque.verTodas}
           </button>
           <p className="mt-1 px-1 text-center text-[13px] text-texto-3">{habituales.length ? UI.arranque.cambiarLuego : T.sinLista}</p>
+          <p className="mt-1 px-1 text-center text-[13px] text-texto-3">{UI.ofrendas.limiteLista}</p>
         </>
       )}
       <div className="sticky bottom-0 -mx-4 mt-4 bg-gradient-to-t from-fondo from-70% to-transparent px-4 pt-6 pb-[max(20px,env(safe-area-inset-bottom))]">
@@ -115,10 +122,10 @@ function Recuperar() {
   )
 }
 
-function Opcion({ nombre, area, activa, onToque }: { nombre: string; area: AreaId; activa: boolean; onToque: () => void }) {
+function Opcion({ nombre, area, activa, bloqueada, onToque }: { nombre: string; area: AreaId; activa: boolean; bloqueada: boolean; onToque: () => void }) {
   return (
-    <button type="button" aria-pressed={activa} onClick={onToque}
-      className={`flex min-h-[56px] w-full items-center gap-3 rounded-2xl border-2 px-3 text-left transition ${activa ? 'border-salvia bg-tarjeta' : 'border-borde bg-tarjeta/60'}`}>
+    <button type="button" aria-pressed={activa} disabled={bloqueada} onClick={onToque}
+      className={`flex min-h-[56px] w-full items-center gap-3 rounded-2xl border-2 px-3 text-left transition disabled:opacity-50 ${activa ? 'border-salvia bg-tarjeta' : 'border-borde bg-tarjeta/60'}`}>
       <IconoArea area={area} />
       <span className="flex-1">
         <span className="block text-[16px] font-semibold">{nombre}</span>

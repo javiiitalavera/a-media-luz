@@ -1,11 +1,11 @@
 // Álbum y Ajustes.
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { COMPANEROS, UI } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
-import { momentosRecientes, type MomentoAlbum } from '../logica/momentos'
+import { momentosRecientes, tituloMomento, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
-import { cronicaNueva, seccionesNuevas, verCronica, verSeccion } from '../logica/avisos'
+import { cronicaNueva, curiosidadNueva, momentoNuevo, seccionesNuevas, verCronica, verCuriosidad, verMomento } from '../logica/avisos'
 import { Punto } from '../componentes/Aviso'
 import type { Curiosidad } from '../contenido/curiosidades'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
@@ -48,15 +48,13 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
   linea: rutaArte('casa/madeja/objeto/telefono'),
 }
 
-export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {
-  // Cada parte avisa con un punto de lo nuevo; al abrirla, se apaga. Se abre primero la que tiene novedades.
+export function Album({ partida, onIr }: { partida: Partida; onIr: (l: Lugar) => void }) {
+  // Se abre primero la parte con novedades. Cada punto se apaga al abrir su ficha.
   const ajustar = useJuego((s) => s.ajustar)
   const momentos = momentosRecientes(partida)
   const lista = cronicas(partida)
   const nuevas = seccionesNuevas(partida)
   const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(() => nuevas[0] ?? (momentos.length || !lista.length ? 'momentos' : 'cronicas'))
-  // Momentos y curiosidades se dan por vistos al abrir su parte; las crónicas, de una en una al abrirlas.
-  useEffect(() => { if (seccion !== 'cronicas') ajustar((p) => verSeccion(p, seccion, ahora)) }, [ajustar, seccion, ahora])
   const curiosidades = curiosidadesTenidas(partida)
   const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
   const [cronicaAbierta, setCronicaAbierta] = useState<string | null>(null)
@@ -66,7 +64,7 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
     const e = partida.situaciones?.[id]
     return s && e ? s.fases[e.fase].lugar : null
   }
-  const leerCronica = (id: string) => { setCosa(null); setAbierto(null); setSeccion('cronicas'); setCronicaAbierta(id) }
+  const leerCronica = (id: string) => { setCosa(null); setAbierto(null); setSeccion('cronicas'); setCronicaAbierta(id); ajustar((p) => verCronica(p, id)) }
   const [abierto, setAbierto] = useState<MomentoAlbum | null>(null)
   return (
     <Pantalla titulo={UI.album.titulo}>
@@ -76,7 +74,7 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
           <button key={s} type="button" role="tab" aria-selected={seccion === s} onClick={() => setSeccion(s)}
             className={`relative min-h-11 rounded-full text-[14px] font-semibold ${seccion === s ? 'bg-tarjeta text-texto shadow-sm' : 'text-texto-3'}`}>
             {UI.album2[s]}
-            {seccion !== s && nuevas.includes(s) && <Punto className="absolute top-1.5 right-2" />}
+            {nuevas.includes(s) && <Punto className="absolute top-1 right-1" />}
           </button>
         ))}
       </div>
@@ -87,8 +85,9 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {curiosidades.map((x) => (
-              <button key={x.c.id} type="button" onClick={() => setCosa(x)}
-                className="flex min-h-[124px] flex-col items-center justify-start gap-1.5 rounded-3xl bg-tarjeta p-2.5 text-center shadow-sm active:scale-[0.97]">
+              <button key={x.c.id} type="button" onClick={() => { setCosa(x); ajustar((p) => verCuriosidad(p, x.c.id, x.fecha)) }}
+                className="relative flex min-h-[124px] flex-col items-center justify-start gap-1.5 rounded-3xl bg-tarjeta p-2.5 text-center shadow-sm active:scale-[0.97]">
+                {curiosidadNueva(partida, x.c.id, x.fecha) && <><Punto className="absolute top-3 right-3" /><span className="sr-only">{UI.album2.novedad}</span></>}
                 <img src={x.c.arte} alt="" className="h-16 w-16 object-contain" draggable={false} />
                 <span className="text-[12px] leading-tight font-semibold">{x.c.nombre}</span>
               </button>
@@ -101,11 +100,12 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {momentos.map((m, i) => (
-              <button key={m.id} type="button" onClick={() => setAbierto(m)}
-                className="rounded-md bg-[#fffaf3] p-2 pb-3 text-left shadow-md transition active:scale-[0.98]"
+              <button key={m.id} type="button" onClick={() => { setAbierto(m); ajustar((p) => verMomento(p, m)) }}
+                className="relative rounded-md bg-[#fffaf3] p-2 pb-3 text-left shadow-md transition active:scale-[0.98]"
                 style={{ transform: `rotate(${i % 2 ? 1.2 : -1.2}deg)` }}>
+                {momentoNuevo(partida, m) && <><Punto className="absolute right-1 -top-1 z-10" /><span className="sr-only">{UI.album2.novedad}</span></>}
                 <FotoEscena e={m.escena} />
-                <span className="mt-2 block text-[13px] leading-tight font-bold text-[#3f2a3a]">{m.titulo}</span>
+                <span className="mt-2 block text-[13px] leading-tight font-bold text-[#3f2a3a]">{tituloMomento(m)}</span>
                 <span className="mt-0.5 block text-[11px] text-[#7a6670]">{UI.album2.fecha(m.fecha)}</span>
               </button>
             ))}
@@ -159,10 +159,10 @@ export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date;
       )}
       {abierto && createPortal(
         <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] items-center justify-center bg-[#2e2030]/60 px-6" onClick={() => setAbierto(null)}>
-          <figure role="dialog" aria-label={abierto.titulo} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
+          <figure role="dialog" aria-label={tituloMomento(abierto)} onClick={(e) => e.stopPropagation()} className="anim-globo w-full rounded-md bg-[#fffaf3] p-3 pb-4 shadow-2xl">
             <FotoEscena e={abierto.escena} />
             <figcaption className="mt-3 px-1">
-              <span className="block text-[17px] font-bold text-[#3f2a3a]">{abierto.titulo}</span>
+              <span className="block text-[17px] font-bold text-[#3f2a3a]">{tituloMomento(abierto)}</span>
               {abierto.texto && <span className="mt-1 block text-[14px] leading-snug text-[#5e4a56] italic">{abierto.texto}</span>}
               <span className="mt-2 block text-[12px] text-[#7a6670]">{UI.album2.fecha(abierto.fecha)}</span>
             </figcaption>

@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { curiosidadesDeHistorias, curiosidadesTenidas, resolverTravesura, sorpresa, travesuraPendiente } from './curiosidades'
-import { cronicaNueva, hayAlbumNuevo, seccionesNuevas, verAlbum, verCronica, verSeccion } from './avisos'
+import { cronicaNueva, curiosidadNueva, hayAlbumNuevo, momentoNuevo, seccionesNuevas, verCronica, verCuriosidad, verMomento } from './avisos'
 import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { azarFijo, en } from './test-utils'
+import { momentoNacimiento } from './momentos'
+import { exportarCopia, importarCopia } from './copia'
+import { desplazarPartida } from './desplazar'
 
 function barrio(construido: string[]): Partida {
   let p = crearPartida('nox', en('2026-01-05', 8), ['pasos', 'leer'], true)
@@ -34,10 +37,10 @@ describe('curiosidades', () => {
     expect(curiosidadesTenidas(p).map((x) => x.c.id)).toEqual(['cartel-quemado'])
     expect(hayAlbumNuevo(p)).toBe(true)
     expect(seccionesNuevas(p)).toEqual(['cronicas', 'curiosidades'])
-    // Mirar una parte apaga solo su aviso.
-    p = verSeccion(p, 'curiosidades', en('2026-01-09', 13))
+    const [hallazgo] = curiosidadesTenidas(p)
+    p = verCuriosidad(p, hallazgo.c.id, hallazgo.fecha)
     expect(seccionesNuevas(p)).toEqual(['cronicas'])
-    p = verAlbum(p, en('2026-01-09', 13))
+    p = verCronica(p, 'normativa')
     expect(hayAlbumNuevo(p)).toBe(false)
     // Al día siguiente la historia de la normativa ya terminó: si empieza otra, avisan las Crónicas.
     p = { ...p, situaciones: { ...p.situaciones, tablon: { fase: 0, dia: '2026-01-10' } } }
@@ -72,5 +75,20 @@ describe('curiosidades', () => {
     p = verCronica(p, 'tablon')
     expect(cronicaNueva(p, 'normativa')).toBe(false)
     expect(seccionesNuevas(p)).toEqual([])
+  })
+
+  it('marca curiosidades y momentos individualmente, incluso al recuperar o desplazar una partida', () => {
+    const fecha = en('2026-01-06', 10).toISOString()
+    let p = momentoNacimiento(momentoNacimiento(barrio([]), 'nox', new Date(fecha)), 'tuerca', new Date(fecha))
+    p = { ...p, hallazgos: [{ objetoId: 'pina', fecha }, { objetoId: 'cerilla', fecha }] }
+    const [nox, tuerca] = p.momentos!
+    p = verCuriosidad(verMomento(p, nox), 'pina', fecha)
+    p = desplazarPartida(importarCopia(exportarCopia(p, new Date(fecha)))!, 2)
+    expect(curiosidadNueva(p, 'pina', p.hallazgos[0].fecha)).toBe(false)
+    expect(curiosidadNueva(p, 'cerilla', p.hallazgos[1].fecha)).toBe(true)
+    expect(momentoNuevo(p, p.momentos![0])).toBe(false)
+    expect(momentoNuevo(p, { ...nox, texto: 'Una nota nueva' })).toBe(true)
+    expect(momentoNuevo(p, tuerca)).toBe(true)
+    expect(seccionesNuevas(p)).toEqual(['momentos', 'curiosidades'])
   })
 })

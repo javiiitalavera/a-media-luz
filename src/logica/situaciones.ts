@@ -190,8 +190,8 @@ export function diaDelBarrio(p: Partida, ahora: Date): { micros: Partial<Record<
     const v = vecinoDe(p, casa)
     if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) continue
     // Lo que pasa sobre un mueble necesita el mueble a la vista (no en el baúl); quien viene de visita, estar libre.
-    const etapa = progreso(p, casa, ahora).etapa
-    const posibles = MICROS.filter((m) => m.casa === casa && etapa >= (m.etapaMinima ?? 0) && (!m.visita || !ocupados.has(m.visita)) && m.requiere.every((q) =>
+    const nivel = progreso(p, casa, ahora).nivel
+    const posibles = MICROS.filter((m) => m.casa === casa && nivel >= (m.nivelMinimo ?? 1) && (!m.visita || !ocupados.has(m.visita)) && m.requiere.every((q) =>
       q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
     const m = posibles.length ? posibles[Math.floor(r() * posibles.length)] : undefined
     if (!m) continue

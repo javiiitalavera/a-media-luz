@@ -78,16 +78,19 @@ Una situación es una pequeña historia de 3 o 4 fases, con uno o varios vecinos
 
 **Las frases cambian de foco.** Los vecinos hablan más entre ellos y de los demás («Tuerca ha vuelto a etiquetar mi piedra») que de ti. Te pinchan poco y con gracia.
 
-## 7. Crecer (por hitos, sin barra de cariño)
-| Etapa | Qué hace falta |
-|---|---|
-| Cachorro | Nace así |
-| **Joven** | 15 hazañas de su área **y** terminar su primer proyecto personal |
-| **Adulto** | 40 hazañas de su área **y** terminar 3 proyectos personales |
+## 7. Niveles del personaje
 
-- **Nunca baja.** Lo crecido no se pierde por no entrar.
-- **Celebración al crecer,** como ahora.
-- **Al crecer** se añaden escenas en su casa con otros vecinos y objetos que ya estén a la vista.
+| Nivel | Días con al menos un reto de su área desde que llegó su huevo |
+|---|---|
+| 1 | Empieza aquí al nacer |
+| 2 | 4 |
+| 3 | 10 |
+| 4 | 21 |
+| 5 | 35 |
+
+- Los días se acumulan aunque haya pausas. Los proyectos tienen su propia progresión.
+- Cada nivel se celebra con una frase y una foto. Las tres apariencias existentes se usan en los niveles 1, 2 y 3. Los niveles 4 y 5 conservan la tercera y abren escenas nuevas entre vecinos.
+- Las partidas anteriores conservan los niveles ya celebrados y las fotos que hicieron. Todos los personajes usan la superficie visible del Tuerca inicial como referencia de tamaño en sus casas.
 - **Lo que «recuerdan»** se nota en lo que dicen (frases que dependen de situaciones vividas), no en estadísticas.
 
 ## 8. Proyectos (sustituyen a los retos y al catálogo)
@@ -523,3 +526,10 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - El ovillo de Madeja rueda por la madriguera sin dejar una línea rosa.
 - El sobre muestra las noticias de hoy y los dos días anteriores. Los mensajes se leen ahí mismo. Solo hay botón de visita para una escena que sigue disponible. Al llegar se ve su contexto. Las decisiones esperan hasta que se contestan y abren la pregunta correspondiente incluso desde la misma casa.
 - El subtítulo de Retos dice «Se reinician cada día.».
+
+### Novedades del Álbum, ambiente y variedad de retos
+
+- Cada curiosidad, crónica y momento tiene su propio punto. Se apaga al abrir la ficha y vuelve si hay cambios. Las marcas antiguas del Álbum se respetan.
+- En el porche de Nox flotan ascuas. En el invernadero de Tofu una semilla cae y rueda por las losas. En casa de Madeja un botón rueda hacia la alfombra.
+- Cada vecino de paseo tiene cinco frases. Van rotando al tocarlo.
+- La lista admite hasta diez retos fijos y tres por área. Las listas antiguas se conservan y los retos puntuales quedan fuera de ese límite. El cuestionario ofrece alternativas que se pueden marcar según edad, rutina, actividad y preferencias.

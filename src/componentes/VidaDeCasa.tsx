@@ -1,27 +1,21 @@
 import type { CompaneroId } from '../contenido'
 import { rutaArte } from '../arte/manifiesto'
 
-const SALCHICHA = '/arte/curiosidades/salchicha.webp'
 const TORNILLO = '/arte/curiosidades/tornillo.webp'
 const SEMILLA = '/arte/curiosidades/semilla.webp'
 const OVILLO = '/arte/curiosidades/ovillo.webp'
 const CARTA = '/arte/curiosidades/carta.webp'
+const BOTON = '/arte/curiosidades/boton.webp'
 
 /** Pequeñas escenas de fondo. Se dibujan detrás de lo que se puede tocar. */
 export function VidaDeCasa({ vecino }: { vecino: CompaneroId }) {
   return (
     <div aria-hidden className="vida-de-casa pointer-events-none absolute inset-0" data-casa={vecino}>
       {vecino === 'nox' && (
-        <>
-          <div className="rafaga-del-porche"><i /><i /><i /></div>
-          <div className="paseo-de-salchicha"><img src={SALCHICHA} alt="" draggable={false} /></div>
-        </>
+        <span className="ascuas-del-porche"><i /><i /><i /></span>
       )}
       {vecino === 'tofu' && (
-        <div className="paseo-de-planta">
-          <span className="planta-rodadora"><i /><i /><i /><i /><i /><i /></span>
-          <span className="sombra-de-escenita" />
-        </div>
+        <span className="semilla-del-invernadero"><img src={SEMILLA} alt="" draggable={false} /></span>
       )}
       {vecino === 'tuerca' && (
         <div className="paseo-de-tornillo">
@@ -30,9 +24,7 @@ export function VidaDeCasa({ vecino }: { vecino: CompaneroId }) {
         </div>
       )}
       {vecino === 'madeja' && (
-        <div className="paseo-de-ovillo">
-          <img src={OVILLO} alt="" draggable={false} />
-        </div>
+        <span className="boton-de-la-cesta"><img src={BOTON} alt="" draggable={false} /></span>
       )}
       {vecino === 'bruma' && (
         <div className="paseo-de-barquito">

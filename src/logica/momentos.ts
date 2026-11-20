@@ -5,7 +5,7 @@ import { COMPANEROS, HISTORIAS, OBJETOS_CASA, PROYECTOS_BARRIO, UI, type Compane
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { construido } from './casa'
-import { nacidos, progreso } from './etapas'
+import { dibujoDelNivel, nacidos, progreso, type Nivel } from './etapas'
 import { momentoDelDia } from './momento'
 import { dondeGregorio, faseDe, huellasEn, visitante } from './situaciones'
 
@@ -73,12 +73,22 @@ export function momentoNacimiento(p: Partida, c: CompaneroId, ahora: Date): Part
   })
 }
 
-export function momentoCrecer(p: Partida, c: CompaneroId, etapa: 1 | 2, ahora: Date, frase?: string): Partida {
+export function momentoSubirNivel(p: Partida, c: CompaneroId, nivel: Exclude<Nivel, 1>, ahora: Date, frase?: string): Partida {
   const nombre = COMPANEROS[c].nombre
   return anadirMomento(p, {
-    id: `crece-${c}-${etapa}`, fecha: ahora.toISOString(), titulo: UI.casa.crecio(nombre, UI.casa.etapas[etapa]),
-    texto: frase ?? '', escena: { ...fotoDe(p, c, ahora), etapa },
+    id: `crece-${c}-${nivel - 1}`, fecha: ahora.toISOString(), titulo: UI.casa.subioNivel(nombre, nivel),
+    texto: frase ?? '', escena: { ...fotoDe(p, c, ahora), etapa: dibujoDelNivel(nivel) },
   })
+}
+
+/** Los momentos antiguos conservan su foto y llevan el nombre del nivel que celebraron. */
+export function tituloMomento(m: MomentoAlbum): string {
+  const c = m.escena.lugar
+  if (c !== 'barrio') {
+    if (m.id === `crece-${c}-1`) return UI.casa.subioNivel(COMPANEROS[c].nombre, 2)
+    if (m.id === `crece-${c}-2`) return UI.casa.subioNivel(COMPANEROS[c].nombre, 3)
+  }
+  return m.titulo
 }
 
 /** Las historias que acaban de terminar dejan su foto, en el sitio de su última fase. */
