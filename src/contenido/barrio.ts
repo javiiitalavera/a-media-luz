@@ -5,14 +5,27 @@ import type { CompaneroId, Momento } from './tipos'
 
 export const PROPORCION_BARRIO = 1024 / 1536
 
-/** Las 5 parcelas, en orden de llegada de los vecinos: centro y ancho. */
-export const PARCELAS: { x: number; y: number; ancho: number }[] = [
-  { x: 25.9, y: 67.7, ancho: 32.4 }, // abajo a la izquierda (el primero: Nox)
-  { x: 71.9, y: 68.1, ancho: 32.2 }, // abajo a la derecha (el segundo: Tuerca)
-  { x: 20.6, y: 38.0, ancho: 27.8 }, // centro a la izquierda
-  { x: 36.3, y: 23.4, ancho: 27.1 }, // arriba a la izquierda
-  { x: 74.4, y: 27.2, ancho: 27.7 }, // arriba a la derecha
+/** Punto donde acaba la entrada y ancho del dibujo, en porcentajes del mapa. */
+export const PARCELAS = [
+  { x: 31.0, y: 70.4, ancho: 26.6 }, // abajo a la izquierda
+  { x: 65.8, y: 71.0, ancho: 26.4 }, // abajo a la derecha
+  { x: 17.2, y: 42.7, ancho: 22.8 }, // centro a la izquierda
+  { x: 34.1, y: 22.4, ancho: 22.2 }, // claro superior izquierdo
+  { x: 74.4, y: 29.9, ancho: 22.7 }, // claro superior derecho
 ]
+
+/** Puntos dentro del dibujo y proporción del WebP de cada casita. */
+export const CASITAS: Record<CompaneroId, {
+  apoyo: { x: number; y: number }
+  ventana: { x: number; y: number }
+  proporcion: number
+}> = {
+  nox: { apoyo: { x: 69, y: 91 }, ventana: { x: 56, y: 57 }, proporcion: 785 / 789 },
+  tuerca: { apoyo: { x: 27, y: 91 }, ventana: { x: 73, y: 63 }, proporcion: 801 / 831 },
+  tofu: { apoyo: { x: 34, y: 91 }, ventana: { x: 40, y: 53 }, proporcion: 739 / 800 },
+  bruma: { apoyo: { x: 40, y: 66 }, ventana: { x: 76, y: 45 }, proporcion: 1019 / 986 },
+  madeja: { apoyo: { x: 50, y: 90 }, ventana: { x: 50, y: 55 }, proporcion: 1 },
+}
 
 /** El paso de piedras del arroyo, donde va el puente. */
 export const PASO_ARROYO = { x: 49.3, y: 56.6, ancho: 12.8, giro: 7 }
@@ -21,7 +34,7 @@ export const PASO_ARROYO = { x: 49.3, y: 56.6, ancho: 12.8, giro: 7 }
 export const PLAZA = {
   banco: { x: 59, y: 38.4, ancho: 8.5 },
   farol: { x: 63.4, y: 39.1, ancho: 3.8 },
-  encuentro: { x: 55.5, y: 42.8, ancho: 8 },
+  encuentro: { x: 54.8, y: 44.0, ancho: 9.2 },
 }
 
 /** Luces ya dibujadas en el mapa (farolillos, ventanas, setas), para que brillen de noche. */

@@ -2,6 +2,7 @@
 // un recorte cuadrado de la casa alrededor del vecino, o del barrio alrededor del puente.
 import type { CSSProperties } from 'react'
 import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, type CompaneroId } from '../contenido'
+import { colocarCasita } from '../logica/mapaBarrio'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { sitioDe } from '../logica/colocar'
 import type { Partida } from '../logica/partida'
@@ -70,10 +71,14 @@ function Barrio({ e }: { e: EscenaFoto }) {
           style={{ position: 'absolute', left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -50%', rotate: `${PASO_ARROYO.giro}deg` }} />
       )}
       <Huellas ids={e.huellas} />
-      {(e.vecinos ?? []).map((c, i) => rutaArte(`casita/${c}`) && PARCELAS[i] && (
-        <img key={c} src={rutaArte(`casita/${c}`)} alt="" draggable={false}
-          style={{ position: 'absolute', left: `${PARCELAS[i].x}%`, top: `${PARCELAS[i].y}%`, width: `${PARCELAS[i].ancho * 0.82}%`, transform: 'translate(-50%, -68%)' }} />
-      ))}
+      {(e.vecinos ?? []).map((c, i) => {
+        const parcela = PARCELAS[i]
+        const arte = rutaArte(`casita/${c}`)
+        if (!parcela || !arte) return null
+        const { x, y, ancho } = colocarCasita(parcela, c)
+        return <img key={c} src={arte} alt="" draggable={false}
+          style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, width: `${ancho}%` }} />
+      })}
       <div aria-hidden className={`absolute inset-0 mix-blend-multiply ${TINTE[e.momentoDia]}`} />
     </div>
   )
