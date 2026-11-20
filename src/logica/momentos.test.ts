@@ -42,7 +42,7 @@ describe('momentos del Álbum', () => {
     p = momentoSubirNivel(p, 'tuerca', 5, en('2026-02-10', 12))
     expect(momentosRecientes(p).map((m) => m.id)).toEqual(['crece-tuerca-4', 'crece-tuerca-1', 'nace-tuerca'])
     expect(p.momentos![1].escena.etapa).toBe(1)
-    expect(p.momentos![2].escena.etapa).toBe(2)
+    expect(p.momentos![2].escena.etapa).toBe(4) // el nivel 5 tiene su propio dibujo
     expect(tituloMomento({ ...p.momentos![1], titulo: 'Tuerca ya es joven' })).toBe('Tuerca alcanza el nivel 2')
   })
 

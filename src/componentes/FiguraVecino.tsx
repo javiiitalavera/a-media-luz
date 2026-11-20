@@ -21,18 +21,19 @@ const BROTE: Partial<Record<Expresion, [number, number]>>[] = [
 /** Punto sobre el que gira esa parte (x, y en %): el brote, desde su base; el engranaje, desde su centro. */
 const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 20]] }
 /** Tuerca joven y adulto (dos engranajes y antena): en vez de girar, parpadea la luz de la antena. */
-const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 }]
+const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 },
+  { x: 51.1, y: 10.1, tam: 7 }, { x: 50.8, y: 10.1, tam: 7 }]
 
 export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMaceta }: {
-  c: CompaneroId; etapa: 0 | 1 | 2; expresion: Expresion; reaccion: number
+  c: CompaneroId; etapa: number; expresion: Expresion; reaccion: number
   ladoToque: -1 | 1; ladoMaceta?: -1 | 1
 }) {
   const src = rutaCompanero(c, etapa, expresion)
-  const brote = c === 'tofu' ? BROTE[etapa][expresion] : undefined
+  const brote = c === 'tofu' ? BROTE[etapa]?.[expresion] : undefined
   const corte = brote ? brote[0] : CORTE[c]?.[etapa]
   const tocado = reaccion > 0
   const dormido = expresion === 'dormido'
-  const antena = c === 'tuerca' ? ANTENA[etapa] : null
+  const antena = c === 'tuerca' ? ANTENA[etapa] ?? null : null
   if (antena) {
     return (
       <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${tocado ? 'anim-respingo' : 'anim-tic'}`}>

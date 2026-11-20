@@ -42,7 +42,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
       <img key={o.id} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
         style={o.sitio.colgado ? { position: 'absolute', left: `${o.sitio.x}%`, top: `${o.sitio.y}%`, width: `${o.sitio.ancho}%`, transform: 'translateX(-50%)' } : pie(o.sitio.x, o.sitio.y, o.sitio.ancho)} />
     ) })),
-    { y: esc.pies.y, nodo: <img key="vecino" src={rutaCompanero(c, e.etapa, e.cara)} alt="" draggable={false} style={pie(esc.pies.x, esc.pies.y, esc.anchos[e.etapa])} /> },
+    { y: esc.pies.y, nodo: <img key="vecino" src={rutaCompanero(c, e.etapa, e.cara)} alt="" draggable={false} style={pie(esc.pies.x, esc.pies.y, esc.anchos[Math.min(e.etapa, esc.anchos.length - 1)])} /> },
   ]
   if (e.gregorio) {
     const s = c === 'tuerca' ? aspiradora.sitio : GREGORIO_EN_NOX

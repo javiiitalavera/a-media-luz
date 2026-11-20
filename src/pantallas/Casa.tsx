@@ -342,7 +342,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const pista = retoQueFalta(partida, ahora, DUENO)
   const propuesta = propuestaDeMeta(partida, ahora)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
-  const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
+  const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[Math.min(etapaVista, ANCHO_NOX.length - 1)]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
 
