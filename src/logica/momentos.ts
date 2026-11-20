@@ -5,7 +5,7 @@ import { COMPANEROS, HISTORIAS, OBJETOS_CASA, PROYECTOS_BARRIO, UI, type Compane
 import { SITUACIONES, type EscenaMicro, type Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { construido } from './casa'
-import { dibujoDelNivel, nacidos, progreso, type Nivel } from './etapas'
+import { dibujoDelNivel, nacidos, progreso, type Etapa, type Nivel } from './etapas'
 import { momentoDelDia } from './momento'
 import { diaDelBarrio, dondeGregorio, faseDe, huellasEn } from './situaciones'
 import { sitioDe } from './colocar'
@@ -14,11 +14,11 @@ export type Cara = 'base' | 'contento' | 'enfurrunado' | 'dormido'
 
 export interface EscenaFoto {
   lugar: Lugar
-  etapa: 0 | 1 | 2
+  etapa: Etapa
   cara: Cara
   visita?: CompaneroId
   /** Cómo era el visitante en la foto (las fotos antiguas no lo guardan: cachorro). */
-  visitaEtapa?: 0 | 1 | 2
+  visitaEtapa?: Etapa
   /** Lo construido en esa casa (o en el barrio). */
   objetos: string[]
   huellas: string[]

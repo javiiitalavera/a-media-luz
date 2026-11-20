@@ -7,9 +7,9 @@ export interface Escena {
   proporcion: number
   /** Dónde apoya los pies el compañero (centro horizontal y altura). */
   pies: { x: number; y: number }
-  /** Ancho del compañero (en % del ancho del fondo) en cada etapa. Igual en las tres (decidido por Javi:
-   *  evolucionan sin crecer, que de bebés son más monos). */
-  anchos: [number, number, number]
+  /** Ancho del compañero (en % del ancho del fondo) en cada dibujo (cachorro, joven, adulto y, si los tiene, niveles 4 y 5),
+   *  ajustado para que todos ocupen lo mismo que el primer Tuerca (evolucionan sin crecer). Si falta, vale el último. */
+  anchos: number[]
   /** Luces ya dibujadas en el fondo, para hacerlas latir. */
   luces: { x: number; y: number }[]
   /** Luz del propio compañero (la llama de Nox, la luz del pecho de Tuerca), relativa a su figura:
@@ -25,13 +25,13 @@ export interface Zona { x: [number, number]; y: [number, number] }
 
 /** Anchos por dibujo, ajustados a la superficie visible del primer Tuerca. */
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
-  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [36.4, 35.1, 35.6],
+  nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [36.4, 35.1, 35.6, 33.8, 33.6],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true },
     suelo: [{ x: [12, 88], y: [46, 82] }] },
-  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 37.4, 36.5],
+  tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 37.4, 36.5, 34.5, 33.5],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 },
     suelo: [{ x: [12, 88], y: [57, 84] }], mesa: [{ x: [48, 84], y: [43.5, 44.5] }] },
-  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [37.8, 36.9, 34.5],
+  tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [37.8, 36.9, 34.5, 31.5, 31.3],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
   // Bruma flota sobre el estanque: sus «pies» son el final de su cola de niebla.

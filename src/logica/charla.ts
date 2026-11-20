@@ -37,7 +37,7 @@ export function gruposDeCharla(p: Partida, c: CompaneroId, ahora: Date): string[
   const antes = p.ofrendas.map((o) => dia(o.fecha)).filter((f) => f < hoy).sort().at(-1)
   if (antes && diasEntre(antes, hoy) >= DIAS_PARA_VUELTA) grupos.push(ch.vuelta)
 
-  grupos.push(ch.etapa[progreso(p, c, ahora).etapa])
+  grupos.push(ch.etapa[Math.min(progreso(p, c, ahora).etapa, ch.etapa.length - 1)])
 
   for (const [id, frases] of Object.entries(ch.objetos)) if (construido(p, id)) grupos.push(frases)
 

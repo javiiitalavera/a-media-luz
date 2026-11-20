@@ -7,7 +7,7 @@ import { queRecompensan } from './casa'
 import { dia } from './fechas'
 
 /** Variante gráfica guardada en el Álbum. Los niveles pueden compartir dibujo. */
-export type Etapa = 0 | 1 | 2
+export type Etapa = 0 | 1 | 2 | 3 | 4
 export type Nivel = 1 | 2 | 3 | 4 | 5
 
 export const NIVEL_MAXIMO = 5
@@ -20,7 +20,8 @@ const DIAS_POR_NIVEL: Record<AreaId, Record<Nivel, number>> = {
   orden: { 1: 0, 2: 2, 3: 3, 4: 5, 5: 8 },
 }
 const NIVELES = [5, 4, 3, 2, 1] as const
-const DIBUJOS: Record<Nivel, Etapa> = { 1: 0, 2: 1, 3: 2, 4: 2, 5: 2 }
+// Cada nivel con su dibujo. Quien no tenga aún los de los niveles 4 y 5, usa el adulto (rutaCompanero vuelve atrás).
+const DIBUJOS: Record<Nivel, Etapa> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
 const NIVELES_ANTIGUOS = [1, 2, 3] as const
 export const dibujoDelNivel = (nivel: Nivel): Etapa => DIBUJOS[nivel]
 

@@ -565,3 +565,7 @@ Según la franja del día puedes encontrar al vecino ya ocupado con un mueble ex
 ### Menos repetición en el sobre y visitas sin montarse (20/11/2026, rama `dev/variedad-y-visitas`)
 - **Cifras del archivo (hitos):** como mucho una por semana (antes podían salir varias seguidas, una por área) y cada área tiene sus propias frases de Tuerca (Energía huele a hoguera, Calma está empañada, Vínculos lo ha leído Madeja…), en vez de la misma plantilla para todas.
 - **Visitas:** si hay alguien de visita en la casa, el dueño no se acerca a su mueble favorito (se montaban uno encima del otro); se queda en su sitio.
+
+### Dibujos de los niveles 4 y 5 (20/11/2026, rama `dev/niveles-4-5`)
+- Cada nivel tiene su dibujo: cachorro (1), joven (2), adulto (3), nivel 4 y nivel 5 (`public/arte/personajes/<vecino>/nivel4|nivel5/`). Ya están Nox (bufanda con broche; capa con farol), Tuerca (cinturón de herramientas; gafas y capa) y Tofu (más hojas y flores). Bruma y Madeja, encargados a ChatGPT; mientras tanto usan el adulto.
+- Su tamaño en casa se calcula para que ocupen lo mismo que el primer Tuerca (como el resto). La antena de Tuerca sigue parpadeando en sus dibujos nuevos.

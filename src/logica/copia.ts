@@ -12,7 +12,7 @@ const texto = (v: unknown): v is string => typeof v === 'string'
 const booleano = (v: unknown): v is boolean => typeof v === 'boolean'
 const fecha = (v: unknown) => texto(v) && Number.isFinite(Date.parse(v))
 const dia = (v: unknown) => texto(v) && /^\d{4}-\d{2}-\d{2}$/.test(v) && fecha(v)
-const etapa = (v: unknown) => v === 0 || v === 1 || v === 2
+const etapa = (v: unknown) => v === 0 || v === 1 || v === 2 || v === 3 || v === 4
 const nivel = (v: unknown) => v === 1 || v === 2 || v === 3 || v === 4 || v === 5
 const clave = (v: unknown, tabla: object) => texto(v) && Object.hasOwn(tabla, v)
 const vecino = (v: unknown) => clave(v, COMPANEROS)
