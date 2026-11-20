@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, pendientesHoy, quitarHazana, textoHazana } from './hazanas'
+import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, pendientesHoy, puntualesHoy, quitarHazana, textoHazana } from './hazanas'
 import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { estadoRincon } from './reglas'
@@ -72,6 +72,8 @@ describe('hazañas', () => {
     expect(r.cuenta).toBe(true)
     expect(r.ofrenda.area).toBe('vinculos')
     expect(pendientesHoy(r.partida, hoy)).toEqual([])
+    expect(puntualesHoy(r.partida, hoy).map((x) => x.id)).toEqual(['propia-taller']) // sigue a la vista, tachado
+    expect(puntualesHoy(r.partida, manana)).toEqual([])
     expect(extrasHoy(r.partida, hoy)).toEqual([])
     expect(pendientesHoy(deshacerOfrenda(r.partida, r.ofrenda.id), hoy)).toEqual(pendientesHoy(p, hoy))
   })

@@ -22,11 +22,13 @@ export const cabeOtro = (p: Partida) => misHazanas(p).length < MAX_RETOS
 /** La hazaña está hecha hoy (cuenta una vez al día). */
 export const hechaHoy = (p: Partida, id: string, ahora: Date) => p.ofrendas.some((o) => o.accionId === id && dia(o.fecha) === dia(ahora))
 
-/** Retos puntuales sin completar durante el día local en que se crearon. */
-export function pendientesHoy(p: Partida, ahora: Date): Accion[] {
+/** Retos puntuales de hoy (hechos o no): se ven en «Solo hoy» hasta que acaba el día. */
+export function puntualesHoy(p: Partida, ahora: Date): Accion[] {
   const hoy = dia(ahora)
-  return p.acciones.filter((a) => a.soloEl === hoy && !hechaHoy(p, a.id, ahora))
+  return p.acciones.filter((a) => a.soloEl === hoy)
 }
+/** Los que aún no has hecho. */
+export const pendientesHoy = (p: Partida, ahora: Date): Accion[] => puntualesHoy(p, ahora).filter((a) => !hechaHoy(p, a.id, ahora))
 
 /** Lo apuntado hoy que no está en tu lista (desde «Algo más»). */
 export function extrasHoy(p: Partida, ahora: Date): Accion[] {
