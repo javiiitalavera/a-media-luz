@@ -268,6 +268,54 @@ export const LECTURAS: Situacion[] = [
       nox: ['Cuando te fuiste, yo sabía que volverías. Hay un acta que dice lo contrario. El acta miente.'],
     },
   },
+  {
+    id: 'bis', titulo: 'El público de alquiler', patron: 'ensayo',
+    requiere: { vecinos: ['tofu', 'madeja'], construido: [] },
+    fases: [
+      { lugar: 'tofu', noticia: 'Van {dias} días de instrumento en tu diario. Tofu ha puesto un gramófono frente a una silla para que el público ensaye también.',
+        frases: { tofu: ['Entrar a tiempo con un aplauso tiene su técnica. Siéntate.'] } },
+      { lugar: 'tofu', noticia: 'Madeja ha grabado un aplauso. Al final de la grabación se la oye preguntar cuánto pagan.',
+        decision: { pregunta: 'Tienes la manivela. ¿Qué oye Tofu?', opciones: [
+          { id: 'bis', texto: 'Poner el aplauso dos veces', respuesta: 'Madeja acaba de reconocer su propia voz entre el público. Se ha saludado.' },
+          { id: 'entera', texto: 'Dejar que suene hasta el final', respuesta: 'Tofu ha oído la pregunta. Ha pedido que le pasen el presupuesto.' },
+        ] } },
+      { lugar: 'tofu', noticia: '', segun: {
+        bis: { noticia: 'Tofu ha contado dos espectadores. Madeja ha venido a cobrar las dos entradas de público profesional.' },
+        entera: { noticia: 'Tofu ha ofrecido pagar en derechos de autor. Madeja ha preguntado cuántos derechos cuesta una barra de pan.' },
+      } },
+      { lugar: 'tofu', noticia: '', recuerdo: 'El gramófono lleva una dedicatoria de la primera espectadora. Ha firmado también en nombre de la segunda.',
+        frases: { madeja: ['La próxima vez traigo a mi prima. Tengo otra cara del disco libre.'] } },
+    ],
+    ecos: { tofu: ['Echo de menos aquel público. Sobre todo desde que se rompió la manivela.'] },
+  },
+  {
+    id: 'lluvia-local', titulo: 'Lluvia muy local', patron: 'pronostico',
+    requiere: { vecinos: ['bruma', 'nox'], construido: [] },
+    fases: [
+      { lugar: 'bruma', noticia: 'En {dias} días del diario coinciden agua y aire libre. Nox le pide a Bruma un pronóstico igual de preciso para tender su bufanda.',
+        frases: { bruma: ['Puedo decirte dónde va a llover. Ponte ahí.'] } },
+      { lugar: 'nox', noticia: 'Nox ha movido el tendedero tres veces. La nube lo ha seguido las tres. Empieza a sospechar que el tiempo tiene algo personal contra la lana.',
+        frases: { bruma: ['Me pidió que vigilase la bufanda. La estoy vigilando.'] } },
+      { lugar: 'bruma', noticia: 'Han metido la bufanda en casa y han dejado el paraguas abierto debajo de Bruma. Por primera vez llueve en el sitio previsto.',
+        frases: { nox: ['Mi parte decía lluvia en el tendedero. He movido el tendedero debajo. Cien por cien de aciertos.'] } },
+      { lugar: 'bruma', noticia: '', recuerdo: 'Debajo del paraguas de Bruma hay una única baldosa seca. Nox la alquila como apartamento de verano.' },
+    ],
+    ecos: { bruma: ['He recibido una queja por vistas al paraguas. Era el techo.'] },
+  },
+  {
+    id: 'saldo-gracias', titulo: 'La deuda de gratitud', patron: 'cortesia',
+    requiere: { vecinos: ['tuerca', 'madeja'], construido: [] },
+    fases: [
+      { lugar: 'tuerca', noticia: 'Esta semana has apuntado revisar gastos y dar las gracias. Tuerca acaba de encontrar algo que se debe y que nunca había metido en las cuentas.',
+        frases: { tuerca: ['Madeja me debe una. Falta determinar una qué.'] } },
+      { lugar: 'madeja', noticia: 'Madeja le ha dado las gracias por llevarle las cuentas. Tuerca ha vuelto al taller con dos deudas y cara de haber pisado un rastrillo.',
+        frases: { madeja: ['Le iba a pagar con un detalle. Por lo visto eso abre otra cuenta.'] } },
+      { lugar: 'tuerca', noticia: 'Han puesto «gracias» en un platillo de la balanza y «de nada» en el otro. La aguja lleva toda la tarde en cero. Tuerca ha cerrado el ejercicio.' },
+      { lugar: 'tuerca', noticia: '', recuerdo: 'La balanza de las cortesías vuelve a inclinarse. Alguien ha dejado un bombón en el platillo de «de nada».',
+        frases: { tuerca: ['Si me lo como, cuadra. Dame un minuto con la contabilidad.'] } },
+    ],
+    ecos: { madeja: ['Desde lo del bombón, Tuerca se ofrece a llevarme las cuentas del postre.'] },
+  },
 ]
 
 /** Las huellas de estas historias: la pista, la consecuencia y el remate que se descubre paseando. */
@@ -298,4 +346,12 @@ export const HUELLAS_LECTURAS: Huella[] = [
     texto: 'SE\nBUSCA', textoCorto: 'Se busca', toque: 'El dibujo es de Nox. Es una salchicha con piernas. Dice que eres tú.' },
   { id: 'cartel-encontrado', situacion: 'reencuentro', desde: 3, lugar: 'barrio', arte: 'cartel', sitio: { x: 60, y: 28.5, ancho: 6.4 }, proporcion: 1.1,
     texto: 'ENCON-\nTRADO', textoCorto: 'Encontrado', toque: 'Tuerca lo ha dejado puesto. Dice que es por si acaso. Ojalá no haga falta.' },
+  { id: 'disco-publico', situacion: 'bis', desde: 0, lugar: 'tofu', arte: 'gramofono', sitio: { x: 27, y: 62, ancho: 10 }, proporcion: 1, sinObjeto: 'gramofono',
+    hasta: 2, toque: 'Alguien ha pegado una oreja de lana a la bocina para que parezca que escucha.' },
+  { id: 'disco-firmado', situacion: 'bis', desde: 3, lugar: 'tofu', arte: 'gramofono', sitio: { x: 27, y: 62, ancho: 10 }, proporcion: 1, sinObjeto: 'gramofono',
+    toque: 'Las dos firmas son idénticas. La segunda lleva bigote.' },
+  { id: 'piso-de-verano', situacion: 'lluvia-local', desde: 2, lugar: 'bruma', arte: 'paraguas', sitio: { x: 71, y: 68, ancho: 13 }, proporcion: 1,
+    toque: 'Cabe un pie. Para pasar la noche en pareja hay que reservar dos turnos.' },
+  { id: 'balanza-cortesias', situacion: 'saldo-gracias', desde: 3, lugar: 'tuerca', arte: 'balanza', sitio: { x: 70, y: 57, ancho: 11 }, proporcion: 1, sinObjeto: 'balanza',
+    toque: 'Queda el envoltorio. En el libro mayor figura como gasto de representación.' },
 ]

@@ -40,6 +40,9 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
   'protocolo-descanso': rutaArte('huella/barquito'),
   'red-de-contactos': rutaArte('huella/corcho'),
   'reto-secreto': rutaArte('huella/lupa'),
+  bis: rutaArte('huella/gramofono'),
+  'lluvia-local': rutaArte('huella/paraguas'),
+  'saldo-gracias': rutaArte('huella/balanza'),
   reencuentro: rutaArte('huella/cartel'),
   linea: rutaArte('casa/madeja/objeto/telefono'),
 }

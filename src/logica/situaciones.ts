@@ -128,6 +128,7 @@ export function huellasEn(p: Partida, lugar: Lugar): Huella[] {
     const e = estados(p)[h.situacion]
     return h.lugar === lugar && e && e.fase >= h.desde && (h.hasta === undefined || e.fase <= h.hasta)
       && (!h.decision || e.decision === h.decision)
+      && (!h.sinObjeto || !construido(p, h.sinObjeto))
   })
 }
 

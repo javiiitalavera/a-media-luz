@@ -623,7 +623,7 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
   },
 ]
 
-export type ArteHuella = 'corcho' | 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito'
+export type ArteHuella = 'corcho' | 'cartel' | 'cartel-quemado' | 'extintor' | 'expediente' | 'puente' | 'libro-quemado' | 'archivador' | 'lupa' | 'salchicha' | 'libros' | 'frasco' | 'paraguas' | 'barquito' | 'gramofono' | 'balanza'
 
 /** Lo que pone en los carteles (el dibujo va en blanco: el texto lo pone la app). */
 export interface Huella {
@@ -643,6 +643,8 @@ export interface Huella {
   textoCorto?: string
   /** Lo que se cuenta si tocas la huella. */
   toque?: string
+  /** Si ese objeto ya está construido, no sale (para no tener dos iguales en la casa). */
+  sinObjeto?: string
 }
 
 const HUELLAS_DEL_BARRIO: Huella[] = [

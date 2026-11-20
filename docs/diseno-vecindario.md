@@ -466,3 +466,6 @@ Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 día
 - **En el huevo no hay casa:** mientras el vecino está en el huevo, al entrar se ve su parcela del barrio (hierba) con el huevo, sin objetos, sin visitas y sin botón de construir. La casa aparece al nacer. Además, la lógica no deja construir para un vecino que no ha nacido.
 - **Madeja en el barrio:** pasea de su casa a la plaza (antes no tenía recorrido).
 - **Animaciones de Madeja:** escucha inclinándose a un lado y a otro; al tocarla brinca y se le escapa una hebra; un ovillo cruza la madriguera rodando y dejando hilo; sus objetos reaccionan al tocarlos (la mecedora se mece, el cesto suelta un ovillo, el buzón una carta, el teléfono tiembla, la tetera echa vapor…).
+### Tres historias más del diario (PR 12, 20/11/2026)
+- **El público de alquiler** (patrón `ensayo`: instrumento 2 días en la semana; Tofu y Madeja, con decisión), **Lluvia muy local** (`pronostico`: agua y aire libre el mismo día, 2 días; Bruma y Nox) y **La deuda de gratitud** (`cortesia`: gastos y gracias en la misma semana; Tuerca y Madeja).
+- Las huellas que reutilizan un objeto de la casa (gramófono, balanza) no salen si ese objeto ya está construido, para no tener dos iguales (`sinObjeto` en la huella).
