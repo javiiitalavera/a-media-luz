@@ -130,6 +130,9 @@ describe('el barrio lee tu diario', () => {
     const fin = avanzar(p, en('2026-01-13'))
     expect(fin.nuevas).toHaveLength(0)
     expect(huellasEn(fin.partida, 'tofu').map(h => h.id)).toContain('disco-firmado')
+    // Si el gramófono ya está construido, la huella no lo duplica.
+    const conGramofono = { ...fin.partida, construcciones: [{ objetoId: 'gramofono', fecha: '2026-01-13T10:00:00' }] } as typeof fin.partida
+    expect(huellasEn(conGramofono, 'tofu').map(h => h.id)).not.toContain('disco-firmado')
     expect(cronicas(fin.partida).find(c => c.id === 'bis')?.fases).toHaveLength(4)
   })
 

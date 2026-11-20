@@ -643,6 +643,8 @@ export interface Huella {
   textoCorto?: string
   /** Lo que se cuenta si tocas la huella. */
   toque?: string
+  /** Si ese objeto ya está construido, no sale (para no tener dos iguales en la casa). */
+  sinObjeto?: string
 }
 
 const HUELLAS_DEL_BARRIO: Huella[] = [
