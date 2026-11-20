@@ -187,6 +187,10 @@ body {
 :root[data-transicion='entrar']::view-transition-new(bosque) { animation-name: llegar-casa; }
 :root[data-transicion='salir']::view-transition-old(bosque) { animation-name: dejar-casa; }
 :root[data-transicion='salir']::view-transition-new(bosque) { animation-name: volver-mapa; }
+:root[data-transicion='cambiar']::view-transition-old(bosque) { animation: dejar-escena 350ms ease-out both; }
+:root[data-transicion='cambiar']::view-transition-new(bosque) { animation: llegar-escena 350ms ease-out both; }
+@keyframes dejar-escena { to { opacity: 0; } }
+@keyframes llegar-escena { from { opacity: 0; } }
 @keyframes acercar-mapa { to { transform: scale(1.42); opacity: 0; } }
 @keyframes llegar-casa {
   0%, 10% { opacity: 0; transform: scale(.94); }

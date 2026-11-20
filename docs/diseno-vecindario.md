@@ -516,3 +516,10 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - Las presentaciones pueden caer en los días 1, 3, 5, 7 y 9 si juegas a diario y abres cada huevo al encontrarlo. El progreso se ve en Retos y el mapa señala dónde hay un huevo que recoger o abrir. Cada huevo de la puerta trae una pista distinta.
 - El crecimiento sigue dependiendo de los días con retos de su área y de los proyectos personales. Cada vecino puede sugerirte un reto de su área al visitar su casa.
 - Desde cachorro hay visitas, incluida la primera inspección de Tuerca en casa de Nox. Al crecer se suman cinco escenas con muebles a la vista: las castañas de Nox, el taller de Tuerca, el club de Tofu, la infusión de Bruma y la llamada de Madeja.
+
+### Fichas, sobre y Retos
+
+- La «i» muestra la etapa y el progreso, el área de retos y su material, y la historia de presentación del personaje. Los objetos se consultan en Construir y las historias en Crónicas.
+- El ovillo de Madeja rueda por la madriguera sin dejar una línea rosa.
+- El sobre muestra las noticias de hoy y los dos días anteriores. Los mensajes se leen ahí mismo. Solo hay botón de visita para una escena que sigue disponible. Al llegar se ve su contexto. Las decisiones esperan hasta que se contestan y abren la pregunta correspondiente incluso desde la misma casa.
+- El subtítulo de Retos dice «Se reinician cada día.».

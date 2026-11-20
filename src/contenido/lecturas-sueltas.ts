@@ -45,37 +45,6 @@ export const LECTURAS_SUELTAS = {
   finde: 'Este fin de semana también has hecho cosas. He preguntado por ahí. Nadie te ha visto descansar. Yo tampoco.',
 }
 
-/** «Lo que sabe de ti», en la ficha de cada vecino. */
-export const LO_QUE_SABE = {
-  nada: 'Aún no sabe casi nada de ti. Lo está deseando.',
-  privado: 'Le has pedido que no lea tu lista. Lo respeta. Con los dientes apretados.',
-  nox: {
-    franja: (f: Franja) => ({ manana: 'Te mueves sobre todo por la mañana.', tarde: 'Te mueves sobre todo por la tarde.', noche: 'Te mueves sobre todo de noche. Como él.' })[f],
-    semana: (n: number) => n === 1 ? 'Esta semana te has movido un día. Dice que lo ha visto todo.' : `Esta semana te has movido ${n} días. Dice que los ha contado de dos en dos.`,
-    favorito: (reto: string) => `Lo que más repites: «${reto}».`,
-  },
-  tuerca: {
-    paginas: (n: number) => `Tu archivo tiene ${n} ${n === 1 ? 'página' : 'páginas'}.`,
-    areas: (n: number) => `Áreas con algo esta semana: ${n} de 5.`,
-    mes: (n: number) => `Días con algo en los últimos 30: ${n}.`,
-  },
-  tofu: {
-    propios: (n: number) => n === 1 ? 'Te has inventado un reto. Lo guarda como un manuscrito.' : `Te has inventado ${n} retos. Los guarda como manuscritos.`,
-    favorito: (reto: string) => `Lo que más aprendes: «${reto}».`,
-    ultimo: (reto: string) => `Lo último que ha anotado de ti: «${reto}».`,
-  },
-  bruma: {
-    semana: (n: number) => n === 1 ? 'Esta semana has parado un rato un día. Dice que se nota.' : `Esta semana has parado un rato ${n} días. Dice que se nota.`,
-    diaMalo: (n: number) => n === 1 ? 'Has usado el modo día malo una vez. Contó igual.' : `Has usado el modo día malo ${n} veces. Contaron igual.`,
-    favorito: (reto: string) => `Lo que más te calma: «${reto}».`,
-  },
-  madeja: {
-    dupla: (a: string, b: string) => `Lo que más juntas: ${a} y ${b}.`,
-    finde: (fin: number, total: number) => `De tus días con algo, ${fin} de cada ${total} caen en fin de semana. Lo sabe todo el barrio.`,
-    favorito: (reto: string) => `A quien más te dedicas: «${reto}».`,
-  },
-}
-
 /** Madeja, una vez, cuando pides que no lean tu lista. */
 export const AL_CALLARLOS: Partial<Record<CompaneroId, string>> = {
   madeja: 'Sin datos no hay cotilleo. Qué barrio tan aburrido. Lo respetamos. Con los dientes apretados.',

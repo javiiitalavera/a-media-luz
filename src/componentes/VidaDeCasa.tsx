@@ -32,7 +32,6 @@ export function VidaDeCasa({ vecino }: { vecino: CompaneroId }) {
       {vecino === 'madeja' && (
         <div className="paseo-de-ovillo">
           <img src={OVILLO} alt="" draggable={false} />
-          <span className="hilo-de-ovillo" />
         </div>
       )}
       {vecino === 'bruma' && (

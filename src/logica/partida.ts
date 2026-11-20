@@ -48,7 +48,7 @@ export interface Partida {
   colocados?: Record<string, { x: number; y: number }>
   /** Objetos construidos que has guardado en el baúl (no se ven en su casa hasta que los sacas). */
   guardados?: string[]
-  vistos?: { gags?: Partial<Record<string, string>>; pina?: 'guardada' | 'aqui'; album?: string; albumSec?: Partial<Record<SeccionAlbum, string>>; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[]; fichas?: Partial<Record<CompaneroId, string>>; cronicas?: Record<string, string>; pideReto?: Partial<Record<CompaneroId, string>> }
+  vistos?: { gags?: Partial<Record<string, string>>; pina?: 'guardada' | 'aqui'; album?: string; albumSec?: Partial<Record<SeccionAlbum, string>>; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[]; cronicas?: Record<string, string>; pideReto?: Partial<Record<CompaneroId, string>> }
   /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */
   hazanas?: 2 | 3
   /** Novedades del barrio que aún no se han visto («Mientras no estabas…»). */

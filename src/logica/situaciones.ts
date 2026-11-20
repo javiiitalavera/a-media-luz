@@ -23,7 +23,7 @@ export function ecosDe(p: Partida, c: CompaneroId): string[][] {
 
 const estados = (p: Partida) => p.situaciones ?? {}
 
-/** Cuántas novedades se guardan en el sobre (las leídas se quedan en gris). */
+/** Cuántas novedades se conservan en la partida. */
 export const NOTICIAS_GUARDADAS = 10
 
 /** Historias en marcha a la vez, como mucho (una puede estar esperando tu decisión). */
@@ -107,7 +107,9 @@ export function decisionPendiente(p: Partida, lugar: Lugar) {
   for (const s of SITUACIONES) {
     const e = estados(p)[s.id]
     const d = e && !e.fin ? s.fases[e.fase].decision : undefined
-    if (d && !e.decision && s.fases[e.fase].lugar === lugar) return { situacion: s.id, ...d }
+    if (d && !e.decision && s.fases[e.fase].lugar === lugar) {
+      return { situacion: s.id, contexto: faseDe(s, e.fase, e.decision, e.datos).noticia, dia: e.dia, ...d }
+    }
   }
   return null
 }

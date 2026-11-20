@@ -30,7 +30,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
-import { avisoFuera, fichaNueva, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { avisoFuera, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { PideReto } from '../componentes/PideReto'
 import { retoQueFalta } from '../logica/pista'
@@ -64,14 +64,14 @@ function useTamano() {
 }
 
 
-export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNovedades, onRecogerHuevo, abrirDecision = false, onDecisionAbierta }: {
+export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNovedades, onRecogerHuevo, abrirDecision, onDecisionAbierta }: {
   partida: Partida; ahora: Date; dueno: CompaneroId; visita?: boolean
   onBarrio: () => void
   /** Abre el sobre («Mientras no estabas…»). */
   onNovedades: () => void
   onRecogerHuevo: (c: CompaneroId) => void
   /** Venir del sobre a decidir: la pregunta sale abierta. */
-  abrirDecision?: boolean; onDecisionAbierta?: () => void
+  abrirDecision?: string; onDecisionAbierta?: () => void
 }) {
   const DUENO = dueno
   const AREA = COMPANEROS[DUENO].area
@@ -137,8 +137,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
     setNota(micro.texto, micro.visita ? 'visita' : micro.requiere.find((r) => construido(partida, r) && OBJETOS_CASA.some((o) => o.id === r && o.companero === DUENO && !o.sitio.colgado)))
     ajustar((p) => verMicro(p, DUENO, ahora))
   }
-  const [decisionAbierta, setDecisionAbierta] = useState(abrirDecision)
-  useEffect(() => { if (abrirDecision) onDecisionAbierta?.() }, [abrirDecision, onDecisionAbierta])
+  const [decisionAbierta, setDecisionAbierta] = useState<string | null>(null)
+  useEffect(() => {
+    if (!abrirDecision) return
+    setDecisionAbierta(abrirDecision)
+    onDecisionAbierta?.()
+  }, [abrirDecision, onDecisionAbierta])
   const [ficha, setFicha] = useState(false)
   // La escena que se puede tocar hoy (se fija al entrar, para que su animación no desaparezca al verla).
   const [gag] = useState(() => (estado === 'vivo' ? gagDeHoy(partida, DUENO, ahora) : null))
@@ -266,6 +270,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const maceta = objetos.find((o) => o.id === 'maceta')
   const huellas = huellasEn(partida, DUENO)
   const decision = decisionPendiente(partida, DUENO)
+  const preguntaAbierta = decision?.situacion === decisionAbierta
   const deVisita = estado === 'vivo' ? visitante(partida, DUENO, ahora) : null
   const llegada = esUltimo && vivo ? proximaLlegada(partida, ahora) : null
   const otroHuevo = llegada?.faltanDias === 0 ? llegada.vecino : null
@@ -420,10 +425,10 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         {gag && !ordenando && <GagEnEscena gag={gag} sitio={sitioSobre(partida, gag.requiere.find((r) => OBJETOS_CASA.some((o) => o.id === r)), gag.sitio)} onVisto={() => ajustar((p) => verGag(p, DUENO, ahora))} />}
 
         {/* Avisos sobre el vecino: «…» una cosa pequeña del día, «?» una decisión. Esperan a que los toques. */}
-        {vivo && !celebra && !ordenando && (microPorVer || (decision && !decisionAbierta)) && (
+        {vivo && !celebra && !ordenando && (microPorVer || (decision && !preguntaAbierta)) && (
           <div className="absolute z-[25] flex gap-1" style={{ left: `${NOX.x + anchoNox * 0.3}%`, top: `${NOX.y - altoNox * 0.95}%`, transform: 'translate(-50%, -50%)' }}>
-            {decision && !decisionAbierta && (
-              <button type="button" aria-label={UI.casa.verDecision} onClick={(e) => { e.stopPropagation(); sfx.toque(); setDecisionAbierta(true) }}
+            {decision && !preguntaAbierta && (
+              <button type="button" aria-label={UI.casa.verDecision} onClick={(e) => { e.stopPropagation(); sfx.toque(); setDecisionAbierta(decision.situacion) }}
                 className="flex min-h-11 min-w-11 items-center justify-center"><Aviso tipo="pregunta" tam={32} /></button>
             )}
             {microPorVer && (
@@ -483,13 +488,11 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           {fuera === 'pregunta' ? <span className="pointer-events-none absolute -top-2 -right-2"><Aviso tipo="pregunta" tam={22} /></span>
             : fuera && <Punto className="pointer-events-none absolute -top-0.5 -right-0.5" />}
         </span>
-        {pendientes > 0 && (
-          <span className="pointer-events-auto">
-            <BotonRedondo etiqueta={UI.barrio.abrirNovedades(pendientes)} onToque={onNovedades}>
-              <Aviso tipo="sobre" tam={34} numero={pendientes} />
-            </BotonRedondo>
-          </span>
-        )}
+        {vivo && <span className="pointer-events-auto">
+          <BotonRedondo etiqueta={UI.barrio.abrirNovedades(pendientes)} onToque={onNovedades}>
+            {pendientes > 0 ? <Aviso tipo="sobre" tam={34} numero={pendientes} /> : <Icono d={ICONOS.sobre} />}
+          </BotonRedondo>
+        </span>}
       </header>
       {/* En su casa, cada vecino puede pedir un reto de su área para crecer. */}
       {pista && !otroHuevo && vivo && !ordenando && !celebra && (
@@ -500,15 +503,16 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
 
       {/* Abajo: materiales y construir, encima de la navegación. */}
       <div className={`absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex flex-col gap-2 px-3 ${ordenando ? 'hidden' : ''}`}>
-        {decision && decisionAbierta && (
+        {decision && preguntaAbierta && (
           <div role="group" aria-label={decision.pregunta} className="animate-entrar rounded-3xl bg-tarjeta p-3 shadow-lg">
             <div className="flex items-start justify-between gap-2">
               <div className="pt-1 text-[15px] font-bold">{decision.pregunta}</div>
-              <button type="button" onClick={() => setDecisionAbierta(false)} className="-mt-1 min-h-11 shrink-0 px-2 text-[14px] font-semibold text-texto-3">{UI.casa.luego}</button>
+              <button type="button" onClick={() => setDecisionAbierta(null)} className="-mt-1 min-h-11 shrink-0 px-2 text-[14px] font-semibold text-texto-3">{UI.casa.luego}</button>
             </div>
+            {decision.contexto && <p className="mt-1 text-[14px] leading-snug text-texto-2">{decision.contexto}</p>}
             <div className="mt-2 grid grid-cols-2 gap-2">
               {decision.opciones.map((o) => (
-                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setDecisionAbierta(false); setNota(o.respuesta, 'vecino') }}
+                <button key={o.id} type="button" onClick={() => { sfx.elegir(); decidir(decision.situacion, o.id, o.respuesta); setDecisionAbierta(null); setNota(o.respuesta, 'vecino') }}
                   className="min-h-12 rounded-2xl bg-ambar px-2 text-[14px] leading-tight font-bold text-tinta">{o.texto}</button>
               ))}
             </div>
@@ -516,14 +520,14 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         )}
         {/* Abajo: la ficha del vecino («i») a la izquierda y construir a la derecha. */}
         <div className="flex items-end justify-between">
-          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => { setFicha(true); ajustar((p) => verFicha(p, DUENO)) }} className="mb-1"><Icono d={ICONOS.info} />{!conHuevo && fichaNueva(partida, DUENO) && <Punto className="absolute -top-0.5 -right-0.5" />}</BotonRedondo>
+          <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mb-1"><Icono d={ICONOS.info} /></BotonRedondo>
           {/* Sin casa todavía (en el huevo), no hay nada que construir. */}
           {conHuevo ? <span /> : <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />}
         </div>
       </div>
 
 
-      {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} fase={r.fase} faltanParaArreglar={r.faltanParaArreglar} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
+      {ficha && <FichaVecino partida={partida} c={DUENO} ahora={ahora} enHuevo={conHuevo} faltaHuevo={faltaHuevo} onCerrar={() => setFicha(false)} />}
       {nacer === 'ficha' && <Ficha c={DUENO} partida={partida} onCerrar={() => { setNacer(null); presentar() }} />}
       {preguntaPiña && (
         <Pregunta titulo={UI.arranque.piñaPregunta} texto={UI.arranque.piñaTexto} si={UI.arranque.guardarla} no={UI.arranque.dejarla}

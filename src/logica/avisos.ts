@@ -2,10 +2,10 @@
 // donde ha pasado algo y tú decides cuándo mirarlo. Todo se guarda en la partida.
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import { GAGS, type Gag } from '../contenido/gags'
-import { construido, proyectosDe, proyectosVisibles, puedeConstruir } from './casa'
+import { proyectosVisibles, puedeConstruir } from './casa'
 import type { Lugar } from '../contenido/situaciones'
-import type { Partida, SeccionAlbum } from './partida'
-import { dia, diasEntre } from './fechas'
+import type { NoticiaBarrio, Partida, SeccionAlbum } from './partida'
+import { dia, diasEntre, sumarDias } from './fechas'
 import { misHazanas } from './hazanas'
 import { crecioSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas'
 import { estadoDelMes, mesActual, mesesDe } from './meses'
@@ -22,22 +22,37 @@ export const hayHazanasNuevas = (p: Partida, ahora: Date) => misHazanas(p).lengt
 export const verHazanas = (p: Partida, ahora: Date): Partida =>
   vistos(p).hazanas === dia(ahora) ? p : { ...p, vistos: { ...vistos(p), hazanas: dia(ahora) } }
 
-/** Novedades sin leer (sin contar las que plantean una decisión pendiente: esas van en su tarjeta). */
-export const noticiasSinLeer = (p: Partida, ahora?: Date) => {
-  const deDecision = ahora ? new Set(decisionesPendientes(p, ahora).map((d) => d.contexto)) : new Set<string>()
-  return (p.noticias ?? []).filter((n) => !n.leida && !deDecision.has(n.texto)).length
+/** Hoy y los dos días anteriores del juego. El historial de las historias se consulta en Crónicas. */
+function noticiasRecientes(p: Partida, ahora: Date): NoticiaBarrio[] {
+  const desde = sumarDias(dia(ahora), -2)
+  return (p.noticias ?? []).filter((n) => dia(n.fecha) >= desde && new Date(n.fecha) <= ahora)
 }
-/** Noticias que se listan en el sobre (la que plantea una decisión pendiente sale en la tarjeta de la decisión). */
+
+/** La noticia que planteó una decisión se muestra en su tarjeta. Las decisiones esperan lo que haga falta. */
 export function noticiasDelSobre(p: Partida, ahora: Date) {
-  const deDecision = new Set(decisionesPendientes(p, ahora).map((d) => d.contexto))
-  return (p.noticias ?? []).filter((n) => !deDecision.has(n.texto))
+  const decisiones = decisionesPendientes(p, ahora)
+  return noticiasRecientes(p, ahora).filter((n) => !decisiones.some((d) =>
+    d.lugar === n.lugar && d.dia === dia(n.fecha) && d.contexto === n.texto))
 }
+
+/** Solo se puede ir a ver una escena si el barrio sigue en esa fase de la historia. */
+export function puedeVisitarNoticia(p: Partida, n: NoticiaBarrio): boolean {
+  const fecha = dia(n.fecha)
+  return SITUACIONES.some((s) => {
+    const e = p.situaciones?.[s.id]
+    if (!e || e.dia !== fecha) return false
+    const f = faseDe(s, e.fase, e.decision, e.datos)
+    return !f.decision && f.lugar === n.lugar && f.noticia === n.texto
+  })
+}
+
+export const noticiasSinLeer = (p: Partida, ahora: Date) => noticiasDelSobre(p, ahora).filter((n) => !n.leida).length
 /** El número del sobre: cada acontecimiento cuenta una vez (una decisión, con su noticia, cuenta uno). */
 export const pendientesDelSobre = (p: Partida, ahora: Date) => noticiasSinLeer(p, ahora) + decisionesPendientes(p, ahora).length
-/** Abrir el sobre: se marcan como leídas; el «!» de su casa sigue hasta que entras. */
-export function leerNoticias(p: Partida): Partida {
-  if (!noticiasSinLeer(p)) return p
-  return { ...p, noticias: (p.noticias ?? []).map((n) => ({ ...n, leida: true })) }
+/** Abrir el sobre da por leída la actualidad, también la que aparece junto a una pregunta pendiente. */
+export function leerNoticias(p: Partida, ahora: Date): Partida {
+  const nuevas = new Set(noticiasRecientes(p, ahora).filter((n) => !n.leida))
+  return nuevas.size ? { ...p, noticias: p.noticias?.map((n) => nuevas.has(n) ? { ...n, leida: true } : n) } : p
 }
 /** Entrar en un sitio apaga su «!»; las novedades siguen sin leer en el sobre hasta que lo abres
  *  (al abrir la app se entra solo en una casa, y no por eso has leído lo que pasó). */
@@ -46,6 +61,9 @@ export function visitarLugar(p: Partida, lugar: Lugar): Partida {
   return n.some((x) => x.lugar === lugar && !x.visitada)
     ? { ...p, noticias: n.map((x) => (x.lugar === lugar ? { ...x, visitada: true } : x)) } : p
 }
+
+const escenaSinVisitar = (p: Partida, lugar: Lugar, ahora: Date) =>
+  noticiasRecientes(p, ahora).some((n) => n.lugar === lugar && !n.visitada && puedeVisitarNoticia(p, n))
 
 /** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
 export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
@@ -56,23 +74,12 @@ export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolea
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
 export const avisoEnCasa = (p: Partida, c: CompaneroId, ahora: Date) =>
   (c === mesActual(p).companero && (estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0)) ||
-  (p.noticias ?? []).some((n) => n.lugar === c && !n.visitada) || Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
+  escenaSinVisitar(p, c, ahora) || Boolean(decisionPendiente(p, c)) || hayAlgoQueHacer(p, c, ahora)
 
 /** Punto en la pestaña Inicio (cuando estás en otra): el huevo está listo, alguien ha crecido, hay una decisión o novedades. */
 export const hayAlgoEnInicio = (p: Partida, ahora: Date) =>
   estadoDelMes(p, ahora) === 'naciendo' || proximaLlegada(p, ahora)?.faltanDias === 0 || pendientesDelSobre(p, ahora) > 0 ||
   nacidos(p, ahora).some((c) => crecioSinVer(p, c, progreso(p, c, ahora).etapa))
-
-/** Lo que enseña la ficha y puede cambiar: el siguiente proyecto y las historias en las que sale. */
-export function firmaFicha(p: Partida, c: CompaneroId): string {
-  const siguiente = proyectosDe(c).find((o) => !construido(p, o.id))?.id ?? ''
-  const historias = SITUACIONES.filter((s) => s.requiere.vecinos.includes(c) && p.situaciones?.[s.id]).map((s) => s.id)
-  return [siguiente, ...historias].join('|')
-}
-/** Punto en la «i»: la ficha ha cambiado desde la última vez que la abriste. */
-export const fichaNueva = (p: Partida, c: CompaneroId) => vistos(p).fichas?.[c] !== firmaFicha(p, c)
-export const verFicha = (p: Partida, c: CompaneroId): Partida =>
-  fichaNueva(p, c) ? { ...p, vistos: { ...vistos(p), fichas: { ...vistos(p).fichas, [c]: firmaFicha(p, c) } } } : p
 
 /** La pequeña cosa de hoy en una casa, si aún no la has mirado. */
 export function microSinVer(p: Partida, c: CompaneroId, ahora: Date) {
@@ -137,12 +144,10 @@ export const verSeccion = (p: Partida, s: SeccionAlbum, ahora: Date): Partida =>
 export const verAlbum = (p: Partida, ahora: Date): Partida => SECCIONES.reduce((q, s) => verSeccion(q, s, ahora), p)
 
 /** Decisiones que te esperan (para el sobre): en qué casa, qué se pregunta y la noticia que la planteó. */
-export function decisionesPendientes(p: Partida, ahora: Date): { lugar: CompaneroId; pregunta: string; contexto: string }[] {
+export function decisionesPendientes(p: Partida, ahora: Date): { lugar: CompaneroId; situacion: string; pregunta: string; contexto: string; dia: string }[] {
   return nacidos(p, ahora).flatMap((c) => {
     const d = decisionPendiente(p, c)
-    const s = d && SITUACIONES.find((x) => x.id === d.situacion)
-    const e = d && p.situaciones?.[d.situacion]
-    return d && s && e ? [{ lugar: c, pregunta: d.pregunta, contexto: faseDe(s, e.fase, e.decision, e.datos).noticia }] : []
+    return d ? [{ lugar: c, situacion: d.situacion, pregunta: d.pregunta, contexto: d.contexto, dia: d.dia }] : []
   })
 }
 
@@ -150,7 +155,7 @@ export function decisionesPendientes(p: Partida, ahora: Date): { lugar: Companer
 export function avisoFuera(p: Partida, casa: CompaneroId, ahora: Date): 'pregunta' | 'punto' | null {
   if (decisionesPendientes(p, ahora).some((d) => d.lugar !== casa)) return 'pregunta'
   const otras = mesesDe(p).map((m) => m.companero).filter((c) => c !== casa)
-  if (otras.some((c) => avisoEnCasa(p, c, ahora)) || (p.noticias ?? []).some((n) => n.lugar === 'barrio' && !n.visitada)) return 'punto'
+  if (otras.some((c) => avisoEnCasa(p, c, ahora)) || escenaSinVisitar(p, 'barrio', ahora)) return 'punto'
   return null
 }
 

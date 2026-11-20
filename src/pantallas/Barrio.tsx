@@ -149,7 +149,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
                 <img src={rutaArte(huevo ? `huevo/${companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${companero}`)} alt=""
                   className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : 'dibujo-de-casita'}`} draggable={false} />
                 {!huevo && <VidaDeCasita vecino={companero} />}
-                <span ref={(el) => { puertas.current[companero] = el }} aria-hidden
+                <span ref={(el) => { puertas.current[companero] = el }} aria-hidden data-puerta={companero}
                   className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === companero ? 'luz-puerta-activa' : ''}`}
                   style={{ left: `${huevo ? 50 : PUERTAS[companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[companero]?.y ?? 66}%` }} />
               </span>
