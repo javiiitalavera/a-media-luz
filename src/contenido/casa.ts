@@ -33,12 +33,12 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
   // Bruma flota sobre el estanque: sus «pies» son el final de su cola de niebla.
-  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [34, 31, 31],
+  bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [41.3, 34.4, 33.9],
     luces: [{ x: 20.5, y: 27 }, { x: 67.5, y: 13 }],
     // La orilla, el embarcadero y los juncos del agua.
     suelo: [{ x: [10, 32], y: [39, 47] }, { x: [32, 66], y: [37.5, 41.5] }, { x: [68, 90], y: [44, 56] }] },
   // La madriguera de lana de Madeja: suelo de madera con alfombra trenzada.
-  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [36, 36, 36],
+  madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [45.5, 45.3, 45.6],
     luces: [{ x: 22, y: 16.5 }, { x: 61, y: 25 }],
     suelo: [{ x: [12, 88], y: [56, 84] }] },
 }
@@ -279,8 +279,8 @@ export const VISITA: Partial<Record<CompaneroId, { x: number; y: number; ancho: 
   nox: { x: 82, y: 56, ancho: 22 },
   tuerca: { x: 75, y: 59, ancho: 21 },
   tofu: { x: 76, y: 62, ancho: 20 },
-  bruma: { x: 76, y: 60, ancho: 21 },
-  madeja: { x: 76, y: 61, ancho: 18 },
+  bruma: { x: 76, y: 60, ancho: 24 },
+  madeja: { x: 76, y: 61, ancho: 23 },
 }
 
 /** En el estanque de Bruma no hay suelo: las visitas se sientan en el embarcadero. */

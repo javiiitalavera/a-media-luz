@@ -55,4 +55,12 @@ describe('proyectos', () => {
     const ids = [...OBJETOS_CASA, ...PROYECTOS_BARRIO].map((o) => o.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
+
+  it('para un vecino que aún está en el huevo no se construye nada', () => {
+    // Partida con Nox nacido y Tuerca todavía en el huevo (sin sus tres retos).
+    const p0 = con(con(nueva(), 'orden', '2026-01-05', 3), 'orden', '2026-01-06', 3)
+    const p = { ...p0, meses: [{ companero: 'nox' as const, inicio: en('2026-01-05', 8).toISOString(), presentado: en('2026-01-05', 9).toISOString() },
+      { companero: 'tuerca' as const, inicio: en('2026-01-07', 20).toISOString() }] }
+    expect(construir(p, 'caja', en('2026-01-07', 21))).toBeNull()
+  })
 })

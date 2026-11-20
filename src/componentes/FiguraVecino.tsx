@@ -3,6 +3,7 @@
 // - Nox: respira, da saltitos impacientes y, al tocarlo, salta.
 // - Tofu: el brote se adelanta al cuerpo al tocarlo. De adulto solo deja caer unas hojas.
 // - Bruma: flota arriba y abajo; al tocarla se esponja y vuelve a flotar. Dormida, flota más despacio.
+// - Madeja: escucha inclinándose a un lado y a otro; al tocarla, brinca y se le escapa una hebra.
 // - Tuerca: respira y da algún tic; su engranaje gira a ratos. Al tocarlo, respingo y engranaje a toda prisa.
 import type { CSSProperties } from 'react'
 import type { CompaneroId } from '../contenido'
@@ -39,6 +40,16 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMac
         <span aria-hidden className={`absolute rounded-full ${tocado ? 'anim-antena-prisa' : 'anim-antena'}`}
           style={{ left: `${antena.x}%`, top: `${antena.y}%`, width: `${antena.tam}%`, aspectRatio: '1', transform: 'translate(-50%, -50%)',
             background: 'radial-gradient(circle, #fff8c8 0%, #ffd34ecc 45%, transparent 72%)' }} />
+      </span>
+    )
+  }
+  if (c === 'madeja') {
+    // Madeja: se inclina a un lado y a otro, como quien escucha detrás de una puerta; al tocarla, da un brinco de
+    // emoción y se le escapa una hebra que se enrolla sola.
+    return (
+      <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${tocado && !dormido ? 'anim-madeja-brinco' : 'anim-madeja-escucha'}`}>
+        <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
+        {tocado && !dormido && <span aria-hidden className="hebra-de-madeja" />}
       </span>
     )
   }
