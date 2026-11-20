@@ -417,3 +417,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Casitas habitadas (20/11/2026, PR 11)
 - Cada casita del mapa tiene su gesto: humo en bocanadas por la chimenea de Tuerca, luz cálida y brasas en la de Nox, la maceta de Tofu que da dos brincos y suelta una hoja, y un barquito que deriva por el estanque de Bruma dejando ondas. Con movimiento reducido se quedan quietos.
+
+### Madeja, la quinta vecina (20/11/2026, rama `dev/madeja`)
+- **Arte recortado:** cachorro, joven (lazo y aguja de tejer) y adulta (bufanda de colores y botones), 4 caras cada una, y su huevo con lazo y botón. Su madriguera de lana (el escenario que ya teníamos) vuelve a `public/arte/casa/madeja/fondo.webp`.
+- **Falta para que llegue:** su casita del mapa (sin ella su huevo no aparece) y sus objetos (sin proyectos no puede crecer).
+- **Voz:** cotilla, cariñosa de más; frases revisadas y ampliadas (6 saludos por momento, 8 reacciones), ficha («Ovillo con orejas»), charla propia y pullas con los demás (y los demás sobre ella).
+- **Primera historia, sin objetos:** *El cotilleo* (Madeja, Nox y Tuerca): en una mañana sabe todos los secretos del barrio, Tuerca le abre un expediente y acaba en una merienda de paz en su casa. Micros: Madeja tejiendo para alguien, dormida a mitad de frase, Nox y Tofu de visita, Madeja tomándole medidas a Nox para unos calcetines.

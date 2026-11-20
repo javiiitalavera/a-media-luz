@@ -301,6 +301,40 @@ export const SITUACIONES: Situacion[] = [
       },
     ],
   },
+  // Madeja
+  {
+    id: 'cotilleo',
+    titulo: 'El cotilleo',
+    requiere: { vecinos: ['madeja', 'nox', 'tuerca'], construido: [] },
+    fases: [
+      {
+        noticia: 'Madeja ha llegado al barrio y en una mañana ya sabe que Nox ronca, que Tuerca habla con su aspiradora y que Tofu lee en voz alta.',
+        lugar: 'barrio',
+        frases: {
+          madeja: ['Una mañana. Solo he necesitado una mañana. Y una ventana abierta.'],
+          nox: ['Yo no ronco. Respiro con convicción.'],
+          tuerca: ['¿Cómo sabe lo de Gregorio? Gregorio no habla. Creo.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha abierto un expediente a Madeja por «difusión de datos vecinales». Madeja ya ha contado lo del expediente.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Expediente 003: Madeja. Asunto: todo. Le he puesto candado. Ya sabe la combinación.'],
+          madeja: ['Me ha abierto un expediente. Qué detalle. Nadie me había archivado nunca.'],
+        },
+      },
+      {
+        noticia: 'Madeja ha organizado una merienda para hacer las paces. Ha venido todo el barrio. Tuerca ha tomado acta de lo que se ha dicho. Madeja también.',
+        lugar: 'madeja',
+        frases: {
+          madeja: ['Ha venido todo el mundo. Nadie ha dicho nada importante. Lo he apuntado todo igual.'],
+          nox: ['Había bizcocho. Me he comido el expediente. Era de bizcocho también.'],
+          tuerca: ['Acta de la merienda: tres tazas, un bizcocho, cero secretos. Madeja dice que mínimo cinco.'],
+        },
+      },
+    ],
+  },
   // Bruma
   {
     id: 'barquitos',
@@ -590,6 +624,11 @@ export const MICROS: Micro[] = [
   { casa: 'bruma', requiere: ['campanillas'], texto: 'No hace viento, pero las campanillas suenan. Bruma dice que no ha sido ella. Ha sido ella.' },
   { casa: 'bruma', requiere: ['hamaca', 'nox'], texto: 'Nox espera en el embarcadero a que la hamaca quede libre. Bruma ha decidido no volver a levantarse.', visita: 'nox', cara: 'enfurrunado' },
   { casa: 'tuerca', requiere: ['bruma'], texto: 'Se ha colado niebla en el taller. Tuerca la está intentando archivar.', visita: 'bruma' },
+  { casa: 'madeja', requiere: [], texto: 'Madeja está tejiendo algo para alguien. No dice para quién. Mira mucho hacia tu lado.' },
+  { casa: 'madeja', requiere: [], texto: 'Madeja se ha quedado dormida en mitad de una frase. Era una frase muy larga.', cara: 'dormido' },
+  { casa: 'madeja', requiere: ['nox'], texto: 'Nox ha venido a por algo de comer y lleva una hora escuchando cotilleos. Ya no se acuerda de qué venía a comer.', visita: 'nox' },
+  { casa: 'madeja', requiere: ['tofu'], texto: 'Tofu está de visita. Madeja habla. Tofu escucha. Los dos parecen encantados.', visita: 'tofu' },
+  { casa: 'nox', requiere: ['madeja'], texto: 'Madeja le está tomando medidas a Nox para unos calcetines. Nox no ha dicho que sí. Nox no ha dicho que no.', visita: 'madeja' },
   { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
 ]
 
@@ -599,4 +638,5 @@ export const FRASES_VISITA: Partial<Record<CompaneroId, string[]>> = {
   nox: ['He venido a ver si tenías algo de comer. No tienes.', 'Me he sentado en tu silla. Ahora es mía. Ponle una etiqueta.'],
   tofu: ['He venido a mirar. Ya he mirado.', 'Tu casa tiene muchas cosas. Pocas necesarias.'],
   bruma: ['He venido a ver cómo estabas. Ya lo sé. No hace falta que me lo digas.', 'Qué casa tan llena de cosas. Y de ruido. Me quedo un poco.', 'No me hagas caso. Soy niebla de paso.'],
+  madeja: ['¡Pasaba por aquí! Bueno, venía aposta. ¿Qué hay de nuevo?', 'Qué bonito lo tienes. ¿Quién te lo ha regalado? Cuéntamelo.', 'Me quedo un ratito. Un ratito largo.'],
 }

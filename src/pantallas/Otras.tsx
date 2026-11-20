@@ -33,6 +33,7 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
   infusion: rutaArte('casa/bruma/objeto/tetera'),
   frasco: rutaArte('casa/bruma/objeto/frasco'),
   hamaca: rutaArte('casa/bruma/objeto/hamaca'),
+  cotilleo: rutaArte('companero/madeja/contento'),
 }
 
 export function Album({ partida, ahora, onIr }: { partida: Partida; ahora: Date; onIr: (l: Lugar) => void }) {

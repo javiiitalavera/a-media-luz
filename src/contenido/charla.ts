@@ -49,6 +49,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       tuerca: ['Tuerca me ha etiquetado la cola. Pone VARIOS.', 'Tuerca ha hecho una lista de mis defectos. Tiene índice.', 'A Tuerca le debo una salchicha. O él a mí. Lo tiene apuntado.'],
       tofu: ['Tofu me mira sin parpadear. No sé si me admira o me está leyendo.', 'Le he preguntado a Tofu qué piensa. Me ha contestado el brote.', 'Tofu es el vecino perfecto: no hace ruido, no come salchichas, no compite.'],
       bruma: ['Bruma me ha llovido encima. Dice que fue sin querer. Lo dijo sonriendo.', 'Cuando Bruma está triste, mi cola echa vapor. Es incómodo para los dos.', 'Bruma me entiende. Es lo peor que le puede pasar a un zorro.'],
+      madeja: ['Madeja me ha tejido unos calcetines. Se han quemado. Casi sin querer.', 'Madeja sabe cosas de mí que yo no sé. Me da miedo preguntar.', 'Le conté a Madeja una tontería. Ya la sabe medio barrio. La otra mitad, mañana.'],
     },
   },
 
@@ -82,6 +83,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       nox: ['Nox ha vuelto a hacer fuego. He actualizado el expediente. Ya tiene tomo dos.', 'Nox me debe tres formularios. Y una salchicha. La salchicha es lo de menos.', 'He intentado ordenar a Nox. No se deja. Es una pieza que no encaja en ningún sitio. Me gusta.'],
       tofu: ['Tofu no habla mucho. Lo que dice lo archivo en «IMPORTANTE». Es la única carpeta con eso.', 'Tofu ha leído mi reglamento entero. Nadie lo había hecho. Me he emocionado. En silencio.', 'He medido a Tofu. No crece. El brote, sí. Lo apunto aparte.'],
       bruma: ['Bruma ha empañado mi archivo. Dice que lo siente. Lo ha empañado más.', 'Cuando Bruma pasa, las etiquetas se despegan. He pedido etiquetas a prueba de niebla.', 'Bruma me ha preguntado qué siento. He abierto la carpeta VARIOS. Ha sido un error.'],
+      madeja: ['Madeja sabe dónde está todo lo que pierdo. No me dice dónde. Me dice con quién.', 'He abierto un expediente a Madeja por difusión de datos. Ya lo sabe todo el barrio.', 'Madeja me ha tejido una funda para el engranaje. No la necesito. La llevo.'],
     },
   },
 
@@ -111,6 +113,7 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       nox: ['Nox me ha devuelto un libro. Olía a humo. Era otro libro.', 'Nox habla mucho. Yo escucho. Es un buen reparto.', 'Nox me ha preguntado de qué va mi libro. Le he dicho que de un zorro. Se lo ha creído.'],
       tuerca: ['Tuerca me ha pedido que clasifique mis libros. Ya están clasificados: por cariño.', 'Tuerca y yo nos entendemos. Él ordena. Yo no desordeno.', 'Tuerca ha corregido la ortografía de mi fórmula. Ahora funciona peor.'],
       bruma: ['Bruma y yo nos sentamos a no decir nada. Es nuestra conversación favorita.', 'Bruma me ha empañado las gafas. No las necesito. Las llevo por ella.', 'Bruma lee lo que pienso. Es cómodo: me ahorra hablar.'],
+      madeja: ['Madeja me ha preguntado qué leo. Se lo he dicho. Ahora lo lee todo el barrio.', 'Madeja habla por los dos. Es un buen reparto.', 'Madeja me ha tejido un marcapáginas. Es muy largo. Marca tres libros a la vez.'],
     },
   },
 
@@ -140,6 +143,33 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       nox: ['Nox hace como que no le importa nada. Le importa todo. Lo noto en la cola.', 'A Nox le he llovido encima. Sin querer. Bueno.', 'Nox me ha traído una salchicha. Es su forma de decir «lo siento». O de deshacerse de ella.'],
       tuerca: ['Tuerca lo ordena todo porque por dentro está muy desordenado. Lo sé. No se lo digo.', 'Tuerca me ha abierto un expediente. Lo he empañado. Estamos en paz.', 'Tuerca abrió un paraguas por mí una vez. No lo ha cerrado.'],
       tofu: ['Tofu y yo nos entendemos sin hablar. Es lo que más me gusta de él.', 'El brote de Tofu me cuenta lo que Tofu no dice. Lo dice todo.', 'Tofu me ha escrito un barquito. Ponía «Sí». Lo tengo guardado.'],
+      madeja: ['Madeja me pregunta qué me pasa antes de que me pase. Es agotador. Y bonito.', 'Madeja me ha tejido un gorro. Las nubes no llevamos gorro. Lo llevo.', 'Le conté algo a Madeja. Ya lo sabe todo el barrio. Lo sabía.'],
+    },
+  },
+
+  madeja: {
+    hoy: {
+      nada: ['Aún no has tachado nada. ¿Qué has hecho entonces? Cuéntamelo igual.', 'Lista sin tocar. Como una conversación que no empieza. Empieza tú.', 'Nada todavía. No pasa nada. Ya pasará algo. Siempre pasa algo.'],
+      algo: ['Vas a medias. Como una bufanda: lo difícil es el principio. Y el final. Y el medio.', 'Llevas unas cuantas. Ya tengo de qué hablar con los vecinos.', 'Bien. Sigue, que me quedo sin cotilleos si paras.'],
+      todo: ['¡Todo hecho! Lo voy a contar en el barrio. Ya lo he contado.', 'Lista completa. Te tejo algo. No me digas que no.', 'Hoy lo has hecho todo. Mañana, una quedada. Te lo mereces.'],
+    },
+    semana: {
+      lunes: ['Lunes. La gente vuelve con historias del fin de semana. Mi día favorito.', 'Es lunes. Escribe a alguien para preguntarle qué tal el finde. Y luego me cuentas.'],
+      viernes: ['¡Viernes! ¿Planes? ¿Con quién? ¿Dónde? Necesito datos.', 'Viernes. La gente queda. Tú también deberías. Yo me apunto. Mentalmente.'],
+      finde: ['Fin de semana. Ideal para ver a alguien en persona. Con ojos y todo.', 'Sábado o domingo. Las familias se juntan. Los cotilleos se multiplican.'],
+    },
+    vuelta: ['¡Por fin! ¿Dónde estabas? No, espera, siéntate primero.', 'Unos días fuera. Te he guardado todas las noticias. Son muchas.', 'Has vuelto. Me alegro. No sabes cuánto. Bueno, te lo cuento.'],
+    etapa: [
+      ['Soy pequeña, pero tengo mucha hebra. Y mucha conversación.', 'Un ovillo pequeño sabe muchas cosas. Las pequeñas, sobre todo.'],
+      ['He crecido. Ahora llevo agujas. Para tejer. Y para señalar.', 'Ovillo joven. Más hebra, más contactos.'],
+      ['Adulta, con bufanda y opiniones. Muchas opiniones.', 'Ya no crezco. Ahora solo me enredo en la vida de los demás.'],
+    ],
+    objetos: {},
+    vecinos: {
+      nox: ['Nox dice que no le importa nadie. Le he visto llevarle una salchicha a Tofu.', 'A Nox le he tejido unos calcetines. Los ha quemado. Sin querer. Eso dice.', 'Nox ronca. Lo sé. No preguntes cómo.'],
+      tuerca: ['Tuerca tiene una carpeta con mi nombre. Yo tengo una con el suyo. Más gorda.', 'Tuerca me ha pedido que no cuente lo de la carpeta SENTIMIENTOS. Ya es tarde.', 'Tuerca finge que no le gustan las visitas. Ordena la casa cuando voy.'],
+      tofu: ['Tofu no habla, pero escucha. Es mi vecino favorito. No se lo digas a los demás.', 'He intentado que Tofu me cuente un secreto. Me ha contado la fórmula. No la he entendido.', 'El brote de Tofu se pone rosa cuando paso. Yo ahí lo dejo.'],
+      bruma: ['Bruma y yo tomamos té. Ella confiesa, yo escucho. Reparto justo.', 'Bruma sabe lo que sientes. Yo sé lo que haces. Juntas somos imparables.', 'A Bruma le he tejido un gorro. Le queda fatal. Lo lleva.'],
     },
   },
 }
