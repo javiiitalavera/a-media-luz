@@ -67,7 +67,7 @@ export function importarCopia(contenido: string): Partida | null {
     const ok =
       clave(p.principal, ESCENAS) && fecha(p.inicio) &&
       lista(p.acciones, (a) => objeto(a) && texto(a.id) && clave(a.area, AREAS) && texto(a.nombre) &&
-        opcional(a.minima, texto) && opcional(a.habitual, booleano)) &&
+        opcional(a.minima, texto) && opcional(a.habitual, booleano) && opcional(a.soloEl, dia)) &&
       objeto(ritmos) && Object.keys(AREAS).every((a) => clave(ritmos[a], RITMOS)) &&
       lista(p.ofrendas, (o) => objeto(o) && texto(o.id) && texto(o.accionId) &&
         clave(o.area, AREAS) && fecha(o.fecha) && opcional(o.diaMalo, booleano)) &&

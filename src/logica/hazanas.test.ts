@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, quitarHazana, textoHazana } from './hazanas'
-import { hacerOfrenda } from './ofrendas'
+import { MAX_RETOS, cabeOtro, anadirHazana, borrarHazana, propiasFuera, crearHazana, editarHazana, extrasHoy, hechaHoy, migrarHazanas, misHazanas, pendientesHoy, quitarHazana, textoHazana } from './hazanas'
+import { deshacerOfrenda, hacerOfrenda } from './ofrendas'
 import { crearPartida, type Partida } from './partida'
 import { estadoRincon } from './reglas'
 import { azarFijo, en } from './test-utils'
+import { exportarCopia, importarCopia } from './copia'
+import { desplazarPartida } from './desplazar'
 
 const base = () => crearPartida('nox', en('2026-01-05', 8), ['pasos', 'leer'])
 
@@ -54,6 +56,32 @@ describe('hazañas', () => {
     expect(misHazanas(p).map((a) => a.id)).toEqual(['pasos', 'leer'])
     expect(extrasHoy(p, en('2026-01-05', 20)).map((a) => a.id)).toEqual(['correr'])
     expect(anadirHazana(p, 'correr').acciones.find((a) => a.id === 'correr')!.habitual).toBeUndefined()
+  })
+
+  it('un reto puntual caduca y al completarlo desaparece de las listas', () => {
+    const hoy = en('2026-01-05', 10)
+    const manana = en('2026-01-06', 10)
+    const p = crearHazana(base(), { nombre: ' Llevar el coche al taller ', area: 'vinculos', soloEl: '2026-01-05' }, 'taller')
+    expect(pendientesHoy(p, hoy).map((a) => a.nombre)).toEqual(['Llevar el coche al taller'])
+    expect(pendientesHoy(p, manana)).toEqual([])
+    expect(misHazanas(p)).toHaveLength(2)
+    expect(propiasFuera(p)).toEqual([])
+    expect(anadirHazana(p, 'propia-taller')).toBe(p)
+
+    const r = hacerOfrenda(p, 'propia-taller', hoy, azarFijo(0, 0.99), 'o1')
+    expect(r.cuenta).toBe(true)
+    expect(r.ofrenda.area).toBe('vinculos')
+    expect(pendientesHoy(r.partida, hoy)).toEqual([])
+    expect(extrasHoy(r.partida, hoy)).toEqual([])
+    expect(pendientesHoy(deshacerOfrenda(r.partida, r.ofrenda.id), hoy)).toEqual(pendientesHoy(p, hoy))
+  })
+
+  it('un reto puntual conserva su fecha en la copia y se mueve con el reloj de prueba', () => {
+    const hoy = en('2026-01-05', 10)
+    const p = crearHazana(base(), { nombre: 'Llevar el coche al taller', area: 'vinculos', soloEl: '2026-01-05' }, 'taller')
+    const recuperada = importarCopia(exportarCopia(p, hoy))!
+    expect(pendientesHoy(recuperada, hoy)).toEqual(pendientesHoy(p, hoy))
+    expect(pendientesHoy(desplazarPartida(recuperada, -1), en('2026-01-04'))).toHaveLength(1)
   })
 
   it('partidas de antes: las acciones genéricas pasan a sus hazañas concretas, sin perder historial', () => {

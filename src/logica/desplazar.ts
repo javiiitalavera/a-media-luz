@@ -15,6 +15,7 @@ export function desplazarPartida(p: Partida, dias: number): Partida {
     ...p,
     inicio: fecha(p.inicio),
     ...(p.diaMalo && { diaMalo: dia(p.diaMalo) }),
+    acciones: p.acciones.map((a) => a.soloEl ? { ...a, soloEl: dia(a.soloEl) } : a),
     ofrendas: p.ofrendas.map(fechado),
     hallazgos: p.hallazgos.map(fechado),
     ...(p.construcciones && { construcciones: p.construcciones.map(fechado) }),
