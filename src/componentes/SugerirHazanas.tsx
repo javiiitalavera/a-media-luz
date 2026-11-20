@@ -11,7 +11,7 @@ export function SugerirHazanas({ partida, area, titulo }: { partida: Partida; ar
   const [anadida, setAnadida] = useState<string | null>(null)
   const opciones = delCatalogoSinUsar(partida).filter((c) => c.area === area).slice(0, 3)
   if (anadida) return <p className="mt-2 text-[14px] font-semibold text-salvia-texto">{UI.sugerir.anadida(anadida)}</p>
-  if (!opciones.length || !cabeOtro(partida)) return null
+  if (!opciones.length || !cabeOtro(partida, area)) return null
   return (
     <div className="mt-2">
       <div className="text-[13px] font-semibold text-texto-2">{titulo ?? UI.sugerir.titulo(AREAS[area].nombre)}</div>

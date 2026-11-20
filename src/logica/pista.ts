@@ -23,7 +23,7 @@ export function retoQueFalta(p: Partida, ahora: Date, vecino = mesActual(p).comp
   const sugerido = sugerencias(p.perfil ?? { mejorar: [] }).find((s) => ACCIONES.find((a) => a.id === s.id)?.area === area)
   const c = ACCIONES.find((a) => a.id === FACIL[area])!
   const reto = sugerido ?? { id: c.id, nombre: c.nombre, minima: c.minima }
-  return { vecino, area, reto, cabe: cabeOtro(p) }
+  return { vecino, area, reto, cabe: cabeOtro(p, area) }
 }
 
 /** «Luego»: deja la petición para mañana. */

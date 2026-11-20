@@ -136,7 +136,7 @@ export default function App() {
     pantalla = <Casa key={ultimo} partida={partida} ahora={ahora} dueno={ultimo} onNovedades={() => setSobre(true)} onRecogerHuevo={recogerHuevo} {...peticionDeDecision(ultimo)} onBarrio={() => transicion('salir', punto(ultimo), () => { setUltimaCasa(ultimo); setVerBarrio(true) })} />
   else if (pestana === 'ofrendas') pantalla = <Ofrendas partida={partida} ahora={ahora} onIrACasa={() => irALugar(ultimo)} />
   else if (pestana === 'ajustes') pantalla = <Ajustes partida={partida} ahora={ahora} />
-  else pantalla = <Album partida={partida} ahora={ahora} onIr={irALugar} />
+  else pantalla = <Album partida={partida} onIr={irALugar} />
 
   return (
     <>

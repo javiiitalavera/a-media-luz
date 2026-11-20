@@ -52,7 +52,8 @@ function vistos(v: unknown) {
   const fechas = (d: unknown) => objeto(d) && Object.values(d).every(fecha)
   return objeto(v) && opcional(v.album, fecha) && opcional(v.albumSec, fechas) && opcional(v.hazanas, dia) &&
     opcional(v.micros, dias) && opcional(v.gags, dias) &&
-    opcional(v.huellas, (h) => lista(h, texto)) &&
+    opcional(v.huellas, (h) => lista(h, texto)) && opcional(v.momentos, (m) => objeto(m) && Object.values(m).every(texto)) &&
+    opcional(v.curiosidades, fechas) &&
     opcional(v.pina, (p) => p === 'guardada' || p === 'aqui')
 }
 

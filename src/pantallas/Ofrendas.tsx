@@ -257,8 +257,8 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
                   <>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {ORDEN_AREAS.map((ar) => (
-                        <button key={ar} type="button" aria-pressed={a.area === ar} onClick={() => ajustar((p) => editarHazana(p, a.id, { area: ar }))}
-                          className={`min-h-11 rounded-full border-2 px-3 text-[13px] font-semibold ${a.area === ar ? 'border-transparent text-tinta' : 'border-borde text-texto-3'}`}
+                        <button key={ar} type="button" aria-pressed={a.area === ar} disabled={a.area !== ar && !cabeOtro(partida, ar, a.id)} onClick={() => ajustar((p) => editarHazana(p, a.id, { area: ar }))}
+                          className={`min-h-11 rounded-full border-2 px-3 text-[13px] font-semibold disabled:opacity-40 ${a.area === ar ? 'border-transparent text-tinta' : 'border-borde text-texto-3'}`}
                           style={a.area === ar ? { background: MATERIALES[ar].color } : undefined}>{AREAS[ar].nombre}</button>
                       ))}
                     </div>
@@ -281,7 +281,7 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
               <div key={a.id} className="flex items-center gap-2 rounded-3xl bg-tarjeta py-1 pr-1 pl-3">
                 <IconoArea area={a.area} pequeno />
                 <span className="flex-1 text-[15px] font-medium">{a.nombre}</span>
-                <button type="button" disabled={!cabe} onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto disabled:opacity-40">+ {UI.ofrendas.aMiLista}</button>
+                <button type="button" disabled={!cabeOtro(partida, a.area)} onClick={() => ajustar((p) => anadirHazana(p, a.id))} className="min-h-11 px-2 text-[14px] font-semibold text-salvia-texto disabled:opacity-40">+ {UI.ofrendas.aMiLista}</button>
                 <BotonBorrar onBorrar={() => ajustar((p) => borrarHazana(p, a.id))} />
               </div>
             ))}
@@ -306,11 +306,11 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
             if (!lista.length) return null
             return (
               <div key={area}>
-                <div className="mb-1 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-texto-3"><IconoArea area={area} pequeno />{AREAS[area].nombre}</div>
+                <div className="mb-1 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-texto-3"><IconoArea area={area} pequeno />{AREAS[area].nombre}{!cabeOtro(partida, area) && <span className="font-normal">· {UI.ofrendas.areaLlena}</span>}</div>
                 <div className="flex flex-wrap gap-2">
                   {lista.map((c) => (
-                    <button key={c.id} type="button" onClick={() => ajustar((p) => anadirHazana(p, c.id))}
-                      className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2">+ {c.nombre}</button>
+                    <button key={c.id} type="button" disabled={!cabeOtro(partida, area)} onClick={() => ajustar((p) => anadirHazana(p, c.id))}
+                      className="min-h-11 rounded-full border-2 border-dashed border-borde px-3.5 text-[14px] font-medium text-texto-2 disabled:opacity-40">+ {c.nombre}</button>
                   ))}
                 </div>
               </div>
@@ -319,7 +319,7 @@ function HojaEditar({ partida, onCerrar }: { partida: Partida; onCerrar: () => v
         </div>
       )}
       {cabe && plegable === 'propia' && (
-        <div className="animate-entrar mt-3"><FormularioPropia boton={UI.ofrendas.crear} onCrear={(d) => { ajustar((p) => crearHazana(p, d, nuevoId())); setPlegable(null) }} /></div>
+        <div className="animate-entrar mt-3"><FormularioPropia boton={UI.ofrendas.crear} areasDisponibles={ORDEN_AREAS.filter((a) => cabeOtro(partida, a))} onCrear={(d) => { ajustar((p) => crearHazana(p, d, nuevoId())); setPlegable(null) }} /></div>
       )}
     </Hoja>
   )
@@ -383,11 +383,11 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
 
 type DatosReto = { nombre: string; area: AreaId }
 
-function FormularioPropia({ boton, onCrear, puntual = false }: { boton: string; onCrear: (d: DatosReto) => void; puntual?: boolean }) {
+function FormularioPropia({ boton, onCrear, puntual = false, areasDisponibles = ORDEN_AREAS }: { boton: string; onCrear: (d: DatosReto) => void; puntual?: boolean; areasDisponibles?: readonly AreaId[] }) {
   const [nombre, setNombre] = useState('')
-  const [area, setArea] = useState<AreaId | null>(puntual ? null : 'cuerpo')
+  const [area, setArea] = useState<AreaId | null>(puntual ? null : areasDisponibles[0] ?? null)
   const crear = (guardar: (d: DatosReto) => void) => {
-    if (!nombre.trim() || !area) return
+    if (!nombre.trim() || !area || !areasDisponibles.includes(area)) return
     guardar({ nombre: nombre.trim(), area })
     setNombre('')
   }
@@ -399,14 +399,14 @@ function FormularioPropia({ boton, onCrear, puntual = false }: { boton: string; 
       <div className="mt-2 text-[13px] font-semibold text-texto-3">{UI.ofrendas.area}</div>
       <div className="mt-1 flex flex-wrap gap-1.5">
         {ORDEN_AREAS.map((a) => (
-          <button key={a} type="button" aria-pressed={area === a} onClick={() => setArea(a)}
-            className={`flex min-h-11 items-center gap-1.5 rounded-full border-2 px-3 text-[14px] font-semibold ${area === a ? 'border-transparent text-tinta' : 'border-borde text-texto-2'}`}
+          <button key={a} type="button" disabled={!areasDisponibles.includes(a)} aria-pressed={area === a} onClick={() => setArea(a)}
+            className={`flex min-h-11 items-center gap-1.5 rounded-full border-2 px-3 text-[14px] font-semibold disabled:opacity-40 ${area === a ? 'border-transparent text-tinta' : 'border-borde text-texto-2'}`}
             style={area === a ? { background: MATERIALES[a].color } : undefined}>
             {AREAS[a].nombre}
           </button>
         ))}
       </div>
-      <button type="submit" disabled={!nombre.trim() || !area}
+      <button type="submit" disabled={!nombre.trim() || !area || !areasDisponibles.includes(area)}
         className="mt-3 min-h-11 w-full rounded-full bg-ambar text-[15px] font-bold text-tinta disabled:opacity-40">{boton}</button>
     </form>
   )

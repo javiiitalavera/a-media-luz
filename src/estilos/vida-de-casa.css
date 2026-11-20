@@ -1,76 +1,74 @@
 /* Un carril ocupa el ancho de la escena: los viajes conservan su longitud al recortar el fondo. */
-.paseo-de-salchicha, .paseo-de-planta, .paseo-de-tornillo, .paseo-de-barquito {
+.paseo-de-tornillo, .paseo-de-barquito {
   position: absolute;
   left: 0;
   width: 100%;
   opacity: 0;
 }
-.paseo-de-salchicha { top: 78%; animation: salchicha-en-fuga 28s -3s linear infinite; }
-.paseo-de-salchicha img {
-  width: 8%;
-  margin-left: 14%;
-  transform: translate(-50%, -100%);
-  animation: salchicha-rebota 28s -3s ease-out infinite;
-  filter: drop-shadow(0 3px 1px #5d422762);
-}
-@keyframes salchicha-en-fuga {
-  0%, 16% { opacity: 0; transform: translateX(-13%); }
-  19%, 40% { opacity: 1; }
-  26% { transform: translateX(32%); }
-  31% { transform: translateX(34%); }
-  43%, 100% { opacity: 0; transform: translateX(82%); }
-}
-@keyframes salchicha-rebota {
-  16% { transform: translate(-50%, -100%) rotate(-30deg); }
-  22% { transform: translate(-50%, -185%) rotate(92deg); }
-  26%, 31% { transform: translate(-50%, -100%) rotate(200deg); }
-  37% { transform: translate(-50%, -145%) rotate(280deg); }
-  43% { transform: translate(-50%, -100%) rotate(430deg); }
-}
-.rafaga-del-porche i {
+/* Los detalles se apoyan en zonas del fondo pintado: porche, losas y alfombra. */
+.ascuas-del-porche {
   position: absolute;
-  top: 38%;
-  left: 12%;
-  width: 2.2%;
-  aspect-ratio: 1.65;
-  border-radius: 82% 0 82% 0;
-  background: linear-gradient(130deg, #ed9c74, #a5514e);
-  transform-origin: 22% 62%;
-  animation: hoja-por-el-porche 21s -4s ease-in-out infinite;
+  left: 26%;
+  top: 36%;
+  width: 7%;
+  height: 10%;
 }
-.rafaga-del-porche i:nth-child(2) { top: 45%; left: 21%; animation-delay: -6s; }
-.rafaga-del-porche i:nth-child(3) { top: 42%; left: 36%; animation-delay: -5.2s; }
-@keyframes hoja-por-el-porche {
-  0%, 24% { opacity: 0; transform: translate(0, 0) rotate(20deg); }
-  29% { opacity: .9; }
-  40% { transform: translate(720%, 18px) rotate(125deg) scaleX(.72); }
-  51%, 100% { opacity: 0; transform: translate(1500%, 46px) rotate(260deg); }
-}
-
-.paseo-de-planta { top: 77%; animation: mata-fugitiva 32s -6s linear infinite; }
-.planta-rodadora {
+.ascuas-del-porche i {
   position: absolute;
-  left: 15%;
-  top: 0;
-  width: 10%;
+  bottom: 0;
+  left: 20%;
+  width: clamp(2px, .7vw, 4px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, #66754d 16%, #82965ac9 46%, transparent 72%);
-  animation: rueda-la-mata 32s -6s linear infinite;
+  background: #ffd897;
+  box-shadow: 0 0 5px #ef9c52;
+  animation: ascuas-del-porche 19s -3s ease-out infinite;
 }
-.planta-rodadora i {
+.ascuas-del-porche i:nth-child(2) { left: 55%; scale: .8; animation-delay: -2.7s; }
+.ascuas-del-porche i:nth-child(3) { left: 78%; scale: .58; animation-delay: -2.4s; }
+@keyframes ascuas-del-porche {
+  0%, 16% { opacity: 0; translate: 0 0; }
+  20% { opacity: .85; }
+  29%, 100% { opacity: 0; translate: 8px -24px; }
+}
+
+.semilla-del-invernadero, .boton-de-la-cesta {
   position: absolute;
-  inset: 2% 33% 51%;
-  transform-origin: 50% 102%;
-  border-radius: 90% 8% 76% 24%;
-  border: 1px solid #4b5e3e;
-  background: linear-gradient(145deg, #bad07c, #718d51);
+  opacity: 0;
+  transform-origin: 50% 90%;
 }
-.planta-rodadora i:nth-child(2) { rotate: 60deg; }
-.planta-rodadora i:nth-child(3) { rotate: 120deg; }
-.planta-rodadora i:nth-child(4) { rotate: 180deg; }
-.planta-rodadora i:nth-child(5) { rotate: 240deg; }
-.planta-rodadora i:nth-child(6) { rotate: 300deg; }
+.semilla-del-invernadero img, .boton-de-la-cesta img {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 2px 1px #5d422757);
+}
+.semilla-del-invernadero {
+  top: 57%;
+  left: 65%;
+  width: 4.5%;
+  animation: semilla-en-las-losas 29s -3s ease-out infinite;
+}
+@keyframes semilla-en-las-losas {
+  0%, 21% { opacity: 0; transform: translate(0, -85%) rotate(-15deg); }
+  25% { opacity: .9; }
+  33% { transform: translate(-145%, 45%) rotate(65deg); }
+  38%, 47% { opacity: .95; transform: translate(-190%, 58%) rotate(98deg); }
+  52%, 100% { opacity: 0; transform: translate(-190%, 58%) rotate(98deg); }
+}
+.boton-de-la-cesta {
+  top: 52%;
+  left: 76%;
+  width: 4.3%;
+  animation: boton-hasta-la-alfombra 34s -6s ease-out infinite;
+}
+@keyframes boton-hasta-la-alfombra {
+  0%, 20% { opacity: 0; transform: translate(0, -45%) rotate(0); }
+  23% { opacity: 1; }
+  30% { transform: translate(-145%, 25%) rotate(-85deg); }
+  34%, 45% { opacity: 1; transform: translate(-200%, 35%) rotate(-130deg); }
+  50%, 100% { opacity: 0; transform: translate(-200%, 35%) rotate(-130deg); }
+}
+
 .sombra-de-escenita {
   position: absolute;
   left: 15%;
@@ -80,18 +78,6 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(ellipse, #422f2652, transparent 70%);
 }
-@keyframes mata-fugitiva {
-  0%, 22% { transform: translate(-10%, 0); opacity: 0; }
-  26%, 50% { opacity: 1; }
-  36%, 41% { transform: translate(32%, 7px); }
-  55%, 100% { transform: translate(82%, 22px); opacity: 0; }
-}
-@keyframes rueda-la-mata {
-  22% { transform: translate(-50%, -100%) rotate(0deg); }
-  36%, 41% { transform: translate(-50%, -100%) rotate(280deg); }
-  55% { transform: translate(-50%, -100%) rotate(680deg); }
-}
-
 .paseo-de-tornillo { top: 78%; animation: tornillo-en-fuga 26s -1.8s linear infinite; }
 .paseo-de-tornillo img {
   width: 6%;
@@ -233,17 +219,7 @@
   .anim-gesto-de-objeto[data-gesto] { animation: none; }
 }
 
-/* Madeja: un ovillo cruza la madriguera rodando; ella escucha inclinándose y, al tocarla, brinca. */
-.paseo-de-ovillo { position: absolute; left: 0; width: 100%; top: 80%; opacity: 0; animation: ovillo-en-fuga 30s -9s linear infinite; }
-.paseo-de-ovillo img { width: 6.5%; margin-left: 12%; transform: translate(-50%, -100%); animation: ovillo-rueda 30s -9s linear infinite; filter: drop-shadow(0 2px 1px #5d42274d); }
-@keyframes ovillo-en-fuga {
-  0%, 20% { opacity: 0; transform: translateX(0); }
-  23%, 52% { opacity: 1; }
-  45% { transform: translateX(55%); }
-  56%, 100% { opacity: 0; transform: translateX(72%); }
-}
-@keyframes ovillo-rueda { 20% { rotate: 0deg; } 45% { rotate: 540deg; } 56% { rotate: 700deg; } }
-
+/* Madeja se inclina para escuchar y brinca al tocarla. */
 @keyframes madeja-escucha {
   0%, 30%, 100% { transform: rotate(0); }
   38%, 48% { transform: rotate(-5deg) translateX(-1.5%); }
@@ -272,6 +248,6 @@
   100% { opacity: 0; transform: translate(40%, -60%) rotate(320deg) scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .paseo-de-ovillo, .hebra-de-madeja { display: none; }
+  .hebra-de-madeja { display: none; }
   .anim-madeja-escucha, .anim-madeja-brinco { animation: none; }
 }

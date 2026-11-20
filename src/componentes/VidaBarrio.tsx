@@ -1,18 +1,23 @@
 import type { CSSProperties } from 'react'
+import { useRef } from 'react'
 import { COMPANEROS, UI, type CompaneroId } from '../contenido'
 import { PASEOS_BARRIO, type PuntoMapa } from '../contenido/barrio'
 import { rutaArte, rutaCompanero } from '../arte/manifiesto'
 import type { Etapa } from '../logica/etapas'
+import { azarConSemilla } from '../logica/azar'
+import { dia } from '../logica/fechas'
 import { sfx } from '../sonido'
 import { globoEn } from '../estado/globo'
 
-export function VecinoDePaseo({ vecino, etapa, ancho, alto, puente }: {
+export function VecinoDePaseo({ vecino, etapa, ancho, alto, puente, ahora }: {
   vecino: CompaneroId
   etapa: Etapa
   ancho: number
   alto: number
   puente: boolean
+  ahora: Date
 }) {
+  const toques = useRef(0)
   const paseo = PASEOS_BARRIO[vecino]
   if (!paseo) return null
 
@@ -34,7 +39,9 @@ export function VecinoDePaseo({ vecino, etapa, ancho, alto, puente }: {
       } as CSSProperties}
       onClick={(e) => {
         sfx.personaje(vecino)
-        globoEn(e, `${COMPANEROS[vecino].nombre}: «${paseo.frase}»`)
+        const inicio = Math.floor(azarConSemilla(`${dia(ahora)}|paseo|${vecino}`)() * paseo.frases.length)
+        const frase = paseo.frases[(inicio + toques.current++) % paseo.frases.length]
+        globoEn(e, `${COMPANEROS[vecino].nombre}: «${frase}»`)
       }}>
       <img src={rutaCompanero(vecino, etapa, 'base')} alt="" draggable={false} className="relative block w-full" />
     </button>

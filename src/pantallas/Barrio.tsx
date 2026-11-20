@@ -160,7 +160,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         {/* Quien está hoy de visita en otra casa no pasea a la vez por el mapa. */}
         {casas.filter(({ huevo, companero }) => !huevo && (!noche || companero === 'nox') && !deVisitaHoy.has(companero)).map(({ companero }) => (
           <VecinoDePaseo key={companero} vecino={companero} etapa={progreso(partida, companero, ahora).etapa}
-            ancho={ancho} alto={alto} puente={puente} />
+            ancho={ancho} alto={alto} puente={puente} ahora={ahora} />
         ))}
         <HojasAlViento />
 

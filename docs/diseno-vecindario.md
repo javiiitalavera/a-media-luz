@@ -523,3 +523,10 @@ Tomado del documento de diseño «Dirección A» de z.ai (lo que encaja; ver la 
 - El ovillo de Madeja rueda por la madriguera sin dejar una línea rosa.
 - El sobre muestra las noticias de hoy y los dos días anteriores. Los mensajes se leen ahí mismo. Solo hay botón de visita para una escena que sigue disponible. Al llegar se ve su contexto. Las decisiones esperan hasta que se contestan y abren la pregunta correspondiente incluso desde la misma casa.
 - El subtítulo de Retos dice «Se reinician cada día.».
+
+### Novedades del Álbum, ambiente y variedad de retos
+
+- Cada curiosidad, crónica y momento tiene su propio punto. Se apaga al abrir la ficha y vuelve si hay cambios. Las marcas antiguas del Álbum se respetan.
+- En el porche de Nox flotan ascuas. En el invernadero de Tofu una semilla cae y rueda por las losas. En casa de Madeja un botón rueda hacia la alfombra.
+- Cada vecino de paseo tiene cinco frases. Van rotando al tocarlo.
+- La lista admite hasta diez retos fijos y tres por área. Las listas antiguas se conservan y los retos puntuales quedan fuera de ese límite. El cuestionario ofrece alternativas que se pueden marcar según edad, rutina, actividad y preferencias.

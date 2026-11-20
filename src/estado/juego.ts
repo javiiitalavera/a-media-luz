@@ -8,7 +8,7 @@ import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { ahora } from '../logica/reloj'
-import { hechaHoy, migrarHazanas } from '../logica/hazanas'
+import { hechaHoy, migrarHazanas, seleccionarHabituales } from '../logica/hazanas'
 import { anadirSugerencia, type Sugerencia } from '../logica/sugerencias'
 import type { Perfil } from '../contenido/cuestionario'
 import { avanzar, decidir as decidirSituacion, empiezaHoyDeTuDiario } from '../logica/situaciones'
@@ -59,8 +59,9 @@ export const useJuego = create<Juego>()(
       partida: null,
       empezar: (c, habituales, perfil, sugeridos = []) => {
         // Los retos sugeridos se guardan con su meta ajustada; el resto, con la del catálogo.
-        let p = crearPartida(c, ahora(), habituales, true)
-        for (const s of sugeridos) if (habituales?.includes(s.id)) p = anadirSugerencia(p, s)
+        const elegidos = habituales && seleccionarHabituales(habituales)
+        let p = crearPartida(c, ahora(), elegidos, true)
+        for (const s of sugeridos) if (elegidos?.includes(s.id)) p = anadirSugerencia(p, s)
         set({ partida: perfil ? { ...p, perfil } : p, porContar: null })
       },
       ofrecer: (accionId) => {

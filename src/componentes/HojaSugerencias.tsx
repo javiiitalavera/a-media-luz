@@ -13,7 +13,7 @@ export function HojaSugerencias({ partida, onCerrar }: { partida: Partida; onCer
   const ajustar = useJuego((s) => s.ajustar)
   const perfil = partida.perfil ?? { mejorar: [] }
   const mias = new Set(misHazanas(partida).map((a) => a.id))
-  const lista = sugerencias(perfil)
+  const lista = sugerencias(perfil, 8)
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
       <section role="dialog" aria-label={T.hojaTitulo} onClick={(e) => e.stopPropagation()}
@@ -39,9 +39,10 @@ export function HojaSugerencias({ partida, onCerrar }: { partida: Partida; onCer
                   <span className="block text-[15px] font-semibold">{s.nombre}</span>
                   {/* Si ya está en tu lista con otra meta, se dice qué se cambia. */}
                   <span className="block text-[13px] text-texto-3">{actual && !ya ? T.ahora(actual) : AREAS[area].nombre}</span>
+                  {!actual && cabeOtro(partida) && !cabeOtro(partida, area) && <span className="block text-[12px] text-texto-3">{UI.ofrendas.areaLlena}</span>}
                 </span>
                 {ya ? <span className="shrink-0 text-[13px] font-semibold text-salvia-texto">{T.yaLoTienes}</span> : (
-                  <button type="button" disabled={!cabeOtro(partida) && !mias.has(s.id)} onClick={() => ajustar((p) => anadirSugerencia(p, s))}
+                  <button type="button" disabled={!cabeOtro(partida, area) && !mias.has(s.id)} onClick={() => ajustar((p) => anadirSugerencia(p, s))}
                     className="min-h-11 shrink-0 rounded-full bg-ambar px-4 text-[14px] font-bold text-tinta disabled:opacity-40">{actual ? T.cambiarMeta : `+ ${T.anadir}`}</button>
                 )}
               </li>

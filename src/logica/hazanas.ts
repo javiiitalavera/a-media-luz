@@ -9,6 +9,10 @@ export const esHabitual = (a: Accion) => a.habitual !== false && !a.soloEl
 
 /** Como mucho, 10 retos en tu lista (más no se cumplen: se acumulan). Mínimo no hay. */
 export const MAX_RETOS = 10
+export const MAX_RETOS_POR_AREA = 3
+
+export const cabeEnLista = (lista: readonly Pick<Accion, 'area'>[], area?: AreaId) =>
+  lista.length < MAX_RETOS && (!area || lista.filter((a) => a.area === area).length < MAX_RETOS_POR_AREA)
 
 /** Tus retos, ordenados por área (Energía, Mente, Calma, Vínculos, Orden) y, dentro, en el orden en que los añadiste. */
 export const misHazanas = (p: Partida) => {
@@ -17,7 +21,18 @@ export const misHazanas = (p: Partida) => {
 }
 
 /** ¿Cabe uno más en tu lista? */
-export const cabeOtro = (p: Partida) => misHazanas(p).length < MAX_RETOS
+export const cabeOtro = (p: Partida, area?: AreaId, salvo?: string) =>
+  cabeEnLista(p.acciones.filter((a) => esHabitual(a) && a.id !== salvo), area)
+
+/** Aplica el límite al crear una partida, respetando el orden elegido. Las listas antiguas se conservan. */
+export function seleccionarHabituales(ids: readonly string[]): string[] {
+  const elegidos: Accion[] = []
+  for (const id of ids) {
+    const accion = ACCIONES.find((a) => a.id === id)
+    if (accion && !elegidos.includes(accion) && cabeEnLista(elegidos, accion.area)) elegidos.push(accion)
+  }
+  return elegidos.map((a) => a.id)
+}
 
 /** La hazaña está hecha hoy (cuenta una vez al día). */
 export const hechaHoy = (p: Partida, id: string, ahora: Date) => p.ofrendas.some((o) => o.accionId === id && dia(o.fecha) === dia(ahora))
@@ -47,10 +62,9 @@ const limpia = (c: Accion): Accion => ({ id: c.id, area: c.area, nombre: c.nombr
 export function anadirHazana(p: Partida, id: string, habitual = true): Partida {
   const ya = p.acciones.find((a) => a.id === id)
   if (ya?.soloEl) return p
-  if (habitual && !(ya && esHabitual(ya)) && !cabeOtro(p)) return p
+  const c = ya ?? ACCIONES.find((x) => x.id === id)
+  if (!c || (habitual && !(ya && esHabitual(ya)) && !cabeOtro(p, c.area))) return p
   if (ya) return { ...p, acciones: p.acciones.map((a) => (a.id === id ? { ...a, habitual: habitual ? undefined : false } : a)) }
-  const c = ACCIONES.find((x) => x.id === id)
-  if (!c) return p
   return { ...p, acciones: [...p.acciones, { ...limpia(c), ...(habitual ? {} : { habitual: false }) }] }
 }
 
@@ -61,7 +75,7 @@ export const quitarHazana = (p: Partida, id: string): Partida =>
 /** Crea una hazaña propia. Sin nombre no se crea; la mínima es opcional. */
 export function crearHazana(p: Partida, datos: { nombre: string; area: AreaId; minima?: string; soloEl?: string }, id: string, habitual = !datos.soloEl): Partida {
   const nombre = datos.nombre.trim()
-  if (!nombre || (habitual && !cabeOtro(p))) return p
+  if (!nombre || (habitual && !cabeOtro(p, datos.area))) return p
   const minima = datos.minima?.trim()
   return { ...p, acciones: [...p.acciones, { id: `propia-${id}`, area: datos.area, nombre, ...(minima ? { minima } : {}), ...(habitual ? {} : { habitual: false }), ...(datos.soloEl ? { soloEl: datos.soloEl } : {}) }] }
 }
@@ -72,7 +86,9 @@ export function editarHazana(p: Partida, id: string, cambio: { nombre?: string; 
     ...p,
     acciones: p.acciones.map((a) => {
       if (a.id !== id) return a
-      const r: Accion = { ...a, nombre: cambio.nombre?.trim() || a.nombre, ...(cambio.area && esPropia(a) ? { area: cambio.area } : {}) }
+      const area = cambio.area && esPropia(a) && (cambio.area === a.area || !esHabitual(a) || cabeOtro(p, cambio.area, a.id))
+        ? cambio.area : a.area
+      const r: Accion = { ...a, nombre: cambio.nombre?.trim() || a.nombre, area }
       if (cambio.minima !== undefined) {
         const m = cambio.minima.trim()
         if (m) r.minima = m

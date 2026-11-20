@@ -35,6 +35,7 @@ export function desplazarPartida(p: Partida, dias: number): Partida {
       ...p.vistos,
       ...(p.vistos.album && { album: fecha(p.vistos.album) }),
       ...(p.vistos.albumSec && { albumSec: Object.fromEntries(Object.entries(p.vistos.albumSec).map(([k, f]) => [k, f && fecha(f)])) }),
+      ...(p.vistos.curiosidades && { curiosidades: Object.fromEntries(Object.entries(p.vistos.curiosidades).map(([k, f]) => [k, fecha(f)])) }),
       ...(p.vistos.hazanas && { hazanas: dia(p.vistos.hazanas) }),
       ...(p.vistos.micros && { micros: diasDelRegistro(p.vistos.micros) }),
       ...(p.vistos.gags && { gags: diasDelRegistro(p.vistos.gags) }),
