@@ -36,9 +36,9 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
     moverme: menor ? [del('jugar-fuera'), del('bici')]
       : mayor ? [pasosSug, del('equilibrio')]
       : act === 'bastante' ? [del('correr', madura ? 'Correr 20 minutos' : undefined), del(joven ? 'bici' : 'fuerza')]
-      : [pasosSug, madura ? del('estirar', 'Hacer 5 minutos de movilidad') : del('fuerza', act === 'poco' ? 'Fuerza 10 minutos' : undefined, '5 sentadillas')],
+      : [pasosSug, madura ? del('estirar', 'Movilidad 15 minutos') : del('fuerza', act === 'poco' ? 'Fuerza 10 minutos' : undefined, '5 sentadillas')],
     dormir: menor ? [del('dormir', 'Dormir 9 horas'), del('pantallas')]
-      : perfil.dia === 'cuido' ? [del('pantallas', 'Dejar el móvil 15 minutos antes de acostarme'), del('para-mi', 'Reservar 5 minutos para desconectar')]
+      : perfil.dia === 'cuido' ? [del('pantallas', 'Sin pantallas la última media hora'), del('para-mi')]
       : [del('dormir'), del('pantallas')],
     aprender: menor ? [del('deberes'), del('leer', 'Leer 10 páginas')]
       : perfil.dia === 'estudio' ? [del('concentrado'), del('leer')]
@@ -46,11 +46,11 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
       : joven ? [del('idioma'), del('crear')] : [del('leer'), del('idioma')],
     calma: [del('meditar', act === 'poco' || mayor ? 'Meditar 5 minutos' : undefined),
       perfil.dia === 'cuido' ? del('para-mi') : del('paseo')],
-    gente: menor ? [del('compartir-foto'), del('cena', 'Cenar en familia sin móviles')]
+    gente: menor ? [del('cena', 'Cenar en familia sin móviles'), del('amigo')]
       : mayor ? [del('amigo', 'Llamar a alguien que quiero'), del('preguntar')]
-      : perfil.dia === 'cuido' ? [del('preguntar'), del('gracias')]
-      : joven ? [del('amigo', 'Mandar un mensaje a un amigo'), del('compartir-foto')]
-      : [del('preguntar'), del('gracias')],
+      : perfil.dia === 'cuido' ? [del('preguntar'), del('quedar')]
+      : joven ? [del('quedar'), del('compartir-foto')]
+      : [del('amigo'), del('quedar')],
     orden: menor ? [del('ayudar-casa'), del('planificar', 'Preparar la mochila de mañana', 'Mirar el horario de mañana')]
       : perfil.dia === 'estudio' ? [del('planificar'), del('ordenar', 'Preparar el sitio para estudiar')]
       : perfil.dia === 'sentado' ? [del('correo', 'Resolver tres correos pendientes'), del('gestion')]
@@ -66,15 +66,15 @@ export function sugerencias(perfil: Perfil, limite = 5): Sugerencia[] {
   }
   for (const m of mejorar) meter(porMejora[m][0])
   // Lo que pide tu día, aunque no lo hayas marcado.
-  if (perfil.dia === 'sentado' && !perfil.mejorar.includes('calma')) meter(del('estirar', 'Estirar 5 minutos'))
+  if (perfil.dia === 'sentado' && !perfil.mejorar.includes('calma')) meter(del('estirar'))
   if (perfil.dia === 'cuido') meter(del('para-mi'))
   // Un segundo reto por cosa que quieres mejorar (si no has dicho nada, mejor empezar con tres).
   if (perfil.mejorar.length) for (const m of mejorar) meter(porMejora[m][1])
   // Al menos tres.
   const alternativas = [
     menor ? del('jugar-fuera') : pasosSug, menor ? del('deberes') : del('leer'),
-    joven || mayor ? del('amigo') : del('padres'), porMejora.calma[1], porMejora.orden[0],
-    del('diario'), del('gracias'), del('cocina'), del('aficion'), del('bici'),
+    porMejora.calma[1], porMejora.orden[0], joven || mayor ? del('amigo') : del('padres'),
+    del('diario'), del('quedar'), del('cocina'), del('aficion'), del('bici'),
   ]
   for (const s of alternativas) if (lista.length < 3) meter(s)
   if (limite > 5) {
