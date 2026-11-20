@@ -1,6 +1,7 @@
 // El lector (Dirección A): cada día, como mucho, una lectura suelta de tu diario en boca de un vecino,
 // y el informe semanal de Tuerca. Todo sale del historial.
 // Reglas: una lectura al día y tres por semana; una lectura no se repite en 14 días (los hitos, nunca);
+// las cifras del archivo (hitos), como mucho una por semana, para que no salgan seguidas;
 // solo habla un vecino que ya está en el barrio.
 import { AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, type AreaId, type CompaneroId } from '../contenido'
 import { LECTURAS_SUELTAS as L, INFORME, type Franja } from '../contenido/lecturas-sueltas'
@@ -56,7 +57,7 @@ function candidatas(p: Partida, ahora: Date): Omit<Lectura, 'fecha'>[] {
     if (reciente) r.push(nacido(p, vecino, ahora) ? { clave: `debut|${area}`, vecino, texto: L.debut[area] }
       : { clave: `debut|${area}`, vecino: 'nox', texto: L.debutSinVecino(AREAS[area].nombre) })
     const hito = [...HITOS].reverse().find((h) => suyas.length >= h)
-    if (hito) r.push({ clave: `hito|${area}|${hito}`, vecino: 'tuerca', texto: L.hito(hito, AREAS[area].nombre) })
+    if (hito) { const t = L.hito[area]; r.push({ clave: `hito|${area}|${hito}`, vecino: 'tuerca', texto: t[HITOS.indexOf(hito) % t.length](hito) }) }
   }
   if (ORDEN_AREAS.every((a) => semana.some((o) => o.area === a))) r.push({ clave: 'equilibrio', vecino: 'tuerca', texto: L.equilibrio })
   for (const area of ORDEN_AREAS) if (diasDe(semana.filter((o) => o.area === area)) >= 5) r.push({ clave: `constancia|${area}`, vecino: AREAS[area].companero, texto: L.constancia[area] })
@@ -82,8 +83,10 @@ export function lecturaDeHoy(p: Partida, ahora: Date): Lectura | null {
   const hoy = dia(ahora)
   if (hechas.some((l) => dia(l.fecha) === hoy)) return null
   if (hechas.filter((l) => lunes(dia(l.fecha)) === lunes(hoy)).length >= POR_SEMANA) return null
+  const hitoReciente = hechas.some((l) => l.clave.startsWith('hito|') && diasEntre(dia(l.fecha), hoy) < 7)
   const libre = (c: Omit<Lectura, 'fecha'>) => {
     if (!nacido(p, c.vecino, ahora)) return false
+    if (hitoReciente && c.clave.startsWith('hito|')) return false
     const antes = hechas.filter((l) => l.clave === c.clave)
     if (unaVez(c.clave)) return !antes.length && !(c.clave.startsWith('hito|') && hechas.some((l) => l.clave.startsWith(c.clave.split('|').slice(0, 2).join('|') + '|') && Number(l.clave.split('|')[2]) >= Number(c.clave.split('|')[2])))
     return antes.every((l) => diasEntre(dia(l.fecha), hoy) >= SIN_REPETIR)

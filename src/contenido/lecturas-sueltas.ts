@@ -28,7 +28,18 @@ export const LECTURAS_SUELTAS = {
   /** Las cinco áreas con algo en siete días (Tuerca). */
   equilibrio: 'Informe: las cinco áreas activas esta semana. Esto es anormalmente sano. Lo investigaré.',
   /** Registros acumulados de un área (Tuerca, con cifras). */
-  hito: (n: number, area: string) => `Página ${n} de tu archivo de ${area}. La he encuadernado. No me lo agradezcas. Bueno, sí.`,
+  hito: {
+    cuerpo: [(n: number) => `Página ${n} de tu archivo de Energía. Huele a hoguera. Nox dice que es «pátina».`,
+      (n: number) => `${n} entradas de Energía. He tenido que cambiar de carpeta. La anterior sudaba.`],
+    mente: [(n: number) => `${n} páginas de Mente. Tofu me ha pedido una copia. La está leyendo al revés.`,
+      (n: number) => `Archivo de Mente: ${n} entradas. Lo había ordenado. Tofu lo ha reordenado por cariño.`],
+    calma: [(n: number) => `${n} entradas de Calma. Bruma ha empañado la portada. Archivado como «húmedo».`,
+      (n: number) => `Calma: ${n} páginas. Es la carpeta más tranquila del archivo. Sospechoso.`],
+    vinculos: [(n: number) => `${n} entradas de Vínculos. Madeja ha pedido acceso. Se lo he denegado. Ya lo ha leído.`,
+      (n: number) => `Vínculos: ${n} páginas. Salen más nombres que en el censo del barrio.`],
+    orden: [(n: number) => `${n} entradas de Orden. Es mi carpeta favorita. No se lo digas a las otras.`,
+      (n: number) => `Orden: ${n} páginas. Las he grapado dos veces. Por si acaso.`],
+  } as Record<AreaId, ((n: number) => string)[]>,
   /** A qué hora te mueves, casi siempre (Nox). */
   hora: {
     manana: 'Siempre te mueves por la mañana. Yo también. Bueno, yo me muevo cuando huele a desayuno.',

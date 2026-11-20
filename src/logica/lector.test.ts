@@ -75,4 +75,13 @@ describe('el lector', () => {
     expect(informeSemanal(r.partida, en('2026-01-13', 9))).toBeNull()
   })
 
+  it('las cifras del archivo no salen seguidas: como mucho una por semana, y cada área con su frase', () => {
+    let p = barrio()
+    for (let i = 0; i < 30; i++) for (const [id, a] of [['pasos', 'cuerpo'], ['leer', 'mente'], ['gestion', 'orden']] as const) p = reg(p, id, a, sumarDias('2025-12-01', i), 8 + (i % 3))
+    const { p: q } = dias(p, '2026-01-05', 14)
+    const hitos = (q.lecturas ?? []).filter((l) => l.clave.startsWith('hito|'))
+    expect(hitos.length).toBeLessThanOrEqual(2)
+    for (let i = 1; i < hitos.length; i++) expect(Date.parse(hitos[i].fecha) - Date.parse(hitos[i - 1].fecha)).toBeGreaterThanOrEqual(7 * 86_400_000)
+    expect(new Set(hitos.map((h) => h.texto)).size).toBe(hitos.length)
+  })
 })

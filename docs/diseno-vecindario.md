@@ -561,3 +561,7 @@ Según la franja del día puedes encontrar al vecino ya ocupado con un mueble ex
 ### Lista de retos más compacta y sin mensaje al tachar (20/11/2026, rama `dev/retos-compactos`, decidido por Javi)
 - Las filas de la lista de retos ya no llevan el subtítulo del área (el icono ya la indica) y son más bajas: con 10 retos se ven todos de golpe en un móvil de 360 × 780.
 - Al tachar un reto ya no habla el vecino (cargaba de más). Solo sale un aviso cuando pasa algo que importa: un hallazgo, una subida de nivel, un proyecto que ya se puede construir, o que al desmarcar el material ya estaba gastado.
+
+### Menos repetición en el sobre y visitas sin montarse (20/11/2026, rama `dev/variedad-y-visitas`)
+- **Cifras del archivo (hitos):** como mucho una por semana (antes podían salir varias seguidas, una por área) y cada área tiene sus propias frases de Tuerca (Energía huele a hoguera, Calma está empañada, Vínculos lo ha leído Madeja…), en vez de la misma plantilla para todas.
+- **Visitas:** si hay alguien de visita en la casa, el dueño no se acerca a su mueble favorito (se montaban uno encima del otro); se queda en su sitio.
