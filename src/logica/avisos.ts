@@ -12,6 +12,8 @@ import { estadoDelMes } from './meses'
 import { SITUACIONES } from '../contenido/situaciones'
 import { curiosidadesTenidas } from './curiosidades'
 import { decisionPendiente, dondeGregorio, faseDe, huellasEn, microDeHoy } from './situaciones'
+import { expuesto } from './colocar'
+import { azarConSemilla } from './azar'
 
 const vistos = (p: Partida) => p.vistos ?? {}
 
@@ -155,17 +157,12 @@ export function avisoFuera(p: Partida, casa: CompaneroId, ahora: Date): 'pregunt
 export function gagDeHoy(p: Partida, lugar: CompaneroId | 'barrio', ahora: Date): Gag | null {
   const hoy = dia(ahora)
   if (vistos(p).gags?.[lugar] === hoy) return null
-  const n = semillaDe(`${hoy}|gag|${lugar}`)
-  if (n % 3) return null
-  const posibles = GAGS.filter((g) => g.lugar === lugar && g.requiere.every((r) =>
-    r === 'gregorio' ? dondeGregorio(p, ahora) === lugar : r in COMPANEROS ? nacido(p, r as CompaneroId, ahora) : construido(p, r)))
-  return posibles.length ? posibles[Math.floor(n / 3) % posibles.length] : null
+  const r = azarConSemilla(`${hoy}|gag|${lugar}`)
+  if (r() >= 1 / 3) return null
+  const posibles = GAGS.filter((g) => g.lugar === lugar && g.requiere.every((q) =>
+    q === 'gregorio' ? dondeGregorio(p, ahora) === lugar : q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
+  return posibles.length ? posibles[Math.floor(r() * posibles.length)] : null
 }
 export const verGag = (p: Partida, lugar: CompaneroId | 'barrio', ahora: Date): Partida =>
   ({ ...p, vistos: { ...vistos(p), gags: { ...vistos(p).gags, [lugar]: dia(ahora) } } })
 
-function semillaDe(texto: string): number {
-  let h = 2166136261
-  for (const ch of texto) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
-  return Math.abs(h)
-}

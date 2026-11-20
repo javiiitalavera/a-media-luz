@@ -7,7 +7,7 @@ import { sumarDias } from './fechas'
 /** Nox y Tuerca nacidos, con lo construido que se pida (sin mirar materiales: es para probar las historias). */
 function barrio(construido: string[]): Partida {
   let p = crearPartida('nox', en('2026-01-05', 8), undefined, true)
-  p = { ...p, meses: [...p.meses!, { companero: 'tuerca', inicio: en('2026-01-06', 8).toISOString() }] }
+  p = { ...p, meses: [...p.meses!, { companero: 'tuerca', inicio: en('2026-01-06', 8).toISOString(), presentado: en('2026-01-06', 8).toISOString() }] }
   const a = p.acciones[0]
   const ofrendas = Array.from({ length: 6 }, (_, i) => ({ id: 'n' + i, accionId: a.id, area: a.area, fecha: en('2026-01-06', 9 + i).toISOString(), diaMalo: false }))
   return { ...p, ofrendas, construcciones: construido.map((objetoId) => ({ objetoId, fecha: en('2026-01-06').toISOString() })) }
@@ -15,17 +15,17 @@ function barrio(construido: string[]): Partida {
 /** Igual, con Tofu nacido también. */
 function conTofu(construido: string[]): Partida {
   const p = barrio(construido)
-  return { ...p, meses: [...p.meses!, { companero: 'tofu', inicio: en('2026-01-06', 8).toISOString() }] }
+  return { ...p, meses: [...p.meses!, { companero: 'tofu', inicio: en('2026-01-06', 8).toISOString(), presentado: en('2026-01-06', 8).toISOString() }] }
 }
 /** Y con Bruma. */
 function conBruma(construido: string[]): Partida {
   const p = conTofu(construido)
-  return { ...p, meses: [...p.meses!, { companero: 'bruma', inicio: en('2026-01-06', 8).toISOString() }] }
+  return { ...p, meses: [...p.meses!, { companero: 'bruma', inicio: en('2026-01-06', 8).toISOString(), presentado: en('2026-01-06', 8).toISOString() }] }
 }
 /** Y con Madeja. */
 function conMadeja(construido: string[]): Partida {
   const p = conBruma(construido)
-  return { ...p, meses: [...p.meses!, { companero: 'madeja', inicio: en('2026-01-06', 8).toISOString() }] }
+  return { ...p, meses: [...p.meses!, { companero: 'madeja', inicio: en('2026-01-06', 8).toISOString(), presentado: en('2026-01-06', 8).toISOString() }] }
 }
 const dia = (n: number, h = 10) => en(sumarDias('2026-01-07', n), h)
 

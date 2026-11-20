@@ -4,7 +4,8 @@ import { FRASES_VISITA, HUELLAS, MICROS, SITUACIONES, type Huella, type Lugar, t
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
-import { guardado } from './colocar'
+import { expuesto, guardado } from './colocar'
+import { azarConSemilla } from './azar'
 import { nacido, nacidos, vecinoDe } from './etapas'
 import { dia, diasEntre } from './fechas'
 import { PATRONES, rellenar, type DatosPatron } from './patrones'
@@ -159,31 +160,30 @@ export function dondeGregorio(p: Partida, ahora: Date): CompaneroId | null {
   return diasEntre('2026-01-01', dia(ahora.toISOString())) % 2 ? 'nox' : 'tuerca'
 }
 
-/** Un número estable para un día y una casa (para que lo que pasa hoy no cambie al recargar). */
-function semilla(texto: string): number {
-  let h = 2166136261
-  for (const ch of texto) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
-  return Math.abs(h)
-}
 
 /** Quién está de visita hoy en una casa: tras inaugurarse el puente, a veces se pasa el otro vecino. */
 export function visitante(p: Partida, casa: CompaneroId, ahora: Date): CompaneroId | null {
   if (!estados(p).puente?.fin) return null
   const otros = nacidos(p, ahora).filter((c) => c !== casa && FRASES_VISITA[c])
-  if (!otros.length || semilla(`${dia(ahora.toISOString())}|visita|${casa}`) % 3 !== 0) return null
-  return otros[semilla(`${dia(ahora.toISOString())}|quien|${casa}`) % otros.length]
+  // Un sorteo estable por día y casa (igual al recargar): primero si hay visita, luego quién.
+  const r = azarConSemilla(`${dia(ahora.toISOString())}|visita|${casa}`)
+  if (!otros.length || r() >= 1 / 3) return null
+  return otros[Math.floor(r() * otros.length)]
 }
 
 /** La pequeña cosa que pasa hoy en una casa (la mitad de los días), entre las que ya se pueden dar. */
 export function microDeHoy(p: Partida, casa: CompaneroId, ahora: Date): Micro | null {
   const hoy = dia(ahora.toISOString())
-  if (semilla(`${hoy}|micro|${casa}`) % 2) return null
+  // Dos extracciones del mismo sorteo del día: si hay escena y cuál (antes iban enganchadas y salía siempre la misma).
+  const r = azarConSemilla(`${hoy}|micro|${casa}`)
+  if (r() >= 0.5) return null
   // El día que llega, bastante tiene con salir del huevo.
   const v = vecinoDe(p, casa)
   if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) return null
-  const posibles = MICROS.filter((m) => m.casa === casa && m.requiere.every((r) =>
-    r in COMPANEROS ? nacido(p, r as CompaneroId, ahora) : construido(p, r)))
-  return posibles.length ? posibles[semilla(`${hoy}|cual|${casa}`) % posibles.length] : null
+  // Lo que pasa sobre un mueble necesita el mueble a la vista (no en el baúl).
+  const posibles = MICROS.filter((m) => m.casa === casa && m.requiere.every((q) =>
+    q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
+  return posibles.length ? posibles[Math.floor(r() * posibles.length)] : null
 }
 
 /** Situaciones empezadas, para las Crónicas del Álbum: primero las que están en marcha (con sus noticias en orden). */

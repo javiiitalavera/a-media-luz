@@ -8,7 +8,7 @@ import { azarFijo, en } from './test-utils'
 
 function barrio(construido: string[]): Partida {
   let p = crearPartida('nox', en('2026-01-05', 8), ['pasos', 'leer'], true)
-  p = { ...p, meses: [...p.meses!, { companero: 'tuerca', inicio: en('2026-01-06', 8).toISOString() }] }
+  p = { ...p, meses: [...p.meses!, { companero: 'tuerca', inicio: en('2026-01-06', 8).toISOString(), presentado: en('2026-01-06', 8).toISOString() }] }
   const ofrendas = Array.from({ length: 6 }, (_, i) => ({ id: 'n' + i, accionId: 'pasos', area: 'cuerpo' as const, fecha: en('2026-01-06', 9 + i).toISOString(), diaMalo: false }))
   return { ...p, ofrendas, construcciones: construido.map((objetoId) => ({ objetoId, fecha: en('2026-01-06').toISOString() })) }
 }

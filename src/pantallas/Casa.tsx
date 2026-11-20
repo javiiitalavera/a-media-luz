@@ -18,7 +18,7 @@ import { BotonConstruir } from '../componentes/BotonConstruir'
 import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { Materiales } from '../componentes/Bolsa'
 import { GREGORIO_EN_NOX, VISITANTES, sitioVisita } from '../contenido/casa'
-import { colocar, encajar, guardado, guardar, movible, ordenOriginal, sacar, sitioDe } from '../logica/colocar'
+import { colocar, encajar, guardado, guardar, movible, ordenOriginal, sacar, sitioDe, sitioSobre } from '../logica/colocar'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso, Punto } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
@@ -32,6 +32,8 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 const PIÑA = { x: 34, y: 75, ancho: 10 }
 import { avisoFuera, fichaNueva, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
+import { PideReto } from '../componentes/PideReto'
+import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
@@ -279,6 +281,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   // Hasta que se celebra, se sigue viendo la etapa anterior.
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
   // Mientras no ha salido, en su sitio está el huevo.
+  const pista = retoQueFalta(partida, ahora)
+  const [pistaLuego, setPistaLuego] = useState(false)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
@@ -413,7 +417,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         )}
         {piñaPendiente && <span aria-hidden className="anim-brasa pointer-events-none absolute z-[11] h-2 w-2 rounded-full bg-[#ffb347] shadow-[0_0_8px_3px_#ff8a3d]" style={{ left: `${PIÑA.x + 2}%`, top: `${PIÑA.y - 11}%` }} />}
 
-        {gag && !ordenando && <GagEnEscena gag={gag} onVisto={() => ajustar((p) => verGag(p, DUENO, ahora))} />}
+        {gag && !ordenando && <GagEnEscena gag={gag} sitio={sitioSobre(partida, gag.requiere.find((r) => OBJETOS_CASA.some((o) => o.id === r)), gag.sitio)} onVisto={() => ajustar((p) => verGag(p, DUENO, ahora))} />}
 
         {/* Avisos sobre el vecino: «…» una cosa pequeña del día, «?» una decisión. Esperan a que los toques. */}
         {vivo && !celebra && !ordenando && (microPorVer || (decision && !decisionAbierta)) && (
@@ -487,6 +491,12 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           </span>
         )}
       </header>
+      {/* El último vecino te pide un reto de su área si tu lista no tiene ninguno (si no, no crece). */}
+      {pista && esUltimo && !conHuevo && !ordenando && !celebra && !pistaLuego && (
+        <div data-tapa-globo className="pointer-events-none absolute inset-x-3 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+60px)] z-30 flex justify-center">
+          <PideReto pista={pista} onLuego={() => setPistaLuego(true)} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
+        </div>
+      )}
 
       {/* Abajo: materiales y construir, encima de la navegación. */}
       <div className={`absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex flex-col gap-2 px-3 ${ordenando ? 'hidden' : ''}`}>
