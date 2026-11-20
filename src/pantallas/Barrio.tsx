@@ -1,3 +1,4 @@
+import '../estilos/claro-del-barrio.css'
 // El barrio (docs/diseno-vecindario.md): el mapa con la casita de cada vecino en su parcela, lo construido
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
 // El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
@@ -102,6 +103,11 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
     <main ref={caja} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
       <div className="absolute" style={{ top: arriba, left: izquierda, width: ancho, height: alto }}>
         <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+        {!noche && (
+          <div aria-hidden="true" className="claro-del-barrio" data-momento={momento}>
+            <span className="mariposa-del-claro" />
+          </div>
+        )}
         <ArroyoEnMovimiento />
         <img src={rutaArte('casa/nox/objeto/banco')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.banco)} />
         <img src={rutaArte('casa/nox/objeto/farolillo')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.farol)} />
