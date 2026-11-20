@@ -119,7 +119,8 @@ def main() -> None:
         cajas = [np.nonzero(cd[:, :, 3] > 0) for cd in celdas]
         y0 = min(ys.min() for ys, _ in cajas); y1 = max(ys.max() for ys, _ in cajas) + 1
         x0 = min(xs.min() for _, xs in cajas); x1 = max(xs.max() for _, xs in cajas) + 1
-        escala = LADO * ALTO_PERSONAJE / (y1 - y0)
+        # Que quepa entero: por la altura y también por la anchura (los muy anchos, como Madeja, se salían).
+        escala = min(LADO * ALTO_PERSONAJE / (y1 - y0), LADO * 0.98 / (x1 - x0))
         for celda, nombre in zip(celdas, nombres):
             img = Image.fromarray(celda[y0:y1, x0:x1])
             img = img.resize((round(img.width * escala), round(img.height * escala)), Image.LANCZOS)

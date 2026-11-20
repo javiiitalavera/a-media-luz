@@ -4,6 +4,7 @@ import { AREAS, OBJETOS_CASA, PROYECTOS_BARRIO, type AreaId, type CompaneroId, t
 import type { Ofrenda, Partida } from './partida'
 import { TOPE_DIARIO } from './reglas'
 import { dia } from './fechas'
+import { nacido } from './etapas'
 
 export type Materiales = Record<AreaId, number>
 const ceros = (): Materiales => Object.fromEntries(Object.keys(AREAS).map((a) => [a, 0])) as Materiales
@@ -85,7 +86,8 @@ export function proyectosBarrioVisibles(p: Partida) {
 export function construir(p: Partida, id: string, ahora: Date, barrioDisponible = false): Partida | null {
   const o = OBJETOS_CASA.find((x) => x.id === id)
   const b = PROYECTOS_BARRIO.find((x) => x.id === id)
-  const ok = o ? puedeConstruir(p, o, ahora)
+  // Sin casa no hay obras: para un vecino que aún está en el huevo no se construye nada.
+  const ok = o ? puedeConstruir(p, o, ahora) && nacido(p, o.companero, ahora)
     : b ? barrioDisponible && proyectosBarrioVisibles(p).some((x) => x.id === b.id) && !construido(p, b.id) && Object.keys(faltan(p, b, ahora)).length === 0
     : false
   if (!ok) return null

@@ -4,14 +4,14 @@ import type React from 'react'
 // Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, ORDEN_COMPANEROS, MATERIALES, OBJETOS_CASA, PARCELAS, PROPORCION_BARRIO, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
-import { estadoDelMes, faltanParaEclosion, mesActual } from '../logica/meses'
+import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
 import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
@@ -39,6 +39,8 @@ import { useJuego } from '../estado/juego'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 
 const ANCHO_HUEVO = 30
+/** Cuánto se acerca el mapa del barrio alrededor de la parcela mientras el vecino está en el huevo (% del ancho de la escena). */
+const ANCHO_NIDO = 330
 /** De dónde sale una nota: el vecino, quien está de visita o un objeto de la casa (su id). */
 type Origen = 'vecino' | 'visita' | string
 const SEGUNDOS_BOCADILLO = 7
@@ -277,6 +279,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   // Mientras no ha salido, en su sitio está el huevo.
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
+  const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
 
   // De noche, el tinte se aclara alrededor del vecino: el fondo sigue oscuro y él conserva sus contornos.
@@ -293,11 +296,20 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   return (
     <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden select-none bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
-        <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+        {/* Mientras está en el huevo no hay casa todavía: se ve su parcela del barrio, con la hierba. Al nacer, aparece la casa. */}
+        {conHuevo ? (
+          <div aria-hidden className="absolute inset-0 overflow-hidden">
+            <img src={rutaArte('barrio/mapa')} alt="" draggable={false} className="absolute max-w-none"
+              style={{ width: `${ANCHO_NIDO}%`, left: `${50 - (parcela.x / 100) * ANCHO_NIDO}%`, top: `${NOX.y - 8 - ((parcela.y / 100) * ANCHO_NIDO * ew) / PROPORCION_BARRIO / eh}%` }} />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_62%,transparent_25%,#2e203055_80%)]" />
+          </div>
+        ) : (
+          <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className={`absolute inset-0 h-full w-full ${nacer ? 'animate-aparecer' : ''}`} draggable={false} />
+        )}
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
 
-        {huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
-        {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]}
+        {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
+        {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id}
           onMover={(x, y) => setArrastre({ id: o.id, ...encajar(o, x, y) })}
           onSoltar={(x, y, punto) => {
@@ -344,7 +356,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
             <img src={`/arte/visitantes/${v.quien}.webp`} alt="" draggable={false} className="block w-full" />
           </button>
         ) })()}
-        {deVisita && sitioVisita(DUENO, deVisita) && (() => { const sv = sitioVisita(DUENO, deVisita)!; return (
+        {!conHuevo && deVisita && sitioVisita(DUENO, deVisita) && (() => { const sv = sitioVisita(DUENO, deVisita)!; return (
           <button type="button" aria-label={UI.casa.deVisita(COMPANEROS[deVisita].nombre)}
             onClick={(e) => { e.stopPropagation(); const l = FRASES_VISITA[deVisita] ?? []; if (l.length) globoEn(e, `${COMPANEROS[deVisita].nombre}: «${l[toquesSit % l.length]}»`); setToquesSit((n) => n + 1) }}
             className={`absolute z-10 ${ordenando ? 'pointer-events-none' : ''}`} style={{ left: `${sv.x}%`, top: `${sv.y}%`, width: `${sv.ancho}%`, transform: 'translate(-50%, -100%)' }}>
@@ -368,7 +380,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
 
         {/* Luces que laten (por encima del tinte, para que de noche brillen). */}
         <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-screen">
-          {LUCES_FONDO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 34 : 22} color="#ffcf73" retraso={i * 0.7} />)}
+          {!conHuevo && LUCES_FONDO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 34 : 22} color="#ffcf73" retraso={i * 0.7} />)}
           {objetos.filter((o) => o.luz).map((o) => {
             const a = alto(o.sitio.ancho, o.proporcion)
             const x = o.sitio.x + ((o.luz!.x - 50) / 100) * o.sitio.ancho
@@ -493,7 +505,8 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         {/* Abajo: la ficha del vecino («i») a la izquierda y construir a la derecha. */}
         <div className="flex items-end justify-between">
           <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => { setFicha(true); ajustar((p) => verFicha(p, DUENO)) }} className="mb-1"><Icono d={ICONOS.info} />{!conHuevo && fichaNueva(partida, DUENO) && <Punto className="absolute -top-0.5 -right-0.5" />}</BotonRedondo>
-          <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />
+          {/* Sin casa todavía (en el huevo), no hay nada que construir. */}
+          {conHuevo ? <span /> : <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />}
         </div>
       </div>
 

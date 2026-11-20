@@ -78,4 +78,10 @@ export const PASEOS_BARRIO: Partial<Record<CompaneroId, {
     segundos: 54, desfase: 21,
     frase: 'He dejado un poco de niebla en el agua. Se seca sola.',
   },
+  madeja: {
+    puntos: [punto(69, 32.5), punto(65.5, 33.5), punto(62.5, 36), punto(61, 40), punto(64, 44.5)],
+    descanso: punto(63, 36),
+    segundos: 46, desfase: 26,
+    frase: 'Voy a la plaza a enterarme de algo. Si no hay nada, me lo invento.',
+  },
 }
