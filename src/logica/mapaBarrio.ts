@@ -10,7 +10,7 @@ export function colocarCasita(
 ) {
   const casita = CASITAS[vecino]
   const escala = Math.min(1, Math.max(0.88, hueco.ancho / 77))
-  const ancho = Math.min(parcela.ancho * (huevo ? 0.55 : escala), hueco.ancho - 2 * hueco.margen)
+  const ancho = Math.min(parcela.ancho * (huevo ? 0.55 : escala * 0.91), hueco.ancho - 2 * hueco.margen)
   const alto = ancho * PROPORCION_BARRIO / casita.proporcion
   const libre = (100 - hueco.ancho) / 2 + hueco.margen
   const apoyo = huevo ? { x: 50, y: 68 } : casita.apoyo

@@ -395,3 +395,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Inicio recuerda dónde estabas (20/11/2026, rama `dev/inicio-donde-estabas`)
 - Al abrir la app se empieza en la casa del último vecino en llegar. Al ir a Retos, Álbum o Ajustes y volver a Inicio, sigues donde te quedaste: en el barrio o en la casa que estabas visitando.
+
+### Escenas animadas en las casas
+
+- Las casitas del mapa se ven un 9 % más pequeñas y conservan el apoyo en la entrada. Los huevos mantienen su tamaño.
+- En el porche de Nox, una ráfaga arrastra hojas y una salchicha sale rodando. Por el invernadero de Tofu pasa una mata rodadora. En el taller, un tornillo rebota y sale disparado. Por el estanque de Bruma pasa un barco de papel con su estela.
+- Los objetos construidos reaccionan al toque. La maceta escupe una semilla, la caja de herramientas despide un tornillo, Gregorio da un tirón y la tetera suelta vapor. Estos efectos siguen la colocación de cada objeto y se suspenden mientras ordenas la casa o si tienes activado movimiento reducido.

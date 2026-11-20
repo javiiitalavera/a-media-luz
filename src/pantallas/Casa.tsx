@@ -32,6 +32,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 const PIÑA = { x: 34, y: 75, ancho: 10 }
 import { avisoFuera, fichaNueva, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verFicha, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
+import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, tieneMes, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -290,6 +291,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
     <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden select-none bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
         <img src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+        {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
 
         {huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]}
@@ -616,6 +618,7 @@ function Objeto({ o, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeM
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number) => void
 }) {
   const [toques, setToques] = useState(0)
+  useEffect(() => { if (ordenando) setToques(0) }, [ordenando])
   const inicio = useRef<{ px: number; py: number; x: number; y: number; ultimo: { x: number; y: number } } | null>(null)
   const arrastrar = ordenando && sePuedeMover
   const aDonde = (e: React.PointerEvent) => {
@@ -648,6 +651,7 @@ function Objeto({ o, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeM
     globoEn(e, frases[n % frases.length])
   }
   const s = o.sitio
+  const gesto = ordenando ? undefined : GESTOS_DE_OBJETO[o.id]
   const estilo: CSSProperties = s.colgado
     ? { left: `${s.x}%`, top: `${s.y}%`, width: `${s.ancho}%`, transform: 'translateX(-50%)' }
     : { left: `${s.x}%`, top: `${s.y}%`, width: `${s.ancho}%`, transform: 'translate(-50%, -100%)' }
@@ -658,11 +662,12 @@ function Objeto({ o, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeM
       <button type="button" aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : o.nombre} onClick={tocar} {...eventosArrastre}
         className={`absolute ${ordenando ? (arrastrar ? `objeto-movible ${arrastrando ? 'objeto-arrastrado z-30' : ''}` : 'opacity-60') : 'active:brightness-110'}`}
         style={{ ...estilo, touchAction: arrastrar ? 'none' : undefined }}>
-        <div className={s.colgado ? 'anim-balanceo' : ''}>
+        <div className={s.colgado && !ordenando ? 'anim-balanceo' : ''}>
           <span className={`block ${nuevo ? 'anim-colocar' : ''}`}>
             <img key={toques} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
-              className={`block w-full ${toques ? 'anim-palpar' : ''}`} />
+              className={`block w-full ${toques && !ordenando ? (gesto ? 'anim-gesto-de-objeto' : 'anim-palpar') : ''}`} data-gesto={gesto} />
           </span>
+          {gesto && <EfectoDeObjeto gesto={gesto} toques={toques} />}
         </div>
       </button>
       {nuevo && <Estallido x={s.x} y={centroY} />}
