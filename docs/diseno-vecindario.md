@@ -375,3 +375,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Crónicas:** al pasar al aviso de una en una, las que ya estaban leídas siguen leídas (antes, abrir una reactivaba las antiguas).
 - **Menos latidos:** solo late el «?» de una decisión (y el huevo a punto, que ya se mueve). Los puntos, el sobre, los «!», los «…» y el martillo aparecen con un saltito y se quedan quietos.
 - **Accesibilidad del sobre:** al abrirlo el foco va al diálogo y al cerrarlo vuelve a donde estaba; se cierra con Escape; las novedades nuevas se anuncian como «nueva».
+
+### Colocación de las casas
+
+- Cada casita se apoya donde termina su entrada. Los nombres se centran bajo el dibujo y quedan fuera del cálculo de posición.
+- En pantallas estrechas las casas se reducen antes de desplazarse hacia el interior del recorte. Tofu se sitúa más abajo para dejar aire al estanque de Bruma. El claro superior derecho mantiene su parcela.
+- Los avisos y la luz de las ventanas acompañan el dibujo. Las fotos del Álbum comparten las referencias de colocación del barrio.

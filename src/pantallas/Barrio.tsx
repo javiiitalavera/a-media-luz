@@ -1,11 +1,11 @@
 // El barrio (docs/diseno-vecindario.md): el mapa con la casita de cada vecino en su parcela, lo construido
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
 // El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
-// los lados por igual. Las casitas que quedarían cortadas en el borde se acercan lo justo hacia dentro.
+// los lados por igual. Las casitas se apoyan en sus entradas y se ajustan al hueco visible.
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
-import { FRASES_PLAZA, VISITA_PLAZA } from '../contenido/barrio'
+import { CASITAS, FRASES_PLAZA, VISITA_PLAZA } from '../contenido/barrio'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
@@ -24,6 +24,7 @@ import { Aviso } from '../componentes/Aviso'
 import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuella } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
+import { colocarCasita } from '../logica/mapaBarrio'
 
 type Punto = { x: number; y: number }
 const PUERTAS: Partial<Record<CompaneroId, Punto>> = {
@@ -60,12 +61,6 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const alto = ancho / PROPORCION_BARRIO
   const arriba = (t.h - alto) / 2
   const izquierda = (t.w - ancho) / 2
-  /** Posición horizontal (en % del mapa) para que algo de `anchoPct` % quepa entero en pantalla. */
-  const dentro = (x: number, anchoPct: number) => {
-    const mitad = (anchoPct / 100) * ancho / 2 + 4
-    const px = Math.min(Math.max((x / 100) * ancho, -izquierda + mitad), -izquierda + t.w - mitad)
-    return (px / ancho) * 100
-  }
   const ajustar = useJuego((st) => st.ajustar)
   const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
   const sinLeer = pendientesDelSobre(partida, ahora)
@@ -73,6 +68,11 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
+  const hueco = { margen: 800 / ancho, ancho: 100 * t.w / ancho }
+  const casas = vecinos.slice(0, PARCELAS.length).map(({ companero }, i) => {
+    const huevo = i === vecinos.length - 1 && estadoUltimo !== 'vivo'
+    return { companero, huevo, ...colocarCasita(PARCELAS[i], companero, hueco, huevo) }
+  })
   const posibleVisita = VISITA_PLAZA[momento]
   const visita = posibleVisita && vecinos.some((m, i) =>
     m.companero === posibleVisita && (i < vecinos.length - 1 || estadoUltimo === 'vivo'))
@@ -124,26 +124,22 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
             )}
           </button>
         ))}
-        {vecinos.slice(0, PARCELAS.length).map((m, i) => {
-          const p = PARCELAS[i]
-          // Hasta que lo ves salir del huevo (aunque ya esté listo), en el mapa sigue siendo un huevo sin nombre.
-          const huevo = i === vecinos.length - 1 && estadoUltimo !== 'vivo'
-          const nombre = huevo ? '?' : COMPANEROS[m.companero].nombre
-          const anchoCasa = p.ancho * (huevo ? 0.45 : 0.82)
+        {casas.map(({ companero, huevo, x, y, ancho: anchoCasa }) => {
+          const nombre = huevo ? '?' : COMPANEROS[companero].nombre
           return (
-            <button key={m.companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={() => entrar(m.companero)}
-              className="absolute flex flex-col items-center"
-              style={{ left: `${dentro(p.x, anchoCasa)}%`, top: `${p.y}%`, width: `${anchoCasa}%`, transform: 'translate(-50%, -68%)' }}>
-              <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`} data-vecino={m.companero}>
+            <button key={companero} type="button" aria-label={huevo ? UI.casa.huevo : UI.barrio.casaDe(nombre)} onClick={() => entrar(companero)}
+              className="absolute min-h-11"
+              style={{ left: `${x}%`, top: `${y}%`, width: `${anchoCasa}%`, aspectRatio: huevo ? undefined : CASITAS[companero].proporcion }}>
+              <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`} data-vecino={companero}>
                 {!huevo && <span aria-hidden className="pasos-de-casa" />}
-                <img src={rutaArte(huevo ? `huevo/${m.companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${m.companero}`)} alt=""
+                <img src={rutaArte(huevo ? `huevo/${companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${companero}`)} alt=""
                   className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
                 {!huevo && <span aria-hidden className="gesto-de-casa" />}
-                <span ref={(el) => { puertas.current[m.companero] = el }} aria-hidden
-                  className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === m.companero ? 'luz-puerta-activa' : ''}`}
-                  style={{ left: `${PUERTAS[m.companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[m.companero]?.y ?? 66}%` }} />
+                <span ref={(el) => { puertas.current[companero] = el }} aria-hidden
+                  className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === companero ? 'luz-puerta-activa' : ''}`}
+                  style={{ left: `${huevo ? 50 : PUERTAS[companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[companero]?.y ?? 66}%` }} />
               </span>
-              <span className={`relative -mt-1 rounded-full bg-tarjeta/95 px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm ${m.companero === 'bruma' ? 'ml-[38%]' : ''}`}>{nombre}</span>
+              <span className="absolute top-full left-1/2 -mt-0.5 -translate-x-1/2 rounded-full bg-tarjeta/95 px-2.5 py-0.5 text-[12px] leading-tight font-bold whitespace-nowrap text-texto shadow-sm">{nombre}</span>
             </button>
           )
         })}
@@ -163,23 +159,28 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
           {LUCES_BARRIO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 16 : 9} color="#ffcf73" retraso={i * 0.5} />)}
           <Luz x={PLAZA.farol.x} y={PLAZA.farol.y - 1} tam={noche ? 10 : 5} color="#ffcf73" retraso={1.1} />
           {/* Ventanas encendidas de cada casita. */}
-          {(noche || momento === 'atardecer') && vecinos.slice(0, PARCELAS.length).map((m, i) => (
-            <Luz key={m.companero} x={dentro(PARCELAS[i].x, PARCELAS[i].ancho * 0.82)} y={PARCELAS[i].y - 4} tam={noche ? 20 : 14} color="#ffc56b" retraso={0.3 + i * 0.4} />
-          ))}
+          {(noche || momento === 'atardecer') && casas.map(({ companero, huevo, x, y, ancho: anchoCasa, alto: altoCasa }, i) => {
+            if (huevo) return null
+            const punto = CASITAS[companero].ventana
+            const tam = anchoCasa * (noche ? 0.64 : 0.46)
+            return <Luz key={companero} x={x + anchoCasa * punto.x / 100} y={y + altoCasa * punto.y / 100}
+              tam={tam} color="#ffc56b" retraso={0.3 + i * 0.4} />
+          })}
         </div>
         {noche && <Luciernagas cuantas={12} />}
         {gag && <GagEnEscena gag={gag} onVisto={() => ajustar((p) => verGag(p, 'barrio', ahora))} />}
 
         {/* Avisos: «!» sobre la casita donde ha pasado algo (por encima del tinte de la noche). */}
-        {vecinos.slice(0, PARCELAS.length).map((m, i) => {
-          if (!avisoEnCasa(partida, m.companero, ahora)) return null
-          const p = PARCELAS[i]
-          const anchoCasa = p.ancho * 0.82
+        {casas.map(({ companero, x, y, ancho: anchoCasa }) => {
+          if (!avisoEnCasa(partida, companero, ahora)) return null
+          const borde = (100 - hueco.ancho) / 2 + 2200 / ancho
+          const aLaIzquierda = x + anchoCasa * 0.5 < 50
+          const destino = x + anchoCasa * (aLaIzquierda ? 0.87 : 0.13)
           return (
-            <button key={`aviso-${m.companero}`} type="button" aria-label={UI.barrio.hayAlgo(COMPANEROS[m.companero].nombre)}
-              onClick={() => entrar(m.companero)}
-              className="absolute flex min-h-11 min-w-11 items-center justify-center"
-              style={{ left: `${dentro(p.x, anchoCasa) + anchoCasa * 0.32}%`, top: `${p.y - anchoCasa * PROPORCION_BARRIO * 0.62}%`, transform: 'translate(-50%, -50%)' }}>
+            <button key={`aviso-${companero}`} type="button" aria-label={UI.barrio.hayAlgo(COMPANEROS[companero].nombre)}
+              onClick={() => entrar(companero)}
+              className="absolute flex min-h-11 min-w-11 -translate-1/2 items-center justify-center"
+              style={{ left: `${Math.min(Math.max(destino, borde), 100 - borde)}%`, top: `${y + 1.8}%` }}>
               <Aviso tipo="exclamacion" tam={28} />
             </button>
           )

@@ -227,7 +227,7 @@ body {
 .casita-en-terreno::before {
   inset: auto 4% 2%;
   height: 19%;
-  background: radial-gradient(ellipse, #26251866 0%, #42432a35 53%, transparent 74%);
+  background: radial-gradient(ellipse, var(--sombra-casita, #26251866) 0%, #42432a35 53%, transparent 74%);
 }
 .casita-en-terreno::after {
   inset: auto 8% 4%;
@@ -248,6 +248,13 @@ body {
     radial-gradient(ellipse 14% 10% at 65% 80%, #d5b18b 73%, #997753 83%, transparent 100%),
     radial-gradient(ellipse 18% 16% at 46% 64%, #e4c09b 76%, #94714e 83%, transparent 100%),
     radial-gradient(ellipse 21% 18% at 29% 43%, #e9c6a0 75%, #977354 83%, transparent 100%);
+}
+[data-vecino='tofu'] .pasos-de-casa {
+  inset-inline: 37% 7%;
+  bottom: -9%;
+}
+[data-vecino='nox'], [data-vecino='tuerca'] {
+  --sombra-casita: #29271d4d;
 }
 [data-vecino='tuerca'] .pasos-de-casa,
 [data-vecino='bruma'] .pasos-de-casa {
