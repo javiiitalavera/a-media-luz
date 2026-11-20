@@ -299,7 +299,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const [enMueble, setEnMueble] = useState(() =>
     azarConSemilla(`${DUENO}|${dia(ahora)}|${momento}`)() < 0.65)
   const [gesto, setGesto] = useState(0)
-  const usando = tranquilo && enMueble ? mueble : undefined
+  const deVisita = estado === 'vivo' ? visitante(partida, DUENO, ahora) : null
+  // Si hay alguien de visita, el dueño no se mueve a su mueble: se pisarían (decidido por Javi, 20/11/2026).
+  const usando = tranquilo && enMueble && !deVisita ? mueble : undefined
   const encuentro = usando?.id === merienda.muebles[0] ? DUENO : undefined
   useEffect(() => {
     if (!tranquilo || !mueble || comiendo) return
@@ -322,7 +324,6 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     x: Math.max(margen, Math.min(100 - margen, usando.sitio.x + (encuentro === 'nox' || encuentro === 'bruma' ? 0 : usando.sitio.x < 50 ? 8 : -8))),
     y: Math.min(77, Math.max(47, usando.sitio.y + 3)),
   } : esc.pies
-  const deVisita = estado === 'vivo' ? visitante(partida, DUENO, ahora) : null
   const llegada = esUltimo && vivo ? proximaLlegada(partida, ahora) : null
   const otroHuevo = llegada?.faltanDias === 0 ? llegada.vecino : null
   const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
