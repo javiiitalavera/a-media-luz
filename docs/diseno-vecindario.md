@@ -423,3 +423,9 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Falta para que llegue:** su casita del mapa (sin ella su huevo no aparece) y sus objetos (sin proyectos no puede crecer).
 - **Voz:** cotilla, cariñosa de más; frases revisadas y ampliadas (6 saludos por momento, 8 reacciones), ficha («Ovillo con orejas»), charla propia y pullas con los demás (y los demás sobre ella).
 - **Primera historia, sin objetos:** *El cotilleo* (Madeja, Nox y Tuerca): en una mañana sabe todos los secretos del barrio, Tuerca le abre un expediente y acaba en una merienda de paz en su casa. Micros: Madeja tejiendo para alguien, dormida a mitad de frase, Nox y Tofu de visita, Madeja tomándole medidas a Nox para unos calcetines.
+
+### Madeja llega y catálogo completo (20/11/2026, rama `dev/madeja`)
+- **Casita del mapa** (madriguera de punto con ovillo) en la quinta parcela, arriba a la derecha. Madeja llega cuando Bruma es joven y tiene un proyecto: su huevo aparece en la puerta del estanque.
+- **Proyectos de Madeja** (casi todo pide hilo): cesto de costura (abre «Los calcetines»), teléfono de rueda (abre «La línea directa»), mecedora, álbum de fotos, guirnalda de banderines (colgada) y buzón.
+- **Historias nuevas:** *Los calcetines* (calcetines para todo el barrio: los de Nox se chamuscan, Tofu los lleva en el brote, Tuerca los archiva sin estrenar) y *La línea directa* (Madeja llama a todos a las seis, Tuerca impone un horario y tú decides a quién llama de noche: a Bruma o a nadie). Micros nuevos con el teléfono y la mecedora.
+- **Catálogo completo:** los objetos que estaban dibujados pero no se podían construir (cojín, farolillo, seta, estantería, zapatillas, bufanda y farol de luna de Nox; flexo, cajonera, estante de tarros, reloj, medalla y Tuerquita de Tuerca) siguen ahora la cadena de proyectos de su casa, después de los tres primeros, de uno en uno. La estantería de Nox cambia de sitio para no quedar detrás del horno.

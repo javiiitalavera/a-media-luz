@@ -31,6 +31,13 @@ export const TOQUES_OBJETO: Record<string, string[]> = {
   tetera: ['La tetera de Bruma. Lo que sirve relaja. Y suelta la lengua.', 'Siempre hay una taza de más. Por si viene alguien. O por si viene ella misma.'],
   campanillas: ['Campanillas de viento. Suenan aunque no haga viento. Bruma no da explicaciones.', 'Tuerca ha medido los decibelios. Bruma ha medido a Tuerca.'],
   hamaca: ['Una hamaca de nenúfar. Bruma la usa poco. Nox, demasiado.', 'Se balancea sola. Bruma dice que es el agua. A veces es Nox, escondido.'],
+  // Madeja
+  cesto: ['El cesto de costura. Hay un calcetín a medias. Es para ti. Aún no lo sabes.', 'Agujas, ovillos y tres conversaciones pendientes.'],
+  telefono: ['Un teléfono de rueda. Madeja marca de memoria todos los números del barrio.', 'Está caliente. Acaba de colgar. Va a volver a llamar.'],
+  mecedora: ['La mecedora de Madeja. Quien se sienta, acaba contando algo.', 'Cruje un poco. Madeja dice que es para que no te duermas a mitad de historia.'],
+  album: ['Un álbum de fotos. Madeja lo va llenando con vecinos que no sabían que posaban.', 'Hay una foto de Nox dormido. Nox no sabe que existe.'],
+  guirnalda: ['Banderines de lana. Madeja celebra hasta los martes.', 'Cada banderín es por alguien. Hay uno vacío. Es para quien venga.'],
+  buzon: ['El buzón de Madeja. Cartas de verdad, con letra torcida.', 'Hay una carta de Tuerca. Es un formulario. Madeja la guarda igual.'],
 }
 
 /** Gregorio de visita en casa de Nox (es la misma aspiradora, con otra vida). */
@@ -40,5 +47,5 @@ export const TOQUES_GREGORIO_EN_NOX = ['Gregorio, en casa de Nox. Come migas. Es
 export const SONIDO_OBJETO: Record<string, 'fuego' | 'metal' | 'hoja'> = {
   hoguera: 'fuego', horno: 'fuego', 'farol-luna': 'fuego', farolillo: 'fuego',
   caja: 'metal', aspiradora: 'metal', flexo: 'metal', cajonera: 'metal', 'estanteria-tarros': 'metal', reloj: 'metal', medalla: 'metal', tuerquita: 'metal', tablon: 'metal',
-  libros: 'hoja', pizarra: 'hoja', maceta: 'hoja', hamaca: 'hoja', campanillas: 'metal', estanteria: 'hoja', seta: 'hoja', cojin: 'hoja', bufanda: 'hoja',
+  libros: 'hoja', pizarra: 'hoja', maceta: 'hoja', hamaca: 'hoja', campanillas: 'metal', album: 'hoja', guirnalda: 'hoja', telefono: 'metal', estanteria: 'hoja', seta: 'hoja', cojin: 'hoja', bufanda: 'hoja',
 }

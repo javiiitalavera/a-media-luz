@@ -164,7 +164,14 @@ export const CHARLA: Partial<Record<CompaneroId, Charla>> = {
       ['He crecido. Ahora llevo agujas. Para tejer. Y para señalar.', 'Ovillo joven. Más hebra, más contactos.'],
       ['Adulta, con bufanda y opiniones. Muchas opiniones.', 'Ya no crezco. Ahora solo me enredo en la vida de los demás.'],
     ],
-    objetos: {},
+    objetos: {
+      cesto: ['Estoy tejiendo unos calcetines. No te digo para quién. Para ti.'],
+      telefono: ['He llamado a todo el barrio esta mañana. Dos veces. A Tuerca, tres.'],
+      mecedora: ['Siéntate en la mecedora. Solo un momento. Cuéntame algo. Lo que sea.'],
+      album: ['Tengo una foto de cada vecino. Algunos posaron. Otros no se enteraron.'],
+      guirnalda: ['He colgado la guirnalda. Celebramos que es jueves. O lo que sea.'],
+      buzon: ['Me ha llegado una carta. No pienso decir de quién. Es de Tofu.'],
+    },
     vecinos: {
       nox: ['Nox dice que no le importa nadie. Le he visto llevarle una salchicha a Tofu.', 'A Nox le he tejido unos calcetines. Los ha quemado. Sin querer. Eso dice.', 'Nox ronca. Lo sé. No preguntes cómo.'],
       tuerca: ['Tuerca tiene una carpeta con mi nombre. Yo tengo una con el suyo. Más gorda.', 'Tuerca me ha pedido que no cuente lo de la carpeta SENTIMIENTOS. Ya es tarde.', 'Tuerca finge que no le gustan las visitas. Ordena la casa cuando voy.'],

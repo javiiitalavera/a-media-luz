@@ -1,7 +1,7 @@
 // Arte en uso (archivos de public/arte/). Cómo se encarga y se integra: docs/arte-encargos.md.
 // No se dibujan sustitutos: si un recurso no está, la interfaz deja su hueco neutro.
 //
-// Estado a 20/11/2026: Nox, Tuerca, Tofu y Bruma completos; Madeja con todo menos su casita del mapa y sus objetos.
+// Estado a 20/11/2026: los cinco vecinos completos.
 
 import type { CompaneroId as Id } from '../contenido/tipos'
 import type { ArteHuella } from '../contenido/situaciones'
@@ -54,6 +54,8 @@ export const ARTE: Partial<Record<ClaveArte, string>> = {
   'casita/bruma': '/arte/casitas/bruma.webp',
   'casa/madeja/fondo': '/arte/casa/madeja/fondo.webp',
   ...personaje('madeja'),
+  ...objetos('madeja', ['cesto', 'telefono', 'mecedora', 'album', 'guirnalda', 'buzon']),
+  'casita/madeja': '/arte/casitas/madeja.webp',
   'huevo/madeja/cerrado': '/arte/huevos/madeja/cerrado.webp',
   'huevo/madeja/agrietado': '/arte/huevos/madeja/agrietado.webp',
   ...personaje('bruma'),
