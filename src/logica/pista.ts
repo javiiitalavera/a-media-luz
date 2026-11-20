@@ -7,6 +7,7 @@ import { cabeOtro, misHazanas } from './hazanas'
 import { mesActual } from './meses'
 import { nacido, progreso } from './etapas'
 import { sugerencias, type Sugerencia } from './sugerencias'
+import { dia } from './fechas'
 
 /** Un reto fácil de cada área, si el cuestionario no sugiere ninguno de ella. */
 const FACIL: Record<AreaId, string> = { cuerpo: 'agua', mente: 'leer', calma: 'aire', vinculos: 'gracias', orden: 'planificar' }
@@ -16,6 +17,8 @@ export interface Pista { vecino: CompaneroId; area: AreaId; reto: Sugerencia; ca
 export function retoQueFalta(p: Partida, ahora: Date): Pista | null {
   const vecino = mesActual(p).companero
   if (!nacido(p, vecino, ahora) || progreso(p, vecino, ahora).etapa >= 2) return null
+  // «Luego»: no vuelve a pedirlo hasta mañana (ni en su casa ni en Retos).
+  if (p.vistos?.pideReto?.[vecino] === dia(ahora)) return null
   const area = COMPANEROS[vecino].area
   if (misHazanas(p).some((a) => a.area === area)) return null
   const sugerido = sugerencias(p.perfil ?? { mejorar: [] }).find((s) => ACCIONES.find((a) => a.id === s.id)?.area === area)
@@ -23,3 +26,7 @@ export function retoQueFalta(p: Partida, ahora: Date): Pista | null {
   const reto = sugerido ?? { id: c.id, nombre: c.nombre, minima: c.minima }
   return { vecino, area, reto, cabe: cabeOtro(p) }
 }
+
+/** «Luego»: deja la petición para mañana. */
+export const aplazarPista = (p: Partida, vecino: CompaneroId, ahora: Date): Partida =>
+  ({ ...p, vistos: { ...p.vistos, pideReto: { ...p.vistos?.pideReto, [vecino]: dia(ahora) } } })

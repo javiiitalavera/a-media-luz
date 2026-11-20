@@ -10,7 +10,7 @@ import { CASITAS } from '../contenido/barrio'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan, proyectosBarrioVisibles } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
-import { barrioAbierto, huellasEn } from '../logica/situaciones'
+import { barrioAbierto, diaDelBarrio, huellasEn } from '../logica/situaciones'
 import { rutaArte } from '../arte/manifiesto'
 import { progreso } from '../logica/etapas'
 import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
@@ -66,6 +66,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const ajustar = useJuego((st) => st.ajustar)
   const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
   // Entrar en el barrio da por vistas sus novedades (el puente, los barquitos…): si no, el punto de «Barrio» no se apagaba nunca.
+  const deVisitaHoy = new Set(Object.values(diaDelBarrio(partida, ahora).visitas))
   const ultimaNoticia = partida.noticias?.at(-1)?.fecha
   useEffect(() => { ajustar((p) => visitarLugar(p, 'barrio')) }, [ajustar, ultimaNoticia])
   const sinLeer = pendientesDelSobre(partida, ahora)
@@ -156,7 +157,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
             </button>
           )
         })}
-        {casas.filter(({ huevo, companero }) => !huevo && (!noche || companero === 'nox')).map(({ companero }) => (
+        {/* Quien está hoy de visita en otra casa no pasea a la vez por el mapa. */}
+        {casas.filter(({ huevo, companero }) => !huevo && (!noche || companero === 'nox') && !deVisitaHoy.has(companero)).map(({ companero }) => (
           <VecinoDePaseo key={companero} vecino={companero} etapa={progreso(partida, companero, ahora).etapa}
             ancho={ancho} alto={alto} puente={puente} />
         ))}

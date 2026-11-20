@@ -266,7 +266,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const maceta = objetos.find((o) => o.id === 'maceta')
   const huellas = huellasEn(partida, DUENO)
   const decision = decisionPendiente(partida, DUENO)
-  const deVisita = (microVisible && micro?.visita) || visitante(partida, DUENO, ahora)
+  const deVisita = estado === 'vivo' ? visitante(partida, DUENO, ahora) : null
   const otroHuevo = esUltimo && vivo ? huevoDisponible(partida, ahora, ORDEN_COMPANEROS.filter(tieneMes)) : null
   const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
   const fuera = avisoFuera(partida, DUENO, ahora)
@@ -282,7 +282,6 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const etapaVista = pendiente ? (partida.etapasVistas?.[DUENO] ?? 0) : g.etapa
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora)
-  const [pistaLuego, setPistaLuego] = useState(false)
   const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[etapaVista]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
@@ -492,9 +491,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         )}
       </header>
       {/* El último vecino te pide un reto de su área si tu lista no tiene ninguno (si no, no crece). */}
-      {pista && esUltimo && !conHuevo && !ordenando && !celebra && !pistaLuego && (
+      {pista && esUltimo && !conHuevo && !ordenando && !celebra && (
         <div data-tapa-globo className="pointer-events-none absolute inset-x-3 top-[calc(max(12px,calc(env(safe-area-inset-top)+32px))+60px)] z-30 flex justify-center">
-          <PideReto pista={pista} onLuego={() => setPistaLuego(true)} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
+          <PideReto pista={pista} className="animate-entrar pointer-events-auto w-full max-w-[360px]" />
         </div>
       )}
 

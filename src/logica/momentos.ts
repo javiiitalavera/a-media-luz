@@ -16,6 +16,8 @@ export interface EscenaFoto {
   etapa: 0 | 1 | 2
   cara: Cara
   visita?: CompaneroId
+  /** Cómo era el visitante en la foto (las fotos antiguas no lo guardan: cachorro). */
+  visitaEtapa?: 0 | 1 | 2
   /** Lo construido en esa casa (o en el barrio). */
   objetos: string[]
   huellas: string[]
@@ -50,7 +52,7 @@ export function fotoDe(p: Partida, lugar: Lugar, ahora: Date, cara: Cara = 'cont
     lugar,
     etapa: progreso(p, lugar, ahora).etapa,
     cara,
-    visita: visitante(p, lugar, ahora) ?? undefined,
+    ...(() => { const v = visitante(p, lugar, ahora); return v ? { visita: v, visitaEtapa: progreso(p, v, ahora).etapa } : {} })(),
     objetos: OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id) && !p.guardados?.includes(o.id)).map((o) => o.id),
     gregorio: dondeGregorio(p, ahora) === lugar,
     ...(colocadosDe(p, lugar) && { colocados: colocadosDe(p, lugar) }),

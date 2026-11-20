@@ -31,6 +31,7 @@ export const EN_MARCHA_MAX = 2
 
 export function cumpleRequisitos(p: Partida, s: Situacion, ahora: Date): boolean {
   return s.requiere.vecinos.every((c) => nacido(p, c, ahora)) && s.requiere.construido.every((id) => construido(p, id))
+    && (s.requiere.terminadas ?? []).every((id) => Boolean(estados(p)[id]?.fin))
     && (!s.patron || Boolean(PATRONES[s.patron]?.(p, ahora)))
 }
 
@@ -168,30 +169,49 @@ export function dondeGregorio(p: Partida, ahora: Date): CompaneroId | null {
 }
 
 
-/** Quién está de visita hoy en una casa: tras inaugurarse el puente, a veces se pasa el otro vecino. */
-export function visitante(p: Partida, casa: CompaneroId, ahora: Date): CompaneroId | null {
-  if (!estados(p).puente?.fin) return null
-  const otros = nacidos(p, ahora).filter((c) => c !== casa && FRASES_VISITA[c])
-  // Un sorteo estable por día y casa (igual al recargar): primero si hay visita, luego quién.
-  const r = azarConSemilla(`${dia(ahora.toISOString())}|visita|${casa}`)
-  if (!otros.length || r() >= 1 / 3) return null
-  return otros[Math.floor(r() * otros.length)]
+/**
+ * El día del barrio: qué escena pasa hoy en cada casa y quién está de visita dónde. Un vecino solo está en
+ * un sitio: primero las escenas que traen a alguien de visita y luego, tras el puente, las visitas sueltas
+ * (con quien quede libre). Es un sorteo estable por día: igual al recargar y en cualquier orden de visita.
+ */
+export function diaDelBarrio(p: Partida, ahora: Date): { micros: Partial<Record<CompaneroId, Micro>>; visitas: Partial<Record<CompaneroId, CompaneroId>> } {
+  const hoy = dia(ahora.toISOString())
+  const casas = nacidos(p, ahora)
+  const ocupados = new Set<CompaneroId>()
+  const micros: Partial<Record<CompaneroId, Micro>> = {}
+  const visitas: Partial<Record<CompaneroId, CompaneroId>> = {}
+  for (const casa of casas) {
+    // Dos extracciones del mismo sorteo del día: si hay escena y cuál.
+    const r = azarConSemilla(`${hoy}|micro|${casa}`)
+    if (r() >= 0.5) continue
+    // El día que llega, bastante tiene con salir del huevo.
+    const v = vecinoDe(p, casa)
+    if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) continue
+    // Lo que pasa sobre un mueble necesita el mueble a la vista (no en el baúl); quien viene de visita, estar libre.
+    const posibles = MICROS.filter((m) => m.casa === casa && (!m.visita || !ocupados.has(m.visita)) && m.requiere.every((q) =>
+      q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
+    const m = posibles.length ? posibles[Math.floor(r() * posibles.length)] : undefined
+    if (!m) continue
+    micros[casa] = m
+    if (m.visita) { visitas[casa] = m.visita; ocupados.add(m.visita) }
+  }
+  if (estados(p).puente?.fin) for (const casa of casas) {
+    if (visitas[casa]) continue
+    const otros = casas.filter((c) => c !== casa && FRASES_VISITA[c] && !ocupados.has(c))
+    const r = azarConSemilla(`${hoy}|visita|${casa}`)
+    if (!otros.length || r() >= 1 / 3) continue
+    const quien = otros[Math.floor(r() * otros.length)]
+    visitas[casa] = quien
+    ocupados.add(quien)
+  }
+  return { micros, visitas }
 }
 
+/** Quién está de visita hoy en una casa (por una escena o, tras el puente, de paso). */
+export const visitante = (p: Partida, casa: CompaneroId, ahora: Date): CompaneroId | null => diaDelBarrio(p, ahora).visitas[casa] ?? null
+
 /** La pequeña cosa que pasa hoy en una casa (la mitad de los días), entre las que ya se pueden dar. */
-export function microDeHoy(p: Partida, casa: CompaneroId, ahora: Date): Micro | null {
-  const hoy = dia(ahora.toISOString())
-  // Dos extracciones del mismo sorteo del día: si hay escena y cuál (antes iban enganchadas y salía siempre la misma).
-  const r = azarConSemilla(`${hoy}|micro|${casa}`)
-  if (r() >= 0.5) return null
-  // El día que llega, bastante tiene con salir del huevo.
-  const v = vecinoDe(p, casa)
-  if (v && [v.inicio, v.presentado].some((f) => f && dia(f) === hoy)) return null
-  // Lo que pasa sobre un mueble necesita el mueble a la vista (no en el baúl).
-  const posibles = MICROS.filter((m) => m.casa === casa && m.requiere.every((q) =>
-    q in COMPANEROS ? nacido(p, q as CompaneroId, ahora) : expuesto(p, q)))
-  return posibles.length ? posibles[Math.floor(r() * posibles.length)] : null
-}
+export const microDeHoy = (p: Partida, casa: CompaneroId, ahora: Date): Micro | null => diaDelBarrio(p, ahora).micros[casa] ?? null
 
 /** Situaciones empezadas, para las Crónicas del Álbum: primero las que están en marcha (con sus noticias en orden). */
 export function cronicas(p: Partida) {

@@ -90,7 +90,7 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
       </div>
 
       {/* Si tu lista no tiene nada del área del último vecino, te lo pide (sin eso no crece). */}
-      {pista && <PideReto pista={pista} className="mt-4" />}
+      {pista && <PideReto pista={pista} onEditar={() => setHoja('editar')} className="mt-4" />}
 
       {/* El huevo está listo: la invitación se queda hasta que vas a verlo (el último toque es tuyo). */}
       {estadoDelMes(partida, ahora) === 'naciendo' && (

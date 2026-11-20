@@ -26,7 +26,8 @@ export interface Situacion {
   id: string
   titulo: string
   /** Vecinos que tienen que haber nacido y cosas que tienen que estar construidas. */
-  requiere: { vecinos: CompaneroId[]; construido: string[] }
+  /** `terminadas`: historias que tienen que haber acabado antes (por ejemplo, porque usan el mismo objeto). */
+  requiere: { vecinos: CompaneroId[]; construido: string[]; terminadas?: string[] }
   /** Si nace de un patrón de tu diario (logica/patrones.ts): solo empieza cuando el patrón se cumple. */
   patron?: string
   fases: Fase[]
@@ -273,7 +274,8 @@ const SITUACIONES_DEL_BARRIO: Situacion[] = [
   {
     id: 'planta',
     titulo: 'La planta',
-    requiere: { vecinos: ['tofu', 'tuerca'], construido: ['maceta', 'aspiradora'] },
+    // Gregorio no puede estar dentro de la planta mientras se decide con quién se queda.
+    requiere: { vecinos: ['tofu', 'tuerca'], construido: ['maceta', 'aspiradora'], terminadas: ['gregorio'] },
     fases: [
       {
         noticia: 'La planta de Tofu ha crecido. Tofu dice que es normal. La planta ha bostezado.',

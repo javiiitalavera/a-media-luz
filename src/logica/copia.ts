@@ -23,7 +23,7 @@ function escena(v: unknown) {
     ['base', 'contento', 'enfurrunado', 'dormido'].some((c) => c === v.cara) &&
     ['amanecer', 'mediodia', 'atardecer', 'noche'].some((m) => m === v.momentoDia) &&
     lista(v.objetos, texto) && lista(v.huellas, texto) && booleano(v.gregorio) &&
-    opcional(v.visita, vecino) && opcional(v.vecinos, (l) => lista(l, vecino)) && opcional(v.colocados, posiciones)
+    opcional(v.visita, vecino) && opcional(v.visitaEtapa, etapa) && opcional(v.vecinos, (l) => lista(l, vecino)) && opcional(v.colocados, posiciones)
 }
 
 function situaciones(v: unknown) {

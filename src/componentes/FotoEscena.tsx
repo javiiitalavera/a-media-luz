@@ -49,7 +49,7 @@ function Casa({ e, c }: { e: EscenaFoto; c: CompaneroId }) {
     capas.push({ y: s.y, nodo: <img key="gregorio" src={rutaArte('casa/tuerca/objeto/aspiradora')} alt="" draggable={false} style={pie(s.x, s.y, s.ancho)} /> })
   }
   const v = e.visita && sitioVisita(c, e.visita)
-  if (e.visita && v) capas.push({ y: v.y, nodo: <img key="visita" src={rutaCompanero(e.visita, 0, 'contento')} alt="" draggable={false} style={pie(v.x, v.y, v.ancho)} /> })
+  if (e.visita && v) capas.push({ y: v.y, nodo: <img key="visita" src={rutaCompanero(e.visita, e.visitaEtapa ?? 0, 'contento')} alt="" draggable={false} style={pie(v.x, v.y, v.ancho)} /> })
   return (
     <div className="absolute" style={{ width: `${ZOOM * 100}%`, left: `${izquierda}%`, aspectRatio: `${esc.proporcion}`, top: `${(-arriba * ZOOM) / esc.proporcion}%` }}>
       <img src={rutaArte(`casa/${c}/fondo`)} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
