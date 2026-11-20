@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { avisoFuera, decisionesPendientes, noticiasDelSobre, pendientesDelSobre, puedeVisitarNoticia, hayAlgoEnInicio, hayAlgoQueHacer, gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
+import { avisoFuera, decisionesPendientes, noticiasDelSobre, pendientesDelSobre, hayAlgoEnInicio, hayAlgoQueHacer, gagDeHoy, verGag, avisoEnCasa, hayHazanasNuevas, huellaNueva, leerNoticias, microSinVer, noticiasSinLeer, verHazanas, verHuella, verMicro, visitarLugar } from './avisos'
 import { crearPartida, type Partida } from './partida'
 import { avanzar } from './situaciones'
 import { en } from './test-utils'
@@ -21,17 +21,12 @@ describe('avisos', () => {
     expect(hayHazanasNuevas(p, en('2026-01-06', 7))).toBe(true)
   })
 
-  it('el sobre cuenta las no leídas; el «!» de la casa sigue hasta que entras', () => {
+  it('una fase aparece en la crónica sin avisar en la casa ni en el sobre', () => {
     const ahora = en('2026-01-07', 10)
-    let p = avanzar(barrio(['hoguera']), ahora).partida
-    expect(noticiasSinLeer(p, ahora)).toBe(1)
-    expect(avisoEnCasa(p, 'nox', ahora)).toBe(true)
-    p = leerNoticias(p, ahora)
-    expect(noticiasSinLeer(p, ahora)).toBe(0)
-    expect(avisoEnCasa(p, 'nox', ahora)).toBe(true)
-    p = visitarLugar(p, 'nox')
+    const p = avanzar(barrio(['hoguera']), ahora).partida
+    expect(Object.keys(p.situaciones ?? {})).toHaveLength(1)
+    expect(noticiasDelSobre(p, ahora)).toEqual([])
     expect(avisoEnCasa(p, 'nox', ahora)).toBe(false)
-    expect(noticiasDelSobre(p, ahora)).toHaveLength(1)
   })
 
   it('las cosas pequeñas del día esperan a que las mires', () => {
@@ -84,7 +79,7 @@ describe('avisos', () => {
   it('el sobre muestra hoy y los dos días anteriores, sin contarlos cuando caducan', () => {
     const ahora = en('2026-01-10', 12)
     const noticias = [7, 8, 9, 10, 11].map((n) =>
-      ({ texto: `Día ${n}`, lugar: 'nox' as const, fecha: en(`2026-01-${String(n).padStart(2, '0')}`, 10).toISOString() }))
+      ({ origen: 'diario' as const, texto: `Día ${n}`, lugar: 'nox' as const, fecha: en(`2026-01-${String(n).padStart(2, '0')}`, 10).toISOString() }))
     const p = { ...barrio([]), noticias }
     expect(noticiasDelSobre(p, ahora)).toEqual(noticias.slice(1, 4))
     expect(pendientesDelSobre(p, ahora)).toBe(3)
@@ -93,16 +88,12 @@ describe('avisos', () => {
     expect(pendientesDelSobre(leidas, ahora)).toBe(0)
   })
 
-  it('solo ofrece visitar la fase actual de una historia, aunque se lean otros mensajes', () => {
-    const primera = avanzar(barrio(['hoguera']), en('2026-01-07', 10)).partida
+  it('en partidas antiguas reconoce el diario y silencia las fases ya guardadas', () => {
     const ahora = en('2026-01-08', 10)
-    const p = avanzar(primera, ahora).partida
-    const comentario = { texto: 'Nox ha leído tu diario.', lugar: 'nox' as const, fecha: ahora.toISOString() }
-    const [anterior, actual] = noticiasDelSobre(p, ahora)
-    expect(puedeVisitarNoticia(primera, anterior)).toBe(true)
-    expect(puedeVisitarNoticia(p, anterior)).toBe(false)
-    expect(puedeVisitarNoticia(p, actual)).toBe(true)
-    expect(puedeVisitarNoticia(p, comentario)).toBe(false)
+    const p = avanzar(barrio(['hoguera']), ahora).partida
+    const diario = { texto: 'Nox: «Hoy has salido.»', lugar: 'nox' as const, fecha: ahora.toISOString() }
+    const antigua = { ...p.noticias![0], origen: undefined }
+    expect(noticiasDelSobre({ ...p, noticias: [antigua, diario] }, ahora)).toEqual([diario])
   })
 
   it('una decisión cuenta una vez en el sobre, con la noticia que la planteó como contexto', () => {
@@ -113,7 +104,7 @@ describe('avisos', () => {
     expect(d.lugar).toBe('nox')
     expect(d.contexto).toMatch(/custodia/)
     expect(noticiasDelSobre(p, ahora).map((n) => n.texto)).not.toContain(d.contexto)
-    expect(pendientesDelSobre(p, ahora)).toBe(3) // dos noticias anteriores + la decisión (no cuatro)
+    expect(pendientesDelSobre(p, ahora)).toBe(1) // solo la decisión
     p = leerNoticias(p, ahora)
     expect(pendientesDelSobre(p, ahora)).toBe(1) // la decisión sigue esperando
     const despues = en('2026-01-20', 12)
@@ -122,12 +113,12 @@ describe('avisos', () => {
     expect(pendientesDelSobre(p, despues)).toBe(1)
   })
 
-  it('entrar en una casa apaga su «!» pero no da las noticias por leídas', () => {
+  it('visitar la casa de una crónica no añade avisos', () => {
     const ahora = en('2026-01-07', 10)
     let p = avanzar(barrio(['hoguera']), ahora).partida
     p = visitarLugar(p, 'nox')
     expect(avisoEnCasa(p, 'nox', en('2026-01-07', 10))).toBe(false)
-    expect(noticiasSinLeer(p, ahora)).toBe(1)
+    expect(noticiasSinLeer(p, ahora)).toBe(0)
   })
 
   it('el botón Barrio de una casa avisa de lo que pasa en las otras («?» si esperan una decisión)', () => {
@@ -138,10 +129,10 @@ describe('avisos', () => {
     expect(avisoFuera(p, 'nox', ahora)).toBeNull() // lo anterior del taller ya no se puede visitar
   })
 
-  it('lo que pasa en el barrio deja de avisar en «Barrio» al entrar en él', () => {
+  it('una fase en la plaza tampoco avisa en Barrio', () => {
     const ahora = en('2026-01-07', 12)
     let p = avanzar(barrio(['puente']), ahora).partida
-    expect(avisoFuera(p, 'nox', ahora)).toBe('punto')
+    expect(avisoFuera(p, 'nox', ahora)).toBeNull()
     p = visitarLugar(p, 'barrio')
     expect(avisoFuera(p, 'nox', ahora)).toBeNull()
   })

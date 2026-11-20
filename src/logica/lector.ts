@@ -127,12 +127,12 @@ export function leerElDiario(p: Partida, ahora: Date, conHistoriaDeTuDiario = fa
   const inf = p.privado ? null : informeSemanal(p, ahora)
   if (inf) {
     q = { ...q, informes: [...(q.informes ?? []), inf.semana].slice(-60) }
-    if (inf.texto) nuevas.push({ texto: conNombre('tuerca', inf.texto), lugar: 'tuerca', fecha: ahora.toISOString() })
+    if (inf.texto) nuevas.push({ origen: 'diario', texto: conNombre('tuerca', inf.texto), lugar: 'tuerca', fecha: ahora.toISOString() })
   }
   const l = conHistoriaDeTuDiario ? null : lecturaDeHoy(q, ahora)
   if (l) {
     q = { ...q, lecturas: [...(q.lecturas ?? []), l].slice(-GUARDADAS) }
-    nuevas.push({ texto: conNombre(l.vecino, l.texto), lugar: l.vecino, fecha: ahora.toISOString() })
+    nuevas.push({ origen: 'diario', texto: conNombre(l.vecino, l.texto), lugar: l.vecino, fecha: ahora.toISOString() })
   }
   if (!nuevas.length) return { partida: q, nuevas }
   return { partida: { ...q, noticias: [...(q.noticias ?? []), ...nuevas].slice(-NOTICIAS_GUARDADAS) }, nuevas }
@@ -143,6 +143,6 @@ export function ponerPrivado(p: Partida, activo: boolean, ahora: Date): Partida 
   if (Boolean(p.privado) === activo) return p
   if (!activo) return { ...p, privado: false }
   const quien: CompaneroId = nacido(p, 'madeja', ahora) ? 'madeja' : 'nox'
-  const noticia: NoticiaBarrio = { texto: conNombre(quien, AL_CALLARLOS[quien]!), lugar: quien, fecha: ahora.toISOString() }
+  const noticia: NoticiaBarrio = { origen: 'diario', texto: conNombre(quien, AL_CALLARLOS[quien]!), lugar: quien, fecha: ahora.toISOString() }
   return { ...p, privado: true, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) }
 }
