@@ -469,3 +469,15 @@ Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 día
 ### Tres historias más del diario (PR 12, 20/11/2026)
 - **El público de alquiler** (patrón `ensayo`: instrumento 2 días en la semana; Tofu y Madeja, con decisión), **Lluvia muy local** (`pronostico`: agua y aire libre el mismo día, 2 días; Bruma y Nox) y **La deuda de gratitud** (`cortesia`: gastos y gracias en la misma semana; Tuerca y Madeja).
 - Las huellas que reutilizan un objeto de la casa (gramófono, balanza) no salen si ese objeto ya está construido, para no tener dos iguales (`sinObjeto` en la huella).
+
+### Arreglos de la auditoría (20/11/2026, rama `dev/auditoria-partida`)
+- **Dos pestañas abiertas:** si la partida se guarda en otra pestaña o ventana, esta la vuelve a leer; ya no se pisan los registros.
+- **Recuperar en un móvil nuevo:** la primera pantalla ofrece «¿Ya tenías partida? Recuperar una copia». Al importar desde Ajustes, la app se recarga para empezar en el sitio correcto de la partida recuperada.
+- **Hora de inicio del día:** al cambiarla, lo ya apuntado se pasa a la nueva hora (nada desaparece de hoy ni queda «en el futuro»). Las copias guardan esa hora y, al importarlas en un móvil con otra, se ajustan.
+- **Desmarcar con el material ya gastado:** lo construido se queda y se avisa: «el próximo reto de esa área paga la deuda».
+- **«Algo más» no desmarca:** lo ya apuntado hoy sale como «ya apuntado» y no se puede tocar.
+- **Dos preguntas en la misma casa:** no esperan a la vez; la segunda historia aguarda a que contestes la primera.
+- **Remates con objeto:** si el gramófono o la balanza ya están en la casa, el remate pasa al objeto (al tocarlo cuenta lo de la huella); si están en el baúl, vuelve la huella. La foto de una historia que acaba en silencio lleva su recuerdo.
+- **Avisos vistos:** una novedad que llega mientras estás en ese sitio queda vista.
+- **Cuervo de Madeja:** más hacia dentro (x 77) para que no se salga en móviles altos.
+- **No se cambia:** «Para hoy» sigue mostrando tachado lo hecho hasta que acaba el día, igual que tu lista (es el diseño, no un fallo).

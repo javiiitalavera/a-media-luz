@@ -4,6 +4,7 @@ import { FRASES_VISITA, HUELLAS, MICROS, SITUACIONES, type Huella, type Lugar, t
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
+import { guardado } from './colocar'
 import { nacido, nacidos, vecinoDe } from './etapas'
 import { dia, diasEntre } from './fechas'
 import { PATRONES, rellenar, type DatosPatron } from './patrones'
@@ -58,12 +59,17 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
   // espera una decisión, puede empezar otra historia (como mucho dos a la vez): el barrio no se congela.
   const enMarcha = SITUACIONES.filter((x) => est[x.id] && !est[x.id].fin)
   const esperando = (x: Situacion) => Boolean(x.fases[est[x.id].fase].decision && !est[x.id].decision)
-  const sigue = enMarcha.find((x) => !esperando(x))
+  // Dos preguntas a la vez en la misma casa se taparían: la segunda espera a que contestes la primera.
+  const choca = (x: Situacion, fase: number) => {
+    const f = x.fases[fase]
+    return Boolean(f?.decision) && enMarcha.some((y) => y !== x && esperando(y) && y.fases[est[y.id].fase].lugar === f.lugar)
+  }
+  const sigue = enMarcha.find((x) => !esperando(x) && !choca(x, est[x.id].fase + 1))
   let s: Situacion | undefined
   let nuevo: EstadoSituacion | undefined
   // Lo que nace de tu diario va primero: si un patrón se cumple y hay hueco, empieza hoy (lo demás sigue mañana).
   const deTuDiario = enMarcha.length < EN_MARCHA_MAX
-    ? SITUACIONES.find((x) => x.patron && !est[x.id] && cumpleRequisitos(p, x, ahora)) : undefined
+    ? SITUACIONES.find((x) => x.patron && !est[x.id] && !choca(x, 0) && cumpleRequisitos(p, x, ahora)) : undefined
   if (deTuDiario) {
     s = deTuDiario
     nuevo = { fase: 0, dia: hoy, fin: deTuDiario.fases.length === 1, ...datosDe(p, deTuDiario, ahora) }
@@ -73,7 +79,7 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
     s = sigue
     nuevo = { ...e, fase, dia: hoy, fin: fase === sigue.fases.length - 1 }
   } else if (enMarcha.length < EN_MARCHA_MAX) {
-    s = SITUACIONES.find((x) => !est[x.id] && cumpleRequisitos(p, x, ahora))
+    s = SITUACIONES.find((x) => !est[x.id] && !choca(x, 0) && cumpleRequisitos(p, x, ahora))
     if (s) nuevo = { fase: 0, dia: hoy, fin: s.fases.length === 1, ...datosDe(p, s, ahora) }
   }
   if (!s || !nuevo) return { partida: p, nuevas: [] }
@@ -123,13 +129,20 @@ export function fraseDeSituacion(p: Partida, c: CompaneroId, ahora: Date): strin
 }
 
 /** Huellas que se ven en un lugar. */
+const activa = (p: Partida, h: Huella) => {
+  const e = estados(p)[h.situacion]
+  return Boolean(e && e.fase >= h.desde && (h.hasta === undefined || e.fase <= h.hasta) && (!h.decision || e.decision === h.decision))
+}
+/** El objeto de la casa ya está fuera: la huella no se duplica y su historia pasa al objeto. */
+const objetoFuera = (p: Partida, h: Huella) => Boolean(h.sinObjeto && construido(p, h.sinObjeto) && !guardado(p, h.sinObjeto))
+
 export function huellasEn(p: Partida, lugar: Lugar): Huella[] {
-  return HUELLAS.filter((h) => {
-    const e = estados(p)[h.situacion]
-    return h.lugar === lugar && e && e.fase >= h.desde && (h.hasta === undefined || e.fase <= h.hasta)
-      && (!h.decision || e.decision === h.decision)
-      && (!h.sinObjeto || !construido(p, h.sinObjeto))
-  })
+  return HUELLAS.filter((h) => h.lugar === lugar && activa(p, h) && !objetoFuera(p, h))
+}
+
+/** Lo que cuenta un objeto de la casa que se ha quedado con la historia de una huella (si lo hay). */
+export function toqueHeredado(p: Partida, objetoId: string): string | undefined {
+  return HUELLAS.find((h) => h.sinObjeto === objetoId && h.toque && activa(p, h) && objetoFuera(p, h))?.toque
 }
 
 /** Dónde está Gregorio, la aspiradora (null si no existe o ha desaparecido). */

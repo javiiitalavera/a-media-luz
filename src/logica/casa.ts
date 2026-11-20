@@ -50,6 +50,16 @@ export function disponibles(p: Partida, ahora: Date): Materiales {
   return Object.fromEntries(Object.keys(g).map((a) => [a, Math.max(0, g[a as AreaId] - s[a as AreaId])])) as Materiales
 }
 
+/** Si deshacer hoy ese reto quita un material que ya se gastó en algo construido, el área (para avisarlo).
+ *  Lo construido se queda; el siguiente reto de esa área no da material hasta cubrir el hueco. */
+export function materialYaGastado(p: Partida, accionId: string, ahora: Date): AreaId | null {
+  const hoy = dia(ahora)
+  const o = [...p.ofrendas].reverse().find((x) => x.accionId === accionId && dia(x.fecha) === hoy)
+  if (!o) return null
+  const sin = { ...p, ofrendas: p.ofrendas.filter((x) => x.id !== o.id) }
+  return ganados(sin, ahora)[o.area] < gastados(sin)[o.area] ? o.area : null
+}
+
 export const construido = (p: Partida, id: string) => (p.construcciones ?? []).some((c) => c.objetoId === id)
 
 /** Materiales que faltan para construirlo (vacío si se puede). */

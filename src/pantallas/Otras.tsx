@@ -189,7 +189,7 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
   const exportar = async () => {
     const ahora = new Date()
     const nombre = `a-media-luz-${dia(ahora)}.json`
-    const f = new File([exportarCopia(partida, ahora)], nombre, { type: 'application/json' })
+    const f = new File([exportarCopia(partida, ahora, inicioDia())], nombre, { type: 'application/json' })
     if (navigator.canShare?.({ files: [f] })) {
       try { await navigator.share({ files: [f], title: nombre }); prefs.copiaHecha(new Date().toISOString()); return } catch (e) { if ((e as Error).name === 'AbortError') return }
     }
@@ -207,7 +207,7 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
     if (archivo.current) archivo.current.value = ''
     const texto = await f.text().catch(() => '')
     if (lectura !== ultimaLectura.current) return
-    const p = importarCopia(texto)
+    const p = importarCopia(texto, inicioDia())
     if (p) setPendiente(p)
     else setMensaje(UI.ajustes.errorCopia)
   }
@@ -224,7 +224,11 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
       <h2 className="mt-6 mb-1 px-1 font-bold">{UI.ajustes.inicioDia}</h2>
       <p className="mb-2 px-1 text-[13px] text-texto-3">{UI.ajustes.inicioDiaExplicacion}</p>
       <Opciones valor={String(inicioDia())} opciones={[['0', UI.ajustes.medianoche], ['3', '3:00'], ['5', '5:00']]}
-        onCambiar={(v) => { ponerInicioDia(Number(v)); location.reload() }} />
+        onCambiar={(v) => {
+          // Lo ya apuntado se pasa a la nueva hora de inicio: nada desaparece de hoy ni queda «en el futuro».
+          const antes = inicioDia(), nuevo = Number(v)
+          sustituir(desplazarPartida(partida, -(nuevo - antes) / 24)); ponerInicioDia(nuevo); setTimeout(() => location.reload(), 100)
+        }} />
 
       <h2 className="mt-6 mb-2 px-1 font-bold">{UI.ajustes.aspecto}</h2>
       <Opciones valor={prefs.aspecto} opciones={[['auto', UI.ajustes.automatico], ['dia', UI.ajustes.dia], ['noche', UI.ajustes.noche]]}
@@ -249,7 +253,7 @@ export function Ajustes({ partida }: { partida: Partida; ahora: Date }) {
         {mensaje && <p role="status" className="mt-3 text-sm font-semibold text-coral-texto">{mensaje}</p>}
         {pendiente && (
           <Confirmar aviso={UI.ajustes.importarAviso} accion={UI.ajustes.sustituir}
-            onSi={() => { sustituir(pendiente); setPendiente(null); setMensaje(UI.ajustes.importado) }} onNo={() => setPendiente(null)} />
+            onSi={() => { sustituir(pendiente); setPendiente(null); setMensaje(UI.ajustes.importado); setTimeout(() => location.reload(), 600) }} onNo={() => setPendiente(null)} />
         )}
       </Tarjeta>
 

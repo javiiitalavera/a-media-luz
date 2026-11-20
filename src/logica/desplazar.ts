@@ -3,11 +3,12 @@
 import type { Partida } from './partida'
 import { sumarDias } from './fechas'
 
-/** Mueve todas las fechas de la partida `dias` días (negativo: hacia atrás). */
+/** Mueve todas las fechas de la partida `dias` días (negativo: hacia atrás). Admite fracciones (horas):
+ *  entonces los instantes se mueven exactos y los días sueltos (YYYY-MM-DD) se redondean. */
 export function desplazarPartida(p: Partida, dias: number): Partida {
   if (!dias) return p
   const fecha = (v: string) => new Date(Date.parse(v) + dias * 86_400_000).toISOString()
-  const dia = (v: string) => sumarDias(v, dias)
+  const dia = (v: string) => sumarDias(v, Math.round(dias))
   const fechado = <T extends { fecha: string }>(v: T): T => ({ ...v, fecha: fecha(v.fecha) })
   const diasDelRegistro = <T extends string>(v: Partial<Record<T, string>>) =>
     Object.fromEntries(Object.entries(v as Record<string, string>).map(([k, d]) => [k, dia(d)])) as Partial<Record<T, string>>
