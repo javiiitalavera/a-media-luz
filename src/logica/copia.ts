@@ -1,4 +1,5 @@
 // Copia de seguridad: exportar e importar la partida (JSON).
+import { desplazarPartida } from './desplazar'
 import { AREAS, COMPANEROS, ESCENAS, RITMOS } from '../contenido'
 import { PREGUNTAS } from '../contenido/cuestionario'
 import { SITUACIONES } from '../contenido/situaciones'
@@ -55,11 +56,21 @@ function vistos(v: unknown) {
     opcional(v.pina, (p) => p === 'guardada' || p === 'aqui')
 }
 
-export function exportarCopia(p: Partida, ahora: Date): string {
-  return JSON.stringify({ app: 'a-media-luz', version: 1, exportado: ahora.toISOString(), partida: p }, null, 2)
+/** `inicioDia`: a qué hora empezaba el día en ese móvil (las fechas de la partida van esas horas por detrás). */
+export function exportarCopia(p: Partida, ahora: Date, inicioDia = 0): string {
+  return JSON.stringify({ app: 'a-media-luz', version: 1, exportado: ahora.toISOString(), inicioDia, partida: p }, null, 2)
 }
 
-export function importarCopia(contenido: string): Partida | null {
+/** Lee una copia. Si venía de un móvil con otra hora de inicio del día, sus fechas se pasan a la de este. */
+export function importarCopia(contenido: string, inicioDia = 0): Partida | null {
+  const p = leerCopia(contenido)
+  if (!p) return null
+  const delOtro = (JSON.parse(contenido) as { inicioDia?: unknown }).inicioDia
+  const antes = typeof delOtro === 'number' && [0, 3, 5].includes(delOtro) ? delOtro : 0
+  return antes === inicioDia ? p : desplazarPartida(p, -(inicioDia - antes) / 24)
+}
+
+function leerCopia(contenido: string): Partida | null {
   try {
     const d: unknown = JSON.parse(contenido)
     if (!objeto(d) || d.app !== 'a-media-luz' || d.version !== 1 || !objeto(d.partida)) return null

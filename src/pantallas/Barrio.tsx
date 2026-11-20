@@ -66,7 +66,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const ajustar = useJuego((st) => st.ajustar)
   const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
   // Entrar en el barrio da por vistas sus novedades (el puente, los barquitos…): si no, el punto de «Barrio» no se apagaba nunca.
-  useEffect(() => { ajustar((p) => visitarLugar(p, 'barrio')) }, [ajustar])
+  const ultimaNoticia = partida.noticias?.at(-1)?.fecha
+  useEffect(() => { ajustar((p) => visitarLugar(p, 'barrio')) }, [ajustar, ultimaNoticia])
   const sinLeer = pendientesDelSobre(partida, ahora)
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'

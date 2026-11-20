@@ -1,6 +1,6 @@
 // Inicio (solo la primera vez): llega el primer huevo, cuatro preguntas (que se pueden saltar) y se eligen
 // los retos de cada día a partir de lo sugerido.
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ACCIONES, AREAS, HAZANAS_INICIALES, ORDEN_AREAS, UI, type AreaId, type CompaneroId } from '../contenido'
 import { IconoArea } from '../componentes/IconoArea'
 import { rutaArte } from '../arte/manifiesto'
@@ -10,6 +10,8 @@ import { Cuestionario } from '../componentes/Cuestionario'
 import { TEXTOS_CUESTIONARIO as T, type Perfil } from '../contenido/cuestionario'
 import { sugerencias, type Sugerencia } from '../logica/sugerencias'
 import { MAX_RETOS } from '../logica/hazanas'
+import { importarCopia } from '../logica/copia'
+import { inicioDia } from '../logica/reloj'
 
 /** El primer huevo es siempre el de Nox (el único compañero con todo su arte, de momento). */
 const PRIMERO: CompaneroId = 'nox'
@@ -35,6 +37,7 @@ export function Inicio() {
           <div className="mt-8 flex justify-center">
             <img src={rutaArte(`huevo/${PRIMERO}/cerrado`)} alt="" className="anim-mecer w-[58%] max-w-[240px]" draggable={false} />
           </div>
+          <Recuperar />
         </>
       ) : paso === 2 ? (
         <>
@@ -86,6 +89,29 @@ export function Inicio() {
         )}
       </div>
     </Pantalla>
+  )
+}
+
+/** ¿Vienes de otro móvil? Recuperar la partida desde una copia, sin pasar por el arranque. */
+function Recuperar() {
+  const sustituir = useJuego((s) => s.sustituir)
+  const archivo = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState(false)
+  const leer = async (f?: File) => {
+    if (!f) return
+    const p = importarCopia(await f.text().catch(() => ''), inicioDia())
+    if (archivo.current) archivo.current.value = ''
+    if (p) sustituir(p)
+    else setError(true)
+  }
+  return (
+    <div className="mt-6 text-center">
+      <button type="button" onClick={() => archivo.current?.click()} className="min-h-11 px-3 text-[15px] font-semibold text-texto-3 underline underline-offset-4">
+        {UI.inicio.recuperar}
+      </button>
+      <input ref={archivo} type="file" accept="application/json,.json" className="hidden" onChange={(e) => leer(e.target.files?.[0])} />
+      {error && <p role="status" className="mt-1 px-1 text-sm font-semibold text-coral-texto">{UI.ajustes.errorCopia}</p>}
+    </div>
   )
 }
 

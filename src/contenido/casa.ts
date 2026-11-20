@@ -269,7 +269,7 @@ export const VISITANTES: Partial<Record<CompaneroId, { quien: 'cuervo' | 'polill
   tuerca: { quien: 'caracol', x: 80, y: 80, ancho: 17 },
   tofu: { quien: 'polilla', x: 78, y: 50, ancho: 16 },
   bruma: { quien: 'caracol', x: 24, y: 46, ancho: 14 },
-  madeja: { quien: 'cuervo', x: 88, y: 67, ancho: 14 },
+  madeja: { quien: 'cuervo', x: 77, y: 67, ancho: 14 },
 }
 
 /** Dónde se pone Gregorio (la aspiradora) cuando está en casa de Nox. */

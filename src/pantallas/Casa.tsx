@@ -12,7 +12,7 @@ import { momentoDelDia } from '../logica/momento'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { crecioSinVer, huevoDisponible, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
-import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, visitante } from '../logica/situaciones'
+import { decisionPendiente, dondeGregorio, fraseDeSituacion, huellasEn, microDeHoy, toqueHeredado, visitante } from '../logica/situaciones'
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
 import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
@@ -152,7 +152,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
     setTimeout(() => setPreguntaPiña(true), 1300)
   }
   // Al entrar, se apagan los avisos de novedades de esta casa.
-  useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO])
+  // Y si llega una novedad mientras estás aquí, también (la estás viendo).
+  const ultimaNoticia = partida.noticias?.at(-1)?.fecha
+  useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO, ultimaNoticia])
   // El huevo listo espera a que lo toques: el último toque es tuyo.
   const [abriendo, setAbriendo] = useState(false)
   useEffect(() => {
@@ -309,7 +311,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
 
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
-        {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]}
+        {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id}
           onMover={(x, y) => setArrastre({ id: o.id, ...encajar(o, x, y) })}
           onSoltar={(x, y, punto) => {

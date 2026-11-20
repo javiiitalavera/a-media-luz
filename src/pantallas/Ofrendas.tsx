@@ -9,6 +9,7 @@ import { diaMaloActivo } from '../logica/ofrendas'
 import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, puntualesHoy, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
+import { materialYaGastado } from '../logica/casa'
 import { dia } from '../logica/fechas'
 import { ahora as reloj } from '../logica/reloj'
 import { estadoDelMes, mesActual } from '../logica/meses'
@@ -45,7 +46,13 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   }, [reaccion])
 
   const marcar = (a: Accion) => {
-    if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); setReaccion(null); return }
+    if (hechaHoy(partida, a.id, ahora)) {
+      // Si ese material ya está en algo construido, se dice: lo construido se queda y el próximo reto de esa área lo repone.
+      const gastado = materialYaGastado(partida, a.id, ahora)
+      sfx.deshacer(); quitarUna(a.id)
+      setReaccion(gastado ? { texto: UI.ofrendas.yaGastado(AREAS[gastado].nombre), n: Date.now() } : null)
+      return
+    }
     const r = ofrecer(a.id)
     if (!r) return
     sfx.tachar(a.area)
@@ -325,7 +332,9 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
   // Las propias que se apuntaron alguna vez en «Algo más» también se ofrecen.
   const usadas = partida.acciones.filter((a) => !a.soloEl && !esHabitual(a) && !ACCIONES.some((c) => c.id === a.id))
   const lista: Accion[] = [...delCatalogoSinUsar(partida), ...usadas]
+  const hoy = reloj()
   const apuntar = (a: Accion) => {
+    if (hechaHoy(partida, a.id, hoy)) return // apuntar dos veces no lo desmarca
     if (!partida.acciones.some((x) => x.id === a.id)) ajustar((p) => anadirHazana(p, a.id, false))
     onApuntar(a)
   }
@@ -340,8 +349,12 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
               <div className="mb-1 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-texto-3"><IconoArea area={area} pequeno />{AREAS[area].nombre}</div>
               <div className="flex flex-wrap gap-2">
                 {delArea.map((c) => (
-                  <button key={c.id} type="button" onClick={() => apuntar(c)}
-                    className="min-h-11 rounded-full border-2 border-borde bg-tarjeta px-3.5 text-[14px] font-medium">{c.nombre}</button>
+                  hechaHoy(partida, c.id, hoy) ? (
+                    <span key={c.id} className="inline-flex min-h-11 items-center rounded-full bg-hundido px-3.5 text-[14px] font-medium text-texto-3">{c.nombre} · {UI.ofrendas.yaApuntado}</span>
+                  ) : (
+                    <button key={c.id} type="button" onClick={() => apuntar(c)}
+                      className="min-h-11 rounded-full border-2 border-borde bg-tarjeta px-3.5 text-[14px] font-medium">{c.nombre}</button>
+                  )
                 ))}
               </div>
             </div>

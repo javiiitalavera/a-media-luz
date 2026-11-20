@@ -163,3 +163,8 @@ export const useJuego = create<Juego>()(
     },
   ),
 )
+
+// Si la partida se guarda en otra pestaña o ventana, esta la vuelve a leer en vez de pisarla después con su copia vieja.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => { if (e.key === 'a-media-luz') void useJuego.persist.rehydrate() })
+}
