@@ -26,7 +26,7 @@ import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuel
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 import { colocarCasita } from '../logica/mapaBarrio'
-import { ArroyoEnMovimiento, HojasAlViento, HumoDeCasa, VecinoDePaseo } from '../componentes/VidaBarrio'
+import { ArroyoEnMovimiento, HojasAlViento, VidaDeCasita, VecinoDePaseo } from '../componentes/VidaBarrio'
 
 type Punto = { x: number; y: number }
 const PUERTAS: Partial<Record<CompaneroId, Punto>> = {
@@ -78,7 +78,6 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
     return { companero, huevo, ...colocarCasita(PARCELAS[i], companero, hueco, huevo) }
   })
   const puente = construido(partida, 'puente')
-  const hoguera = construido(partida, 'hoguera')
   const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
@@ -138,9 +137,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
               <span className={`relative block w-full ${huevo ? '' : 'casita-en-terreno'}`} data-vecino={companero}>
                 {!huevo && <span aria-hidden className="pasos-de-casa" />}
                 <img src={rutaArte(huevo ? `huevo/${companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${companero}`)} alt=""
-                  className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
-                {!huevo && <span aria-hidden className="gesto-de-casa" />}
-                {!huevo && (companero === 'tuerca' || (companero === 'nox' && hoguera)) && <HumoDeCasa vecino={companero} />}
+                  className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : 'dibujo-de-casita'}`} draggable={false} />
+                {!huevo && <VidaDeCasita vecino={companero} />}
                 <span ref={(el) => { puertas.current[companero] = el }} aria-hidden
                   className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === companero ? 'luz-puerta-activa' : ''}`}
                   style={{ left: `${huevo ? 50 : PUERTAS[companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[companero]?.y ?? 66}%` }} />

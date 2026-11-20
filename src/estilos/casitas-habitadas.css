@@ -1,0 +1,150 @@
+.humo-de-chimenea,
+.calor-de-casita,
+.maceta-inquieta,
+.estanque-de-casita {
+  position: absolute;
+  pointer-events: none;
+}
+
+.calor-de-casita {
+  left: 39%;
+  top: 43%;
+  width: 38%;
+  height: 37%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #ffe49c 4%, #ffb75a9e 31%, transparent 69%);
+  mix-blend-mode: screen;
+  opacity: .34;
+}
+
+.maceta-inquieta {
+  left: 63%;
+  bottom: 14%;
+  width: 21%;
+}
+.maceta-inquieta img {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 2px 1px #5836237d);
+}
+
+.estanque-de-casita {
+  inset: 63% 13% 11% 17%;
+}
+.estanque-de-casita img {
+  position: absolute;
+  left: 30%;
+  top: 56%;
+  width: 26%;
+  translate: -50% -50%;
+  filter: drop-shadow(0 1.5px 1px #41305480);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* La parte superior del dibujo contiene humo fijo. Este recorte conserva el borde de la chimenea. */
+  [data-vecino='tuerca'] .dibujo-de-casita {
+    clip-path: polygon(0 0, 55% 0, 55% 16%, 61% 16%, 63% 18.3%, 69% 18.3%, 73% 16%, 100% 16%, 100% 100%, 0 100%);
+  }
+  .humo-de-chimenea {
+    left: 64%;
+    top: 18.7%;
+    width: 18%;
+    aspect-ratio: 1;
+  }
+  .humo-de-chimenea i {
+    position: absolute;
+    inset: 0;
+    border-radius: 57% 50% 52% 48%;
+    background: radial-gradient(ellipse at 38% 24%, #fff4dc 8%, #f5d9bc 58%, #c7a3a0);
+    box-shadow: inset 0 0 0 1px #7e5f5a87;
+    animation: bocanada-del-taller 4.4s -2.7s ease-out infinite;
+  }
+  .humo-de-chimenea i:nth-child(2) { animation-delay: -1.3s; }
+  .humo-de-chimenea i:nth-child(3) { animation-delay: -.9s; }
+
+  .calor-de-casita { animation: luz-de-casita 4.2s -1s ease-in-out infinite; }
+  .calor-de-casita i {
+    position: absolute;
+    left: 43%;
+    top: 64%;
+    width: 8%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #ffdf87;
+    box-shadow: 0 0 3px #ffb86a;
+    animation: brasa-de-casita 3.6s -.4s ease-out infinite;
+  }
+  .calor-de-casita i:nth-child(2) { left: 62%; animation-delay: -1.7s; }
+  .calor-de-casita i:nth-child(3) { left: 35%; animation-delay: -2.9s; }
+
+  .maceta-inquieta img {
+    transform-origin: 50% 100%;
+    animation: brinco-de-maceta 9s -1.4s ease-in-out infinite;
+  }
+  .maceta-inquieta i {
+    position: absolute;
+    left: 36%;
+    top: 25%;
+    width: 28%;
+    aspect-ratio: 1.65;
+    border-radius: 82% 0 82% 0;
+    background: #a6b95b;
+    box-shadow: inset 0 0 0 1px #637642;
+    animation: hoja-de-maceta 9s -1.4s ease-out infinite;
+  }
+
+  .estanque-de-casita i {
+    position: absolute;
+    top: 57%;
+    left: 39%;
+    width: 42%;
+    height: 43%;
+    border: 1px solid #f5e9ffda;
+    border-radius: 50%;
+    animation: onda-del-barquito 3.8s -1s ease-out infinite;
+  }
+  .estanque-de-casita i:nth-child(2) { animation-delay: -2.9s; }
+  .estanque-de-casita img { animation: deriva-del-barquito 8s -1.5s ease-in-out infinite; }
+}
+
+@keyframes bocanada-del-taller {
+  0% { opacity: 0; transform: translate(-50%, -38%) scale(.34); }
+  9% { opacity: .91; }
+  40% { opacity: .72; transform: translate(-27%, -101%) rotate(15deg) scale(.83); }
+  72%, 100% { opacity: 0; transform: translate(45%, -188%) rotate(35deg) scale(1.42); }
+}
+@keyframes luz-de-casita {
+  0%, 100% { opacity: .35; }
+  22%, 63% { opacity: .76; }
+  39%, 78% { opacity: .52; }
+}
+@keyframes brasa-de-casita {
+  0%, 37% { opacity: 0; transform: translate(0, 0) scale(.45); }
+  48% { opacity: .88; }
+  76%, 100% { opacity: 0; transform: translate(-225%, -680%) scale(.48); }
+}
+@keyframes brinco-de-maceta {
+  0%, 15%, 47%, 100% { transform: none; }
+  20% { transform: scale(1.12, .83) rotate(-8deg); }
+  25% { transform: translate(-26%, -23%) rotate(-19deg) scale(.91, 1.1); }
+  31% { transform: translate(-44%, 0) scale(1.11, .84); }
+  34% { transform: translate(-44%, 0) rotate(10deg); }
+  38% { transform: translate(-24%, -31%) rotate(14deg); }
+  43% { transform: scale(1.12, .83); }
+}
+@keyframes hoja-de-maceta {
+  0%, 31% { opacity: 0; transform: translate(0, 0) rotate(-22deg); }
+  34% { opacity: .95; }
+  51%, 100% { opacity: 0; transform: translate(210%, -240%) rotate(111deg); }
+}
+@keyframes onda-del-barquito {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.25); }
+  17% { opacity: .85; }
+  79%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
+}
+@keyframes deriva-del-barquito {
+  0%, 100% { transform: translate(0, 0) rotate(-7deg); }
+  35% { transform: translate(123%, 7%) rotate(8deg); }
+  52% { transform: translate(146%, -11%) rotate(-10deg); }
+  67% { transform: translate(130%, -26%) rotate(5deg); }
+}

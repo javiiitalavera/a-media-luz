@@ -3,6 +3,7 @@
 @import '@fontsource/fredoka/600.css';
 @import '@fontsource/fredoka/700.css';
 @import './vida-de-casa.css';
+@import './casitas-habitadas.css';
 
 /* Colores de interfaz a partir de la paleta aprobada (docs/direccion-artistica.md).
    Contraste de textos comprobado (WCAG ≥ 4,5). */
@@ -376,31 +377,6 @@ body {
   85% { transform: translate(360%, 26px) rotate(175deg); opacity: .75; }
   100% { opacity: 0; transform: translate(610%, 47px) rotate(230deg) scaleX(.7); }
 }
-.humo-de-casa {
-  position: absolute;
-  left: 77%;
-  top: 13%;
-  width: 18%;
-  aspect-ratio: 1;
-  pointer-events: none;
-}
-.humo-de-casa[data-humo='nox'] { left: 60%; top: 23%; width: 14%; }
-.humo-de-casa i {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #fff3dccc 8%, #eacbd98c 41%, transparent 73%);
-  animation: humo-del-barrio 5.4s ease-out infinite;
-}
-.humo-de-casa i:nth-child(2) { animation-delay: -1.8s; }
-.humo-de-casa i:nth-child(3) { animation-delay: -3.6s; }
-@keyframes humo-del-barrio {
-  0% { opacity: 0; transform: translate(-50%, -40%) scale(.42); }
-  19% { opacity: .62; }
-  53% { transform: translate(4%, -115%) scale(.92); }
-  100% { opacity: 0; transform: translate(118%, -235%) scale(1.65); }
-}
-
 .luz-puerta {
   width: 44%;
   aspect-ratio: 1;
@@ -416,30 +392,10 @@ body {
   24% { opacity: .88; scale: 1; }
   100% { opacity: .25; scale: 1.1; }
 }
-.gesto-de-casa { position: absolute; pointer-events: none; }
-[data-vecino='bruma'] .gesto-de-casa {
-  left: 10%; bottom: 18%; width: 71%; height: 14%;
-  background: radial-gradient(ellipse, #e6bbf696, transparent 68%);
-  animation: niebla-del-estanque 17s -8s ease-in-out infinite;
-}
-[data-vecino='tofu'] .gesto-de-casa {
-  left: 31%; top: 36%; width: 39%; height: 25%;
-  background: radial-gradient(ellipse, #fff1b08c, transparent 69%);
-  animation: cristal-del-invernadero 15s -1s ease-in-out infinite;
-}
-@keyframes niebla-del-estanque {
-  0%, 68% { opacity: 0; transform: translateX(-12%); }
-  82% { opacity: .68; }
-  100% { opacity: 0; transform: translateX(23%); }
-}
-@keyframes cristal-del-invernadero {
-  0%, 64%, 100% { opacity: 0; transform: translateX(-12%); }
-  78% { opacity: .7; transform: translateX(12%); }
-}
 .navegacion-barrio { background: color-mix(in srgb, var(--color-tarjeta) 86%, var(--color-fondo)); }
 
 @media (prefers-reduced-motion: reduce) {
-  .barrio-arroyo i, .barrio-cascada, .hojas-del-barrio, .humo-de-casa, .gesto-de-casa, .luz-puerta-activa { display: none; }
+  .barrio-arroyo i, .barrio-cascada, .hojas-del-barrio, .luz-puerta-activa { display: none; }
 }
 .sombra-vecino {
   position: absolute;
