@@ -197,7 +197,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         })}
       </div>
 
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
+      <header data-tapa-globo className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-3 pt-[max(12px,calc(env(safe-area-inset-top)+32px))]">
         <h1 className="sr-only">{UI.barrio.titulo}</h1>
         {/* A la izquierda, volver a la casa en la que estabas (flecha); el sobre, a la derecha. */}
         <span className="pointer-events-auto">

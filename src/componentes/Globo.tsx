@@ -1,5 +1,5 @@
 // El globo de texto que sale donde has tocado: pequeño, con un pico que señala el sitio.
-// Si el toque está muy arriba, sale por debajo. Se cierra a los 4 s, o al tocar fuera.
+// Si el toque está muy arriba (o el globo se metería bajo los botones de arriba), sale por debajo. Se cierra a los 4 s, o al tocar fuera.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useGlobo } from '../estado/globo'
@@ -23,8 +23,10 @@ export function GloboFlotante() {
   if (!globo) return null
   const ancho = Math.min(ANCHO, innerWidth - 24)
   const izquierda = Math.min(Math.max(globo.x - ancho / 2, 12), innerWidth - ancho - 12)
-  const debajo = globo.y - alto - 16 < 70
-  const arriba = debajo ? globo.y + 18 : globo.y - alto - 14
+  // Lo que hay arriba (botón «Barrio», avisos…) no se tapa: el globo sale por debajo de esa franja.
+  const techo = Math.max(70, ...[...document.querySelectorAll('[data-tapa-globo]')].map((e) => e.getBoundingClientRect().bottom + 8))
+  const debajo = globo.y - alto - 16 < techo
+  const arriba = debajo ? Math.max(globo.y + 18, techo) : globo.y - alto - 14
   const pico = Math.min(Math.max(globo.x - izquierda, 18), ancho - 18)
   return createPortal(
     <div key={globo.n} ref={caja} role="status" className="anim-globo pointer-events-none fixed z-[70]"

@@ -481,3 +481,6 @@ Decidida por Javi a partir de la auditoría de Z.ai (informe de jugador, 17 día
 - **Avisos vistos:** una novedad que llega mientras estás en ese sitio queda vista.
 - **Cuervo de Madeja:** más hacia dentro (x 77) para que no se salga en móviles altos.
 - **No se cambia:** «Para hoy» sigue mostrando tachado lo hecho hasta que acaba el día, igual que tu lista (es el diseño, no un fallo).
+
+### Globos bajo los botones de arriba (20/11/2026, rama `dev/globo-arriba`)
+- Un globo de texto (al tocar un objeto o una huella) nunca se mete debajo de la franja de arriba («Barrio», sobre): si no cabe por encima, sale por debajo de esa franja. La franja se marca con `data-tapa-globo`.
