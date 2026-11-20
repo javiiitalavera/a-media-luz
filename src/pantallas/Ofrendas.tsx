@@ -6,9 +6,11 @@ import { createPortal } from 'react-dom'
 import { ACCIONES, AREAS, COMPANEROS, MATERIALES, ORDEN_AREAS, UI, type Accion, type AreaId } from '../contenido'
 import type { Partida } from '../logica/partida'
 import { diaMaloActivo } from '../logica/ofrendas'
-import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, quitarHazana, textoHazana } from '../logica/hazanas'
+import { MAX_RETOS, anadirHazana, borrarHazana, cabeOtro, esPropia, propiasFuera, crearHazana, delCatalogoSinUsar, editarHazana, esHabitual, extrasHoy, hechaHoy, misHazanas, puntualesHoy, quitarHazana, textoHazana } from '../logica/hazanas'
 import { useJuego } from '../estado/juego'
 import { verHazanas } from '../logica/avisos'
+import { dia } from '../logica/fechas'
+import { ahora as reloj } from '../logica/reloj'
 import { estadoDelMes, mesActual } from '../logica/meses'
 import { rutaArte } from '../arte/manifiesto'
 import { sfx } from '../sonido'
@@ -27,8 +29,10 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const diaMalo = diaMaloActivo(partida, ahora)
   const mias = misHazanas(partida)
   const extras = extrasHoy(partida, ahora)
+  // Retos puntuales de hoy: se quedan (tachados si los has hecho) hasta que acaba el día.
+  const puntuales = puntualesHoy(partida, ahora)
   const hechas = mias.filter((a) => hechaHoy(partida, a.id, ahora)).length
-  const [hoja, setHoja] = useState<'editar' | 'algo' | 'sugerencias' | null>(null)
+  const [hoja, setHoja] = useState<'editar' | 'algo' | 'puntual' | 'sugerencias' | null>(null)
   const [reaccion, setReaccion] = useState<{ texto: string; n: number; sorpresa?: string } | null>(null)
   // Abrir Hazañas apaga el aviso del día nuevo.
   const ajustar = useJuego((s) => s.ajustar)
@@ -43,10 +47,18 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
   const marcar = (a: Accion) => {
     if (hechaHoy(partida, a.id, ahora)) { sfx.deshacer(); quitarUna(a.id); setReaccion(null); return }
     const r = ofrecer(a.id)
-    if (r) sfx.tachar(a.area)
-    if (r?.sorpresa) {
-      setReaccion({ texto: `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`, n: Date.now(), sorpresa: r.sorpresa.arte })
-    } else if (r?.frase) setReaccion({ texto: `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`, n: Date.now() })
+    if (!r) return
+    sfx.tachar(a.area)
+    const frase = r.frase && `${COMPANEROS[r.frase.companero].nombre}: «${r.frase.texto}»`
+    const texto = r.sorpresa
+      ? `${UI.ofrendas.encontrado(COMPANEROS[r.sorpresa.vecino].nombre, r.sorpresa.nombre)}${r.frase ? ` «${r.frase.texto}»` : ''}`
+      : frase || (a.soloEl ? UI.ofrendas.retoCumplido : '')
+    if (texto) setReaccion({ texto, n: Date.now(), sorpresa: r.sorpresa?.arte })
+  }
+
+  const guardarPuntual = (datos: DatosReto) => {
+    ajustar((p) => crearHazana(p, { ...datos, soloEl: dia(reloj()) }, nuevoId()))
+    setHoja(null)
   }
 
   return (
@@ -76,16 +88,30 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
         </button>
       )}
 
+      {puntuales.length > 0 && (
+        <>
+          <h2 className="mt-4 mb-2 px-1 text-[15px] font-bold">{UI.ofrendas.soloHoy}</h2>
+          <ul className="divide-y divide-borde/60 overflow-hidden rounded-3xl bg-tarjeta shadow-sm">
+            {puntuales.map((a) => <Fila key={a.id} a={a} hecha={hechaHoy(partida, a.id, ahora)} texto={a.nombre} onToque={() => marcar(a)} />)}
+          </ul>
+        </>
+      )}
+
       <div className="mt-4 overflow-hidden rounded-3xl bg-tarjeta shadow-sm">
         {mias.length === 0 && <p className="px-4 py-5 text-[15px] text-texto-3">{UI.ofrendas.vacia}</p>}
         <ul className="divide-y divide-borde/60">
           {mias.map((a) => <Fila key={a.id} a={a} hecha={hechaHoy(partida, a.id, ahora)} texto={textoHazana(a, diaMalo)} onToque={() => marcar(a)} />)}
         </ul>
-        <div className="flex items-center justify-between gap-2 border-t border-borde/60 px-4 py-2.5">
-          <span className="text-[14px] text-texto-3">{UI.ofrendas.hechas(hechas, mias.length)}</span>
-          <button type="button" onClick={() => setHoja('algo')} className="min-h-11 rounded-full border-2 border-borde px-4 text-[15px] font-semibold text-texto-2">
-            + {UI.ofrendas.algoMas}
-          </button>
+        <div className="border-t border-borde/60 px-4 py-2.5">
+          <span className="block text-[14px] text-texto-3">{UI.ofrendas.hechas(hechas, mias.length)}</span>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => setHoja('puntual')} className="min-h-11 rounded-full border-2 border-borde px-3 text-[15px] font-semibold text-texto-2">
+              + {UI.ofrendas.paraHoy}
+            </button>
+            <button type="button" onClick={() => setHoja('algo')} className="min-h-11 rounded-full border-2 border-borde px-3 text-[15px] font-semibold text-texto-2">
+              + {UI.ofrendas.algoMas}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -103,16 +129,23 @@ export function Ofrendas({ partida, ahora, onIrACasa }: { partida: Partida; ahor
       </div>
 
       {reaccion && (
-        <div key={reaccion.n} role="status" className="animate-entrar pointer-events-none fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-[430px] justify-center px-4">
+        <div key={reaccion.n} className="animate-entrar pointer-events-none fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-[430px] justify-center px-4">
           <span className="flex items-center gap-3 rounded-2xl bg-[#2e2030]/88 px-4 py-2.5 text-[14px] leading-snug text-[#fbefe4] shadow-lg backdrop-blur-sm">
             {reaccion.sorpresa && <img src={reaccion.sorpresa} alt="" className="anim-brotar h-12 w-12 shrink-0 object-contain" />}
-            <span className={reaccion.sorpresa ? '' : 'text-center'}>{reaccion.texto}</span>
+            <span role="status" className={reaccion.sorpresa ? '' : 'text-center'}>{reaccion.texto}</span>
           </span>
         </div>
       )}
 
       {hoja === 'sugerencias' && <HojaSugerencias partida={partida} onCerrar={() => setHoja(null)} />}
       {hoja === 'editar' && <HojaEditar partida={partida} onCerrar={() => setHoja(null)} />}
+      {hoja === 'puntual' && (
+        <Hoja titulo={UI.ofrendas.retoPuntual} explicacion={UI.ofrendas.retoPuntualExplicacion} onCerrar={() => setHoja(null)}>
+          <div className="mt-3">
+            <FormularioPropia puntual boton={UI.ofrendas.guardarParaHoy} onCrear={guardarPuntual} />
+          </div>
+        </Hoja>
+      )}
       {hoja === 'algo' && <HojaAlgoMas partida={partida} onCerrar={() => setHoja(null)} onApuntar={(a) => { setHoja(null); marcar(a) }} />}
     </Pantalla>
   )
@@ -286,7 +319,7 @@ function BotonBorrar({ onBorrar }: { onBorrar: () => void }) {
 function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCerrar: () => void; onApuntar: (a: Accion) => void }) {
   const ajustar = useJuego((s) => s.ajustar)
   // Las propias que se apuntaron alguna vez en «Algo más» también se ofrecen.
-  const usadas = partida.acciones.filter((a) => !esHabitual(a) && !ACCIONES.some((c) => c.id === a.id))
+  const usadas = partida.acciones.filter((a) => !a.soloEl && !esHabitual(a) && !ACCIONES.some((c) => c.id === a.id))
   const lista: Accion[] = [...delCatalogoSinUsar(partida), ...usadas]
   const apuntar = (a: Accion) => {
     if (!partida.acciones.some((x) => x.id === a.id)) ajustar((p) => anadirHazana(p, a.id, false))
@@ -321,18 +354,20 @@ function HojaAlgoMas({ partida, onCerrar, onApuntar }: { partida: Partida; onCer
   )
 }
 
-function FormularioPropia({ boton, onCrear }: { boton: string; onCrear: (d: { nombre: string; area: AreaId }) => void }) {
+type DatosReto = { nombre: string; area: AreaId }
+
+function FormularioPropia({ boton, onCrear, puntual = false }: { boton: string; onCrear: (d: DatosReto) => void; puntual?: boolean }) {
   const [nombre, setNombre] = useState('')
-  const [area, setArea] = useState<AreaId>('cuerpo')
-  const crear = () => {
-    if (!nombre.trim()) return
-    onCrear({ nombre, area })
+  const [area, setArea] = useState<AreaId | null>(puntual ? null : 'cuerpo')
+  const crear = (guardar: (d: DatosReto) => void) => {
+    if (!nombre.trim() || !area) return
+    guardar({ nombre: nombre.trim(), area })
     setNombre('')
   }
   return (
-    <div className="rounded-3xl bg-tarjeta p-3">
-      <label className="block text-[13px] font-semibold text-texto-3">{UI.ofrendas.nombre}
-        <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
+    <form className="rounded-3xl bg-tarjeta p-3" onSubmit={(e) => { e.preventDefault(); crear(onCrear) }}>
+      <label className="block text-[13px] font-semibold text-texto-3">{puntual ? UI.ofrendas.nombrePuntual : UI.ofrendas.nombre}
+        <input autoFocus={puntual} value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={puntual ? UI.ofrendas.ejemploPuntual : UI.ofrendas.nombreEjemplo} className={`${campo} mt-1`} />
       </label>
       <div className="mt-2 text-[13px] font-semibold text-texto-3">{UI.ofrendas.area}</div>
       <div className="mt-1 flex flex-wrap gap-1.5">
@@ -344,8 +379,8 @@ function FormularioPropia({ boton, onCrear }: { boton: string; onCrear: (d: { no
           </button>
         ))}
       </div>
-      <button type="button" disabled={!nombre.trim()} onClick={crear}
+      <button type="submit" disabled={!nombre.trim() || !area}
         className="mt-3 min-h-11 w-full rounded-full bg-ambar text-[15px] font-bold text-tinta disabled:opacity-40">{boton}</button>
-    </div>
+    </form>
   )
 }

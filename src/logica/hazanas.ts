@@ -5,7 +5,7 @@ import type { Accion } from '../contenido'
 import type { Partida } from './partida'
 import { dia } from './fechas'
 
-export const esHabitual = (a: Accion) => a.habitual !== false
+export const esHabitual = (a: Accion) => a.habitual !== false && !a.soloEl
 
 /** Como mucho, 10 retos en tu lista (más no se cumplen: se acumulan). Mínimo no hay. */
 export const MAX_RETOS = 10
@@ -22,11 +22,19 @@ export const cabeOtro = (p: Partida) => misHazanas(p).length < MAX_RETOS
 /** La hazaña está hecha hoy (cuenta una vez al día). */
 export const hechaHoy = (p: Partida, id: string, ahora: Date) => p.ofrendas.some((o) => o.accionId === id && dia(o.fecha) === dia(ahora))
 
+/** Retos puntuales de hoy (hechos o no): se ven en «Solo hoy» hasta que acaba el día. */
+export function puntualesHoy(p: Partida, ahora: Date): Accion[] {
+  const hoy = dia(ahora)
+  return p.acciones.filter((a) => a.soloEl === hoy)
+}
+/** Los que aún no has hecho. */
+export const pendientesHoy = (p: Partida, ahora: Date): Accion[] => puntualesHoy(p, ahora).filter((a) => !hechaHoy(p, a.id, ahora))
+
 /** Lo apuntado hoy que no está en tu lista (desde «Algo más»). */
 export function extrasHoy(p: Partida, ahora: Date): Accion[] {
   const hoy = dia(ahora)
   const ids = new Set(p.ofrendas.filter((o) => dia(o.fecha) === hoy).map((o) => o.accionId))
-  return p.acciones.filter((a) => !esHabitual(a) && ids.has(a.id))
+  return p.acciones.filter((a) => !a.soloEl && !esHabitual(a) && ids.has(a.id))
 }
 
 /** Del catálogo, las que no están en tu lista (para «Algo más» y para añadir). */
@@ -38,6 +46,7 @@ const limpia = (c: Accion): Accion => ({ id: c.id, area: c.area, nombre: c.nombr
 /** Añade a la lista (o recupera) una hazaña del catálogo, o vuelve a hacer habitual una que se usó en «Algo más». */
 export function anadirHazana(p: Partida, id: string, habitual = true): Partida {
   const ya = p.acciones.find((a) => a.id === id)
+  if (ya?.soloEl) return p
   if (habitual && !(ya && esHabitual(ya)) && !cabeOtro(p)) return p
   if (ya) return { ...p, acciones: p.acciones.map((a) => (a.id === id ? { ...a, habitual: habitual ? undefined : false } : a)) }
   const c = ACCIONES.find((x) => x.id === id)
@@ -50,11 +59,11 @@ export const quitarHazana = (p: Partida, id: string): Partida =>
   ({ ...p, acciones: p.acciones.map((a) => (a.id === id ? { ...a, habitual: false } : a)) })
 
 /** Crea una hazaña propia. Sin nombre no se crea; la mínima es opcional. */
-export function crearHazana(p: Partida, datos: { nombre: string; area: AreaId; minima?: string }, id: string, habitual = true): Partida {
+export function crearHazana(p: Partida, datos: { nombre: string; area: AreaId; minima?: string; soloEl?: string }, id: string, habitual = !datos.soloEl): Partida {
   const nombre = datos.nombre.trim()
   if (!nombre || (habitual && !cabeOtro(p))) return p
   const minima = datos.minima?.trim()
-  return { ...p, acciones: [...p.acciones, { id: `propia-${id}`, area: datos.area, nombre, ...(minima ? { minima } : {}), ...(habitual ? {} : { habitual: false }) }] }
+  return { ...p, acciones: [...p.acciones, { id: `propia-${id}`, area: datos.area, nombre, ...(minima ? { minima } : {}), ...(habitual ? {} : { habitual: false }), ...(datos.soloEl ? { soloEl: datos.soloEl } : {}) }] }
 }
 
 /** Cambia el nombre (con su meta), la versión mínima o, si es propia, el área. Una mínima vacía la quita; un nombre vacío no se guarda. */
@@ -113,4 +122,4 @@ export const borrarHazana = (p: Partida, id: string): Partida =>
   ({ ...p, acciones: p.acciones.filter((a) => !(a.id === id && esPropia(a))) })
 
 /** Tus retos propios que no están en tu lista (los apuntaste en «Algo más» o los quitaste). */
-export const propiasFuera = (p: Partida) => p.acciones.filter((a) => esPropia(a) && !esHabitual(a))
+export const propiasFuera = (p: Partida) => p.acciones.filter((a) => esPropia(a) && !a.soloEl && !esHabitual(a))

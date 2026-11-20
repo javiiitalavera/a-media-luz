@@ -8,7 +8,7 @@ import { azarReal } from '../logica/azar'
 import { dia } from '../logica/fechas'
 import { construir as construirEnCasa } from '../logica/casa'
 import { ahora } from '../logica/reloj'
-import { migrarHazanas } from '../logica/hazanas'
+import { hechaHoy, migrarHazanas } from '../logica/hazanas'
 import { anadirSugerencia, type Sugerencia } from '../logica/sugerencias'
 import type { Perfil } from '../contenido/cuestionario'
 import { avanzar, decidir as decidirSituacion } from '../logica/situaciones'
@@ -66,6 +66,8 @@ export const useJuego = create<Juego>()(
         const p = get().partida
         if (!p) return null
         const momento = ahora()
+        const puntual = p.acciones.find((a) => a.id === accionId)?.soloEl
+        if (puntual && (puntual !== dia(momento) || hechaHoy(p, accionId, momento))) return null
         const resultado = hacerOfrenda(p, accionId, momento, azarReal, nuevoId())
         set({
           partida: resultado.partida,
@@ -76,7 +78,7 @@ export const useJuego = create<Juego>()(
       quitarUna: (accionId) => {
         const p = get().partida
         if (!p) return
-        const hoy = dia(ahora().toISOString())
+        const hoy = p.acciones.find((a) => a.id === accionId)?.soloEl ?? dia(ahora())
         const ultima = [...p.ofrendas].reverse().find((o) => o.accionId === accionId && dia(o.fecha) === hoy)
         if (ultima) set({ partida: deshacerOfrenda(p, ultima.id), porContar: null })
       },
