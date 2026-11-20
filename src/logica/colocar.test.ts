@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { OBJETOS_CASA } from '../contenido'
-import { colocar, encajar, movible, ordenOriginal, sitioDe } from './colocar'
+import { colocar, encajar, guardado, guardar, movible, ordenOriginal, sacar, sitioDe } from './colocar'
 import { crearPartida } from './partida'
 import { en } from './test-utils'
 
@@ -37,5 +37,15 @@ describe('ordenar la casa', () => {
     expect(p.colocados!.tetera).toBeDefined() // lo de otras casas no se toca
     expect(sitioDe(p, obj('hoguera'))).toEqual(obj('hoguera').sitio)
     expect(colocar(p, 'aspiradora', 10, 10)).toBe(p)
+  })
+
+  it('el baúl guarda y saca; lo guardado sigue construido y Gregorio no se guarda', () => {
+    let p = guardar(base(), 'hoguera')
+    expect(guardado(p, 'hoguera')).toBe(true)
+    expect(guardar(p, 'hoguera')).toBe(p)
+    expect(guardar(p, 'aspiradora')).toBe(p)
+    p = sacar(p, 'hoguera')
+    expect(guardado(p, 'hoguera')).toBe(false)
+    expect(p.guardados).toEqual([])
   })
 })

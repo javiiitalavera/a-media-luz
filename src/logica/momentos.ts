@@ -51,7 +51,7 @@ export function fotoDe(p: Partida, lugar: Lugar, ahora: Date, cara: Cara = 'cont
     etapa: progreso(p, lugar, ahora).etapa,
     cara,
     visita: visitante(p, lugar, ahora) ?? undefined,
-    objetos: OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id)).map((o) => o.id),
+    objetos: OBJETOS_CASA.filter((o) => o.companero === lugar && o.id !== 'aspiradora' && construido(p, o.id) && !p.guardados?.includes(o.id)).map((o) => o.id),
     gregorio: dondeGregorio(p, ahora) === lugar,
     ...(colocadosDe(p, lugar) && { colocados: colocadosDe(p, lugar) }),
   }

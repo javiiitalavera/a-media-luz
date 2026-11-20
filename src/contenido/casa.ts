@@ -130,6 +130,18 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
     coste: { vinculos: 5, cuerpo: 2 }, sitio: { x: 61, y: 8, ancho: 26, colgado: true }, proporcion: 0.58 },
   { id: 'buzon', companero: 'madeja', orden: 6, nombre: 'Buzón de cartas', descripcion: 'Cartas de verdad. Con sello y con letra torcida.',
     coste: { vinculos: 6, orden: 2 }, sitio: { x: 79, y: 82, ancho: 15 }, proporcion: 1.03 },
+  { id: 'tetera-rosa', companero: 'madeja', orden: 7, nombre: 'Tetera rosa', descripcion: 'Dos tazas desparejadas. Como las parejas que más duran.',
+    coste: { vinculos: 5, calma: 2 }, sitio: { x: 30, y: 49, ancho: 11 }, proporcion: 0.95 },
+  { id: 'costurero', companero: 'madeja', orden: 8, nombre: 'Costurero', descripcion: 'Hilos para coser. Y para atar cabos sueltos de los vecinos.',
+    coste: { vinculos: 6, orden: 2 }, sitio: { x: 58, y: 83, ancho: 12 }, proporcion: 1.01 },
+  { id: 'sofa', companero: 'madeja', orden: 9, nombre: 'Sofá de dos plazas', descripcion: 'Para dos. Si viene uno solo, me siento yo al lado.',
+    coste: { vinculos: 7, cuerpo: 2 }, sitio: { x: 84, y: 58, ancho: 19 }, proporcion: 0.71 },
+  { id: 'marco', companero: 'madeja', orden: 10, nombre: 'Marco de fotos', descripcion: 'Vacío. Esperando a la foto adecuada. Tengo varias candidatas.',
+    coste: { vinculos: 6, mente: 2 }, sitio: { x: 77, y: 45, ancho: 7 }, proporcion: 1.11 },
+  { id: 'alfombra', companero: 'madeja', orden: 11, nombre: 'Alfombra de retales', descripcion: 'Un retal de cada vecino. Algunos no saben que han donado.',
+    coste: { vinculos: 7, calma: 2 }, sitio: { x: 16, y: 84, ancho: 15 }, proporcion: 0.78 },
+  { id: 'farol-punto', companero: 'madeja', orden: 12, nombre: 'Farolillo de punto', descripcion: 'Luz tejida. Calienta un poco. Sobre todo, la conversación.',
+    coste: { vinculos: 8, orden: 2 }, sitio: { x: 30, y: 3, ancho: 8, colgado: true }, proporcion: 1.37, luz: { x: 50, y: 62, color: '#ffd9a8' } },
   { id: 'caja', companero: 'tuerca', orden: 1, abre: 'Las primeras reparaciones del taller. Y las primeras búsquedas de herramientas.', nombre: 'Caja de herramientas', descripcion: 'Arreglo cualquier cosa. El cajón de las herramientas sigue atascado.',
     coste: { orden: 3 }, sitio: { x: 25, y: 71, ancho: 19 }, proporcion: 0.91 },
   { id: 'aspiradora', companero: 'tuerca', orden: 3, abre: 'Una aspiradora con ideas propias.', nombre: 'Aspiradora robot', descripcion: 'Limpia sola. Es lo más productivo de esta casa.',
@@ -250,6 +262,15 @@ export const PROYECTOS_BARRIO: ProyectoBarrio[] = [
     sitio: { x: 22, y: 80, ancho: 5 }, arte: 'buzon',
     toques: ['El buzón del barrio. Está lleno. Casi todo es de Madeja para Madeja.', 'Hay una carta de Tofu. Pone «Sí». Otra vez.'] },
 ]
+
+/** Quién se cuela en cada casa cuando llevas días sin aparecer (fase 3) y dónde se planta. Se va solo con unos pocos retos. */
+export const VISITANTES: Partial<Record<CompaneroId, { quien: 'cuervo' | 'polilla' | 'caracol'; x: number; y: number; ancho: number }>> = {
+  nox: { quien: 'cuervo', x: 80, y: 70, ancho: 16 },
+  tuerca: { quien: 'caracol', x: 80, y: 80, ancho: 17 },
+  tofu: { quien: 'polilla', x: 78, y: 50, ancho: 16 },
+  bruma: { quien: 'caracol', x: 24, y: 46, ancho: 14 },
+  madeja: { quien: 'cuervo', x: 88, y: 67, ancho: 14 },
+}
 
 /** Dónde se pone Gregorio (la aspiradora) cuando está en casa de Nox. */
 export const GREGORIO_EN_NOX: ObjetoCasa['sitio'] = { x: 80, y: 80, ancho: 13 }

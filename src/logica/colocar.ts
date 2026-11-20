@@ -55,3 +55,13 @@ export function ordenOriginal(p: Partida, c: CompaneroId): Partida {
   const resto = Object.fromEntries(Object.entries(p.colocados).filter(([id]) => OBJETOS_CASA.find((o) => o.id === id)?.companero !== c))
   return { ...p, colocados: resto }
 }
+
+/** El baúl: lo guardado no se ve en la casa, pero sigue construido (y cuenta para todo). */
+export const guardado = (p: Partida, id: string) => Boolean(p.guardados?.includes(id))
+export function guardar(p: Partida, id: string): Partida {
+  const o = OBJETOS_CASA.find((k) => k.id === id)
+  if (!o || !movible(o) || guardado(p, id)) return p
+  return { ...p, guardados: [...(p.guardados ?? []), id] }
+}
+export const sacar = (p: Partida, id: string): Partida =>
+  guardado(p, id) ? { ...p, guardados: p.guardados!.filter((x) => x !== id) } : p

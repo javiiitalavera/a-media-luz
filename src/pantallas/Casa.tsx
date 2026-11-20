@@ -17,8 +17,8 @@ import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
 import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { Materiales } from '../componentes/Bolsa'
-import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
-import { colocar, encajar, movible, ordenOriginal, sitioDe } from '../logica/colocar'
+import { GREGORIO_EN_NOX, VISITANTES, sitioVisita } from '../contenido/casa'
+import { colocar, encajar, guardado, guardar, movible, ordenOriginal, sacar, sitioDe } from '../logica/colocar'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso, Punto } from '../componentes/Aviso'
 import { FichaVecino } from '../componentes/FichaVecino'
@@ -102,6 +102,9 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   // Ordenar la casa: los objetos se arrastran con el dedo; al soltar, se guarda dónde.
   const [ordenando, setOrdenando] = useState(false)
   const [arrastre, setArrastre] = useState<{ id: string; x: number; y: number } | null>(null)
+  const baul = useRef<HTMLButtonElement>(null)
+  const [verBaul, setVerBaul] = useState(false)
+  const enBaul = OBJETOS_CASA.filter((o) => o.companero === DUENO && guardado(partida, o.id))
   const verEtapa = useJuego((s) => s.verEtapa)
   const g = progreso(partida, DUENO, ahora)
   const [celebra, setCelebra] = useState<number | null>(null)
@@ -249,7 +252,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
   const gregorio = dondeGregorio(partida, ahora)
   const aspiradora = OBJETOS_CASA.find((o) => o.id === 'aspiradora')!
   const objetos = [
-    ...OBJETOS_CASA.filter((o) => o.companero === DUENO && o.id !== 'aspiradora' && construido(partida, o.id) && rutaArte(`casa/${DUENO}/objeto/${o.id}`))
+    ...OBJETOS_CASA.filter((o) => o.companero === DUENO && o.id !== 'aspiradora' && construido(partida, o.id) && !guardado(partida, o.id) && rutaArte(`casa/${DUENO}/objeto/${o.id}`))
       .map((o) => ({ ...o, sitio: sitioDe(partida, o, arrastre?.id === o.id ? arrastre : undefined) })),
     ...(gregorio === DUENO ? [DUENO === 'tuerca' ? aspiradora : { ...aspiradora, sitio: GREGORIO_EN_NOX }] : []),
   ]
@@ -297,7 +300,15 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
         {capas.map(({ o }) => o ? <Objeto key={o.id} o={o} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : TOQUES_OBJETO[o.id] ?? [o.descripcion]}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id}
           onMover={(x, y) => setArrastre({ id: o.id, ...encajar(o, x, y) })}
-          onSoltar={(x, y) => { setArrastre(null); sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera'); ajustar((p) => colocar(p, o.id, x, y)) }} /> : (
+          onSoltar={(x, y, punto) => {
+            setArrastre(null)
+            // Soltado encima del baúl: se guarda. Si no, se deja donde está.
+            const b = baul.current?.getBoundingClientRect()
+            if (b && punto.x >= b.left - 8 && punto.x <= b.right + 8 && punto.y >= b.top - 8 && punto.y <= b.bottom + 8) {
+              sfx.construir(); ajustar((p) => guardar(p, o.id)); return
+            }
+            sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera'); ajustar((p) => colocar(p, o.id, x, y))
+          }} /> : (
           <div key="nox" className={`absolute z-10 ${ordenando ? 'pointer-events-none' : ''}`} style={{ left: `${NOX.x}%`, top: `${NOX.y}%`, width: `${anchoNox}%`, transform: 'translate(-50%, -100%)', transition: 'width 0.8s cubic-bezier(.3,.7,.4,1)' }}>
             <span aria-hidden className="sombra-vecino pointer-events-none" data-vecino={conHuevo ? 'huevo' : DUENO} />
             <button type="button" aria-label={conHuevo ? UI.casa.huevo : UI.bosque.hablar(COMPANEROS[DUENO].nombre)}
@@ -324,6 +335,15 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           </div>
         ))}
 
+        {/* El visitante que se cuela cuando llevas días sin aparecer: se va solo con unos pocos retos. */}
+        {esUltimo && vivo && rReal.visitante && !ordenando && VISITANTES[DUENO] && (() => { const v = VISITANTES[DUENO]!; return (
+          <button type="button" aria-label={UI.casa.visitante(UI.casa.visitantes[v.quien])}
+            onClick={(e) => { e.stopPropagation(); sfx.toque(); globoEn(e, `${UI.casa.visitantes[v.quien]}: «${UI.casa.dichoVisitante[v.quien]}»`) }}
+            className={`absolute z-10 ${v.quien === 'polilla' ? 'anim-flotar' : 'anim-respirar'}`}
+            style={{ left: `${v.x}%`, top: `${v.y}%`, width: `${v.ancho}%`, transform: 'translate(-50%, -100%)' }}>
+            <img src={`/arte/visitantes/${v.quien}.webp`} alt="" draggable={false} className="block w-full" />
+          </button>
+        ) })()}
         {deVisita && sitioVisita(DUENO, deVisita) && (() => { const sv = sitioVisita(DUENO, deVisita)!; return (
           <button type="button" aria-label={UI.casa.deVisita(COMPANEROS[deVisita].nombre)}
             onClick={(e) => { e.stopPropagation(); const l = FRASES_VISITA[deVisita] ?? []; if (l.length) globoEn(e, `${COMPANEROS[deVisita].nombre}: «${l[toquesSit % l.length]}»`); setToquesSit((n) => n + 1) }}
@@ -502,12 +522,50 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
           </div>
           <div role="group" aria-label={UI.casa.ordenar} className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-40 flex items-end justify-between px-3">
             <BotonPastilla onToque={() => { sfx.toque(); ajustar((p) => ordenOriginal(p, DUENO)) }}>{UI.casa.comoAlPrincipio}</BotonPastilla>
+            {/* El baúl: suelta algo encima para guardarlo; tócalo para ver lo guardado y sacarlo. */}
+            <button ref={baul} type="button" aria-label={UI.casa.baul(enBaul.length)} onClick={() => { sfx.toque(); setVerBaul(true) }}
+              className={`relative -mb-1 w-[74px] transition-transform ${arrastre ? 'scale-110' : ''}`}>
+              <img src={`/arte/baul/${arrastre ? 'abierto' : 'cerrado'}.webp`} alt="" draggable={false} className="block w-full drop-shadow-lg" />
+              {enBaul.length > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#a8424c] px-1 text-[12px] font-bold text-white">{enBaul.length}</span>}
+            </button>
             <button type="button" onClick={() => { sfx.elegir(); setOrdenando(false) }}
               className="flex h-12 items-center rounded-full bg-ambar px-6 text-[16px] font-bold text-tinta shadow-lg ring-2 ring-tarjeta active:scale-95">{UI.casa.listo}</button>
           </div>
         </>
       )}
+      {verBaul && <HojaBaul objetos={enBaul} onSacar={(id) => { sfx.construir(); ajustar((p) => sacar(p, id)) }} onCerrar={() => setVerBaul(false)} />}
     </main>
+  )
+}
+
+/** Lo guardado en el baúl de esta casa: se saca con un toque (vuelve a su sitio). */
+function HojaBaul({ objetos, onSacar, onCerrar }: { objetos: ObjetoCasa[]; onSacar: (id: string) => void; onCerrar: () => void }) {
+  return createPortal(
+    <div className="fixed inset-0 z-[45] mx-auto flex max-w-[430px] touch-none flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
+      <section role="dialog" aria-label={UI.casa.baulTitulo} onClick={(e) => e.stopPropagation()}
+        className="anim-hoja max-h-[70dvh] touch-pan-y overflow-y-auto overscroll-contain rounded-t-[28px] bg-fondo px-4 pt-3 pb-[max(20px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-borde" />
+        <div className="flex items-center justify-between">
+          <h2 className="text-[22px] font-bold">{UI.casa.baulTitulo}</h2>
+          <button type="button" onClick={onCerrar} className="min-h-11 px-2 font-semibold text-texto-3">{UI.casa.cerrar}</button>
+        </div>
+        {objetos.length === 0 ? <p className="mt-2 text-[15px] text-texto-3">{UI.casa.baulVacio}</p> : (
+          <ul className="mt-3 grid grid-cols-3 gap-2">
+            {objetos.map((o) => (
+              <li key={o.id}>
+                <button type="button" onClick={() => onSacar(o.id)} aria-label={UI.casa.sacarDelBaul(o.nombre)}
+                  className="flex min-h-[120px] w-full flex-col items-center justify-start gap-1.5 rounded-3xl bg-tarjeta p-2.5 text-center shadow-sm active:scale-[0.97]">
+                  <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" className="h-14 w-14 object-contain" draggable={false} />
+                  <span className="text-[12px] leading-tight font-semibold">{o.nombre}</span>
+                  <span className="text-[12px] font-bold text-salvia-texto">{UI.casa.sacar}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>,
+    document.body,
   )
 }
 
@@ -615,7 +673,7 @@ function Objeto({ o, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeM
   o: ObjetoCasa; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean
-  onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number) => void
+  onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
 }) {
   const [toques, setToques] = useState(0)
   useEffect(() => { if (ordenando) setToques(0) }, [ordenando])
@@ -625,15 +683,18 @@ function Objeto({ o, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeM
     const i = inicio.current!
     return { x: i.x + ((e.clientX - i.px) / ew) * 100, y: i.y + ((e.clientY - i.py) / eh) * 100 }
   }
-  const soltar = () => { const i = inicio.current; inicio.current = null; if (i) onSoltar?.(i.ultimo.x, i.ultimo.y) }
+  const ultimoPunto = useRef({ x: 0, y: 0 })
+  const soltar = () => { const i = inicio.current; inicio.current = null; if (i) onSoltar?.(i.ultimo.x, i.ultimo.y, ultimoPunto.current) }
   const eventosArrastre = arrastrar ? {
     onPointerDown: (e: React.PointerEvent<HTMLButtonElement>) => {
       e.stopPropagation()
       e.currentTarget.setPointerCapture(e.pointerId)
       inicio.current = { px: e.clientX, py: e.clientY, x: o.sitio.x, y: o.sitio.y, ultimo: { x: o.sitio.x, y: o.sitio.y } }
+      ultimoPunto.current = { x: e.clientX, y: e.clientY }
     },
     onPointerMove: (e: React.PointerEvent<HTMLButtonElement>) => {
       if (!inicio.current) return
+      ultimoPunto.current = { x: e.clientX, y: e.clientY }
       inicio.current.ultimo = aDonde(e)
       onMover?.(inicio.current.ultimo.x, inicio.current.ultimo.y)
     },
