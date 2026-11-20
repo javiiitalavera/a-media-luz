@@ -22,6 +22,11 @@ function conBruma(construido: string[]): Partida {
   const p = conTofu(construido)
   return { ...p, meses: [...p.meses!, { companero: 'bruma', inicio: en('2026-01-06', 8).toISOString() }] }
 }
+/** Y con Madeja. */
+function conMadeja(construido: string[]): Partida {
+  const p = conBruma(construido)
+  return { ...p, meses: [...p.meses!, { companero: 'madeja', inicio: en('2026-01-06', 8).toISOString() }] }
+}
 const dia = (n: number, h = 10) => en(sumarDias('2026-01-07', n), h)
 
 describe('situaciones', () => {
@@ -176,5 +181,16 @@ describe('situaciones', () => {
     const visitas = (p: Partida) => Array.from({ length: 60 }, (_, i) => microDeHoy(p, 'tuerca', dia(i))?.visita).filter(Boolean)
     expect(visitas(conTofu([]))).not.toContain('bruma')
     expect(visitas(conBruma([]))).toContain('bruma')
+  })
+
+  it('Madeja: el cotilleo empieza sin construir nada y acaba en su casa', () => {
+    let p = conMadeja([])
+    p = { ...p, situaciones: { barquitos: { fase: 2, dia: '2026-01-01', fin: true } } }
+    p = avanzar(p, dia(0)).partida
+    expect(p.noticias!.at(-1)!.texto).toMatch(/ronca/)
+    p = avanzar(avanzar(p, dia(1)).partida, dia(2)).partida
+    expect(p.situaciones!.cotilleo.fin).toBe(true)
+    expect(p.noticias!.at(-1)!.lugar).toBe('madeja')
+    expect(fraseDeSituacion(p, 'nox', dia(2))![0]).toMatch(/bizcocho/)
   })
 })

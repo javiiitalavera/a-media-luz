@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { construir, disponibles, faltan, ganados, proyectosVisibles, queRecompensan } from './casa'
-import { OBJETOS_CASA } from '../contenido'
+import { construir, disponibles, faltan, ganados, proyectosBarrioVisibles, proyectosVisibles, queRecompensan } from './casa'
+import { OBJETOS_CASA, PROYECTOS_BARRIO } from '../contenido'
 import { con, en, nueva } from './test-utils'
 import type { Partida } from './partida'
 
@@ -44,5 +44,15 @@ describe('proyectos', () => {
   it('dice lo que falta', () => {
     const p = con(nueva(), 'cuerpo', '2026-01-05')
     expect(faltan(p, objeto('hoguera'), en('2026-01-05', 23))).toEqual({ cuerpo: 2 })
+  })
+
+  it('los proyectos del barrio se desvelan de uno en uno, después del puente', () => {
+    const p = nueva()
+    expect(proyectosBarrioVisibles(p).map((b) => b.id)).toEqual(['puente'])
+    const conPuente = { ...p, construcciones: [{ objetoId: 'puente', fecha: en('2026-01-06').toISOString() }] }
+    expect(proyectosBarrioVisibles(conPuente).map((b) => b.id)).toEqual(['puente', 'fuente'])
+    // Los ids del barrio no chocan con los de las casas (construido() los mira todos juntos).
+    const ids = [...OBJETOS_CASA, ...PROYECTOS_BARRIO].map((o) => o.id)
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })

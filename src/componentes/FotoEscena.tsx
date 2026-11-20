@@ -1,7 +1,7 @@
 // Pinta una foto del Álbum a partir de la escena guardada (componentes/momentos), con el arte de siempre:
 // un recorte cuadrado de la casa alrededor del vecino, o del barrio alrededor del puente.
 import type { CSSProperties } from 'react'
-import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, type CompaneroId } from '../contenido'
+import { ESCENAS, OBJETOS_CASA, PARCELAS, PASO_ARROYO, PROPORCION_BARRIO, PROYECTOS_BARRIO, type CompaneroId } from '../contenido'
 import { colocarCasita } from '../logica/mapaBarrio'
 import { GREGORIO_EN_NOX, sitioVisita } from '../contenido/casa'
 import { sitioDe } from '../logica/colocar'
@@ -70,6 +70,10 @@ function Barrio({ e }: { e: EscenaFoto }) {
         <img src={rutaArte('barrio/puente')} alt="" draggable={false}
           style={{ position: 'absolute', left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -50%', rotate: `${PASO_ARROYO.giro}deg` }} />
       )}
+      {PROYECTOS_BARRIO.filter((b) => b.sitio && b.arte && e.objetos.includes(b.id)).map((b) => (
+        <img key={b.id} src={rutaArte(`barrio/proyecto/${b.arte}`)} alt="" draggable={false}
+          style={{ position: 'absolute', left: `${b.sitio!.x}%`, top: `${b.sitio!.y}%`, width: `${b.sitio!.ancho}%`, transform: 'translate(-50%, -100%)' }} />
+      ))}
       <Huellas ids={e.huellas} />
       {(e.vecinos ?? []).map((c, i) => {
         const parcela = PARCELAS[i]

@@ -24,7 +24,7 @@ export const CASITAS: Record<CompaneroId, {
   tuerca: { apoyo: { x: 27, y: 91 }, ventana: { x: 73, y: 63 }, proporcion: 801 / 831 },
   tofu: { apoyo: { x: 34, y: 91 }, ventana: { x: 40, y: 53 }, proporcion: 739 / 800 },
   bruma: { apoyo: { x: 40, y: 66 }, ventana: { x: 76, y: 45 }, proporcion: 1019 / 986 },
-  madeja: { apoyo: { x: 50, y: 90 }, ventana: { x: 50, y: 55 }, proporcion: 1 },
+  madeja: { apoyo: { x: 38, y: 93 }, ventana: { x: 70.5, y: 61 }, proporcion: 1220 / 1239 },
 }
 
 /** El paso de piedras del arroyo, donde va el puente. */

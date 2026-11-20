@@ -28,6 +28,8 @@
 | `public/arte/casa/tuerca/fondo.webp`, `…/objetos/*.webp` | Taller de Tuerca, sus 6 objetos y sus 3 premios de retos |
 | `public/arte/casa/nox/objetos/zapatillas`, `bufanda`, `farol-luna` | Premios de los antiguos retos de Nox (sin uso de momento) |
 | `public/arte/barrio/mapa.webp` | Mapa del barrio: 5 parcelas, plaza y arroyo |
+| `public/arte/barrio/proyectos/*.webp` | Proyectos del barrio: fuente, tablón, columpio, pérgola, horno y buzón |
+| Láminas del 20/11/2026 | 6 objetos más por casa (Nox, Tuerca, Tofu y Bruma), en `public/arte/casa/<vecino>/objetos/` |
 | `public/arte/curiosidades/*.webp` | 12 curiosidades del Álbum (piña, salchicha, zapatilla, tornillo, llave, tuerca con lazo, semilla, gafas, marcapáginas, cerilla, etiqueta, piedra-corazón) |
 | `public/arte/huellas/*.webp` | Huellas de las situaciones: cartel en blanco, cartel chamuscado, extintor, expediente, puente, libro chamuscado, archivador y lupa (el texto de los carteles lo pone la app) |
 | `public/arte/personajes/tofu/**`, `huevos/tofu/*`, `casitas/tofu.webp`, `casa/tofu/*` | Tofu: 3 etapas × 4 caras (joven y adulto rehechos el 19/11/2026 con cuerpo de bebé), huevo, casita, invernadero-biblioteca (941 × 1672) y sus 3 proyectos (pila de libros, pizarra, maceta) |
@@ -39,6 +41,6 @@
 Un compañero puede tener su mes cuando tiene **huevo, escenario, casita y sus caras** (`tieneMes` en `src/arte/manifiesto.ts`).
 | `public/arte/huevos/nox/cerrado.webp`, `agrietado.webp` | Huevo de Nox (600 × 600, mismo encuadre) |
 | `public/arte/personajes/bruma/**`, `huevos/bruma/*`, `casa/bruma/*`, `casitas/bruma.webp` | Bruma: 3 etapas × 4 caras, huevo, estanque (941 × 1672) y 6 objetos (tetera, campanillas y hamaca son proyectos; frasco, paraguas y barquito, huellas de sus historias). Casita del mapa (cabaña de juncos con charca). |
-| `docs/arte/madeja-fondo.webp` | Escenario de Madeja (madriguera de lana), reservado hasta su incorporación |
+| `public/arte/personajes/madeja/**`, `huevos/madeja/*`, `casa/madeja/*`, `casitas/madeja.webp` | Madeja: 3 etapas × 4 caras, huevo, madriguera de lana, 6 objetos (cesto, teléfono, mecedora, álbum, guirnalda, buzón) y casita del mapa |
 | `public/arte/personajes/nox/joven/*.webp` | Nox joven, mismas 4 expresiones |
 | `public/arte/personajes/nox/adulto/*.webp` | Nox adulto, mismas 4 expresiones. Joven y adulto rehechos el 19/11/2026 con cuerpo de bebé (bufanda; de adulto, pecho esponjoso) |

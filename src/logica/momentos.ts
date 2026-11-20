@@ -1,7 +1,7 @@
 // Momentos del Álbum (decidido por Javi, 18/11/2026): fotos que hace el propio juego en los hitos
 // (nace un vecino, crece, termina una historia). Se guarda cómo estaba la escena, no una imagen:
 // el Álbum la vuelve a pintar con el arte que ya hay.
-import { COMPANEROS, HISTORIAS, OBJETOS_CASA, UI, type CompaneroId, type Momento as MomentoDia } from '../contenido'
+import { COMPANEROS, HISTORIAS, OBJETOS_CASA, PROYECTOS_BARRIO, UI, type CompaneroId, type Momento as MomentoDia } from '../contenido'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
 import type { Partida } from './partida'
 import { construido } from './casa'
@@ -44,7 +44,7 @@ function colocadosDe(p: Partida, c: CompaneroId) {
 /** Cómo está ahora mismo un sitio, para la foto. */
 export function fotoDe(p: Partida, lugar: Lugar, ahora: Date, cara: Cara = 'contento'): EscenaFoto {
   const base = { huellas: huellasEn(p, lugar).map((h) => h.id), momentoDia: momentoDelDia(ahora) }
-  if (lugar === 'barrio') return { ...base, lugar, etapa: 0, cara, objetos: construido(p, 'puente') ? ['puente'] : [], gregorio: false, vecinos: nacidos(p, ahora) }
+  if (lugar === 'barrio') return { ...base, lugar, etapa: 0, cara, objetos: PROYECTOS_BARRIO.filter((b) => construido(p, b.id)).map((b) => b.id), gregorio: false, vecinos: nacidos(p, ahora) }
   return {
     ...base,
     lugar,

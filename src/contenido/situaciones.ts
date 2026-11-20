@@ -301,6 +301,122 @@ export const SITUACIONES: Situacion[] = [
       },
     ],
   },
+  // Madeja
+  {
+    id: 'cotilleo',
+    titulo: 'El cotilleo',
+    requiere: { vecinos: ['madeja', 'nox', 'tuerca'], construido: [] },
+    fases: [
+      {
+        noticia: 'Madeja ha llegado al barrio y en una mañana ya sabe que Nox ronca, que Tuerca habla con su aspiradora y que Tofu lee en voz alta.',
+        lugar: 'barrio',
+        frases: {
+          madeja: ['Una mañana. Solo he necesitado una mañana. Y una ventana abierta.'],
+          nox: ['Yo no ronco. Respiro con convicción.'],
+          tuerca: ['¿Cómo sabe lo de Gregorio? Gregorio no habla. Creo.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha abierto un expediente a Madeja por «difusión de datos vecinales». Madeja ya ha contado lo del expediente.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Expediente 003: Madeja. Asunto: todo. Le he puesto candado. Ya sabe la combinación.'],
+          madeja: ['Me ha abierto un expediente. Qué detalle. Nadie me había archivado nunca.'],
+        },
+      },
+      {
+        noticia: 'Madeja ha organizado una merienda para hacer las paces. Ha venido todo el barrio. Tuerca ha tomado acta de lo que se ha dicho. Madeja también.',
+        lugar: 'madeja',
+        frases: {
+          madeja: ['Ha venido todo el mundo. Nadie ha dicho nada importante. Lo he apuntado todo igual.'],
+          nox: ['Había bizcocho. Me he comido el expediente. Era de bizcocho también.'],
+          tuerca: ['Acta de la merienda: tres tazas, un bizcocho, cero secretos. Madeja dice que mínimo cinco.'],
+        },
+      },
+    ],
+  },
+  {
+    id: 'calcetines',
+    titulo: 'Los calcetines',
+    requiere: { vecinos: ['madeja', 'nox', 'tofu', 'tuerca'], construido: ['cesto'] },
+    fases: [
+      {
+        noticia: 'Madeja ha tejido calcetines para todo el barrio. Nadie los ha pedido. Todos los ha medido a escondidas.',
+        lugar: 'madeja',
+        frases: {
+          madeja: ['Un par para cada uno. Las tallas las he sacado a ojo. Tengo muy buen ojo.'],
+          tofu: ['Me ha tejido calcetines. No tengo pies. Los llevo en el brote.'],
+        },
+      },
+      {
+        noticia: 'Los calcetines de Nox se han chamuscado en la primera hora. Nox dice que eran de prueba.',
+        lugar: 'nox',
+        frases: {
+          nox: ['Eran calcetines de verano. Muy de verano. De verano a la brasa.'],
+          madeja: ['Le he tejido otros. De lana ignífuga. No existe. Los he tejido igual.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha clasificado sus calcetines por talla, color y día de la semana. Solo tiene un par. Lleva una semana sin ponérselos para no desordenarlos.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['Calcetines: un par. Clasificación: completa. Uso: pendiente de aprobación.'],
+          madeja: ['Tuerca no se pone mis calcetines. Los archiva. Es su forma de querer.'],
+        },
+      },
+    ],
+  },
+  {
+    id: 'linea',
+    titulo: 'La línea directa',
+    requiere: { vecinos: ['madeja', 'tuerca', 'bruma'], construido: ['telefono'] },
+    fases: [
+      {
+        noticia: 'Madeja tiene teléfono. A las seis de la mañana ya había llamado a todo el barrio para decir que tenía teléfono.',
+        lugar: 'madeja',
+        frases: {
+          madeja: ['¡Tengo línea! Ya os he llamado a todos. Algunos no lo cogíais. Insistí.'],
+          tuerca: ['Llamada entrante a las 6:02. Contenido: «Hola». Lo he archivado como urgente por si acaso.'],
+        },
+      },
+      {
+        noticia: 'Tuerca ha redactado un horario de llamadas: de diez a doce y de cinco a siete. Madeja ha llamado a las nueve para preguntar si el horario iba en serio.',
+        lugar: 'tuerca',
+        frases: {
+          tuerca: ['El horario es oficial. Lo he sellado. Ella llama para preguntar por el sello.'],
+          madeja: ['Un horario. Para hablar. Ni que fuéramos un ministerio.'],
+        },
+        decision: {
+          pregunta: '¿A quién llama Madeja de noche, fuera de horario?',
+          opciones: [
+            { id: 'bruma', texto: 'A Bruma, que no duerme', respuesta: 'Bruma ha cogido a la primera. Llevan dos horas. Bruma casi no ha hablado.' },
+            { id: 'nadie', texto: 'A nadie: que respete el horario', respuesta: 'Madeja ha mirado el teléfono toda la noche. No ha llamado. Le ha costado.' },
+          ],
+        },
+      },
+      {
+        noticia: '',
+        lugar: 'madeja',
+        segun: {
+          bruma: {
+            noticia: 'Madeja y Bruma hablan cada noche fuera de horario. Tuerca lo sabe. Ha añadido un anexo: «Excepto ellas dos».',
+            frases: {
+              bruma: ['De noche, Madeja habla bajito. Es otra Madeja. Me gusta.'],
+              madeja: ['Bruma escucha como nadie. Y no lo cuenta. Somos el equilibrio perfecto.'],
+              tuerca: ['Anexo 1: excepto Madeja y Bruma. Anexo 2: no preguntar por el anexo 1.'],
+            },
+          },
+          nadie: {
+            noticia: 'Madeja ha cumplido el horario una semana entera. Tuerca le ha dado un diploma. Madeja ha llamado a todos para contarlo. Dentro de horario.',
+            frases: {
+              madeja: ['Una semana sin llamar de noche. Me han dado un diploma. Lo he contado por teléfono, claro.'],
+              tuerca: ['Diploma al cumplimiento horario. Primer diploma que doy. Me he emocionado. Dentro de horario.'],
+            },
+          },
+        },
+      },
+    ],
+  },
   // Bruma
   {
     id: 'barquitos',
@@ -590,6 +706,13 @@ export const MICROS: Micro[] = [
   { casa: 'bruma', requiere: ['campanillas'], texto: 'No hace viento, pero las campanillas suenan. Bruma dice que no ha sido ella. Ha sido ella.' },
   { casa: 'bruma', requiere: ['hamaca', 'nox'], texto: 'Nox espera en el embarcadero a que la hamaca quede libre. Bruma ha decidido no volver a levantarse.', visita: 'nox', cara: 'enfurrunado' },
   { casa: 'tuerca', requiere: ['bruma'], texto: 'Se ha colado niebla en el taller. Tuerca la está intentando archivar.', visita: 'bruma' },
+  { casa: 'madeja', requiere: [], texto: 'Madeja está tejiendo algo para alguien. No dice para quién. Mira mucho hacia tu lado.' },
+  { casa: 'madeja', requiere: ['telefono'], texto: 'El teléfono de Madeja suena. Es Madeja, desde el teléfono de Tuerca, para probar si suena.' },
+  { casa: 'madeja', requiere: ['mecedora', 'bruma'], texto: 'Bruma está en la mecedora. Madeja la mece. Ninguna de las dos habla. Es raro. Es bonito.', visita: 'bruma' },
+  { casa: 'madeja', requiere: [], texto: 'Madeja se ha quedado dormida en mitad de una frase. Era una frase muy larga.', cara: 'dormido' },
+  { casa: 'madeja', requiere: ['nox'], texto: 'Nox ha venido a por algo de comer y lleva una hora escuchando cotilleos. Ya no se acuerda de qué venía a comer.', visita: 'nox' },
+  { casa: 'madeja', requiere: ['tofu'], texto: 'Tofu está de visita. Madeja habla. Tofu escucha. Los dos parecen encantados.', visita: 'tofu' },
+  { casa: 'nox', requiere: ['madeja'], texto: 'Madeja le está tomando medidas a Nox para unos calcetines. Nox no ha dicho que sí. Nox no ha dicho que no.', visita: 'madeja' },
   { casa: 'nox', requiere: ['hoguera', 'tofu'], texto: 'Tofu lleva diez minutos mirando la hoguera de Nox sin decir nada. Nox empieza a ponerse nervioso.', visita: 'tofu' },
 ]
 
@@ -599,4 +722,5 @@ export const FRASES_VISITA: Partial<Record<CompaneroId, string[]>> = {
   nox: ['He venido a ver si tenías algo de comer. No tienes.', 'Me he sentado en tu silla. Ahora es mía. Ponle una etiqueta.'],
   tofu: ['He venido a mirar. Ya he mirado.', 'Tu casa tiene muchas cosas. Pocas necesarias.'],
   bruma: ['He venido a ver cómo estabas. Ya lo sé. No hace falta que me lo digas.', 'Qué casa tan llena de cosas. Y de ruido. Me quedo un poco.', 'No me hagas caso. Soy niebla de paso.'],
+  madeja: ['¡Pasaba por aquí! Bueno, venía aposta. ¿Qué hay de nuevo?', 'Qué bonito lo tienes. ¿Quién te lo ha regalado? Cuéntamelo.', 'Me quedo un ratito. Un ratito largo.'],
 }

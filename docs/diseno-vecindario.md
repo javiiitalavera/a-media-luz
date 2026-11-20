@@ -417,3 +417,25 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Casitas habitadas (20/11/2026, PR 11)
 - Cada casita del mapa tiene su gesto: humo en bocanadas por la chimenea de Tuerca, luz cálida y brasas en la de Nox, la maceta de Tofu que da dos brincos y suelta una hoja, y un barquito que deriva por el estanque de Bruma dejando ondas. Con movimiento reducido se quedan quietos.
+
+### Madeja, la quinta vecina (20/11/2026, rama `dev/madeja`)
+- **Arte recortado:** cachorro, joven (lazo y aguja de tejer) y adulta (bufanda de colores y botones), 4 caras cada una, y su huevo con lazo y botón. Su madriguera de lana (el escenario que ya teníamos) vuelve a `public/arte/casa/madeja/fondo.webp`.
+- **Falta para que llegue:** su casita del mapa (sin ella su huevo no aparece) y sus objetos (sin proyectos no puede crecer).
+- **Voz:** cotilla, cariñosa de más; frases revisadas y ampliadas (6 saludos por momento, 8 reacciones), ficha («Ovillo con orejas»), charla propia y pullas con los demás (y los demás sobre ella).
+- **Primera historia, sin objetos:** *El cotilleo* (Madeja, Nox y Tuerca): en una mañana sabe todos los secretos del barrio, Tuerca le abre un expediente y acaba en una merienda de paz en su casa. Micros: Madeja tejiendo para alguien, dormida a mitad de frase, Nox y Tofu de visita, Madeja tomándole medidas a Nox para unos calcetines.
+
+### Madeja llega y catálogo completo (20/11/2026, rama `dev/madeja`)
+- **Casita del mapa** (madriguera de punto con ovillo) en la quinta parcela, arriba a la derecha. Madeja llega cuando Bruma es joven y tiene un proyecto: su huevo aparece en la puerta del estanque.
+- **Proyectos de Madeja** (casi todo pide hilo): cesto de costura (abre «Los calcetines»), teléfono de rueda (abre «La línea directa»), mecedora, álbum de fotos, guirnalda de banderines (colgada) y buzón.
+- **Historias nuevas:** *Los calcetines* (calcetines para todo el barrio: los de Nox se chamuscan, Tofu los lleva en el brote, Tuerca los archiva sin estrenar) y *La línea directa* (Madeja llama a todos a las seis, Tuerca impone un horario y tú decides a quién llama de noche: a Bruma o a nadie). Micros nuevos con el teléfono y la mecedora.
+- **Catálogo completo:** los objetos que estaban dibujados pero no se podían construir (cojín, farolillo, seta, estantería, zapatillas, bufanda y farol de luna de Nox; flexo, cajonera, estante de tarros, reloj, medalla y Tuerquita de Tuerca) siguen ahora la cadena de proyectos de su casa, después de los tres primeros, de uno en uno. La estantería de Nox cambia de sitio para no quedar detrás del horno.
+
+### Más objetos y la plaza (20/11/2026, rama `dev/mas-objetos`)
+- **24 objetos nuevos** que siguen la cadena de proyectos de cada casa, de uno en uno:
+  - **Nox:** saco de hojas (colgado), mancuernas de piedra, comba, parrilla, colchoneta de musgo y bicicleta de madera.
+  - **Tuerca:** archivador, máquina de escribir, corcho de pistas (en la pared), balanza, lámpara de piezas y cajas apiladas.
+  - **Tofu:** telescopio, globo terráqueo, atril, caballete, tablero de ajedrez y gramófono.
+  - **Bruma:** tarro de luciérnagas, columpio en el embarcadero, cometa de nube (colgada), lámpara de loto flotando, manta en la piedra y farolillo de papel (colgado).
+  Cada uno con su frase al tocarlo y su sonido. Con esto las casas tienen de 9 a 16 proyectos.
+- **Proyectos del barrio:** después del puente, también de uno en uno: fuente, tablón del barrio, columpio, pérgola con farolillos, horno del barrio y buzón. Se ven en el mapa alrededor de la plaza, cuentan algo al tocarlos y salen en las fotos del Álbum. Sus ids no coinciden con los de las casas (`tablon-plaza`, `horno-plaza`…).
+- **Curiosidades de Bruma:** ocho que encuentra por sorpresa al tachar retos de Calma (gota de rocío, pluma lila, concha vacía, nube en una cajita, piedra de río, loto cerrado, reloj de arena y llave de cristal).

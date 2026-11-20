@@ -28,7 +28,7 @@ describe('copias de seguridad', () => {
     const p = crearPartida('nox', ahora, undefined, true)
     for (const campos of [
       { meses: [] },
-      { meses: [{ companero: 'madeja', inicio: p.inicio }] },
+      { meses: [{ companero: 'gato', inicio: p.inicio }] },
       { situaciones: { normativa: { fase: 99, dia: '2026-11-19' } } },
       { situaciones: { normativa: null } },
       { noticias: {} },

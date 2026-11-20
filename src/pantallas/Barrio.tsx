@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom'
 import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
 import { CASITAS } from '../contenido/barrio'
 import type { Partida } from '../logica/partida'
-import { construido, disponibles, faltan } from '../logica/casa'
+import { construido, disponibles, faltan, proyectosBarrioVisibles } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
 import { rutaArte } from '../arte/manifiesto'
@@ -80,7 +80,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const puente = construido(partida, 'puente')
   const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
-  const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
+  const listos = abierto && proyectosBarrioVisibles(partida).some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
   const entrar = (c: CompaneroId, ir = (p?: Punto) => onCasa(c, p)) => {
     if (esperaEntrada.current !== undefined) return
     sfx.puerta()
@@ -115,6 +115,14 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
             <img src={rutaArte('barrio/puente')} alt={UI.barrio.puente} className={`relative block w-full ${proyectoNuevo === 'puente' ? 'anim-colocar' : ''}`} draggable={false} />
           </div>
         )}
+        {/* Lo construido en la plaza: se apoya en el suelo y al tocarlo cuenta algo. */}
+        {PROYECTOS_BARRIO.filter((b) => b.sitio && b.arte && construido(partida, b.id)).map((b) => (
+          <button key={b.id} type="button" aria-label={b.nombre}
+            onClick={(e) => { sfx.objeto('madera'); globoEn(e, b.toques?.[Math.floor(Math.random() * b.toques.length)] ?? b.descripcion) }}
+            className="mueble-plaza absolute" style={juntoAlSuelo(b.sitio!)}>
+            <img src={rutaArte(`barrio/proyecto/${b.arte}`)} alt="" draggable={false} className={`block w-full ${proyectoNuevo === b.id ? 'anim-colocar' : ''}`} />
+          </button>
+        ))}
         {huellasEn(partida, 'barrio').map((h) => (
           <button key={h.id} type="button" onClick={(e) => {
             if (h.toque) globoEn(e, h.textoCorto && h.texto ? `«${h.texto.replace('\n', ' ')}». ${h.toque}` : h.toque)
@@ -227,13 +235,13 @@ function HojaBarrio({ partida, ahora, abierto, onConstruido, onCerrar }: { parti
         <div className="mt-2 rounded-2xl bg-tarjeta px-2 py-2.5"><Materiales mat={disponibles(partida, ahora)} /></div>
         {!abierto && <p className="mt-1 text-[14px] text-texto-3">{UI.casa.barrioNecesita}</p>}
         <ul className="mt-3 flex flex-col gap-2.5">
-          {PROYECTOS_BARRIO.map((b) => {
+          {proyectosBarrioVisibles(partida).map((b) => {
             const hecho = construido(partida, b.id)
             const f = faltan(partida, b, ahora)
             const puede = abierto && !hecho && Object.keys(f).length === 0
             return (
               <li key={b.id} className="flex items-center gap-3 rounded-3xl bg-tarjeta p-3">
-                <img src={rutaArte(`huella/${b.id === 'puente' ? 'puente' : 'expediente'}`)} alt="" className="h-16 w-16 shrink-0 object-contain" />
+                <img src={b.arte ? rutaArte(`barrio/proyecto/${b.arte}`) : rutaArte('barrio/puente')} alt="" className="h-16 w-16 shrink-0 object-contain" />
                 <div className="min-w-0 flex-1">
                   <div className="font-bold">{b.nombre}</div>
                   <div className="text-[13px] leading-snug text-texto-3 italic">«{b.descripcion}»</div>

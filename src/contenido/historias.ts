@@ -51,6 +51,18 @@ export const HISTORIAS: Partial<Record<CompaneroId, Historia>> = {
     ],
     vecino: ['Nubecilla con ojeras', 'Niebla con criterio', 'Borrasca serena'],
   },
+  madeja: {
+    especie: 'Ovillo con orejas',
+    historia: 'Se desprendió de una bufanda que alguien tejía para otra persona y nunca terminó. Desde entonces une cosas: hebras, vecinos, conversaciones. Lo sabe todo de todos, y lo poco que no sabe se lo imagina con mucho detalle.',
+    necesita: 'Vive de tus Vínculos: llamar, quedar, escribir, dar las gracias. Con eso junta hilo para su madriguera y crece. Si te encierras, se enreda. Y cotillea sobre ti. Por cariño.',
+    despedida: 'Encantada. Ya me lo contarás todo.',
+    cierre: [
+      'Sigo siendo un ovillo pequeño. Pero un ovillo pequeño da para mucha bufanda.',
+      'He crecido. Ahora conozco a más gente. Y más cosas de esa gente.',
+      'Adulta, con bufanda y con la agenda llena. Gracias por traerme gente.',
+    ],
+    vecino: ['Ovillo con antena', 'Red social de lana', 'Abuela de todo el barrio'],
+  },
   tuerca: {
     especie: 'Robot de taller',
     historia: 'Lo montaron con piezas sobrantes y un engranaje que no encajaba en ningún sitio, así que se lo pusieron en la cabeza. Desde entonces ordena todo lo que toca, menos sus sentimientos, que tiene etiquetados como «VARIOS».',
