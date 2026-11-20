@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { COMPANEROS, UI, type CompaneroId } from './contenido'
 import type { Lugar } from './contenido/situaciones'
 import { useJuego } from './estado/juego'
+import { ahora as reloj } from './logica/reloj'
 import { momentoDelDia } from './logica/momento'
 import { mesActual } from './logica/meses'
 import { nacidos } from './logica/etapas'
@@ -32,7 +33,12 @@ export default function App() {
   // La última casa visitada: desde el barrio, un toque te devuelve a ella.
   const [ultimaCasa, setUltimaCasa] = useState<CompaneroId | null>(null)
   useEffect(() => { if (casa) setUltimaCasa(casa) }, [casa])
-  const [verBarrio, setVerBarrio] = useState(false)
+  // Al abrir la app se empieza en el barrio si ya hay barrio (dos vecinos o más); si no, en la casa del primero
+  // (decidido por Javi, 20/11/2026). Al cambiar de pestaña y volver, sigues donde estabas.
+  const [verBarrio, setVerBarrio] = useState(() => {
+    const p = useJuego.getState().partida
+    return Boolean(p && nacidos(p, reloj()).length >= 2)
+  })
   const [sobre, setSobre] = useState(false)
   // Si vienes del sobre a decidir algo, la casa abre la pregunta directamente.
   const [abrirDecision, setAbrirDecision] = useState(false)
@@ -56,8 +62,7 @@ export default function App() {
 
   if (!partida) return <><Inicio /><Sonido momento={momento} apagada={false} /><Entrada noche={noche} /></>
 
-  // Cambiar de pestaña no olvida dónde estabas: al volver a Inicio sigues en el barrio o en la casa en que te quedaste
-  // (decidido por Javi, 20/11/2026). Al abrir la app, en cambio, se empieza en la casa del último en llegar.
+  // Cambiar de pestaña no olvida dónde estabas: al volver a Inicio sigues en el barrio o en la casa en que te quedaste.
   const irA = (p: Pestana) => setPestana(p)
   const ultimo = mesActual(partida).companero
   const conBarrio = nacidos(partida, ahora).length >= 2

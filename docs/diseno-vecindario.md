@@ -395,3 +395,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Inicio recuerda dónde estabas (20/11/2026, rama `dev/inicio-donde-estabas`)
 - Al abrir la app se empieza en la casa del último vecino en llegar. Al ir a Retos, Álbum o Ajustes y volver a Inicio, sigues donde te quedaste: en el barrio o en la casa que estabas visitando.
+
+### Al abrir, el barrio (20/11/2026, rama `dev/abrir-en-barrio`; sustituye a «Al entrar, la última casa»)
+- Al abrir la app se empieza en el barrio si ya hay dos vecinos o más; mientras solo hay uno, en su casa. Al cambiar de pestaña y volver a Inicio, sigues donde te quedaste.
