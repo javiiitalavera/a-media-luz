@@ -392,3 +392,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 
 ### Aviso del barrio (20/11/2026, rama `dev/aviso-barrio`)
 - Entrar en el barrio da por vistas sus novedades (las del puente, los barquitos…), igual que entrar en una casa. Antes no se marcaban nunca y el punto de «Barrio» se quedaba encendido sin nada que hacer.
+
+### Inicio recuerda dónde estabas (20/11/2026, rama `dev/inicio-donde-estabas`)
+- Al abrir la app se empieza en la casa del último vecino en llegar. Al ir a Retos, Álbum o Ajustes y volver a Inicio, sigues donde te quedaste: en el barrio o en la casa que estabas visitando.
