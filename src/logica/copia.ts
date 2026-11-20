@@ -30,7 +30,8 @@ function situaciones(v: unknown) {
     const definicion = SITUACIONES.find((s) => s.id === id)
     if (!objeto(e) || typeof e.fase !== 'number' || !Number.isInteger(e.fase) || e.fase < 0) return false
     if (definicion && (e.fase >= definicion.fases.length || Boolean(e.fin) !== (e.fase === definicion.fases.length - 1))) return false
-    return dia(e.dia) && opcional(e.fin, booleano) && opcional(e.decision, texto)
+    return dia(e.dia) && opcional(e.fin, booleano) && opcional(e.decision, texto) &&
+      opcional(e.datos, (d) => objeto(d) && Object.values(d).every((n) => typeof n === 'number'))
   })
 }
 

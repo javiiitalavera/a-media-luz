@@ -6,6 +6,18 @@ import type { EstadoSituacion, NoticiaBarrio, Partida } from './partida'
 import { construido, proyectosHechos } from './casa'
 import { nacido, nacidos, vecinoDe } from './etapas'
 import { dia, diasEntre } from './fechas'
+import { PATRONES, rellenar, type DatosPatron } from './patrones'
+
+/** Lo que se lee del diario al empezar una historia de patrón (se guarda: recargar no lo cambia). */
+function datosDe(p: Partida, s: Situacion, ahora: Date): { datos?: DatosPatron } {
+  const datos = s.patron ? PATRONES[s.patron]?.(p, ahora) : null
+  return datos ? { datos } : {}
+}
+
+/** Lo que recuerdan los vecinos de las historias que ya terminaron (para su charla). */
+export function ecosDe(p: Partida, c: CompaneroId): string[][] {
+  return SITUACIONES.filter((s) => p.situaciones?.[s.id]?.fin && s.ecos?.[c]?.length).map((s) => s.ecos![c]!)
+}
 
 const estados = (p: Partida) => p.situaciones ?? {}
 
@@ -17,13 +29,19 @@ export const EN_MARCHA_MAX = 2
 
 export function cumpleRequisitos(p: Partida, s: Situacion, ahora: Date): boolean {
   return s.requiere.vecinos.every((c) => nacido(p, c, ahora)) && s.requiere.construido.every((id) => construido(p, id))
+    && (!s.patron || Boolean(PATRONES[s.patron]?.(p, ahora)))
 }
 
 /** Texto y frases de una fase, teniendo en cuenta la decisión tomada. */
-export function faseDe(s: Situacion, i: number, decision?: string) {
+export function faseDe(s: Situacion, i: number, decision?: string, datos?: DatosPatron) {
   const f = s.fases[i]
   const v = decision ? f.segun?.[decision] : undefined
-  return { ...f, noticia: v?.noticia ?? f.noticia, frases: v?.frases ?? f.frases }
+  const frases = v?.frases ?? f.frases
+  return {
+    ...f,
+    noticia: rellenar(v?.noticia ?? f.noticia, datos),
+    frases: frases && Object.fromEntries(Object.entries(frases).map(([c, l]) => [c, l!.map((t) => rellenar(t, datos))])) as typeof frases,
+  }
 }
 
 /**
@@ -43,17 +61,25 @@ export function avanzar(p: Partida, ahora: Date): { partida: Partida; nuevas: No
   const sigue = enMarcha.find((x) => !esperando(x))
   let s: Situacion | undefined
   let nuevo: EstadoSituacion | undefined
-  if (sigue) {
+  // Lo que nace de tu diario va primero: si un patrón se cumple y hay hueco, empieza hoy (lo demás sigue mañana).
+  const deTuDiario = enMarcha.length < EN_MARCHA_MAX
+    ? SITUACIONES.find((x) => x.patron && !est[x.id] && cumpleRequisitos(p, x, ahora)) : undefined
+  if (deTuDiario) {
+    s = deTuDiario
+    nuevo = { fase: 0, dia: hoy, fin: deTuDiario.fases.length === 1, ...datosDe(p, deTuDiario, ahora) }
+  } else if (sigue) {
     const e = est[sigue.id]
     const fase = e.fase + 1
     s = sigue
     nuevo = { ...e, fase, dia: hoy, fin: fase === sigue.fases.length - 1 }
   } else if (enMarcha.length < EN_MARCHA_MAX) {
     s = SITUACIONES.find((x) => !est[x.id] && cumpleRequisitos(p, x, ahora))
-    if (s) nuevo = { fase: 0, dia: hoy, fin: s.fases.length === 1 }
+    if (s) nuevo = { fase: 0, dia: hoy, fin: s.fases.length === 1, ...datosDe(p, s, ahora) }
   }
   if (!s || !nuevo) return { partida: p, nuevas: [] }
-  const f = faseDe(s, nuevo.fase, nuevo.decision)
+  const f = faseDe(s, nuevo.fase, nuevo.decision, nuevo.datos)
+  // Una fase sin noticia (el remate) no avisa en el sobre: se descubre paseando por el barrio o entrando en una casa.
+  if (!f.noticia) return { partida: { ...p, situaciones: { ...est, [s.id]: nuevo } }, nuevas: [] }
   const noticia: NoticiaBarrio = { texto: f.noticia, lugar: f.lugar, fecha: ahora.toISOString() }
   return {
     partida: { ...p, situaciones: { ...est, [s.id]: nuevo }, noticias: [...(p.noticias ?? []), noticia].slice(-NOTICIAS_GUARDADAS) },
@@ -90,7 +116,7 @@ export function fraseDeSituacion(p: Partida, c: CompaneroId, ahora: Date): strin
     .filter((x) => x.e && (!x.e.fin || diasEntre(x.e.dia, hoy) <= 2))
     .sort((a, b) => b.e!.dia.localeCompare(a.e!.dia))
   for (const { s, e } of recientes) {
-    const frases = faseDe(s, e!.fase, e!.decision).frases?.[c]
+    const frases = faseDe(s, e!.fase, e!.decision, e!.datos).frases?.[c]
     if (frases?.length) return frases
   }
   return null
@@ -151,7 +177,7 @@ export function cronicas(p: Partida) {
   const lista = SITUACIONES.filter((s) => estados(p)[s.id]).map((s) => {
     const e = estados(p)[s.id]
     // Las que están en marcha, hasta donde han llegado.
-    const fases = s.fases.slice(0, e.fin ? s.fases.length : e.fase + 1).map((_, i) => faseDe(s, i, e.decision).noticia).filter(Boolean)
+    const fases = s.fases.slice(0, e.fin ? s.fases.length : e.fase + 1).map((f, i) => faseDe(s, i, e.decision, e.datos).noticia || f.recuerdo || '').filter(Boolean)
     return { id: s.id, titulo: s.titulo, fases, enMarcha: !e.fin }
   })
   return [...lista.filter((c) => c.enMarcha), ...lista.filter((c) => !c.enMarcha)]

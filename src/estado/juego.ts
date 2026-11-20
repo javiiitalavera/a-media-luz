@@ -122,7 +122,8 @@ export const useJuego = create<Juego>()(
         if (!p) return
         const momento = ahora()
         const r = avanzar(p, momento)
-        if (r.nuevas.length) set({ partida: curiosidadesDeHistorias(p, momentosDeHistorias(p, r.partida, momento), momento) })
+        // También las fases sin noticia (los remates que se descubren paseando) avanzan y se guardan.
+        if (r.partida !== p) set({ partida: curiosidadesDeHistorias(p, momentosDeHistorias(p, r.partida, momento), momento) })
       },
       decidir: (situacion, opcion) => {
         const p = get().partida

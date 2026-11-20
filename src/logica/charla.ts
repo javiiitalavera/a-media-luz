@@ -6,6 +6,7 @@ import type { Partida } from './partida'
 import { hechaHoy, misHazanas } from './hazanas'
 import { nacidos, progreso } from './etapas'
 import { construido } from './casa'
+import { ecosDe } from './situaciones'
 import { dia, diasEntre } from './fechas'
 import { momentoDelDia } from './momento'
 
@@ -39,6 +40,9 @@ export function gruposDeCharla(p: Partida, c: CompaneroId, ahora: Date): string[
   grupos.push(ch.etapa[progreso(p, c, ahora).etapa])
 
   for (const [id, frases] of Object.entries(ch.objetos)) if (construido(p, id)) grupos.push(frases)
+
+  // Lo que ya pasó vuelve como remate, sin repetir la historia entera.
+  grupos.push(...ecosDe(p, c))
 
   for (const otro of nacidos(p, ahora)) {
     const frases = otro !== c ? ch.vecinos[otro] : undefined

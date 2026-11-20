@@ -35,6 +35,12 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
   hamaca: rutaArte('casa/bruma/objeto/hamaca'),
   cotilleo: rutaArte('companero/madeja/contento'),
   calcetines: rutaArte('casa/madeja/objeto/cesto'),
+  asesoria: rutaArte('huella/cartel'),
+  'club-lectura': rutaArte('casa/tofu/objeto/libros'),
+  'protocolo-descanso': rutaArte('huella/barquito'),
+  'red-de-contactos': rutaArte('huella/corcho'),
+  'reto-secreto': rutaArte('huella/lupa'),
+  reencuentro: rutaArte('huella/cartel'),
   linea: rutaArte('casa/madeja/objeto/telefono'),
 }
 
