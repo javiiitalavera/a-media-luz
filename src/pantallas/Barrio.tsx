@@ -2,7 +2,7 @@
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
 // El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
 // los lados por igual. Las casitas se apoyan en sus entradas y se ajustan al hueco visible.
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
 import { CASITAS, FRASES_PLAZA, VISITA_PLAZA } from '../contenido/barrio'
@@ -21,7 +21,7 @@ import { BotonConstruir } from '../componentes/BotonConstruir'
 import { Materiales } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
-import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuella } from '../logica/avisos'
+import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuella, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 import { colocarCasita } from '../logica/mapaBarrio'
@@ -63,6 +63,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const izquierda = (t.w - ancho) / 2
   const ajustar = useJuego((st) => st.ajustar)
   const [gag] = useState(() => gagDeHoy(partida, 'barrio', ahora))
+  // Entrar en el barrio da por vistas sus novedades (el puente, los barquitos…): si no, el punto de «Barrio» no se apagaba nunca.
+  useEffect(() => { ajustar((p) => visitarLugar(p, 'barrio')) }, [ajustar])
   const sinLeer = pendientesDelSobre(partida, ahora)
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'

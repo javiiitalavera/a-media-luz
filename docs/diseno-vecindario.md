@@ -388,3 +388,6 @@ La cámara entra desde la casa elegida y vuelve hacia ella. La barra inferior pe
 - **Perspectiva:** al llevarlo al fondo se ve un poco más pequeño y al acercarlo, más grande (entre el 75 % y el 130 %). Lo de delante tapa a lo de detrás.
 - **No se mueven:** el vecino, Gregorio, las huellas de las historias y lo que está en la pared (el tablón, el reloj y el flexo del taller).
 - Se guarda en la partida (y en las copias). Las fotos del Álbum guardan cómo estaba la casa en ese momento.
+
+### Aviso del barrio (20/11/2026, rama `dev/aviso-barrio`)
+- Entrar en el barrio da por vistas sus novedades (las del puente, los barquitos…), igual que entrar en una casa. Antes no se marcaban nunca y el punto de «Barrio» se quedaba encendido sin nada que hacer.

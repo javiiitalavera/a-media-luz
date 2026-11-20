@@ -121,4 +121,13 @@ describe('avisos', () => {
     p = visitarLugar(p, 'tuerca')
     expect(avisoFuera(p, 'nox', ahora)).toBeNull()
   })
+
+  it('lo que pasa en el barrio deja de avisar en «Barrio» al entrar en él', () => {
+    let p = barrio(['puente'])
+    p = { ...p, meses: p.meses!.map((m) => ({ ...m, presentado: m.inicio })), noticias: [{ texto: 'El puente está terminado.', lugar: 'barrio' as const, fecha: en('2026-01-07', 10).toISOString() }] }
+    const ahora = en('2026-01-07', 12)
+    expect(avisoFuera(p, 'nox', ahora)).toBe('punto')
+    p = visitarLugar(p, 'barrio')
+    expect(avisoFuera(p, 'nox', ahora)).toBeNull()
+  })
 })
