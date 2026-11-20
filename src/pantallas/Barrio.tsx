@@ -5,12 +5,12 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { COMPANEROS, LUCES_BARRIO, MATERIALES, PARCELAS, PASO_ARROYO, PLAZA, PROPORCION_BARRIO, PROYECTOS_BARRIO, UI, type AreaId, type CompaneroId } from '../contenido'
-import { CASITAS, FRASES_PLAZA, VISITA_PLAZA } from '../contenido/barrio'
+import { CASITAS } from '../contenido/barrio'
 import type { Partida } from '../logica/partida'
 import { construido, disponibles, faltan } from '../logica/casa'
 import { estadoDelMes, mesesDe } from '../logica/meses'
 import { barrioAbierto, huellasEn } from '../logica/situaciones'
-import { rutaArte, rutaCompanero } from '../arte/manifiesto'
+import { rutaArte } from '../arte/manifiesto'
 import { progreso } from '../logica/etapas'
 import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { useJuego } from '../estado/juego'
@@ -25,6 +25,7 @@ import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuel
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 import { colocarCasita } from '../logica/mapaBarrio'
+import { ArroyoEnMovimiento, HojasAlViento, HumoDeCasa, VecinoDePaseo } from '../componentes/VidaBarrio'
 
 type Punto = { x: number; y: number }
 const PUERTAS: Partial<Record<CompaneroId, Punto>> = {
@@ -75,10 +76,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
     const huevo = i === vecinos.length - 1 && estadoUltimo !== 'vivo'
     return { companero, huevo, ...colocarCasita(PARCELAS[i], companero, hueco, huevo) }
   })
-  const posibleVisita = VISITA_PLAZA[momento]
-  const visita = posibleVisita && vecinos.some((m, i) =>
-    m.companero === posibleVisita && (i < vecinos.length - 1 || estadoUltimo === 'vivo'))
-    ? posibleVisita : null
+  const puente = construido(partida, 'puente')
+  const hoguera = construido(partida, 'hoguera')
   const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
   const listos = abierto && PROYECTOS_BARRIO.some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
@@ -103,12 +102,10 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
     <main ref={caja} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden bg-[#5c7a4a]">
       <div className="absolute" style={{ top: arriba, left: izquierda, width: ancho, height: alto }}>
         <img src={rutaArte('barrio/mapa')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
-        <div aria-hidden className="barrio-arroyo pointer-events-none absolute inset-0">
-          {[0, 1, 2].map((i) => <span key={i} />)}
-        </div>
+        <ArroyoEnMovimiento />
         <img src={rutaArte('casa/nox/objeto/banco')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.banco)} />
         <img src={rutaArte('casa/nox/objeto/farolillo')} alt="" draggable={false} className="mueble-plaza absolute pointer-events-none" style={juntoAlSuelo(PLAZA.farol)} />
-        {construido(partida, 'puente') && (
+        {puente && (
           <div className="puente-barrio absolute" style={{ left: `${PASO_ARROYO.x}%`, top: `${PASO_ARROYO.y}%`, width: `${PASO_ARROYO.ancho}%`, translate: '-50% -50%', rotate: `${PASO_ARROYO.giro}deg` }}>
             <img src={rutaArte('barrio/puente')} alt={UI.barrio.puente} className={`relative block w-full ${proyectoNuevo === 'puente' ? 'anim-colocar' : ''}`} draggable={false} />
           </div>
@@ -137,6 +134,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
                 <img src={rutaArte(huevo ? `huevo/${companero}/${estadoUltimo === 'naciendo' ? 'agrietado' : 'cerrado'}` : `casita/${companero}`)} alt=""
                   className={`relative block w-full ${huevo ? (estadoUltimo === 'naciendo' ? 'anim-inquieto' : 'anim-mecer') : ''}`} draggable={false} />
                 {!huevo && <span aria-hidden className="gesto-de-casa" />}
+                {!huevo && (companero === 'tuerca' || (companero === 'nox' && hoguera)) && <HumoDeCasa vecino={companero} />}
                 <span ref={(el) => { puertas.current[companero] = el }} aria-hidden
                   className={`luz-puerta pointer-events-none absolute ${!huevo && entrada === companero ? 'luz-puerta-activa' : ''}`}
                   style={{ left: `${huevo ? 50 : PUERTAS[companero]?.x ?? 50}%`, top: `${huevo ? 50 : PUERTAS[companero]?.y ?? 66}%` }} />
@@ -145,14 +143,11 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
             </button>
           )
         })}
-        {visita && (
-          <button key={visita} type="button" aria-label={UI.barrio.enLaPlaza(COMPANEROS[visita].nombre)}
-            className="vecino-en-plaza absolute min-h-11 min-w-11"
-            style={juntoAlSuelo(PLAZA.encuentro)}
-            onClick={(e) => { sfx.personaje(visita); globoEn(e, `${COMPANEROS[visita].nombre}: «${FRASES_PLAZA[visita]}»`) }}>
-            <img src={rutaCompanero(visita, progreso(partida, visita, ahora).etapa, 'base')} alt="" draggable={false} className="block w-full" />
-          </button>
-        )}
+        {casas.filter(({ huevo, companero }) => !huevo && (!noche || companero === 'nox')).map(({ companero }) => (
+          <VecinoDePaseo key={companero} vecino={companero} etapa={progreso(partida, companero, ahora).etapa}
+            ancho={ancho} alto={alto} puente={puente} />
+        ))}
+        <HojasAlViento />
 
         {/* Luz del momento del día (igual que en las casas): tiñe el mapa sin cambiarlo. */}
         <div aria-hidden className={`pointer-events-none absolute inset-0 mix-blend-multiply transition-opacity duration-1000 ${
