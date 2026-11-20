@@ -1,4 +1,4 @@
-// Ordenar la casa (decidido por Javi, 20/11/2026: libre, dentro del suelo de cada casa, sin baúl todavía).
+// Ordenar la casa: cada objeto se mueve por sus superficies de apoyo o se guarda en el baúl.
 // Cada objeto tiene su sitio de siempre (contenido/casa.ts); si lo mueves, la partida guarda dónde.
 // Al llevarlo al fondo se hace un poco más pequeño y al acercarlo, más grande. Los colgados solo se
 // mueven de lado. Gregorio y las huellas de las historias no se mueven: las historias cuentan con su sitio.
@@ -15,19 +15,25 @@ const LADOS: [number, number] = [15, 85]
 const dentro = (z: Zona, x: number, y: number) => x >= z.x[0] && x <= z.x[1] && y >= z.y[0] && y <= z.y[1]
 const limitar = (v: number, [a, b]: [number, number]) => Math.min(Math.max(v, a), b)
 
-/** ¿Se puede mover? Los colgados, sí; los de suelo, si su sitio de siempre está en el suelo de la casa. */
-export function movible(o: ObjetoCasa): boolean {
-  if (o.id === 'aspiradora') return false
-  if (o.sitio.colgado) return true
-  return (ESCENAS[o.companero]?.suelo ?? []).some((z) => dentro(z, o.sitio.x, o.sitio.y))
+function superficies(o: ObjetoCasa): Zona[] {
+  const escena = ESCENAS[o.companero]
+  return (o.apoyo === 'mesa' ? escena?.mesa : escena?.suelo) ?? []
 }
 
-/** El punto del suelo más cercano a (x, y). Los colgados conservan su altura. */
+/** Los colgados se mueven lateralmente y los demás se apoyan en el suelo o en un mueble. */
+export function movible(o: ObjetoCasa): boolean {
+  if (o.apoyo === 'fijo') return false
+  if (o.sitio.colgado) return true
+  const zonas = superficies(o)
+  return o.apoyo === 'mesa' ? zonas.length > 0 : zonas.some((z) => dentro(z, o.sitio.x, o.sitio.y))
+}
+
+/** El apoyo compatible más cercano a (x, y). Los colgados conservan su altura. */
 export function encajar(o: ObjetoCasa, x: number, y: number): { x: number; y: number } {
   if (o.sitio.colgado) return { x: limitar(x, LADOS), y: o.sitio.y }
   let mejor = { x: o.sitio.x, y: o.sitio.y }
   let distancia = Infinity
-  for (const z of ESCENAS[o.companero]?.suelo ?? []) {
+  for (const z of superficies(o)) {
     const p = { x: limitar(x, z.x), y: limitar(y, z.y) }
     const d = (p.x - x) ** 2 + (p.y - y) ** 2
     if (d < distancia) { distancia = d; mejor = p }
@@ -42,7 +48,7 @@ export function sitioDe(p: Partida, o: ObjetoCasa, pos = p.colocados?.[o.id]): O
   return { ...o.sitio, x: pos.x, y: pos.y, ancho: o.sitio.ancho * escala }
 }
 
-/** Deja un objeto en un sitio (encajado en el suelo). */
+/** Deja un objeto en su superficie de apoyo. */
 export function colocar(p: Partida, id: string, x: number, y: number): Partida {
   const o = OBJETOS_CASA.find((k) => k.id === id)
   if (!o || !movible(o)) return p

@@ -4,7 +4,7 @@ import type React from 'react'
 // Todo lo que se mueve es código.
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { AREAS, COMPANEROS, ESCENAS, HISTORIAS, MATERIALES, OBJETOS_CASA, PARCELAS, PROPORCION_BARRIO, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { COMPANEROS, ESCENAS, HISTORIAS, MATERIALES, OBJETOS_CASA, PARCELAS, PROPORCION_BARRIO, UI, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
@@ -542,7 +542,7 @@ export function Casa({ partida, ahora, dueno, visita = false, onBarrio, onNoveda
       )}
 
       {hoja && <Catalogo dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir}
-        onOrdenar={objetos.some(movible) ? () => { setHoja(false); setHabla(null); setNota(null); setOrdenando(true) } : undefined} />}
+        onOrdenar={objetos.some(movible) || enBaul.length > 0 ? () => { setHoja(false); setHabla(null); setNota(null); setOrdenando(true) } : undefined} />}
       {/* Ordenar: la ayuda se va sola (arriba cuelgan cosas) y los botones van en las esquinas de abajo. */}
       {ordenando && (
         <>
@@ -790,8 +790,13 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir, onOrden
   const mat = disponibles(partida, ahora)
   const visibles = proyectosVisibles(partida, DUENO)
   const quedan = proyectosDe(DUENO).length - visibles.length
-  const siguiente = visibles.find((o) => !construido(partida, o.id))
-  const faltaSiguiente = siguiente ? faltan(partida, siguiente, ahora) : {}
+  const fichas = visibles.map((o) => {
+    const hecho = construido(partida, o.id)
+    return { o, hecho, falta: hecho ? {} : faltan(partida, o, ahora) }
+  })
+  const areasHabituales = new Set(misHazanas(partida).map((x) => x.area))
+  const areasSinReto = [...new Set(fichas.flatMap(({ falta }) => Object.keys(falta) as AreaId[]))]
+    .filter((area) => !areasHabituales.has(area))
   // Se pinta directamente en el documento para quedar por encima de la navegación.
   return createPortal(
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
@@ -810,10 +815,8 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir, onOrden
           </button>
         )}
         <ul className="mt-3 flex flex-col gap-2.5">
-          {visibles.map((o) => {
-            const hecho = construido(partida, o.id)
-            const f = faltan(partida, o, ahora)
-            const puede = !hecho && Object.keys(f).length === 0
+          {fichas.map(({ o, hecho, falta }) => {
+            const puede = !hecho && Object.keys(falta).length === 0
             return (
               <li key={o.id} className="flex items-center gap-3 rounded-3xl bg-tarjeta p-3">
                 <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" className="h-16 w-16 shrink-0 object-contain" />
@@ -821,13 +824,18 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir, onOrden
                   <div className="font-bold">{o.nombre}</div>
                   <div className="text-[13px] leading-snug text-texto-3 italic">«{o.descripcion}»</div>
                   {o.abre && <div className="mt-1 text-[13px] leading-snug font-semibold text-salvia-texto">{o.abre}</div>}
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {!hecho && <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {(Object.entries(o.coste) as [AreaId, number][]).map(([a, n]) => (
-                      <span key={a} className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold ${!hecho && f[a] ? 'bg-hundido text-peligro' : 'bg-hundido text-texto-2'}`}>
+                      <span key={a} className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold ${falta[a] ? 'bg-hundido text-peligro' : 'bg-hundido text-texto-2'}`}>
                         <IconoMaterial area={a} tam={14} />{n} {MATERIALES[a].nombre}
                       </span>
                     ))}
-                  </div>
+                  </div>}
+                  {(Object.entries(falta) as [AreaId, number][]).map(([a, n]) => (
+                    <p key={a} className="mt-1 text-[12px] leading-snug text-peligro">
+                      {UI.casa.faltaMaterial(n, n === 1 ? MATERIALES[a].singular : MATERIALES[a].plural)}
+                    </p>
+                  ))}
                 </div>
                 {hecho ? (
                   <span className="w-20 shrink-0 text-center text-[12px] font-semibold text-salvia-texto">{UI.casa.yaEsta}</span>
@@ -842,15 +850,9 @@ function Catalogo({ partida, ahora, dueno: DUENO, onCerrar, onConstruir, onOrden
           })}
         </ul>
         {quedan > 0 && <p className="mt-3 px-1 text-[13px] text-texto-3">{UI.casa.masProyectos}</p>}
-        {/* Qué falta para el siguiente proyecto y de dónde sale (con sugerencias si no tienes hazañas de esa área). */}
-        {siguiente && Object.keys(faltaSiguiente).length > 0 && (
-          <div className="mt-3 rounded-3xl bg-tarjeta p-3">
-            {(Object.entries(faltaSiguiente) as [AreaId, number][]).map(([a, n]) => (
-              <div key={a} className="mt-1 first:mt-0">
-                <p className="text-[14px] leading-snug text-texto-2">{UI.sugerir.faltan(n, MATERIALES[a].singular, MATERIALES[a].plural, AREAS[a].nombre)}</p>
-                {!misHazanas(partida).some((x) => x.area === a) && <SugerirHazanas partida={partida} area={a} />}
-              </div>
-            ))}
+        {areasSinReto.length > 0 && (
+          <div className="mt-3 space-y-2">
+            {areasSinReto.map((area) => <SugerirHazanas key={area} partida={partida} area={area} />)}
           </div>
         )}
       </section>

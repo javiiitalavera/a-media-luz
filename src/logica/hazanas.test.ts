@@ -25,7 +25,7 @@ describe('hazañas', () => {
   it('el vecino del área comenta tu hazaña con su frase propia', () => {
     const r = hacerOfrenda(base(), 'pasos', en('2026-01-05', 10), azarFijo(0, 0.99), 'o1')
     expect(r.frase?.companero).toBe('nox')
-    expect(r.frase?.texto).toMatch(/pasos|hoja/)
+    expect(r.frase?.texto).toMatch(/pasos|hoja/i)
   })
 
   it('meta editable y mínima opcional (vacía la quita); el día malo usa la mínima si existe', () => {
@@ -123,7 +123,18 @@ describe('hazañas', () => {
     ] }
     const p = migrarHazanas(vieja)
     expect(p.acciones.map((a) => [a.id, a.area, a.nombre])).toEqual([['dormir', 'calma', 'Dormir 8 horas'], ['diario', 'mente', 'Escribir en mi diario'], ['propia-z', 'cuerpo', 'Nadar']])
-    expect(p.hazanas).toBe(3)
+    expect(p.hazanas).toBe(4)
+  })
+
+  it('jugar fuera pasa a Energía y conserva el hilo de los retos anteriores', () => {
+    const vieja: Partida = { ...base(), hazanas: 3,
+      acciones: [{ id: 'jugar-fuera', area: 'vinculos', nombre: 'Jugar fuera 20 minutos' }],
+      ofrendas: [{ id: 'o1', accionId: 'jugar-fuera', area: 'vinculos', fecha: en('2026-01-05').toISOString(), diaMalo: false }],
+    }
+    const partida = migrarHazanas(vieja)
+    expect(partida.acciones[0]).toMatchObject({ area: 'cuerpo', nombre: 'Jugar fuera 20 minutos' })
+    const nueva = hacerOfrenda(partida, 'jugar-fuera', en('2026-01-06'), azarFijo(0.99, 0.99), 'o2').partida
+    expect(nueva.ofrendas.map((o) => o.area)).toEqual(['vinculos', 'cuerpo'])
   })
 
   it('la lista sale ordenada por área y no pasa de 10 retos', () => {

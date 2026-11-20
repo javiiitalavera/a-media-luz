@@ -52,7 +52,7 @@ export interface Partida {
   guardados?: string[]
   vistos?: { gags?: Partial<Record<string, string>>; pina?: 'guardada' | 'aqui'; album?: string; albumSec?: Partial<Record<SeccionAlbum, string>>; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[]; cronicas?: Record<string, string>; momentos?: Record<string, string>; curiosidades?: Record<string, string>; pideReto?: Partial<Record<CompaneroId, string>> }
   /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */
-  hazanas?: 2 | 3
+  hazanas?: 2 | 3 | 4
   /** Novedades del barrio que aún no se han visto («Mientras no estabas…»). */
   noticias?: NoticiaBarrio[]
   /** Lecturas sueltas que ha hecho el barrio de tu diario (logica/lector.ts). */
@@ -85,6 +85,7 @@ export interface NoticiaBarrio {
 }
 
 export interface Construccion {
+  coste?: Partial<Record<AreaId, number>>
   objetoId: string
   fecha: string
 }
@@ -106,7 +107,7 @@ export function crearPartida(principal: CompaneroId, ahora: Date, habituales?: s
     hallazgos: [],
     frasesRecientes: [],
     construcciones: [],
-    hazanas: 3,
+    hazanas: 4,
     ...(conHuevo ? { meses: [{ companero: principal, inicio: ahora.toISOString() }] } : {}),
   }
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { construir, disponibles, faltan, ganados, proyectosBarrioVisibles, proyectosVisibles, queRecompensan } from './casa'
-import { OBJETOS_CASA, PROYECTOS_BARRIO } from '../contenido'
+import { construir, disponibles, faltan, ganados, gastados, proyectosBarrioVisibles, proyectosVisibles, queRecompensan } from './casa'
+import { COMPANEROS, OBJETOS_CASA, PROYECTOS_BARRIO } from '../contenido'
 import { con, en, nueva } from './test-utils'
 import type { Partida } from './partida'
 
@@ -27,7 +27,7 @@ describe('materiales (bolsa común)', () => {
 })
 
 describe('proyectos', () => {
-  it('se desvelan de uno en uno y no se construye uno escondido', () => {
+  it('el primer proyecto va solo y abre dos opciones, aunque falten otros materiales', () => {
     let p: Partida = nueva()
     expect(proyectosVisibles(p, 'nox').map((o) => o.id)).toEqual(['hoguera'])
     const ids = p.acciones.map((a) => a.id)
@@ -39,8 +39,29 @@ describe('proyectos', () => {
     const ahora = en('2026-03-01')
     expect(construir(p, 'banco', ahora)).toBeNull()
     p = construir(p, 'hoguera', ahora)!
-    expect(proyectosVisibles(p, 'nox').map((o) => o.id)).toEqual(['hoguera', 'banco'])
+    expect(proyectosVisibles(p, 'nox').map((o) => o.id)).toEqual(['banco', 'cojin', 'hoguera'])
+    expect(construir(p, 'horno', ahora)).toBeNull()
+    const soloAscuas = { ...p, ofrendas: p.ofrendas.filter((o) => o.area === 'cuerpo') }
+    expect(construir(soloAscuas, 'banco', ahora)).toBeNull()
+    const conCojin = construir(soloAscuas, 'cojin', ahora)!
+    expect(conCojin.construcciones?.at(-1)?.coste).toEqual({ cuerpo: 4 })
+    expect(gastados(conCojin)).toMatchObject({ cuerpo: 7, vinculos: 0 })
+    expect(construir(conCojin, 'cojin', ahora)).toBeNull()
+    expect(proyectosVisibles(conCojin, 'nox').map((o) => o.id)).toEqual(['banco', 'mancuernas', 'hoguera', 'cojin'])
+    const cojinAntiguo = { ...soloAscuas, construcciones: [...soloAscuas.construcciones!, { objetoId: 'cojin', fecha: ahora.toISOString() }] }
+    expect(gastados(cojinAntiguo)).toMatchObject({ cuerpo: 5, vinculos: 2 })
   })
+  it('cada casa tiene una opción con su propio material después de la primera obra', () => {
+    const ahora = en('2026-01-07')
+    for (const { id, area } of Object.values(COMPANEROS)) {
+      const primera = proyectosVisibles(nueva(), id)[0]
+      const p = { ...nueva(), construcciones: [{ objetoId: primera.id, fecha: ahora.toISOString() }] }
+      const opciones = proyectosVisibles(p, id).filter((o) => o.id !== primera.id)
+      expect(opciones).toHaveLength(2)
+      expect(opciones.some((o) => Object.keys(o.coste).join() === area)).toBe(true)
+    }
+  })
+
   it('dice lo que falta', () => {
     const p = con(nueva(), 'cuerpo', '2026-01-05')
     expect(faltan(p, objeto('hoguera'), en('2026-01-05', 23))).toEqual({ cuerpo: 2 })

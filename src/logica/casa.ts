@@ -1,6 +1,6 @@
 // Materiales y construcción (docs/diseno-vecindario.md). Todo se calcula a partir del historial: lo ganado
 // sale de las hazañas y lo gastado, de lo construido. Los materiales son de una bolsa común del vecindario.
-import { AREAS, OBJETOS_CASA, PROYECTOS_BARRIO, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
+import { AREAS, COMPANEROS, OBJETOS_CASA, PROYECTOS_BARRIO, type AreaId, type CompaneroId, type ObjetoCasa } from '../contenido'
 import type { Ofrenda, Partida } from './partida'
 import { TOPE_DIARIO } from './reglas'
 import { dia } from './fechas'
@@ -36,11 +36,14 @@ export function ganados(p: Partida, ahora: Date): Materiales {
   return m
 }
 
-const costeDe = (id: string) => (OBJETOS_CASA.find((x) => x.id === id) ?? PROYECTOS_BARRIO.find((x) => x.id === id))?.coste ?? {}
+function costeAnterior(id: string): Partial<Materiales> {
+  const objeto = OBJETOS_CASA.find((x) => x.id === id)
+  return objeto?.costeAnterior ?? objeto?.coste ?? PROYECTOS_BARRIO.find((x) => x.id === id)?.coste ?? {}
+}
 
 export function gastados(p: Partida): Materiales {
   const m = ceros()
-  for (const k of p.construcciones ?? []) for (const [a, n] of Object.entries(costeDe(k.objetoId))) m[a as AreaId] += n
+  for (const k of p.construcciones ?? []) for (const [a, n] of Object.entries(k.coste ?? costeAnterior(k.objetoId))) m[a as AreaId] += n
   return m
 }
 
@@ -74,11 +77,17 @@ export function faltan(p: Partida, o: { coste: Partial<Materiales> }, ahora: Dat
 export const proyectosDe = (c: CompaneroId) =>
   OBJETOS_CASA.filter((o) => o.companero === c && o.orden !== undefined).sort((a, b) => a.orden! - b.orden!)
 
-/** Los que se ven: los ya hechos y el siguiente (se van desvelando de uno en uno). */
+/** Después del primer proyecto, se ve el siguiente y una alternativa del material del vecino si queda alguna. */
 export function proyectosVisibles(p: Partida, c: CompaneroId): ObjetoCasa[] {
   const todos = proyectosDe(c)
-  const siguiente = todos.findIndex((o) => !construido(p, o.id))
-  return siguiente < 0 ? todos : todos.slice(0, siguiente + 1)
+  const pendientes = todos.filter((o) => !construido(p, o.id))
+  const hechos = todos.filter((o) => construido(p, o.id))
+  const [siguiente, ...resto] = pendientes
+  if (!siguiente) return hechos
+  if (!hechos.length) return [siguiente]
+  const propio = (o: ObjetoCasa) => Object.keys(o.coste).length === 1 && o.coste[COMPANEROS[c].area] !== undefined
+  const alternativa = (propio(siguiente) ? resto[0] : resto.find(propio)) ?? resto[0]
+  return alternativa ? [siguiente, alternativa, ...hechos] : [siguiente, ...hechos]
 }
 
 export const proyectosHechos = (p: Partida, c: CompaneroId) => proyectosDe(c).filter((o) => construido(p, o.id)).length
@@ -86,7 +95,7 @@ export const proyectosHechos = (p: Partida, c: CompaneroId) => proyectosDe(c).fi
 export const puedeConstruir = (p: Partida, o: ObjetoCasa, ahora: Date) =>
   proyectosVisibles(p, o.companero).some((x) => x.id === o.id) && !construido(p, o.id) && Object.keys(faltan(p, o, ahora)).length === 0
 
-/** Proyectos del barrio que se ven: los hechos y el siguiente (de uno en uno, como los de las casas). */
+/** Proyectos del barrio que se ven: los hechos y el siguiente (de uno en uno). */
 export function proyectosBarrioVisibles(p: Partida) {
   const siguiente = PROYECTOS_BARRIO.findIndex((b) => !construido(p, b.id))
   return siguiente < 0 ? PROYECTOS_BARRIO : PROYECTOS_BARRIO.slice(0, siguiente + 1)
@@ -97,9 +106,11 @@ export function construir(p: Partida, id: string, ahora: Date, barrioDisponible 
   const o = OBJETOS_CASA.find((x) => x.id === id)
   const b = PROYECTOS_BARRIO.find((x) => x.id === id)
   // Sin casa no hay obras: para un vecino que aún está en el huevo no se construye nada.
+  const proyecto = o ?? b
+  if (!proyecto) return null
   const ok = o ? puedeConstruir(p, o, ahora) && nacido(p, o.companero, ahora)
     : b ? barrioDisponible && proyectosBarrioVisibles(p).some((x) => x.id === b.id) && !construido(p, b.id) && Object.keys(faltan(p, b, ahora)).length === 0
     : false
   if (!ok) return null
-  return { ...p, construcciones: [...(p.construcciones ?? []), { objetoId: id, fecha: ahora.toISOString() }] }
+  return { ...p, construcciones: [...(p.construcciones ?? []), { objetoId: id, fecha: ahora.toISOString(), coste: proyecto.coste }] }
 }

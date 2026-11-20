@@ -24,6 +24,20 @@ describe('ordenar la casa', () => {
     expect(t).toEqual({ x: 68, y: 56 })
   })
 
+  it('los objetos de sobremesa se apoyan sobre muebles y pueden ir al baúl', () => {
+    const telefono = obj('telefono')
+    for (const id of ['telefono', 'tetera-rosa', 'marco', 'flexo', 'maquina', 'colchoneta']) {
+      const o = obj(id)
+      expect(movible(o)).toBe(true)
+      expect(encajar(o, o.sitio.x, o.sitio.y)).toEqual({ x: o.sitio.x, y: o.sitio.y })
+    }
+    expect(encajar(telefono, 50, 26)).toEqual({ x: 36, y: 43 })
+    const p = colocar(base(), 'telefono', 70, 75)
+    expect(sitioDe(p, telefono)).toMatchObject({ x: 70, y: 43.5 })
+    expect(guardado(guardar(p, 'telefono'), 'telefono')).toBe(true)
+    expect(sitioDe(ordenOriginal(p, 'madeja'), telefono)).toEqual(telefono.sitio)
+  })
+
   it('al fondo se ve más pequeño y delante más grande; se guarda en la partida y se puede deshacer', () => {
     let p = colocar(base(), 'hoguera', 40, 80)
     expect(p.colocados!.hoguera).toEqual({ x: 40, y: 80 })
