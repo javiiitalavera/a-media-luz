@@ -9,7 +9,8 @@ import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
-import { fondoDeEclosion, type PasoEclosion } from '../logica/fondoDeEclosion'
+import { fondoDeEclosion, TIEMPOS_ECLOSION, type PasoEclosion } from '../logica/fondoDeEclosion'
+import { NieblaEclosion } from '../componentes/NieblaEclosion'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { dibujoDelNivel, nivelSinVer, nivelVisto, proximaLlegada, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
@@ -181,9 +182,10 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     // Con «reducir movimiento», la eclosión dura menos.
     const k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.35 : 1
     const pasos = [
-      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion(k < 1) }, 150),
-      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, 1750 * k),
-      setTimeout(() => setNacer('ficha'), 3250 * k),
+      setTimeout(() => { setNacer('rompiendo'); sfx.eclosion(k < 1) }, TIEMPOS_ECLOSION.rompiendo),
+      setTimeout(() => setNacer('niebla'), TIEMPOS_ECLOSION.niebla * k),
+      setTimeout(() => { setNacer('salio'); setCelebra(Date.now()); setSaltos((n) => n + 1) }, TIEMPOS_ECLOSION.salio * k),
+      setTimeout(() => setNacer('ficha'), TIEMPOS_ECLOSION.ficha * k),
     ]
     return () => pasos.forEach(clearTimeout)
   }, [estado, abriendo])
@@ -345,7 +347,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora, DUENO)
   const propuesta = propuestaDeMeta(partida, ahora)
-  const { conHuevo, mostrarNido, revelandoCasa } = fondoDeEclosion(estado, nacer)
+  const { conHuevo, mostrarNido, revelandoCasa, niebla } = fondoDeEclosion(estado, nacer)
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[Math.min(etapaVista, ANCHO_NOX.length - 1)]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
@@ -406,7 +408,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
               {conHuevo ? (
                 <span key={`h${toques}`} className={`block ${toques ? 'anim-temblar' : ''}`}>
                   <img src={rutaArte(`huevo/${DUENO}/${faltaHuevo <= 1 || estado === 'naciendo' ? 'agrietado' : 'cerrado'}`)} alt="" draggable={false}
-                    className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
+                    className={`block w-full ${nacer === 'rompiendo' || nacer === 'niebla' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
                 <span key={`${etapaVista}-${gesto}`} data-encuentro={encuentro} data-paso={paso} data-merendando={comiendo || undefined} data-usando={usando?.id} className={`block ${celebra ? nacer ? 'anim-brotar' : 'anim-crecer-vecino' : ''}`}>
@@ -526,6 +528,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
             )}
           </div>
         )}
+        {/* La niebla llega antes de revelar la casa; permanece hasta terminar el fundido. */}
+        {niebla && <NieblaEclosion fase={niebla} />}
       </div>
 
       {/* Arriba: a la izquierda, al barrio (con aviso si pasa algo en otra casa); a la derecha, el sobre. */}
