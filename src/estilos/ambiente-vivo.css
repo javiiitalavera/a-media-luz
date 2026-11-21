@@ -1,0 +1,130 @@
+/* P9: pequeñas variaciones estacionales, sin nuevas imágenes, paneles ni controles visibles. */
+.clima-estacional { position: absolute; display: block; left: var(--x); top: var(--y); opacity: .65; }
+.clima-del-barrio[data-fenomeno='petalos'] .clima-estacional {
+  width: 9px; height: 13px; border-radius: 70% 0 70% 0;
+  background: #f4b6c1; box-shadow: inset -2px -2px 0 #d88da245;
+}
+.clima-del-barrio[data-fenomeno='motas'] .clima-estacional,
+.clima-del-barrio[data-fenomeno='brillos'] .clima-estacional {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #fff1aa; box-shadow: 0 0 6px 2px #f8e8a277;
+}
+.clima-del-barrio[data-fenomeno='brillos'] .clima-estacional { background: #eae8ff; box-shadow: 0 0 8px #ece4ff; }
+.clima-del-barrio[data-fenomeno='hojas'] .clima-estacional,
+.clima-del-barrio[data-fenomeno='remolino'] .clima-estacional {
+  width: 10px; height: 6px; border-radius: 70% 0 70% 0; background: #bf834d;
+}
+.clima-del-barrio[data-fenomeno='remolino'] .clima-estacional { background: #d4c7ba; }
+.clima-del-barrio[data-fenomeno='escarcha'] .clima-estacional {
+  width: 8px; height: 8px; border: 1px solid #e9f8ff; transform: rotate(45deg);
+  box-shadow: 0 0 3px #c8ecff;
+}
+.clima-del-barrio[data-fenomeno='gotas'] .clima-estacional {
+  width: 16px; height: 5px; border: 1px solid #c3e6ed; border-radius: 50%;
+  background: #c6e9f134;
+}
+.clima-del-barrio[data-interior] .clima-estacional { opacity: .3; }
+@keyframes temporada-flotar {
+  0%,100% { translate: 0 0; rotate: -10deg; opacity: .18; }
+  42% { translate: 17px -19px; rotate: 30deg; opacity: .75; }
+  70% { translate: -8px -28px; rotate: 70deg; opacity: .5; }
+}
+@keyframes temporada-brillar {
+  0%,100% { scale: .7; opacity: .2; }
+  47% { scale: 1.5; opacity: .9; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .clima-estacional { animation: temporada-flotar var(--duracion) ease-in-out var(--retardo) infinite; }
+  .clima-del-barrio[data-fenomeno='brillos'] .clima-estacional,
+  .clima-del-barrio[data-fenomeno='motas'] .clima-estacional,
+  .clima-del-barrio[data-fenomeno='escarcha'] .clima-estacional,
+  .clima-del-barrio[data-fenomeno='gotas'] .clima-estacional {
+    animation: temporada-brillar var(--duracion) ease-in-out var(--retardo) infinite;
+  }
+}
+
+/* El detalle táctil está integrado en el paisaje. Se activa con toque o teclado, sin globo. */
+.fenomeno-tocable { border: 0; background: transparent; touch-action: manipulation; }
+.fenomeno-tocable:focus-visible { outline: 2px solid #fff1ca; outline-offset: 2px; border-radius: 50%; }
+.fenomeno-sprite { position: relative; display: block; width: 42px; height: 42px; }
+.fenomeno-sprite i { position: absolute; display: block; left: 35%; top: 35%; }
+.fenomeno-sprite i:nth-child(2) { left: 57%; top: 45%; animation-delay: .22s; }
+.fenomeno-sprite i:nth-child(3) { left: 23%; top: 52%; animation-delay: .44s; }
+.fenomeno-tocable[data-fenomeno='petalos'] i {
+  width: 10px; height: 14px; border-radius: 70% 0 70% 0; background: #f5b7c6; box-shadow: 0 0 3px #9e695555;
+}
+.fenomeno-tocable[data-fenomeno='motas'] i,
+.fenomeno-tocable[data-fenomeno='brillos'] i {
+  width: 6px; height: 6px; border-radius: 50%; background: #ffea94; box-shadow: 0 0 8px 3px #eedc9566;
+}
+.fenomeno-tocable[data-fenomeno='brillos'] i { background: #e8deff; box-shadow: 0 0 7px 2px #e8dfff; }
+.fenomeno-tocable[data-fenomeno='hojas'] i,
+.fenomeno-tocable[data-fenomeno='remolino'] i {
+  width: 12px; height: 7px; border-radius: 60% 0 70% 0; background: #bd8d58;
+}
+.fenomeno-tocable[data-fenomeno='remolino'] i { background: #e5d7ba; }
+.fenomeno-tocable[data-fenomeno='escarcha'] i {
+  width: 10px; height: 10px; background: #d1effd; border: 1px solid #f4faff; rotate: 45deg;
+  box-shadow: 0 0 5px #b4d9f9;
+}
+.fenomeno-tocable[data-fenomeno='gotas'] i {
+  width: 17px; height: 6px; border: 2px solid #b4e7f6; border-radius: 50%;
+  background: #b5e5ee55;
+}
+@keyframes fenomeno-respirar {
+  0%,100% { transform: translateY(3px) rotate(-10deg); opacity: .5; }
+  50% { transform: translateY(-5px) rotate(22deg); opacity: 1; }
+}
+@keyframes fenomeno-tocar {
+  0% { transform: translate(0,0) rotate(0deg) scale(.85); opacity: .9; }
+  75% { transform: translate(22px,-17px) rotate(105deg) scale(1.45); opacity: .8; }
+  100% { transform: translate(25px,-20px) rotate(160deg) scale(.5); opacity: .35; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fenomeno-sprite i { animation: fenomeno-respirar 3.4s ease-in-out infinite; }
+  .fenomeno-sprite[data-tocado] i { animation: fenomeno-tocar 1.05s ease-out both; }
+}
+
+/* Un objeto reaccionando al clima. La animación permanece pegada a su propio botón,
+   incluso si se mueve a otra superficie de su casa. */
+.clima-objeto { position: absolute; inset: -12%; display: block; pointer-events: none; z-index: 4; }
+.clima-objeto i { position: absolute; display: block; left: 23%; top: 20%; }
+.clima-objeto i:nth-child(2) { left: 52%; top: 16%; animation-delay: .6s; }
+.clima-objeto i:nth-child(3) { left: 75%; top: 43%; animation-delay: 1.2s; }
+.clima-objeto[data-reaccion='humo'] i,
+.clima-objeto[data-reaccion='vaho'] i {
+  width: 13px; height: 19px; border-radius: 50%;
+  background: radial-gradient(ellipse, #e9e6e7ab, transparent 75%); filter: blur(2px);
+}
+.clima-objeto[data-reaccion='humo'] i { background: radial-gradient(ellipse, #aeb3b0c7, transparent 75%); }
+.clima-objeto[data-reaccion='gotas'] i {
+  width: 6px; height: 11px; border-radius: 70% 70% 65% 0; rotate: -45deg;
+  background: #9fcfdccc; border: 1px solid #d2edf0aa;
+}
+.clima-objeto[data-reaccion='ondas'] i {
+  width: 16px; height: 6px; border-radius: 50%; border: 2px solid #d4f1f0bb;
+}
+.clima-objeto[data-reaccion='aire'] i {
+  width: 19px; height: 6px; border: 2px solid #e9d8bda6; border-left: 0; border-bottom: 0; border-radius: 50%;
+}
+.clima-objeto[data-reaccion='halo'] i {
+  width: 10px; height: 10px; border-radius: 50%; background: #fff1b3b2; box-shadow: 0 0 8px #ffe59ca9;
+}
+@keyframes objeto-tiempo {
+  0%,100% { transform: translate(0, 8px) scale(.5); opacity: .12; }
+  48% { transform: translate(12px,-13px) scale(1.3); opacity: .9; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .clima-objeto i { animation: objeto-tiempo 4s ease-in-out infinite; }
+}
+
+/* Las escenas de fondo de cada vecino también responden sin arte nuevo. */
+.vida-de-casa[data-casa='nox'][data-tiempo='lluvia'] .ascuas-del-porche { opacity: .45; }
+.vida-de-casa[data-casa='tofu'][data-tiempo='lluvia'] .semilla-del-invernadero { filter: saturate(1.35) brightness(1.07); }
+.vida-de-casa[data-casa='bruma'][data-tiempo='viento'] .paseo-de-barquito { animation-duration: 8s; }
+.vida-de-casa[data-casa='madeja'][data-tiempo='viento'] .boton-de-la-cesta { filter: drop-shadow(0 0 4px #c9a2b0); }
+.vida-de-casa[data-casa='tuerca'][data-tiempo='niebla'] .paseo-de-tornillo { filter: drop-shadow(0 0 5px #e5d5b6); }
+@media (prefers-reduced-motion: reduce) {
+  .clima-estacional, .fenomeno-sprite i, .clima-objeto i,
+  .vida-de-casa[data-tiempo] .paseo-de-barquito { animation: none !important; }
+}

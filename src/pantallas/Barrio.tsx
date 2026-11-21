@@ -18,7 +18,8 @@ import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
 import { estacionDelDia, tiempoDelDia } from '../logica/convivencia'
-import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
+import { ClimaEnEscena, FenomenoTocable } from '../componentes/ClimaEnEscena'
+import { fenomenoDelDia } from '../logica/ambiente'
 import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
@@ -76,6 +77,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const momento = momentoDelDia(ahora)
   const tiempo = tiempoDelDia(ahora)
   const estacion = estacionDelDia(ahora)
+  const fenomeno = fenomenoDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
@@ -172,7 +174,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
         {/* Luz del momento del día (igual que en las casas): tiñe el mapa sin cambiarlo. */}
         <div aria-hidden className={`pointer-events-none absolute inset-0 mix-blend-multiply transition-opacity duration-1000 ${
           noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
-        <ClimaEnEscena tiempo={tiempo} estacion={estacion} />
+        <ClimaEnEscena tiempo={tiempo} estacion={estacion} fenomeno={fenomeno} />
+        <FenomenoTocable fenomeno={fenomeno} />
         <div aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen">
           {LUCES_BARRIO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 16 : 9} color="#ffcf73" retraso={i * 0.5} />)}
           <Luz x={PLAZA.farol.x} y={PLAZA.farol.y - 1} tam={noche ? 10 : 5} color="#ffcf73" retraso={1.1} />
