@@ -282,10 +282,10 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const darMerienda = () => {
     if (comiendo) return
     setComiendo(true)
-    registrarInteraccion('merienda')
     setBocados(bocados + 1)
     setNota(null)
     setHabla(bocados === 2 ? { texto: merienda.frase, n: Date.now(), contento: true } : null)
+    registrarInteraccion('merienda')
     sfx.personaje(DUENO)
   }
   const expresion: Expresion = nacer === 'salio' || nacer === 'ficha' ? 'contento'
@@ -293,6 +293,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     : !vivo ? 'dormido'
     : microVisible && micro?.cara ? micro.cara
     : habla?.contento ? 'contento'
+    : r.fase < 2 && DUENO === 'bruma' && tiempo === 'lluvia' ? 'contento'
+    : r.fase < 2 && DUENO === 'nox' && tiempo === 'viento' ? 'enfurrunado'
     : noche && !habla ? 'dormido'
     : r.fase >= 2 ? 'enfurrunado'
     : r.hoy > 0 ? 'contento'
