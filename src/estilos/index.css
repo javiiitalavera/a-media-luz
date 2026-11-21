@@ -518,3 +518,47 @@ body {
 /* Zonas que se deslizan con el dedo sin enseñar barras (el mapa del bosque). */
 .sin-barras { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .sin-barras::-webkit-scrollbar { display: none; }
+
+/* Jugabilidad táctil: el personaje responde con el cuerpo, no con otra ficha de texto. */
+@keyframes gesto-caricia {
+  0% { transform: rotate(0) scale(1); }
+  25% { transform: rotate(-3deg) scale(1.045,.98); }
+  60% { transform: rotate(2deg) scale(1.065,.975); }
+  100% { transform: rotate(0) scale(1.025); }
+}
+@keyframes gesto-caricia-incomoda {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  22% { transform: translateX(-5%) rotate(-3deg); }
+  55% { transform: translateX(4%) rotate(3deg); }
+  78% { transform: translateX(-2%) rotate(-1deg); }
+}
+.vecino-caricia[data-caricia='agradable'] {
+  transform-origin: 50% 85%;
+  animation: gesto-caricia 520ms ease-in-out both;
+}
+.vecino-caricia[data-caricia='incomoda'] {
+  transform-origin: 50% 85%;
+  animation: gesto-caricia-incomoda 430ms ease-out both;
+}
+/* Los juguetes tienen causa-efecto visible en cada toque; sin recursos nuevos. */
+@keyframes juguete-saltar { 0%, 100% { transform: none; } 26% { transform: translateY(-15%) rotate(-6deg); } 55% { transform: translateY(-4%) rotate(9deg); } 75% { transform: rotate(-3deg); } }
+@keyframes juguete-girar { from { transform: rotate(-3deg) } 35% { transform: rotate(8deg) } 65% { transform: rotate(-6deg) } to { transform: none } }
+@keyframes juguete-timbre { 0%,100% { transform: rotate(0deg); } 15%,45%,75% { transform: rotate(-7deg); } 30%,60%,90% { transform: rotate(7deg); } }
+img.anim-gesto-de-objeto[data-gesto='comba'] { animation: juguete-saltar 650ms ease-out; }
+img.anim-gesto-de-objeto[data-gesto='gramofono'] { animation: juguete-girar 900ms ease-in-out; transform-origin: 50% 80%; }
+img.anim-gesto-de-objeto[data-gesto='telefono'] { animation: juguete-timbre 650ms ease-in-out; transform-origin: 50% 80%; }
+.juguete-comba,.juguete-gramofono,.juguete-telefono { pointer-events:none; position:absolute; inset:0; }
+.juguete-comba i { position:absolute; left:40%; bottom:20%; width:24%; height:45%; border:2px solid #d49262; border-radius:50%; animation: juguete-girar 600ms ease-in-out both; }
+@keyframes subir-nota { 0% { transform:translateY(0) scale(.75);opacity:0 } 35% { opacity:1 } 100% { transform:translateY(-18px) scale(1.1);opacity:0 } }
+.juguete-gramofono i { position:absolute; right:0; top:0; width:6px;height:6px; background:#d3a5b2; border-radius:50%; animation:subir-nota 1.1s ease-out both; }
+.juguete-gramofono i + i { right:22%; animation-delay:.24s; background:#f0cc83 }
+@keyframes eco-telefono { from {transform:scale(.6);opacity:.9} to {transform:scale(1.65);opacity:0} }
+.juguete-telefono i { position:absolute; left:8%; top:8%; width:80%; height:80%; border:2px solid #f6c6cc; border-radius:50%;animation:eco-telefono .8s ease-out both; }
+.juguete-telefono i + i { animation-delay:.14s; }
+@keyframes vecindad-viva { 0%, 86%, 100% { filter:none } 90% { filter:drop-shadow(0 0 5px #f9d98a99) } 96% { filter:drop-shadow(0 0 2px #f9d98a66) } }
+[data-vecindad='activa'] img { animation: vecindad-viva 9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .vecino-caricia[data-caricia], img.anim-gesto-de-objeto[data-gesto='comba'],
+  img.anim-gesto-de-objeto[data-gesto='gramofono'], img.anim-gesto-de-objeto[data-gesto='telefono'],
+  [data-vecindad='activa'] img, .juguete-comba i,.juguete-gramofono i,.juguete-telefono i { animation:none; }
+}
