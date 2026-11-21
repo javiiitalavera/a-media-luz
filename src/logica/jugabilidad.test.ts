@@ -13,9 +13,13 @@ const base = () => ({
 })
 
 describe('juego táctil y vecindades', () => {
-  it('reconoce cinco juguetes, pero no los demás objetos', () => {
-    for (const id of ['hoguera', 'comba', 'maceta', 'gramofono', 'telefono']) expect(esJuguete(id)).toBe(true)
+  it('reconoce catorce juguetes construibles, repartidos entre las cinco casas', () => {
+    const ids = ['hoguera', 'comba', 'bici', 'maquina', 'balanza', 'maceta', 'gramofono', 'telescopio', 'globo', 'cometa', 'loto', 'telefono', 'cesto', 'buzon']
+    expect(ids).toHaveLength(14)
+    for (const id of ids) expect(esJuguete(id)).toBe(true)
     expect(esJuguete('banco')).toBe(false)
+    expect(new Set(ids.map((id) => OBJETOS_CASA.find((o) => o.id === id)!.companero)).size).toBe(5)
+    for (const id of ids) expect(OBJETOS_CASA.some((o) => o.id === id)).toBe(true)
   })
 
   it('la caricia tiene una zona cómica diferente según el vecino', () => {
@@ -54,7 +58,7 @@ describe('juego táctil y vecindades', () => {
     const p = colocar({ ...base(), construcciones: [] }, 'hoguera', 76, 58)
     expect(vecindadesActivas(p, 'nox')).toHaveLength(0)
   })
-  it('las cinco vecindades son alcanzables al colocar objetos en sus superficies reales', () => {
+  it('las quince vecindades son alcanzables al colocar objetos en sus superficies reales', () => {
     for (const vecindad of VECINDADES) {
       const a = OBJETOS_CASA.find((o) => o.id === vecindad.a)!
       const b = OBJETOS_CASA.find((o) => o.id === vecindad.b)!
@@ -70,6 +74,32 @@ describe('juego táctil y vecindades', () => {
       }
       expect(posible, `Combinación inaccesible: ${vecindad.id}`).toBe(true)
     }
+  })
+
+  it('hay tres combinaciones por vecino, todas con piezas propias, efectos y parejas distintas', () => {
+    expect(VECINDADES).toHaveLength(15)
+    for (const c of ['nox', 'tuerca', 'tofu', 'bruma', 'madeja'] as const) {
+      expect(VECINDADES.filter((v) => v.companero === c)).toHaveLength(3)
+    }
+    const parejas = new Set<string>()
+    for (const v of VECINDADES) {
+      expect(v.efecto.length).toBeGreaterThan(1)
+      expect(OBJETOS_CASA.find((o) => o.id === v.a)?.companero).toBe(v.companero)
+      expect(OBJETOS_CASA.find((o) => o.id === v.b)?.companero).toBe(v.companero)
+      expect(v.a).not.toBe(v.b)
+      const clave = [v.a, v.b].sort().join('/')
+      expect(parejas.has(clave)).toBe(false)
+      parejas.add(clave)
+    }
+  })
+
+  it('una combinación de otra casa, un mueble guardado o una pieza no construida no genera efectos', () => {
+    const par = VECINDADES.find((v) => v.id === 'madeja-lana')!
+    const p = { ...base(), construcciones: [{ objetoId: par.a, fecha: '2026-11-20' }, { objetoId: par.b, fecha: '2026-11-20' }] }
+    const junto = colocar(colocar(p, par.a, 65, 70), par.b, 65, 70)
+    expect(vecindadesActivas(junto, 'nox')).toHaveLength(0)
+    expect(vecindadesActivas(guardar(junto, par.a), 'madeja')).toHaveLength(0)
+    expect(vecindadesActivas({ ...junto, construcciones: [] }, 'madeja')).toHaveLength(0)
   })
 
 })
