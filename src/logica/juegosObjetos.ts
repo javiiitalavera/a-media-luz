@@ -21,9 +21,9 @@ export function tocarComba(estado: EstadoComba, instante: number): { estado: Est
 
 /** Respuestas únicas por acción: ver, oír y provocar algo prima sobre leer. */
 export const FRASE_JUEGO_ESPECIAL: Record<JuegoEspecial, string> = {
-  avivar: 'Nox: «Eso ha sido avivar el fuego. No lo llames supervisión».',
-  regar: 'Tofu: «La planta ha pedido otra ronda. Yo no».',
-  'dar-cuerda': 'Tofu: «Ya suena. Por favor, no bailes encima de los libros».',
-  llamada: 'Madeja: «Centralita de Madeja. Sabía que llamarías».',
-  salto: 'Nox: «Tres saltos seguidos. Estás contratado como entrenador. Sin sueldo».',
+  avivar: 'Eso ha sido avivar el fuego. No lo llames supervisión.',
+  regar: 'La planta ha pedido otra ronda. Yo no.',
+  'dar-cuerda': 'Ya suena. Por favor, no bailes encima de los libros.',
+  llamada: 'Centralita de Madeja. Sabía que llamarías.',
+  salto: 'Tres saltos seguidos. Estás contratado como entrenador. Sin sueldo.',
 }
