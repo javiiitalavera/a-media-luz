@@ -52,11 +52,13 @@ export const GESTOS_DE_OBJETO: Partial<Record<string, string>> = {
   mecedora: 'hamaca',
   guirnalda: 'campanillas',
   'farol-punto': 'campanillas',
-  telefono: 'reloj',
+  telefono: 'telefono',
   cesto: 'ovillo',
   buzon: 'carta',
   sofa: 'rebote',
   'tetera-rosa': 'vapor',
+  comba: 'comba',
+  gramofono: 'gramofono',
   album: 'libros',
 }
 
@@ -71,6 +73,9 @@ export function EfectoDeObjeto({ gesto, toques }: { gesto: string; toques: numbe
     )
   }
   if (!toques) return null
+  if (gesto === 'comba') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-comba"><i /></span>
+  if (gesto === 'gramofono') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-gramofono"><i /><i /></span>
+  if (gesto === 'telefono') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-telefono"><i /><i /></span>
   if (gesto === 'semilla' || gesto === 'tornillo' || gesto === 'ovillo' || gesto === 'carta') {
     const arte = { semilla: SEMILLA, tornillo: TORNILLO, ovillo: OVILLO, carta: CARTA }[gesto]
     return <img key={toques} aria-hidden className="efecto-de-objeto objeto-escupe" src={arte} alt="" draggable={false} />
