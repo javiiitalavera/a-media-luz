@@ -107,13 +107,18 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const tiempo = tiempoDelDia(ahora)
   const estacion = estacionDelDia(ahora)
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
+  // No interrumpir al jugador con una bienvenida cuando ya está interactuando.
+  const interaccionRealizada = useRef(false)
   // Lo que pasa (narración): sale de quien lo protagoniza (el vecino, la visita o un objeto), no de arriba.
   const [nota, ponerNota] = useState<{ texto: string; de?: Origen } | null>(null)
   // Un mensaje cada vez: si aparece una nota, se cierra el bocadillo.
-  const setNota = (t: string | null, de?: Origen) => { if (t) setHabla(null); ponerNota(t ? { texto: t, de } : null) }
+  const setNota = (t: string | null, de?: Origen) => {
+    if (t) { interaccionRealizada.current = true; setHabla(null) }
+    ponerNota(t ? { texto: t, de } : null)
+  }
   // Si sale un globo (has tocado un objeto), se callan el bocadillo y la nota.
   const globo = useGlobo((st) => st.globo)
-  useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
+  useEffect(() => { if (globo) { interaccionRealizada.current = true; setHabla(null); ponerNota(null) } }, [globo])
   const [saltos, setSaltos] = useState(0)
   const saludoHecho = useRef<CompaneroId | null>(null)
   // Una frase por descubrimiento jugable, no una notificación por cada repetición.
@@ -230,7 +235,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
           return saludar ? recordarSaludo(conTrato, DUENO, ahora) : conTrato
         })
       }
-      if (!saludar && !resultado.nuevoHito) return
+      if (interaccionRealizada.current || (!saludar && !resultado.nuevoHito)) return
       const texto = resultado.nuevoHito
         ? GESTOS_DE_AMISTAD[DUENO][resultado.nuevoHito - 1]
         : saludoDeLlegada(resultado.partida, DUENO, ahora)
@@ -291,6 +296,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   }, [comiendo])
   const darMerienda = () => {
     if (comiendo) return
+    interaccionRealizada.current = true
     setComiendo(true)
     setBocados(bocados + 1)
     setNota(null)
@@ -323,6 +329,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   }, [pendiente, vivo, esUltimo, contar, DUENO])
 
   const hablar = () => {
+    interaccionRealizada.current = true
     if (estado === 'huevo') {
       // Va rotando las frases para no repetir seguidas.
       const lista = UI.casa.huevoToques[Math.min(3, Math.max(1, faltaHuevo)) as 1 | 2 | 3]
@@ -341,6 +348,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     if (f) setHabla({ texto: f.texto, n: Date.now() })
   }
   const alConstruir = (id: string) => {
+    interaccionRealizada.current = true
     const res = construirObjeto(id, DUENO)
     if (!res.ok) return
     sfx.construir()
@@ -444,6 +452,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   }
   const empezarCaricia = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (conHuevo || !vivo || ordenando || e.button !== 0) return
+    interaccionRealizada.current = true
     if (cariciaPendiente.current) return // Solo el primer dedo acaricia.
     if (salirCaricia.current) clearTimeout(salirCaricia.current)
     setCariciaActiva(null)
@@ -502,6 +511,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} enUso={usando?.id === o.id} alEncuentro={encuentro && usando?.id === o.id ? responder : undefined} paso={paso} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id} seleccionado={objetoSeleccionado === o.id} noche={noche} enVecindad={enVecindad.has(o.id)}
+          onInteraccion={() => { interaccionRealizada.current = true }}
           onJugar={(id, veces, especial) => {
             registrarInteraccion('juguete')
             if (especial) {
@@ -521,6 +531,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
             }
           }}
           onMover={(x, y) => setArrastre({ id: o.id, ...encajar(o, x, y) })}
+          onCancelar={() => setArrastre(null)}
           onSoltar={(x, y, punto) => {
             setArrastre(null)
             // Soltado encima del baúl: se guarda. Si no, se deja donde está.
@@ -544,6 +555,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
                 // Click sintetizado al acabar una caricia: no abrir otro bocadillo.
                 if (gestoConsumido.current && e.detail > 0) { gestoConsumido.current = false; return }
                 gestoConsumido.current = false
+                interaccionRealizada.current = true
                 if (DUENO === 'tofu') {
                   const caja = e.currentTarget.getBoundingClientRect()
                   setLadoTofu(e.detail && e.clientX < caja.left + caja.width / 2 ? -1 : 1)
@@ -932,12 +944,14 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
 /** Cuántas veces se ha tocado cada objeto (para ir rotando sus frases). */
 const vecesTocado = new Map<string, number>()
 
-function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, onJugar, onMover, onSoltar }: {
+function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, onJugar, onInteraccion, onMover, onSoltar, onCancelar }: {
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean; enVecindad?: boolean
   onJugar?: (id: string, veces: number, especial?: JuegoEspecial) => void
+  onInteraccion?: () => void
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
+  onCancelar?: () => void
 }) {
   const [toques, setToques] = useState(0)
   const [extra, setExtra] = useState<{ tipo: JuegoEspecial; n: number } | null>(null)
@@ -963,6 +977,11 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
   }
   const ultimoPunto = useRef({ x: 0, y: 0 })
   const soltar = () => { const i = inicio.current; inicio.current = null; if (i) onSoltar?.(i.ultimo.x, i.ultimo.y, ultimoPunto.current) }
+  const cancelar = () => {
+    if (!inicio.current) return
+    inicio.current = null
+    onCancelar?.() // El gesto interrumpido no guarda una posición accidental.
+  }
   const eventosArrastre = arrastrar ? {
     onPointerDown: (e: React.PointerEvent<HTMLButtonElement>) => {
       e.stopPropagation()
@@ -977,8 +996,8 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
       onMover?.(inicio.current.ultimo.x, inicio.current.ultimo.y)
     },
     onPointerUp: soltar,
-    onPointerCancel: soltar,
-    onLostPointerCapture: soltar,
+    onPointerCancel: cancelar,
+    onLostPointerCapture: cancelar,
   } : {}
   const siguienteToque = () => {
     const n = (vecesTocado.get(o.id) ?? 0) + 1
@@ -997,6 +1016,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     if (omitirClick.current && e.detail > 0) { omitirClick.current = false; return }
     omitirClick.current = false
     const n = siguienteToque()
+    onInteraccion?.()
     if (alEncuentro) alEncuentro()
     if (alEncuentro && !esJuguete(o.id)) return
     if (!alEncuentro) sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
@@ -1024,6 +1044,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
       if (!pendiente || pendiente.pointerId !== pointerId) return
       omitirClick.current = true
       const n = siguienteToque()
+      onInteraccion?.()
       sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
       if (alEncuentro) alEncuentro()
       desencadenar(tipo, n)
