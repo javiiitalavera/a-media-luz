@@ -362,10 +362,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
         {/* La casa aparece debajo del paisaje exterior. El paisaje se desvanece DESPUÉS de romperse
             el huevo: así no hay corte entre la parcela del barrio y el interior de la casa. */}
-        {!conHuevo && (
-          <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" draggable={false}
-            className={`absolute inset-0 h-full w-full ${revelandoCasa ? 'anim-revelar-casa' : ''}`} />
-        )}
+        {/* Precarga de la casa desde que hay huevo: el fundido no espera a descargar el dibujo. */}
+        <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" draggable={false}
+          className={`absolute inset-0 h-full w-full ${conHuevo ? 'opacity-0' : revelandoCasa ? 'anim-revelar-casa' : ''}`} />
         {mostrarNido && (
           <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${revelandoCasa ? 'anim-disipar-nido' : ''}`}>
             <img src={rutaArte('barrio/mapa')} alt="" draggable={false} className="absolute max-w-none"
