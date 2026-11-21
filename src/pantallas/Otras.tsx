@@ -1,11 +1,11 @@
 // Álbum y Ajustes.
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { COMPANEROS, UI } from '../contenido'
 import { createPortal } from 'react-dom'
 import { FotoEscena } from '../componentes/FotoEscena'
 import { momentosRecientes, tituloMomento, type MomentoAlbum } from '../logica/momentos'
 import { curiosidadesTenidas } from '../logica/curiosidades'
-import { cronicaNueva, curiosidadNueva, momentoNuevo, seccionesNuevas, verCronica, verCuriosidad, verMomento } from '../logica/avisos'
+import { cronicaNueva, curiosidadNueva, momentoNuevo, seccionesNuevas, verCronica, verCuriosidad, verMomento, verSeccionAlbum } from '../logica/avisos'
 import { Punto } from '../componentes/Aviso'
 import type { Curiosidad } from '../contenido/curiosidades'
 import { SITUACIONES, type Lugar } from '../contenido/situaciones'
@@ -48,13 +48,17 @@ const ILUSTRACION_CRONICA: Record<string, string | undefined> = {
 }
 
 export function Album({ partida, onIr }: { partida: Partida; onIr: (l: Lugar) => void }) {
-  // Se abre primero la parte con novedades. Cada punto se apaga al abrir su ficha.
+  // Se abre primero la parte con novedades. En fotos y curiosidades basta con entrar en la sección.
   const ajustar = useJuego((s) => s.ajustar)
   const momentos = momentosRecientes(partida)
   const lista = cronicas(partida)
   const nuevas = seccionesNuevas(partida)
   const [seccion, setSeccion] = useState<'momentos' | 'cronicas' | 'curiosidades'>(() => nuevas[0] ?? (momentos.length || !lista.length ? 'momentos' : 'cronicas'))
   const curiosidades = curiosidadesTenidas(partida)
+  // La cuadrícula ya muestra cada novedad. No hace falta entrar foto por foto para apagar sus puntos.
+  useEffect(() => {
+    if (seccion === 'momentos' || seccion === 'curiosidades') ajustar((p) => verSeccionAlbum(p, seccion))
+  }, [ajustar, seccion, partida.momentos, partida.hallazgos])
   const [cosa, setCosa] = useState<{ c: Curiosidad; fecha: string } | null>(null)
   const [cronicaAbierta, setCronicaAbierta] = useState<string | null>(null)
   /** Dónde terminó una historia (su última fase). */

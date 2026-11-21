@@ -22,7 +22,7 @@ import { BotonConstruir } from '../componentes/BotonConstruir'
 import { Materiales } from '../componentes/Bolsa'
 import { globoEn } from '../estado/globo'
 import { Aviso } from '../componentes/Aviso'
-import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, verGag, verHuella, visitarLugar } from '../logica/avisos'
+import { avisoEnCasa, gagDeHoy, huellaNueva, pendientesDelSobre, proyectosBarrioSinVer, verGag, verHuella, verProyectosBarrio, visitarLugar } from '../logica/avisos'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { IconoMaterial } from '../componentes/IconoMaterial'
 import { colocarCasita } from '../logica/mapaBarrio'
@@ -82,7 +82,7 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   const puente = construido(partida, 'puente')
   const volverEsHuevo = volverA === vecinos.at(-1)?.companero && estadoUltimo !== 'vivo'
   const abierto = barrioAbierto(partida, ahora)
-  const listos = abierto && proyectosBarrioVisibles(partida).some((b) => !construido(partida, b.id) && Object.keys(faltan(partida, b, ahora)).length === 0)
+  const listos = proyectosBarrioSinVer(partida, ahora).length > 0
   const entrar = (c: CompaneroId, ir = (p?: Punto) => onCasa(c, p)) => {
     if (esperaEntrada.current !== undefined) return
     sfx.puerta()
@@ -215,7 +215,9 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
       </header>
 
       <div className="absolute inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-30 flex justify-end px-3">
-        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => setHoja(true)} />
+        <BotonConstruir etiqueta={UI.barrio.proyectos} listos={listos ? 1 : 0} onToque={() => {
+          ajustar((p) => verProyectosBarrio(p, ahora)); setHoja(true)
+        }} />
       </div>
 
       {hoja && <HojaBarrio partida={partida} ahora={ahora} abierto={abierto} onConstruido={setProyectoNuevo} onCerrar={() => setHoja(false)} />}

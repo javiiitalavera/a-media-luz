@@ -2,7 +2,7 @@
 // donde ha pasado algo y tú decides cuándo mirarlo. Todo se guarda en la partida.
 import { COMPANEROS, type CompaneroId } from '../contenido'
 import { GAGS, type Gag } from '../contenido/gags'
-import { proyectosVisibles, puedeConstruir } from './casa'
+import { proyectosBarrioVisibles, proyectosVisibles, puedeConstruir, construido, faltan } from './casa'
 import type { Lugar } from '../contenido/situaciones'
 import type { NoticiaBarrio, Partida, SeccionAlbum } from './partida'
 import { dia, diasEntre, sumarDias } from './fechas'
@@ -11,7 +11,7 @@ import { nivelSinVer, nacido, nacidos, proximaLlegada, progreso } from './etapas
 import { estadoDelMes, mesActual, mesesDe } from './meses'
 import { curiosidadesTenidas } from './curiosidades'
 import type { MomentoAlbum } from './momentos'
-import { decisionPendiente, dondeGregorio, huellasEn, microDeHoy } from './situaciones'
+import { barrioAbierto, decisionPendiente, dondeGregorio, huellasEn, microDeHoy } from './situaciones'
 import { expuesto } from './colocar'
 import { azarConSemilla } from './azar'
 
@@ -50,10 +50,43 @@ export function visitarLugar(p: Partida, lugar: Lugar): Partida {
     ? { ...p, noticias: n.map((x) => (x.lugar === lugar ? { ...x, visitada: true } : x)) } : p
 }
 
-/** El vecino ha crecido y aún no lo has visto, o tiene un proyecto listo para construir. */
+/** Cada proyecto puede avisar una vez. Mirar el catálogo no obliga a gastar materiales. */
+export function proyectosCasaSinVer(p: Partida, c: CompaneroId, ahora: Date): string[] {
+  if (!nacido(p, c, ahora)) return []
+  const vistosAqui = new Set(vistos(p).proyectosCasa?.[c] ?? [])
+  return proyectosVisibles(p, c)
+    .filter((o) => puedeConstruir(p, o, ahora) && !vistosAqui.has(o.id))
+    .map((o) => o.id)
+}
+
+/** Haber visto un proyecto no impide construirlo: solo quita su notificación. */
+export function verProyectosCasa(p: Partida, c: CompaneroId, ahora: Date): Partida {
+  const nuevos = proyectosCasaSinVer(p, c, ahora)
+  if (!nuevos.length) return p
+  const v = vistos(p)
+  return { ...p, vistos: {
+    ...v, proyectosCasa: { ...v.proyectosCasa, [c]: [...(v.proyectosCasa?.[c] ?? []), ...nuevos] },
+  } }
+}
+
+/** El martillo del barrio usa la misma regla: no insiste con un proyecto ya consultado. */
+export function proyectosBarrioSinVer(p: Partida, ahora: Date): string[] {
+  if (!barrioAbierto(p, ahora)) return []
+  const vistosAqui = new Set(vistos(p).proyectosBarrio ?? [])
+  return proyectosBarrioVisibles(p).filter((o) =>
+    !construido(p, o.id) && !Object.keys(faltan(p, o, ahora)).length && !vistosAqui.has(o.id)
+  ).map((o) => o.id)
+}
+export function verProyectosBarrio(p: Partida, ahora: Date): Partida {
+  const nuevos = proyectosBarrioSinVer(p, ahora)
+  if (!nuevos.length) return p
+  return { ...p, vistos: { ...vistos(p), proyectosBarrio: [...(vistos(p).proyectosBarrio ?? []), ...nuevos] } }
+}
+
+/** El vecino ha crecido y aún no lo has visto, o hay un proyecto NUEVO sin consultar. */
 export function hayAlgoQueHacer(p: Partida, c: CompaneroId, ahora: Date): boolean {
   if (!nacido(p, c, ahora)) return false
-  return nivelSinVer(p, c, progreso(p, c, ahora).nivel) || proyectosVisibles(p, c).some((o) => puedeConstruir(p, o, ahora))
+  return nivelSinVer(p, c, progreso(p, c, ahora).nivel) || proyectosCasaSinVer(p, c, ahora).length > 0
 }
 
 /** «!» sobre una casita: ha pasado algo allí, te espera una decisión, ha crecido o puede construir algo. */
@@ -136,6 +169,23 @@ export const verCronica = (p: Partida, id: string): Partida => {
     .filter(([k]) => !cronicaNueva(p, k)).map(([k, x]) => [k, firmaCronica(x)]))
   return { ...p, vistos: { ...vistos(p), cronicas: { ...previas, [id]: firmaCronica(e) } } }
 }
+/** Abrir la sección ya es verla: no exige pulsar cada fotografía ni cada objeto. */
+export function verSeccionAlbum(p: Partida, seccion: SeccionAlbum): Partida {
+  if (seccion === 'momentos') {
+    const lista = p.momentos ?? []
+    if (!lista.some((m) => momentoNuevo(p, m))) return p
+    const vistosMomento = Object.fromEntries(lista.map((m) => [m.id, firmaMomento(m)]))
+    return { ...p, vistos: { ...vistos(p), momentos: vistosMomento } }
+  }
+  if (seccion === 'curiosidades') {
+    const lista = curiosidadesTenidas(p)
+    if (!lista.some(({ c, fecha }) => curiosidadNueva(p, c.id, fecha))) return p
+    const vistasCuriosidades = Object.fromEntries(lista.map(({ c, fecha }) => [c.id, fecha]))
+    return { ...p, vistos: { ...vistos(p), curiosidades: vistasCuriosidades } }
+  }
+  return p // Las crónicas siguen siendo expansibles y se marcan al abrirlas.
+}
+
 export const hayAlbumNuevo = (p: Partida) => seccionesNuevas(p).length > 0
 
 /** Decisiones que te esperan (para el sobre): en qué casa, qué se pregunta y la noticia que la planteó. */
