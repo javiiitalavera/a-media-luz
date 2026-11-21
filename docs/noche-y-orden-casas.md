@@ -12,3 +12,11 @@
 - En modo Ordenar, los objetos desplazables se dibujan delante de las mascotas; desde el baúl se pueden seleccionar para traerlos delante o guardar directamente, incluso si estaban tapados.
 - **Gregorio/aspiradora** es el único elemento del catálogo intencionadamente fijo: es un personaje autónomo que aparece en distintas casas, no decoración de sitio fijo.
 - Las zonas de colocación continúan respetando la lógica física: suelo, pared, mesa, agua o elementos colgados. No se permite poner una lámpara dentro del estanque ni un reloj flotando en medio de la habitación.
+
+## Eclosión y cambios de aspecto
+- El exterior del nido y el fondo interior de la casa se superponen durante unos 950 ms. El mapa se desvanece mientras se descubre la casa, cuando el huevo termina de romperse y aparece el nuevo vecino.
+- El fondo interior se precarga mientras aún está el huevo para evitar imágenes en blanco en conexiones lentas.
+- La secuencia del huevo, el sonido de eclosión y la ficha de presentación conservan sus tiempos y acciones. Tras guardar la presentación no vuelve a reproducirse el fundido.
+- Al subir de nivel se suaviza el cambio de sprite con una entrada breve (520 ms), sin repetir el estallido grande del nacimiento.
+- Con «Reducir movimiento» se muestran las imágenes definitivas sin animación; no se añaden pantallas de espera ni recursos artísticos.
+- Transiciones existentes comprobadas en código: barrio ↔ casas (View Transitions con fallback), objetos recién construidos y tintes de amanecer/atardecer/noche. No se duplican.
