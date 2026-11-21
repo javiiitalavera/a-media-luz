@@ -36,7 +36,7 @@ import { CURIOSIDADES } from '../contenido/curiosidades'
 
 /** Dónde está la piña de la primera travesura de Nox (medio escondida tras su cola). */
 const PIÑA = { x: 34, y: 75, ancho: 10 }
-import { avisoFuera, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, verGag, verHuella, verMicro, visitarLugar } from '../logica/avisos'
+import { avisoFuera, gagDeHoy, pendientesDelSobre, huellaNueva, microSinVer, proyectosCasaSinVer, verGag, verHuella, verMicro, verProyectosCasa, visitarLugar } from '../logica/avisos'
 import { EscenaBreve } from '../componentes/EscenaBreve'
 import { GagEnEscena } from '../componentes/GagEnEscena'
 import { PideReto } from '../componentes/PideReto'
@@ -170,7 +170,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   // Al entrar, se apagan los avisos de novedades de esta casa.
   // Y si llega una novedad mientras estás aquí, también (la estás viendo).
   const ultimaNoticia = partida.noticias?.at(-1)?.fecha
-  useEffect(() => { ajustar((p) => visitarLugar(p, DUENO)) }, [ajustar, DUENO, ultimaNoticia])
+  useEffect(() => {
+    ajustar((p) => verProyectosCasa(visitarLugar(p, DUENO), DUENO, ahora))
+  }, [ajustar, DUENO, ultimaNoticia])
   // El huevo listo espera a que lo toques: el último toque es tuyo.
   const [abriendo, setAbriendo] = useState(false)
   useEffect(() => {
@@ -332,7 +334,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   } : esc.pies
   const llegada = esUltimo && vivo ? proximaLlegada(partida, ahora) : null
   const otroHuevo = llegada?.faltanDias === 0 ? llegada.vecino : null
-  const listos = proyectosVisibles(partida, DUENO).filter((o) => puedeConstruir(partida, o, ahora)).length
+  // El martillo avisa solo de proyectos que aún no hemos consultado.
+  const listos = proyectosCasaSinVer(partida, DUENO, ahora).length
   const fuera = avisoFuera(partida, DUENO, ahora)
   const pendientes = pendientesDelSobre(partida, ahora)
   // Lo de abajo se pinta delante: se ordena por la altura de los pies.
@@ -583,7 +586,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
           <BotonRedondo etiqueta={UI.casa.verFicha(conHuevo ? UI.casa.huevo : COMPANEROS[DUENO].nombre)} onToque={() => setFicha(true)} className="mb-1"><Icono d={ICONOS.info} /></BotonRedondo>
           {vivo && !nacer && !celebra && <BotonPastilla onToque={darMerienda}><span aria-hidden className="muestra-bocado" data-forma={merienda.forma}><i /></span>{merienda.nombre}</BotonPastilla>}
           {/* Sin casa todavía (en el huevo), no hay nada que construir. */}
-          {conHuevo ? <span /> : <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => setHoja(true)} />}
+          {conHuevo ? <span /> : <BotonConstruir etiqueta={UI.casa.construir} listos={listos} onToque={() => {
+            ajustar((p) => verProyectosCasa(p, DUENO, ahora)); setHoja(true)
+          }} />}
         </div>
       </div>
 
