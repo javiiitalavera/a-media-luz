@@ -961,7 +961,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
   const ritmo = useRef<EstadoComba>({ ...COMBA_INICIAL })
   const omitirClick = useRef(false)
   const inicioJuego = useRef<{
-    pointerId: number; x: number; y: number; reloj: ReturnType<typeof setTimeout>
+    pointerId: number; x: number; y: number; reloj: ReturnType<typeof setTimeout> | null
   } | null>(null)
   useEffect(() => {
     if (ordenando) { setToques(0); ritmo.current = { ...COMBA_INICIAL } }
@@ -1024,25 +1024,27 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     if (alEncuentro && !esJuguete(o.id)) return
     if (!alEncuentro) sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
     if (!esJuguete(o.id)) { globoEn(e, frases[(n - 1) % frases.length]); return }
-    if (o.id === 'comba') {
+    const deRitmo = RITMO_OBJETO[o.id]
+    if (deRitmo) {
       const paso = tocarComba(ritmo.current, Date.now())
       ritmo.current = paso.estado
-      if (paso.especial) { desencadenar('salto', n); return }
+      if (paso.especial) { desencadenar(deRitmo, n); return }
     }
     onJugar?.(o.id, n)
     // El objeto cuenta algo ocasionalmente, pero primero se juega con él.
     if (n % 6 === 0 && o.id !== 'telefono') globoEn(e, frases[(n - 1) % frases.length])
   }
 
-  // Hoguera, maceta, gramófono y teléfono: mantener pulsado produce una acción diferente.
-  // Capturamos el puntero para soltar fuera del objeto sin disparar un segundo click.
+  // Mantener, deslizar y tocar a ritmo son gestos diferentes; en modo Ordenar
+  // prevalece siempre el arrastre de muebles.
   const empezarJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
-    const tipo = MANTENER_OBJETO[o.id]
-    if (!tipo || ordenando || e.button !== 0 || inicioJuego.current) return
+    const mantener = MANTENER_OBJETO[o.id]
+    const deslizar = DESLIZAR_OBJETO[o.id]
+    if ((!mantener && !deslizar) || ordenando || e.button !== 0 || inicioJuego.current) return
     omitirClick.current = false
     e.currentTarget.setPointerCapture(e.pointerId)
     const pointerId = e.pointerId
-    const reloj = setTimeout(() => {
+    const reloj = mantener ? setTimeout(() => {
       const pendiente = inicioJuego.current
       if (!pendiente || pendiente.pointerId !== pointerId) return
       omitirClick.current = true
@@ -1050,23 +1052,29 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
       onInteraccion?.()
       sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
       if (alEncuentro) alEncuentro()
-      desencadenar(tipo, n)
-    }, 550)
+      desencadenar(mantener, n)
+    }, 550) : null
     inicioJuego.current = { pointerId, x: e.clientX, y: e.clientY, reloj }
   }
   const seguirJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
     const p = inicioJuego.current
     if (!p || p.pointerId !== e.pointerId) return
-    if (Math.hypot(e.clientX - p.x, e.clientY - p.y) > 18) {
-      clearTimeout(p.reloj)
-      inicioJuego.current = null
-      omitirClick.current = true
-    }
+    if (Math.hypot(e.clientX - p.x, e.clientY - p.y) <= 24) return
+    if (p.reloj) clearTimeout(p.reloj)
+    inicioJuego.current = null
+    omitirClick.current = true // No transformar un arrastre en un segundo toque.
+    const deslizar = DESLIZAR_OBJETO[o.id]
+    if (!deslizar) return // Una pulsación larga movida accidentalmente se cancela.
+    const n = siguienteToque()
+    onInteraccion?.()
+    sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
+    if (alEncuentro) alEncuentro()
+    desencadenar(deslizar, n)
   }
   const terminarJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
     const p = inicioJuego.current
     if (!p || p.pointerId !== e.pointerId) return
-    clearTimeout(p.reloj)
+    if (p.reloj) clearTimeout(p.reloj)
     inicioJuego.current = null
   }
   const s = o.sitio
@@ -1079,17 +1087,28 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     <>
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
       <button type="button"
-        aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : MANTENER_OBJETO[o.id] ? `${o.nombre}. Mantén pulsado para jugar` : o.nombre}
+        aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : MANTENER_OBJETO[o.id] ? `${o.nombre}. Mantén pulsado para jugar` : DESLIZAR_OBJETO[o.id] ? `${o.nombre}. Desliza para jugar` : RITMO_OBJETO[o.id] ? `${o.nombre}. Toca tres veces a ritmo` : o.nombre}
         onClick={tocar}
+        onKeyDown={(e) => {
+          if (ordenando || !e.shiftKey || e.key !== 'Enter') return
+          const especial = MANTENER_OBJETO[o.id] ?? DESLIZAR_OBJETO[o.id] ?? RITMO_OBJETO[o.id]
+          if (!especial) return
+          e.preventDefault()
+          e.stopPropagation()
+          const n = siguienteToque()
+          onInteraccion?.()
+          sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
+          desencadenar(especial, n)
+        }}
         onPointerDown={!ordenando ? empezarJuego : undefined}
         onPointerMove={!ordenando ? seguirJuego : undefined}
         onPointerUp={!ordenando ? terminarJuego : undefined}
         onPointerCancel={!ordenando ? terminarJuego : undefined}
         onLostPointerCapture={!ordenando ? terminarJuego : undefined}
-        onContextMenu={(e) => { if (MANTENER_OBJETO[o.id] && !ordenando) e.preventDefault() }}
+        onContextMenu={(e) => { if ((MANTENER_OBJETO[o.id] || DESLIZAR_OBJETO[o.id]) && !ordenando) e.preventDefault() }}
         {...eventosArrastre}
         className={`absolute ${ordenando ? (arrastrar ? `objeto-movible ${arrastrando ? 'objeto-arrastrado z-30' : seleccionado ? 'z-[22]' : 'z-[12]'}` : 'opacity-60') : 'active:brightness-110'}`}
-        style={{ ...estilo, touchAction: arrastrar ? 'none' : MANTENER_OBJETO[o.id] ? 'manipulation' : undefined }}>
+        style={{ ...estilo, touchAction: arrastrar || DESLIZAR_OBJETO[o.id] ? 'none' : MANTENER_OBJETO[o.id] ? 'manipulation' : undefined }}>
         <div data-mueble-en-uso={enUso ? o.id : undefined} data-paso={paso} data-vecindad={enVecindad && !ordenando ? 'activa' : undefined} className={s.colgado && !ordenando ? 'anim-balanceo' : ''}>
           <span className={`block ${nuevo ? 'anim-colocar' : ''}`}>
             <img key={toques} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
