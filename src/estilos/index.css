@@ -562,3 +562,67 @@ img.anim-gesto-de-objeto[data-gesto='telefono'] { animation: juguete-timbre 650m
   img.anim-gesto-de-objeto[data-gesto='gramofono'], img.anim-gesto-de-objeto[data-gesto='telefono'],
   [data-vecindad='activa'] img, .juguete-comba i,.juguete-gramofono i,.juguete-telefono i { animation:none; }
 }
+
+/* Acciones físicas de los juguetes. Los efectos son dibujados con CSS y duran un segundo. */
+.juego-especial-de-objeto {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.juego-especial-de-objeto i { position: absolute; display: block; opacity: .85; }
+.juego-especial-de-objeto i:nth-child(1) { animation-delay: 0ms !important; }
+.juego-especial-de-objeto i:nth-child(2) { animation-delay: 140ms !important; }
+.juego-especial-de-objeto i:nth-child(3) { animation-delay: 280ms !important; }
+@keyframes chispa-avivada {
+  0% { transform: translateY(10px) scale(.4); opacity: 0; }
+  30% { opacity: .96; }
+  100% { transform: translateY(-34px) rotate(25deg) scale(.25); opacity: 0; }
+}
+.juego-especial-de-objeto[data-accion='avivar'] i {
+  width: 14%; height: 28%; bottom: 6%; left: 24%;
+  background: radial-gradient(ellipse at 50% 70%, #ffcd71 5%, #f78744 57%, transparent 76%);
+  border-radius: 65% 0 65% 65%;
+  animation: chispa-avivada 920ms ease-out both;
+}
+.juego-especial-de-objeto[data-accion='avivar'] i:nth-child(2) { left: 44%; height: 38%; }
+.juego-especial-de-objeto[data-accion='avivar'] i:nth-child(3) { left: 62%; }
+@keyframes gota-maceta {
+  0% { opacity: 0; transform: translateY(-12px) scale(.6); }
+  25% { opacity: .96; }
+  100% { opacity: 0; transform: translateY(28px) scale(.7); }
+}
+.juego-especial-de-objeto[data-accion='regar'] i {
+  width: 8%; height: 13%; top: 0; left: 28%;
+  background: #9cdae5; border: 1px solid #6599b4;
+  border-radius: 65% 65% 70% 10%; transform: rotate(40deg);
+  animation: gota-maceta 780ms ease-in both;
+}
+.juego-especial-de-objeto[data-accion='regar'] i:nth-child(2) { left: 50%; top: -7%; }
+.juego-especial-de-objeto[data-accion='regar'] i:nth-child(3) { left: 66%; top: 2%; }
+@keyframes onda-musical {
+  0% { transform: scale(.3) rotate(-15deg); opacity: .85; }
+  100% { transform: scale(1.8) rotate(25deg); opacity: 0; }
+}
+.juego-especial-de-objeto[data-accion='dar-cuerda'] i,
+.juego-especial-de-objeto[data-accion='llamada'] i {
+  inset: 5%; border: 2px solid #e9bd86; border-radius: 50%;
+  animation: onda-musical 880ms ease-out both;
+}
+.juego-especial-de-objeto[data-accion='llamada'] i { border-color: #ffcade; }
+@keyframes saltos-comba {
+  0% { transform: translateY(0) scale(.75); opacity: 0; }
+  35% { opacity: .95; }
+  70% { transform: translateY(-23px) scale(1.2); opacity: .72; }
+  100% { transform: translateY(-30px) scale(.7); opacity: 0; }
+}
+.juego-especial-de-objeto[data-accion='salto'] i {
+  width: 11%; aspect-ratio: 1; border-radius: 50%; bottom: 12%; left: 20%;
+  background: #f5d37d; box-shadow: 0 0 0 2px #fff0c688;
+  animation: saltos-comba 720ms ease-out both;
+}
+.juego-especial-de-objeto[data-accion='salto'] i:nth-child(2) { left: 48%; }
+.juego-especial-de-objeto[data-accion='salto'] i:nth-child(3) { left: 73%; }
+@media (prefers-reduced-motion: reduce) {
+  .juego-especial-de-objeto i { animation: none !important; opacity: .6; }
+}
