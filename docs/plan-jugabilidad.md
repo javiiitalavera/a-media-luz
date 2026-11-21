@@ -64,3 +64,14 @@ Las mecánicas de estos PR permanecen operativas. Esta hoja de ruta decide **qu�
 - **P6 ampliado:** quince parejas de muebles en total, tres por casa. Cada pareja tiene su propia microescena ambiental perceptible sobre ambos objetos, que revive al tocarlos, sin quedarse solo en un mensaje. Las reglas siguen requiriendo que las dos piezas estén construidas, visibles y próximas. Los descubrimientos persisten y el baúl/ordenar los desactivan visualmente.
 - **Alcance expresamente excluido:** P9, las demás propuestas descartadas y el arte nuevo. P9 es el siguiente bloque independiente; el arte y las posturas siguen aplazados en la issue #25.
 - **QA:** pruebas de catorce gestos sin duplicados, quince combinaciones alcanzables en superficies reales, restricción de construcciones y guardado, regresión de piezas previas y compilación. Queda comprobación táctil y visual con un móvil real antes de fusionar.
+
+## Bloque P9 (21/11/2026): clima con consecuencias visibles
+
+- **Acontecimientos ambientales especiales:** siete variantes de pequeñas sorpresas estacionales en función del tiempo y la estación (pétalos primaverales, motitas de verano, hojas de otoño, escarcha invernal, gotas de lluvia, brillos de niebla y remolinos). No aparecen todos los días; la elección es determinista por fecha y permanece igual en el mapa y en las cinco casas.
+- **Jugar sin registrar:** en esos días hay una pequeña partícula ambiental tocable, también accesible por teclado. Un toque provoca un efecto breve en el propio paisaje. Se puede repetir sin límite, sin material, puntos, historia, notificaciones, cuenta atrás ni premio por entrar ese día.
+- **Construcciones que responden al tiempo:** lluvia en la hoguera, maceta o loto; viento en cometa, guirnaldas o cajas; niebla sobre telescopio, lámpara u otros objetos existentes. El efecto acompaña al mueble si se recoloca y desaparece si se guarda. Varias escenas de fondo de los cinco vecinos cambian de intensidad con el clima.
+- **Rendimiento y ergonomía:** todo se dibuja con CSS y componentes ya presentes, sin nuevos sprites; los efectos son `pointer-events: none` salvo el detalle interactivo, con mínimo de 44px; se respeta `prefers-reduced-motion` y se reducen partículas en interiores.
+- **Cobertura:** pruebas de los siete fenómenos en cuatro años, correspondencia estación/clima, consistencia mañana/noche, reacciones en las cinco casas e inmutabilidad de partida.
+- **Filosofía:** no se consulta el clima real ni se exige una visita diaria. Nada altera las propuestas voluntarias de aumento de metas, las ofrendas, materiales, retos o amistad.
+
+**Los únicos tres apartados de jugabilidad autorizados (P3/P6/P9) ya tienen implementación propuesta.** Quedan revisión visual/táctil y posibles correcciones de calidad, no ampliar P1/P2/P4/P5/P7/P8/P10. El nuevo arte para animaciones y posturas individuales permanece aplazado en la issue #25.
