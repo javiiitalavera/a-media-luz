@@ -147,7 +147,10 @@ export const UI = {
   },
   casa: {
     ordenar: 'Ordenar la casa',
-    ordenarAyuda: 'Arrastra cada cosa a su sitio o suéltala sobre el baúl para guardarla.',
+    ordenarAyuda: 'Arrastra los objetos. Si alguno queda tapado, toca el baúl para seleccionarlo o guardarlo.',
+    objetosEnCasa: 'Objetos de esta casa',
+    traerDelante: 'Seleccionar',
+    guardarEnBaul: 'Guardar',
     baul: (n: number) => (n ? `Baúl (${n} guardados)` : 'Baúl'),
     baulTitulo: 'El baúl',
     baulVacio: 'Está vacío. Arrastra algo encima para guardarlo.',
