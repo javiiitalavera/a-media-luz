@@ -44,7 +44,7 @@ export function reaccionObjetoPorClima(
   if (tiempo === 'viento') {
     const ventosos: Record<string, ReaccionClimaObjeto> = {
       cometa: 'aire', campanillas: 'aire', guirnalda: 'aire',
-      'farol-papel': 'aire', cajas: 'aire', papeles: 'aire',
+      'farol-papel': 'aire', cajas: 'aire',
     }
     return ventosos[objetoId] ?? null
   }
