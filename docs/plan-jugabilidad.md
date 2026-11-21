@@ -30,3 +30,13 @@ El juego sigue basado en registrar acciones positivas reales. Los hábitos dan m
 ## Criterio de evaluación
 
 En una sesión **sin hábitos que registrar**, ¿apetece acariciar, tocar los juguetes y experimentar colocando muebles? Si la respuesta es no, no añadir más lecturas ni sistemas de misiones: mejorar la respuesta táctil y la sorpresa primero.
+
+## Bloque 2 (21/11/2026): llegada, amistad y clima
+
+- **Saludo de llegada (P1):** una línea como máximo al entrar en una casa ya habitada; no interfiere con la eclosión, las decisiones ni la celebración de niveles. Reutiliza `FRASES.saludo`, y cambia a veces por la confianza y el tiempo.
+- **Amistad (P5):** registramos silenciosamente `visita`, `caricia`, `merienda` y `juguete`. Solo cuentan hasta tres tipos distintos por semana, una vez por tipo; no hay barra, tareas, rachas ni caída de puntos. Dos hitos por vecino con nuevas frases y pequeños cambios de trato. Tofu permite tocarle el brote en el segundo hito.
+- **Clima (P9 inicial):** cada día del calendario del juego produce tiempo ficticio estable (despejado, lluvia, niebla o viento), y las estaciones cambian la paleta. Se ve en el mapa y matiza las casas; una parte de los saludos y las expresiones reacciona. No se consulta el clima real del usuario ni se obliga a visitar el barrio.
+- **Siguientes:** ampliar objetos-juguete y vecindades si la experiencia táctil convence; después evaluar encargos y ronda sin listas, dejando mensajes/barquitos y cuaderno como ambientación secundaria.
+- **Se mantienen sin cambios las propuestas automáticas de subir objetivos.**
+
+Validación: abrir una casa y ser recibido sin más paneles; jugar y dar de merendar durante tres semanas ficticias; comprobar que repetir cuarenta caricias no adelanta hitos y que la lluvia cambia el barrio sin hacer más difícil jugar.
