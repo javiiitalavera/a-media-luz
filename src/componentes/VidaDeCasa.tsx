@@ -106,8 +106,9 @@ export function EfectoDeObjeto({ gesto, toques }: { gesto: string; toques: numbe
  * Efecto puramente visual: no hay marcador, premio ni nueva pantalla de descubrimientos. */
 export function EfectoVecindad({ efecto, toques }: { efecto: EfectoVecindad; toques: number }) {
   return (
-    <span key={toques} aria-hidden="true" className="efecto-vecindad" data-efecto={efecto} data-tocado={toques > 0 ? '' : undefined}>
+    <span aria-hidden="true" className="efecto-vecindad" data-efecto={efecto}>
       <i /><i /><i />
+      {toques > 0 && <b key={toques} className="vecindad-reaccion" />}
     </span>
   )
 }
