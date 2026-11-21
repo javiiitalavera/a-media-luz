@@ -12,7 +12,17 @@ describe('ordenar la casa', () => {
     expect(movible(obj('hoguera'))).toBe(true)
     expect(movible(obj('farolillo'))).toBe(true)
     expect(movible(obj('aspiradora'))).toBe(false)
-    expect(movible(obj('tablon'))).toBe(false) // está en la pared del taller
+    expect(movible(obj('tablon'))).toBe(true) // se puede recolocar sobre la pared del taller
+  })
+
+  it('todas las construcciones salvo Gregorio pueden moverse y guardarse', () => {
+    expect(OBJETOS_CASA.filter((o) => o.id !== 'aspiradora' && !movible(o)).map((o) => o.id)).toEqual([])
+    for (const id of ['loto', 'bufanda', 'reloj', 'corcho', 'medalla', 'tablon']) {
+      expect(guardado(guardar(base(), id), id)).toBe(true)
+    }
+    expect(encajar(obj('loto'), 50, 65)).toEqual({ x: 50, y: 65 })
+    expect(encajar(obj('loto'), 90, 90)).toEqual({ x: 85, y: 70 })
+    expect(encajar(obj('tablon'), 40, 80)).toEqual({ x: 40, y: 44 })
   })
 
   it('lo que sueltas fuera del suelo encaja en el punto más cercano; lo colgado solo se mueve de lado', () => {
