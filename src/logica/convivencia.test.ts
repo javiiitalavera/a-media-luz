@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { crearPartida } from './partida'
-import { estacionDelDia, gradoAmistad, HITOS_AMISTAD, registrarTrato, saludoDeLlegada, tiempoDelDia } from './convivencia'
+import { estacionDelDia, gradoAmistad, HITOS_AMISTAD, puedeSaludar, recordarSaludo, registrarTrato, saludoDeLlegada, tiempoDelDia } from './convivencia'
 
 const fecha = (dia: string) => new Date(dia + 'T12:00:00')
 const base = () => crearPartida('nox', fecha('2026-11-16'), [], true)
@@ -55,6 +55,16 @@ describe('convivencia: afecto y clima sin obligaciones', () => {
     expect(estacionDelDia(fecha('2026-07-10'))).toBe('verano')
     expect(estacionDelDia(fecha('2026-10-10'))).toBe('otono')
     expect(['despejado', 'lluvia', 'niebla', 'viento']).toContain(tiempoDelDia(f))
+  })
+
+  it('volver del barrio a los dos minutos no repite el saludo, pero sí dos horas después', () => {
+    const f = new Date('2026-11-21T08:00:00')
+    expect(puedeSaludar(base(), 'nox', f)).toBe(true)
+    const visto = recordarSaludo(base(), 'nox', f)
+    expect(puedeSaludar(visto, 'nox', new Date('2026-11-21T08:02:00'))).toBe(false)
+    expect(puedeSaludar(visto, 'tofu', new Date('2026-11-21T08:02:00'))).toBe(true)
+    expect(recordarSaludo(visto, 'nox', new Date('2026-11-21T08:02:00'))).toBe(visto)
+    expect(puedeSaludar(visto, 'nox', new Date('2026-11-21T10:01:00'))).toBe(true)
   })
 
   it('el saludo reutiliza frases válidas y cambia con la confianza', () => {
