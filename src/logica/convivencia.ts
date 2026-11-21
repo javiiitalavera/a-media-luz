@@ -66,6 +66,18 @@ export const REACCIONES_TIEMPO: Record<CompaneroId, Partial<Record<TiempoBarrio,
   tuerca: { lluvia: 'Humedad no prevista. Abriré una incidencia.', niebla: 'Visibilidad reducida. He etiquetado la niebla.', viento: 'Hay tres etiquetas volando. Dos son mías. La tercera también.' },
 }
 
+/** Evita saludar otra vez tras ir al mapa. Más tarde puede volver a reconocerte. */
+export function puedeSaludar(p: Partida, vecino: CompaneroId, ahora: Date): boolean {
+  const antes = p.saludosVistos?.[vecino]
+  if (!antes) return true
+  const diferencia = ahora.getTime() - new Date(antes).getTime()
+  return !Number.isFinite(diferencia) || diferencia < 0 || diferencia >= 2 * 60 * 60 * 1000
+}
+export function recordarSaludo(p: Partida, vecino: CompaneroId, ahora: Date): Partida {
+  if (!puedeSaludar(p, vecino, ahora)) return p
+  return { ...p, saludosVistos: { ...p.saludosVistos, [vecino]: ahora.toISOString() } }
+}
+
 /** Una línea al entrar; usa saludos ya escritos y personaliza algunos encuentros. */
 export function saludoDeLlegada(p: Partida, vecino: CompaneroId, ahora: Date): string {
   const grado = gradoAmistad(p, vecino)
