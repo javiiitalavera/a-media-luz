@@ -15,5 +15,5 @@ export function fondoDeEclosion(estado: EstadoHuevo, paso: PasoEclosion) {
   const revelandoCasa = estado === 'naciendo' && (paso === 'salio' || paso === 'ficha')
   const conHuevo = estado !== 'vivo' && !revelandoCasa
   return { conHuevo, mostrarNido: conHuevo || revelandoCasa, revelandoCasa,
-    niebla: estado === 'naciendo' && (paso === 'niebla' ? 'cubriendo' : paso === 'salio' ? 'revelando' : null) } as const
+    niebla: estado === 'naciendo' ? (paso === 'niebla' ? 'cubriendo' : paso === 'salio' ? 'revelando' : null) : null } as const
 }
