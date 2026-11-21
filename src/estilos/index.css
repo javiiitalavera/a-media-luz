@@ -56,6 +56,18 @@ body {
 .animate-entrar { animation: entrar 0.28s ease-out both; }
 @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
 .animate-aparecer { animation: aparecer 0.2s ease-out both; }
+/* Eclosión: el paisaje exterior permanece mientras aparece la nueva casa.
+   Ambas capas comparten exactamente la misma cámara; no hace falta arte adicional. */
+@keyframes disipar-nido {
+  0%, 12% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.anim-disipar-nido { opacity: 0; animation: disipar-nido 950ms ease-in-out both; }
+@keyframes revelar-casa {
+  from { opacity: .9; transform: scale(1.025); }
+  to { opacity: 1; transform: none; }
+}
+.anim-revelar-casa { animation: revelar-casa 950ms ease-out both; transform-origin: 50% 55%; }
 /* Casa: animaciones de la escena (todas por código, sobre el arte quieto). */
 @keyframes respirar { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.99, 1.025); } }
 .anim-respirar { animation: respirar 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
@@ -449,7 +461,7 @@ body {
   .anim-luz { transform: translate(-50%, -50%); opacity: .7; }
   .anim-luciernaga { opacity: .38; }
   .anim-asoma { animation: gag-quieto 4s linear both; }
-  .animate-entrar, .animate-aparecer { animation: none; }
+  .animate-entrar, .animate-aparecer, .anim-disipar-nido, .anim-revelar-casa { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
   .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-aviso, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
