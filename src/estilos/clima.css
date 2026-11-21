@@ -1,0 +1,34 @@
+/* Clima ficticio del vecindario; no debe volver opaca la escena ni ocultar los objetos. */
+.clima-del-barrio { z-index: 1; }
+.clima-del-barrio .clima-tinte { position: absolute; inset: 0; opacity: .26; }
+.clima-del-barrio[data-estacion='primavera'] .clima-tinte { background: linear-gradient(125deg, #f0d6e938, transparent 55%); }
+.clima-del-barrio[data-estacion='verano'] .clima-tinte { background: linear-gradient(130deg, #ffeb9e5c, transparent 65%); }
+.clima-del-barrio[data-estacion='otono'] .clima-tinte { background: linear-gradient(140deg, #dfad655b, transparent 65%); }
+.clima-del-barrio[data-estacion='invierno'] .clima-tinte { background: linear-gradient(140deg, #bad1e37a, transparent 70%); }
+.clima-del-barrio[data-tiempo='lluvia'] .clima-tinte { background: linear-gradient(#9eaccc40, #7c94bf40); opacity: .58; }
+.clima-del-barrio[data-tiempo='niebla'] .clima-tinte { background: linear-gradient(100deg, #f5f1f770, #ece7f260); opacity: .55; }
+.clima-del-barrio[data-tiempo='viento'] .clima-tinte { background: linear-gradient(145deg, #fff6e526, transparent); }
+.clima-particula { position: absolute; left: var(--x); top: var(--y); display: block; }
+.clima-del-barrio[data-tiempo='lluvia'] .clima-particula {
+  width: 1px; height: 22px; background: linear-gradient(#f6f7f9bb, #e6f1f900);
+  transform: rotate(19deg); opacity: .65;
+}
+.clima-del-barrio[data-tiempo='niebla'] .clima-particula {
+  width: 60%; height: 16%; border-radius: 50%;
+  background: radial-gradient(ellipse, #eff0f4a0, transparent 68%); filter: blur(12px);
+}
+.clima-del-barrio[data-tiempo='viento'] .clima-particula {
+  width: 9px; height: 5px; border-radius: 70% 0 70% 0;
+  background: #cba768a8; box-shadow: inset 0 0 0 1px #80624a55;
+}
+.clima-del-barrio[data-interior] { z-index: 0; }
+.clima-del-barrio[data-interior] .clima-particula { display: none; }
+.clima-del-barrio[data-interior] .clima-tinte { opacity: .16; }
+@keyframes clima-llover { from { transform: translate(0,-8vh) rotate(19deg); opacity:0 } 20% {opacity:.7} to {transform:translate(-28px,80vh) rotate(19deg);opacity:0} }
+@keyframes clima-niebla { 0%,100% { transform:translateX(-28%) } 50% {transform:translateX(24%)} }
+@keyframes clima-viento { from {transform:translate(-30px,8px) rotate(-25deg);opacity:0} 25% {opacity:.7} to {transform:translate(140px,-26px) rotate(250deg);opacity:0} }
+@media (prefers-reduced-motion: no-preference) {
+ .clima-del-barrio[data-tiempo='lluvia'] .clima-particula { animation:clima-llover var(--duracion) linear var(--retardo) infinite; }
+ .clima-del-barrio[data-tiempo='niebla'] .clima-particula { animation:clima-niebla 15s ease-in-out var(--retardo) infinite; }
+ .clima-del-barrio[data-tiempo='viento'] .clima-particula { animation:clima-viento calc(var(--duracion) * 2) linear var(--retardo) infinite; }
+}
