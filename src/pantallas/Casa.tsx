@@ -9,6 +9,7 @@ import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
+import { fondoDeEclosion, type PasoEclosion } from '../logica/fondoDeEclosion'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { dibujoDelNivel, nivelSinVer, nivelVisto, proximaLlegada, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
@@ -126,7 +127,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const vivo = estado === 'vivo'
   const faltaHuevo = faltanParaEclosion(partida, ahora)
   const [toques, setToques] = useState(0)
-  const [nacer, setNacer] = useState<'rompiendo' | 'salio' | 'ficha' | null>(null)
+  const [nacer, setNacer] = useState<PasoEclosion>(null)
   const [toquesSit, setToquesSit] = useState(0)
   const [preguntaHuevo, setPreguntaHuevo] = useState(false)
   useEffect(() => {
@@ -344,7 +345,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora, DUENO)
   const propuesta = propuestaDeMeta(partida, ahora)
-  const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
+  const { conHuevo, mostrarNido, revelandoCasa } = fondoDeEclosion(estado, nacer)
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[Math.min(etapaVista, ANCHO_NOX.length - 1)]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
@@ -359,15 +360,18 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   return (
     <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden select-none bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
-        {/* Mientras está en el huevo no hay casa todavía: se ve su parcela del barrio, con la hierba. Al nacer, aparece la casa. */}
-        {conHuevo ? (
-          <div aria-hidden className="absolute inset-0 overflow-hidden">
+        {/* La casa aparece debajo del paisaje exterior. El paisaje se desvanece DESPUÉS de romperse
+            el huevo: así no hay corte entre la parcela del barrio y el interior de la casa. */}
+        {!conHuevo && (
+          <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" draggable={false}
+            className={`absolute inset-0 h-full w-full ${revelandoCasa ? 'anim-revelar-casa' : ''}`} />
+        )}
+        {mostrarNido && (
+          <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${revelandoCasa ? 'anim-disipar-nido' : ''}`}>
             <img src={rutaArte('barrio/mapa')} alt="" draggable={false} className="absolute max-w-none"
               style={{ width: `${ANCHO_NIDO}%`, left: `${50 - (parcela.x / 100) * ANCHO_NIDO}%`, top: `${NOX.y - 8 - ((parcela.y / 100) * ANCHO_NIDO * ew) / PROPORCION_BARRIO / eh}%` }} />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_62%,transparent_25%,#2e203055_80%)]" />
           </div>
-        ) : (
-          <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className={`absolute inset-0 h-full w-full ${nacer ? 'animate-aparecer' : ''}`} draggable={false} />
         )}
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
         {micro?.visual && !ordenando && <EscenaBreve visual={micro.visual} />}
