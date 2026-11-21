@@ -68,6 +68,46 @@ body {
   to { opacity: 1; transform: none; }
 }
 .anim-revelar-casa { animation: revelar-casa 950ms ease-out both; transform-origin: 50% 55%; }
+/* Cortina de niebla de eclosión. Empieza sobre el paisaje exterior y lo cubre
+   ANTES del fundido; se retira únicamente cuando la nueva casa está formada.
+   Una base opaca oculta por completo la sustitución, tres volutas crean el movimiento. */
+.niebla-eclosion {
+  position: absolute;
+  inset: 0;
+  z-index: 27;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(155deg, #e9dfea, #faf1f0 47%, #e5d7e7);
+}
+.niebla-eclosion[data-fase='cubriendo'] {
+  animation: niebla-cubre 400ms ease-out both;
+}
+.niebla-eclosion[data-fase='revelando'] {
+  animation: niebla-revela 1480ms ease-in-out both;
+}
+@keyframes niebla-cubre { from { opacity: 0; } to { opacity: 1; } }
+@keyframes niebla-revela {
+  0%, 66% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.niebla-eclosion__voluta {
+  position: absolute;
+  width: 145%;
+  height: 57%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #fffaf6 0%, #f9f2f7ed 44%, #e6d6eaa6 73%, transparent 100%);
+  filter: blur(14px);
+  animation: voluta-eclosion 1850ms ease-in-out both;
+}
+.niebla-eclosion__voluta--izq { left: -72%; top: 3%; --niebla-x: 16%; --niebla-y: 8%; }
+.niebla-eclosion__voluta--centro { left: -22%; top: 32%; --niebla-x: 0%; --niebla-y: -10%; }
+.niebla-eclosion__voluta--der { right: -75%; top: 61%; --niebla-x: -20%; --niebla-y: -10%; }
+@keyframes voluta-eclosion {
+  from { transform: translate(0, 10%) scale(.72); }
+  45% { transform: translate(calc(var(--niebla-x) * .45), calc(var(--niebla-y) * .45)) scale(1.12); }
+  to { transform: translate(var(--niebla-x), var(--niebla-y)) scale(1.34); }
+}
 /* Casa: animaciones de la escena (todas por código, sobre el arte quieto). */
 @keyframes respirar { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.99, 1.025); } }
 .anim-respirar { animation: respirar 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
@@ -469,6 +509,8 @@ body {
   .anim-luciernaga { opacity: .38; }
   .anim-asoma { animation: gag-quieto 4s linear both; }
   .animate-entrar, .animate-aparecer, .anim-disipar-nido, .anim-revelar-casa, .anim-crecer-vecino { animation: none; }
+  .niebla-eclosion { display: none; }
+  .niebla-eclosion__voluta { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
   .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-aviso, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
