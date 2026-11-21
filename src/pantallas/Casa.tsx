@@ -45,11 +45,12 @@ import { PideReto } from '../componentes/PideReto'
 import { PropuestaMeta } from '../componentes/PropuestaMeta'
 import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
-import { EfectoDeObjeto, EfectoVecindad, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
+import { EfectoClimaObjeto, EfectoDeObjeto, EfectoVecindad, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda, type EfectoVecindad as TipoEfectoVecindad } from '../logica/jugabilidad'
 import { COMBA_INICIAL, DESLIZAR_OBJETO, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, RITMO_OBJETO, tocarComba, type EstadoComba, type JuegoEspecial } from '../logica/juegosObjetos'
 import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, puedeSaludar, recordarSaludo, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
-import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
+import { ClimaEnEscena, FenomenoTocable } from '../componentes/ClimaEnEscena'
+import { fenomenoDelDia, reaccionObjetoPorClima, type ReaccionClimaObjeto } from '../logica/ambiente'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -107,6 +108,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const noche = momento === 'noche'
   const tiempo = tiempoDelDia(ahora)
   const estacion = estacionDelDia(ahora)
+  const fenomeno = fenomenoDelDia(ahora)
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
   // No interrumpir al jugador con una bienvenida cuando ya está interactuando.
   const interaccionRealizada = useRef(false)
@@ -505,14 +507,16 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_62%,transparent_25%,#2e203055_80%)]" />
           </div>
         )}
-        {!conHuevo && <ClimaEnEscena tiempo={tiempo} estacion={estacion} casa />}
-        {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
+        {!conHuevo && <ClimaEnEscena tiempo={tiempo} estacion={estacion} fenomeno={fenomeno} casa />}
+        {vivo && !ordenando && <VidaDeCasa vecino={DUENO} tiempo={tiempo} estacion={estacion} />}
+        {vivo && !ordenando && !nacer && <FenomenoTocable fenomeno={fenomeno} casa />}
         {micro?.visual && !ordenando && <EscenaBreve visual={micro.visual} />}
 
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} enUso={usando?.id === o.id} alEncuentro={encuentro && usando?.id === o.id ? responder : undefined} paso={paso} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id} seleccionado={objetoSeleccionado === o.id} noche={noche} enVecindad={enVecindad.has(o.id)}
           escenas={vecindades.filter((v) => v.a === o.id || v.b === o.id).map((v) => ({ id: v.id, efecto: v.efecto }))}
+          reaccionClima={reaccionObjetoPorClima(o.id, tiempo, estacion)}
           onInteraccion={() => { interaccionRealizada.current = true }}
           onJugar={(id, veces, especial) => {
             registrarInteraccion('juguete')
@@ -946,11 +950,12 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
 /** Cuántas veces se ha tocado cada objeto (para ir rotando sus frases). */
 const vecesTocado = new Map<string, number>()
 
-function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, escenas = [], onJugar, onInteraccion, onMover, onSoltar, onCancelar }: {
+function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, escenas = [], reaccionClima = null, onJugar, onInteraccion, onMover, onSoltar, onCancelar }: {
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean; enVecindad?: boolean
   escenas?: { id: string; efecto: TipoEfectoVecindad }[]
+  reaccionClima?: ReaccionClimaObjeto | null
   onJugar?: (id: string, veces: number, especial?: JuegoEspecial) => void
   onInteraccion?: () => void
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
@@ -1118,6 +1123,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
             <img aria-hidden alt="" className="frente-del-cajon" src={rutaArte('casa/tuerca/objeto/cajonera')} />}
           {gesto && <EfectoDeObjeto gesto={gesto} toques={toques} />}
           {!ordenando && escenas.map((v) => <EfectoVecindad key={v.id} efecto={v.efecto} toques={toques} />)}
+          {!ordenando && <EfectoClimaObjeto reaccion={reaccionClima} />}
           {extra && <span key={extra.n} aria-hidden="true" className="juego-especial-de-objeto" data-accion={extra.tipo}><i /><i /><i /></span>}
         </div>
       </button>
