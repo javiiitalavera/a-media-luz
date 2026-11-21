@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { colocar, guardar, ordenOriginal } from './colocar'
+import { colocar, encajar, guardar, ordenOriginal } from './colocar'
 import { crearPartida } from './partida'
-import { esJuguete, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from './jugabilidad'
+import { OBJETOS_CASA } from '../contenido'
+import { esJuguete, recordarVecindades, VECINDADES, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from './jugabilidad'
 
 const base = () => ({
   ...crearPartida('nox', new Date('2026-11-20T12:00:00Z'), undefined, true),
@@ -53,4 +54,22 @@ describe('juego táctil y vecindades', () => {
     const p = colocar({ ...base(), construcciones: [] }, 'hoguera', 76, 58)
     expect(vecindadesActivas(p, 'nox')).toHaveLength(0)
   })
+  it('las cinco vecindades son alcanzables al colocar objetos en sus superficies reales', () => {
+    for (const vecindad of VECINDADES) {
+      const a = OBJETOS_CASA.find((o) => o.id === vecindad.a)!
+      const b = OBJETOS_CASA.find((o) => o.id === vecindad.b)!
+      const p = { ...base(), construcciones: [{ objetoId: a.id, fecha: '2026-11-20' }, { objetoId: b.id, fecha: '2026-11-20' }] }
+      let posible = false
+      for (let x = 15; x <= 85 && !posible; x += 5) {
+        for (let y = 20; y <= 85 && !posible; y += 5) {
+          const pa = encajar(a, x, y)
+          const pb = encajar(b, x, y)
+          const cerca = colocar(colocar(p, a.id, pa.x, pa.y), b.id, pb.x, pb.y)
+          posible = vecindadesActivas(cerca, vecindad.companero).some((v) => v.id === vecindad.id)
+        }
+      }
+      expect(posible, `Combinación inaccesible: ${vecindad.id}`).toBe(true)
+    }
+  })
+
 })
