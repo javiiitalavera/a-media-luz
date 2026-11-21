@@ -46,7 +46,7 @@ import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from '../logica/jugabilidad'
-import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
+import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, puedeSaludar, recordarSaludo, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
 import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
@@ -220,7 +220,14 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
       const p = useJuego.getState().partida
       if (!p) return
       const resultado = registrarTrato(p, DUENO, 'visita', ahora)
-      if (resultado.partida !== p) ajustar((vigente) => registrarTrato(vigente, DUENO, 'visita', ahora).partida)
+      const saludar = puedeSaludar(p, DUENO, ahora)
+      if (resultado.partida !== p || saludar) {
+        ajustar((vigente) => {
+          const conTrato = registrarTrato(vigente, DUENO, 'visita', ahora).partida
+          return saludar ? recordarSaludo(conTrato, DUENO, ahora) : conTrato
+        })
+      }
+      if (!saludar && !resultado.nuevoHito) return
       const texto = resultado.nuevoHito
         ? GESTOS_DE_AMISTAD[DUENO][resultado.nuevoHito - 1]
         : saludoDeLlegada(resultado.partida, DUENO, ahora)
