@@ -936,11 +936,25 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean; enVecindad?: boolean
-  onJugar?: (id: string, veces: number) => void
+  onJugar?: (id: string, veces: number, especial?: JuegoEspecial) => void
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
 }) {
   const [toques, setToques] = useState(0)
-  useEffect(() => { if (ordenando) setToques(0) }, [ordenando])
+  const [extra, setExtra] = useState<{ tipo: JuegoEspecial; n: number } | null>(null)
+  const ritmo = useRef<EstadoComba>({ ...COMBA_INICIAL })
+  const omitirClick = useRef(false)
+  const inicioJuego = useRef<{
+    pointerId: number; x: number; y: number; reloj: ReturnType<typeof setTimeout>
+  } | null>(null)
+  useEffect(() => {
+    if (ordenando) { setToques(0); ritmo.current = { ...COMBA_INICIAL } }
+  }, [ordenando])
+  useEffect(() => {
+    if (!extra) return
+    const t = setTimeout(() => setExtra(null), 1300)
+    return () => clearTimeout(t)
+  }, [extra])
+  useEffect(() => () => { if (inicioJuego.current) clearTimeout(inicioJuego.current.reloj) }, [])
   const inicio = useRef<{ px: number; py: number; x: number; y: number; ultimo: { x: number; y: number } } | null>(null)
   const arrastrar = ordenando && sePuedeMover
   const aDonde = (e: React.PointerEvent) => {
@@ -966,18 +980,70 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     onPointerCancel: soltar,
     onLostPointerCapture: soltar,
   } : {}
+  const siguienteToque = () => {
+    const n = (vecesTocado.get(o.id) ?? 0) + 1
+    vecesTocado.set(o.id, n)
+    setToques((v) => v + 1)
+    return n
+  }
+  const desencadenar = (tipo: JuegoEspecial, n: number) => {
+    setExtra({ tipo, n })
+    onJugar?.(o.id, n, tipo)
+  }
   const tocar = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     if (ordenando) return
-    setToques((n) => n + 1)
-    if (alEncuentro) { alEncuentro(); return }
-    const n = vecesTocado.get(o.id) ?? 0
-    vecesTocado.set(o.id, n + 1)
-    sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
-    if (esJuguete(o.id)) {
-      onJugar?.(o.id, n + 1)
-      if ((n + 1) % 4 === 0) globoEn(e, frases[n % frases.length])
-    } else globoEn(e, frases[n % frases.length])
+    // Una pulsación larga produce una sola acción. El navegador dispara además click al soltar.
+    if (omitirClick.current && e.detail > 0) { omitirClick.current = false; return }
+    omitirClick.current = false
+    const n = siguienteToque()
+    if (alEncuentro) alEncuentro()
+    if (alEncuentro && !esJuguete(o.id)) return
+    if (!alEncuentro) sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
+    if (!esJuguete(o.id)) { globoEn(e, frases[(n - 1) % frases.length]); return }
+    if (o.id === 'comba') {
+      const paso = tocarComba(ritmo.current, Date.now())
+      ritmo.current = paso.estado
+      if (paso.especial) { desencadenar('salto', n); return }
+    }
+    onJugar?.(o.id, n)
+    // El objeto cuenta algo ocasionalmente, pero primero se juega con él.
+    if (n % 6 === 0) globoEn(e, frases[(n - 1) % frases.length])
+  }
+
+  // Hoguera, maceta, gramófono y teléfono: mantener pulsado produce una acción diferente.
+  // Capturamos el puntero para soltar fuera del objeto sin disparar un segundo click.
+  const empezarJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const tipo = MANTENER_OBJETO[o.id]
+    if (!tipo || ordenando || e.button !== 0 || inicioJuego.current) return
+    omitirClick.current = false
+    e.currentTarget.setPointerCapture(e.pointerId)
+    const pointerId = e.pointerId
+    const reloj = setTimeout(() => {
+      const pendiente = inicioJuego.current
+      if (!pendiente || pendiente.pointerId !== pointerId) return
+      omitirClick.current = true
+      const n = siguienteToque()
+      sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
+      if (alEncuentro) alEncuentro()
+      desencadenar(tipo, n)
+    }, 550)
+    inicioJuego.current = { pointerId, x: e.clientX, y: e.clientY, reloj }
+  }
+  const seguirJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const p = inicioJuego.current
+    if (!p || p.pointerId !== e.pointerId) return
+    if (Math.hypot(e.clientX - p.x, e.clientY - p.y) > 18) {
+      clearTimeout(p.reloj)
+      inicioJuego.current = null
+      omitirClick.current = true
+    }
+  }
+  const terminarJuego = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const p = inicioJuego.current
+    if (!p || p.pointerId !== e.pointerId) return
+    clearTimeout(p.reloj)
+    inicioJuego.current = null
   }
   const s = o.sitio
   const gesto = ordenando ? undefined : GESTOS_DE_OBJETO[o.id]
@@ -988,9 +1054,18 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
   return (
     <>
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
-      <button type="button" aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : o.nombre} onClick={tocar} {...eventosArrastre}
+      <button type="button"
+        aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : MANTENER_OBJETO[o.id] ? `${o.nombre}. Mantén pulsado para jugar` : o.nombre}
+        onClick={tocar}
+        onPointerDown={!ordenando ? empezarJuego : undefined}
+        onPointerMove={!ordenando ? seguirJuego : undefined}
+        onPointerUp={!ordenando ? terminarJuego : undefined}
+        onPointerCancel={!ordenando ? terminarJuego : undefined}
+        onLostPointerCapture={!ordenando ? terminarJuego : undefined}
+        onContextMenu={(e) => { if (MANTENER_OBJETO[o.id] && !ordenando) e.preventDefault() }}
+        {...eventosArrastre}
         className={`absolute ${ordenando ? (arrastrar ? `objeto-movible ${arrastrando ? 'objeto-arrastrado z-30' : seleccionado ? 'z-[22]' : 'z-[12]'}` : 'opacity-60') : 'active:brightness-110'}`}
-        style={{ ...estilo, touchAction: arrastrar ? 'none' : undefined }}>
+        style={{ ...estilo, touchAction: arrastrar ? 'none' : MANTENER_OBJETO[o.id] ? 'manipulation' : undefined }}>
         <div data-mueble-en-uso={enUso ? o.id : undefined} data-paso={paso} data-vecindad={enVecindad && !ordenando ? 'activa' : undefined} className={s.colgado && !ordenando ? 'anim-balanceo' : ''}>
           <span className={`block ${nuevo ? 'anim-colocar' : ''}`}>
             <img key={toques} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
@@ -999,6 +1074,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
           {enUso && o.id === 'cajonera' && paso === 'primero' &&
             <img aria-hidden alt="" className="frente-del-cajon" src={rutaArte('casa/tuerca/objeto/cajonera')} />}
           {gesto && <EfectoDeObjeto gesto={gesto} toques={toques} />}
+          {extra && <span key={extra.n} aria-hidden="true" className="juego-especial-de-objeto" data-accion={extra.tipo}><i /><i /><i /></span>}
         </div>
       </button>
       {nuevo && <Estallido x={s.x} y={centroY} />}
