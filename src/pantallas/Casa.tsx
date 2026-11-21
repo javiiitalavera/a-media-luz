@@ -46,7 +46,7 @@ import { PropuestaMeta } from '../componentes/PropuestaMeta'
 import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, EfectoVecindad, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
-import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda, type EfectoVecindad } from '../logica/jugabilidad'
+import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda, type EfectoVecindad as TipoEfectoVecindad } from '../logica/jugabilidad'
 import { COMBA_INICIAL, DESLIZAR_OBJETO, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, RITMO_OBJETO, tocarComba, type EstadoComba, type JuegoEspecial } from '../logica/juegosObjetos'
 import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, puedeSaludar, recordarSaludo, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
 import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
@@ -950,7 +950,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean; enVecindad?: boolean
-  escenas?: { id: string; efecto: EfectoVecindad }[]
+  escenas?: { id: string; efecto: TipoEfectoVecindad }[]
   onJugar?: (id: string, veces: number, especial?: JuegoEspecial) => void
   onInteraccion?: () => void
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
@@ -971,7 +971,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     const t = setTimeout(() => setExtra(null), 1300)
     return () => clearTimeout(t)
   }, [extra])
-  useEffect(() => () => { if (inicioJuego.current) clearTimeout(inicioJuego.current.reloj) }, [])
+  useEffect(() => () => { if (inicioJuego.current?.reloj) clearTimeout(inicioJuego.current.reloj) }, [])
   const inicio = useRef<{ px: number; py: number; x: number; y: number; ultimo: { x: number; y: number } } | null>(null)
   const arrastrar = ordenando && sePuedeMover
   const aDonde = (e: React.PointerEvent) => {
