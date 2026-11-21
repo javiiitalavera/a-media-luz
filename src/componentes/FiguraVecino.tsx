@@ -76,12 +76,14 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMac
   if (!corte) {
     // Nox (y quien no tenga gesto propio): respira; saltitos de impaciencia; al tocar, salto.
     return (
-      <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
-        <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
-        {/* De noche la llama de la cola de Nox se convierte en ascuas sin iluminar:
-            se oscurece solo esa zona de la ilustración, sin cambiar la cara ni el cuerpo. */}
-        {c === 'nox' && noche && <img aria-hidden src={src} alt="" draggable={false}
-          className="nox-ascuas absolute inset-0 block w-full pointer-events-none" />}
+      <span key={reaccion} data-dormido={dormido || undefined} className={`block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
+        <span className="anim-respirar relative block">
+          <img src={src} alt="" draggable={false} className="block w-full" />
+          {/* De noche la llama de la cola de Nox se convierte en ascuas sin iluminar:
+              se oscurece solo esa zona de la ilustración, sin cambiar la cara ni el cuerpo. */}
+          {c === 'nox' && noche && <img aria-hidden src={src} alt="" draggable={false}
+            className="nox-ascuas absolute inset-0 block w-full pointer-events-none" />}
+        </span>
       </span>
     )
   }
