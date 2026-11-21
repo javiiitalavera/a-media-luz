@@ -93,6 +93,13 @@ body {
 .anim-luciernaga { animation: luciernaga var(--t, 6s) ease-in-out infinite; }
 @keyframes brotar { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 80% { transform: scale(0.95); } 100% { transform: scale(1); } }
 .anim-brotar { animation: brotar 0.7s cubic-bezier(.3,.7,.4,1) both; transform-origin: 50% 100%; }
+/* Una evolución de nivel es un cambio de ropa/detalles, no otro nacimiento. */
+@keyframes crecer-vecino {
+  0% { opacity: .55; transform: scale(.96); }
+  65% { opacity: 1; transform: scale(1.025); }
+  100% { opacity: 1; transform: none; }
+}
+.anim-crecer-vecino { animation: crecer-vecino 520ms ease-out both; transform-origin: 50% 100%; }
 @keyframes estallido { 0% { transform: scale(.3); opacity: 0; } 18% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.22); opacity: 0; } }
 .anim-estallido { animation: estallido 0.9s ease-out both; }
 @keyframes balanceo { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
@@ -461,7 +468,7 @@ body {
   .anim-luz { transform: translate(-50%, -50%); opacity: .7; }
   .anim-luciernaga { opacity: .38; }
   .anim-asoma { animation: gag-quieto 4s linear both; }
-  .animate-entrar, .animate-aparecer, .anim-disipar-nido, .anim-revelar-casa { animation: none; }
+  .animate-entrar, .animate-aparecer, .anim-disipar-nido, .anim-revelar-casa, .anim-crecer-vecino { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
   .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-aviso, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }
