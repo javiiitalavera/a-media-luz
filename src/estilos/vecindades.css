@@ -1,0 +1,166 @@
+/* P3 + P6: microescenas físicas. Todas se colocan DENTRO del objeto construido y
+   siguen sus coordenadas y tamaño al ordenar. Nunca interceptan el dedo. */
+.efecto-vecindad,
+.juguete-gesto-base { position: absolute; inset: -12% -16%; display: block; pointer-events: none; }
+.efecto-vecindad { z-index: 4; }
+.efecto-vecindad i, .juguete-gesto-base i { display: block; position: absolute; }
+.efecto-vecindad i:nth-child(1), .juguete-gesto-base i:nth-child(1) { left: 18%; top: 12%; }
+.efecto-vecindad i:nth-child(2), .juguete-gesto-base i:nth-child(2) { left: 55%; top: 34%; animation-delay: .48s; }
+.efecto-vecindad i:nth-child(3), .juguete-gesto-base i:nth-child(3) { left: 78%; top: 8%; animation-delay: .93s; }
+
+/* Brasas, cocina y vapor: no son únicamente resplandor; ascienden partículas. */
+.efecto-vecindad[data-efecto='brasas'] i,
+.efecto-vecindad[data-efecto='horno'] i {
+  width: 8px; height: 11px; border-radius: 80% 0 80% 60%; background: #ffbc62;
+  box-shadow: 0 0 4px #fe994877; animation: vec-ascender 5s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='horno'] i { background: #e7d5ca; border-radius: 50%; box-shadow: 0 0 5px #d7bb9c77; }
+.efecto-vecindad[data-efecto='vapor'] i,
+.efecto-vecindad[data-efecto='te'] i {
+  width: 10px; height: 17px; border: 2px solid #e2dfe7a8; border-left: 0; border-bottom: 0;
+  border-radius: 50%; animation: vec-ascender 4s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='te'] i { border-color: #eab4c3; }
+
+/* Talleres: movimiento, expedientes y balanza. */
+.efecto-vecindad[data-efecto='velocidad'] i,
+.efecto-vecindad[data-efecto='viento'] i {
+  width: 18px; height: 3px; border-radius: 99px; background: #d9e8dd;
+  box-shadow: 0 5px 0 #e3d3aa99; animation: vec-desplazar 4s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='viento'] i { background: #d6c7e5; transform: rotate(-18deg); }
+.efecto-vecindad[data-efecto='papeles'] i,
+.efecto-vecindad[data-efecto='cartas'] i {
+  width: 11px; height: 9px; background: #faf0db; border: 1px solid #9a806d;
+  border-radius: 2px; box-shadow: 1px 2px 2px #4c3e4b35;
+  animation: vec-papel 6s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='cartas'] i { background: #ffdfe9; border-color: #c28298; }
+.efecto-vecindad[data-efecto='hilo-rojo'] i,
+.efecto-vecindad[data-efecto='lana'] i {
+  width: 23px; height: 14px; border: 2px dashed #b34e55; border-top: 0;
+  border-radius: 50%; animation: vec-tensar 5s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='lana'] i { border: 2px solid #f2a7a1; border-right: 0; width: 18px; height: 18px; }
+.efecto-vecindad[data-efecto='balanza'] i {
+  width: 11px; height: 7px; border: 2px solid #b7a08b; border-top: 0;
+  border-radius: 0 0 60% 60%; animation: vec-peso 5s ease-in-out infinite;
+}
+
+/* Biblioteca, tablero y luces del estanque. */
+.efecto-vecindad[data-efecto='musica'] i {
+  width: 7px; height: 7px; border: 2px solid #a58aa0; border-radius: 50%;
+  box-shadow: 3px -8px 0 -2px #a58aa0;
+  animation: vec-ascender 4s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='estrellas'] i,
+.efecto-vecindad[data-efecto='luciernagas'] i {
+  width: 7px; height: 7px; border-radius: 50%; background: #fff0b1;
+  box-shadow: 0 0 8px 3px #f7d99588;
+  animation: vec-brillar 4s ease-in-out infinite;
+}
+.efecto-vecindad[data-efecto='estrellas'] i { background: #d8dcff; box-shadow: 0 0 7px 3px #e5e8ff99; }
+.efecto-vecindad[data-efecto='ajedrez'] i {
+  width: 8px; height: 8px; background: #eee9d6; border: 1px solid #9d9081;
+  transform: rotate(45deg); animation: vec-peso 5s ease-in-out infinite;
+}
+.efecto-vecindad[data-tocado] i { animation-duration: .8s; animation-iteration-count: 1; }
+
+/* Respuestas al toque ya presentes, pero ahora reconocibles en más muebles. */
+.juguete-gesto-base { z-index: 3; }
+.juguete-gesto-base[data-gesto='papel'] i {
+  width: 10px; height: 9px; background: #fff0dd; border: 1px solid #997f73;
+  animation: vec-papel .75s ease-out both;
+}
+.juguete-gesto-base[data-gesto='estrellas'] i,
+.juguete-gesto-base[data-gesto='loto'] i {
+  width: 7px; height: 7px; border-radius: 50%; background: #fbe29c; box-shadow: 0 0 7px #ffe1a7;
+  animation: vec-brillar .9s ease-out both;
+}
+.juguete-gesto-base[data-gesto='giro'] i,
+.juguete-gesto-base[data-gesto='balanza'] i {
+  width: 18px; height: 18px; border: 2px dashed #c8a589; border-radius: 50%;
+  animation: vec-girar 1s ease-in-out both;
+}
+.juguete-gesto-base[data-gesto='cometa'] i {
+  width: 15px; height: 4px; border-radius: 10px; background: #e6c9e0;
+  animation: vec-desplazar 1s ease-out both;
+}
+
+/* Acciones especiales de pulsación larga, swipe y ritmo. Un efecto propio, no una frase. */
+.juego-especial-de-objeto[data-accion='pedalear'] i,
+.juego-especial-de-objeto[data-accion='girar'] i {
+  inset: 4%; border: 3px dashed #d8b284; border-radius: 50%;
+  background: none; animation: vec-girar .9s ease-out both;
+}
+.juego-especial-de-objeto[data-accion='pedalear'] i { border-color: #edb06b; }
+.juego-especial-de-objeto[data-accion='pesar'] i {
+  top: 25%; width: 17%; height: 11%; border: 2px solid #a78f77; border-top: 0;
+  border-radius: 0 0 40% 40%; animation: vec-peso 1s ease-in-out both;
+}
+.juego-especial-de-objeto[data-accion='pesar'] i:nth-child(1) { left: 8%; }
+.juego-especial-de-objeto[data-accion='pesar'] i:nth-child(2) { left: 45%; }
+.juego-especial-de-objeto[data-accion='pesar'] i:nth-child(3) { left: 72%; }
+.juego-especial-de-objeto[data-accion='escribir'] i,
+.juego-especial-de-objeto[data-accion='enviar'] i {
+  width: 15%; height: 13%; top: 8%; left: 20%; background: #fff1dc;
+  border: 1px solid #9e8178; border-radius: 2px; animation: vec-papel 1.1s ease-out both;
+}
+.juego-especial-de-objeto[data-accion='enviar'] i { background: #ffe2ed; }
+.juego-especial-de-objeto[data-accion='escribir'] i:nth-child(2),
+.juego-especial-de-objeto[data-accion='enviar'] i:nth-child(2) { left: 53%; }
+.juego-especial-de-objeto[data-accion='escribir'] i:nth-child(3),
+.juego-especial-de-objeto[data-accion='enviar'] i:nth-child(3) { left: 78%; }
+.juego-especial-de-objeto[data-accion='observar'] i,
+.juego-especial-de-objeto[data-accion='lucir'] i {
+  width: 12%; aspect-ratio: 1; top: 15%; left: 20%; border-radius: 50%;
+  background: #fff6d3; box-shadow: 0 0 10px 4px #fff1a97a;
+  animation: vec-brillar 1s ease-out both;
+}
+.juego-especial-de-objeto[data-accion='observar'] i { background: #d5e6ff; box-shadow: 0 0 9px #b4d5ff; }
+.juego-especial-de-objeto[data-accion='observar'] i:nth-child(2),
+.juego-especial-de-objeto[data-accion='lucir'] i:nth-child(2) { left: 48%; top: -5%; }
+.juego-especial-de-objeto[data-accion='observar'] i:nth-child(3),
+.juego-especial-de-objeto[data-accion='lucir'] i:nth-child(3) { left: 68%; top: 25%; }
+.juego-especial-de-objeto[data-accion='elevar'] i {
+  width: 28%; height: 2px; top: 30%; left: 15%; background: #d0b9df;
+  animation: vec-desplazar .9s ease-in-out both;
+}
+.juego-especial-de-objeto[data-accion='tejer'] i {
+  width: 22%; height: 20%; top: 15%; left: 20%;
+  border: 3px solid #f0a7ae; border-right: 0; border-radius: 50%;
+  animation: vec-tensar 1s ease-out both;
+}
+@keyframes vec-ascender {
+  0%,100% { transform: translateY(8px) scale(.65); opacity: .12; }
+  40% { transform: translateY(-13px) scale(1.15); opacity: .9; }
+}
+@keyframes vec-desplazar {
+  0%,100% { transform: translate(-9px, 6px); opacity: .1; }
+  40% { transform: translate(12px,-6px); opacity: .85; }
+}
+@keyframes vec-papel {
+  0%,100% { transform: translateY(5px) rotate(-14deg); opacity: .15; }
+  40% { transform: translateY(-18px) rotate(20deg); opacity: .92; }
+}
+@keyframes vec-tensar {
+  0%,100% { transform: scaleX(.65) rotate(-12deg); opacity: .2; }
+  40% { transform: scaleX(1.15) rotate(16deg); opacity: .9; }
+}
+@keyframes vec-brillar {
+  0%,100% { transform: scale(.55); opacity: .15; }
+  48% { transform: scale(1.65); opacity: .98; }
+}
+@keyframes vec-peso {
+  0%,100% { transform: translateY(2px) rotate(-10deg); opacity: .25; }
+  45% { transform: translateY(-5px) rotate(12deg); opacity: .9; }
+}
+@keyframes vec-girar {
+  from { transform: rotate(0) scale(.65); opacity: .2; }
+  45% { opacity: 1; }
+  to { transform: rotate(360deg) scale(1.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .efecto-vecindad i, .juguete-gesto-base i,
+  .juego-especial-de-objeto[data-accion] i { animation: none !important; opacity: .65; }
+}

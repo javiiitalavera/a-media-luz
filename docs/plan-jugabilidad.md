@@ -57,3 +57,10 @@ Pruebas automáticas de las reglas y de la accesibilidad de las combinaciones; c
 - **PR #24:** correcciones táctiles y acciones de juguetes (comba rítmica y cuatro pulsaciones largas).
 
 Las mecánicas de estos PR permanecen operativas. Esta hoja de ruta decide **qué se amplía**, no las elimina.
+
+## Bloque P3 + P6 (PR posterior al #26, 21/11/2026)
+
+- **P3 ampliado:** catorce objetos-juguete disponibles entre las cinco casas. Cuatro objetos antiguos conservan su pulsación larga; se añaden seis nuevas pulsaciones largas (máquina, balanza, telescopio, loto, cesto y buzón), dos deslizamientos (globo y cometa) y un segundo objeto con ritmo de tres toques (bicicleta). La comba sigue intacta. Una frase especial por objeto y visita, con efectos generados por CSS; no hay material, puntuación ni checklist.
+- **P6 ampliado:** quince parejas de muebles en total, tres por casa. Cada pareja tiene su propia microescena ambiental perceptible sobre ambos objetos, que revive al tocarlos, sin quedarse solo en un mensaje. Las reglas siguen requiriendo que las dos piezas estén construidas, visibles y próximas. Los descubrimientos persisten y el baúl/ordenar los desactivan visualmente.
+- **Alcance expresamente excluido:** P9, las demás propuestas descartadas y el arte nuevo. P9 es el siguiente bloque independiente; el arte y las posturas siguen aplazados en la issue #25.
+- **QA:** pruebas de catorce gestos sin duplicados, quince combinaciones alcanzables en superficies reales, restricción de construcciones y guardado, regresión de piezas previas y compilación. Queda comprobación táctil y visual con un móvil real antes de fusionar.
