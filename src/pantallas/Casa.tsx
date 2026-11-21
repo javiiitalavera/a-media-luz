@@ -409,7 +409,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
                     className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
-                <span key={`${etapaVista}-${gesto}`} data-encuentro={encuentro} data-paso={paso} data-merendando={comiendo || undefined} data-usando={usando?.id} className={`block ${celebra ? 'anim-brotar' : ''}`}>
+                <span key={`${etapaVista}-${gesto}`} data-encuentro={encuentro} data-paso={paso} data-merendando={comiendo || undefined} data-usando={usando?.id} className={`block ${celebra ? nacer ? 'anim-brotar' : 'anim-crecer-vecino' : ''}`}>
                   <FiguraVecino c={DUENO} etapa={etapaVista} expresion={cara} reaccion={saltos} ladoToque={ladoTofu} ladoMaceta={ladoMaceta} noche={noche} />
                   {encuentro === 'madeja' && gesto > 0 && <img aria-hidden alt="" className="hallazgo-del-cesto" src={gesto % 2 ? '/arte/curiosidades/calcetin.webp' : '/arte/curiosidades/ovillo.webp'} />}
 
