@@ -100,12 +100,12 @@ body {
   filter: blur(14px);
   animation: voluta-eclosion 1850ms ease-in-out both;
 }
-.niebla-eclosion__voluta--izq { left: -72%; top: 3%; --niebla-x: 16%; --niebla-y: 8%; }
-.niebla-eclosion__voluta--centro { left: -22%; top: 32%; --niebla-x: 0%; --niebla-y: -10%; }
-.niebla-eclosion__voluta--der { right: -75%; top: 61%; --niebla-x: -20%; --niebla-y: -10%; }
+.niebla-eclosion__voluta--izq { left: -72%; top: 3%; --niebla-x: 16%; --niebla-y: 8%; --niebla-medio-x: 7%; --niebla-medio-y: 4%; }
+.niebla-eclosion__voluta--centro { left: -22%; top: 32%; --niebla-x: 0%; --niebla-y: -10%; --niebla-medio-x: 0%; --niebla-medio-y: -5%; }
+.niebla-eclosion__voluta--der { right: -75%; top: 61%; --niebla-x: -20%; --niebla-y: -10%; --niebla-medio-x: -9%; --niebla-medio-y: -5%; }
 @keyframes voluta-eclosion {
   from { transform: translate(0, 10%) scale(.72); }
-  45% { transform: translate(calc(var(--niebla-x) * .45), calc(var(--niebla-y) * .45)) scale(1.12); }
+  45% { transform: translate(var(--niebla-medio-x), var(--niebla-medio-y)) scale(1.12); }
   to { transform: translate(var(--niebla-x), var(--niebla-y)) scale(1.34); }
 }
 /* Casa: animaciones de la escena (todas por código, sobre el arte quieto). */
