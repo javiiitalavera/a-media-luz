@@ -1028,7 +1028,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     }
     onJugar?.(o.id, n)
     // El objeto cuenta algo ocasionalmente, pero primero se juega con él.
-    if (n % 6 === 0) globoEn(e, frases[(n - 1) % frases.length])
+    if (n % 6 === 0 && o.id !== 'telefono') globoEn(e, frases[(n - 1) % frases.length])
   }
 
   // Hoguera, maceta, gramófono y teléfono: mantener pulsado produce una acción diferente.
