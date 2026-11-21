@@ -153,6 +153,14 @@ body {
 .anim-latido { animation: latido 1.6s ease-in-out infinite; }
 /* Ordenar la casa: lo que se puede mover lleva un contorno claro; lo que arrastras, además, se levanta. */
 .objeto-movible { filter: drop-shadow(0 0 1.5px #fff8e8) drop-shadow(0 0 1.5px #fff8e8); cursor: grab; }
+/* Las luces de trabajo y el fuego reposan por la noche. Sin introducir nuevos dibujos. */
+.objeto-apagado-noche { filter: brightness(.46) saturate(.38); }
+/* Solo la llama de la cola, dejando el resto del cachorro como estaba. */
+.nox-ascuas {
+  filter: brightness(.18) saturate(.3);
+  -webkit-mask-image: radial-gradient(ellipse 19% 18% at 21% 61%, black 65%, transparent 98%);
+  mask-image: radial-gradient(ellipse 19% 18% at 21% 61%, black 65%, transparent 98%);
+}
 @keyframes ayuda-ordenar { 0% { opacity: 0; } 8%, 75% { opacity: 1; } 100% { opacity: 0; } }
 .anim-ayuda-ordenar { animation: ayuda-ordenar 4.5s ease-out both; }
 .objeto-arrastrado { filter: drop-shadow(0 0 2px #fff8e8) drop-shadow(0 6px 6px #2e203066); scale: 1.06; cursor: grabbing; }
