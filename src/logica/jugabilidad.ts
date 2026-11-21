@@ -71,7 +71,7 @@ export function vecindadesNuevas(p: Partida, c: CompaneroId): Vecindad[] {
 
 /** El hallazgo se recuerda aunque el jugador luego mueva o guarde los objetos. */
 export function recordarVecindades(p: Partida, ids: string[]): Partida {
-  const nuevas = ids.filter((id) => VECINDADES.some((v) => v.id === id) && !(p.vecindadesVistas ?? []).includes(id))
+  const nuevas = [...new Set(ids)].filter((id) => VECINDADES.some((v) => v.id === id) && !(p.vecindadesVistas ?? []).includes(id))
   if (nuevas.length === 0) return p
   return { ...p, vecindadesVistas: [...(p.vecindadesVistas ?? []), ...nuevas] }
 }
