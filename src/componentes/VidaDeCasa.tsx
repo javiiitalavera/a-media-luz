@@ -1,4 +1,5 @@
 import type { CompaneroId } from '../contenido'
+import type { EfectoVecindad } from '../logica/jugabilidad'
 import { rutaArte } from '../arte/manifiesto'
 
 const TORNILLO = '/arte/curiosidades/tornillo.webp'
@@ -59,6 +60,13 @@ export const GESTOS_DE_OBJETO: Partial<Record<string, string>> = {
   'tetera-rosa': 'vapor',
   comba: 'comba',
   gramofono: 'gramofono',
+  maquina: 'papel',
+  telescopio: 'estrellas',
+  globo: 'giro',
+  bici: 'giro',
+  balanza: 'balanza',
+  cometa: 'cometa',
+  loto: 'loto',
   album: 'libros',
 }
 
@@ -76,6 +84,9 @@ export function EfectoDeObjeto({ gesto, toques }: { gesto: string; toques: numbe
   if (gesto === 'comba') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-comba"><i /></span>
   if (gesto === 'gramofono') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-gramofono"><i /><i /></span>
   if (gesto === 'telefono') return <span key={toques} aria-hidden className="efecto-de-objeto juguete-telefono"><i /><i /></span>
+  if (gesto === 'papel' || gesto === 'estrellas' || gesto === 'giro' || gesto === 'balanza' || gesto === 'cometa' || gesto === 'loto') {
+    return <span key={toques} aria-hidden="true" className="juguete-gesto-base" data-gesto={gesto}><i /><i /><i /></span>
+  }
   if (gesto === 'semilla' || gesto === 'tornillo' || gesto === 'ovillo' || gesto === 'carta') {
     const arte = { semilla: SEMILLA, tornillo: TORNILLO, ovillo: OVILLO, carta: CARTA }[gesto]
     return <img key={toques} aria-hidden className="efecto-de-objeto objeto-escupe" src={arte} alt="" draggable={false} />
@@ -84,4 +95,14 @@ export function EfectoDeObjeto({ gesto, toques }: { gesto: string; toques: numbe
     return <span key={toques} aria-hidden className="efecto-de-objeto destellos-de-objeto"><i /><i /><i /></span>
   }
   return null
+}
+
+/** Cada pareja construida altera el ambiente de los DOS objetos, y revive al tocarlos.
+ * Efecto puramente visual: no hay marcador, premio ni nueva pantalla de descubrimientos. */
+export function EfectoVecindad({ efecto, toques }: { efecto: EfectoVecindad; toques: number }) {
+  return (
+    <span key={toques} aria-hidden="true" className="efecto-vecindad" data-efecto={efecto} data-tocado={toques > 0 ? '' : undefined}>
+      <i /><i /><i />
+    </span>
+  )
 }
