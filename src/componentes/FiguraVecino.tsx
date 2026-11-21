@@ -24,9 +24,9 @@ const EJE: Partial<Record<CompaneroId, [number, number][]>> = { tuerca: [[55.2, 
 const ANTENA: (null | { x: number; y: number; tam: number })[] = [null, { x: 56, y: 10.2, tam: 7 }, { x: 57.9, y: 10.7, tam: 6.5 },
   { x: 51.1, y: 10.1, tam: 7 }, { x: 50.8, y: 10.1, tam: 7 }]
 
-export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMaceta }: {
+export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMaceta, noche = false }: {
   c: CompaneroId; etapa: number; expresion: Expresion; reaccion: number
-  ladoToque: -1 | 1; ladoMaceta?: -1 | 1
+  ladoToque: -1 | 1; ladoMaceta?: -1 | 1; noche?: boolean
 }) {
   const src = rutaCompanero(c, etapa, expresion)
   const brote = c === 'tofu' ? BROTE[etapa]?.[expresion] : undefined
@@ -76,8 +76,12 @@ export function FiguraVecino({ c, etapa, expresion, reaccion, ladoToque, ladoMac
   if (!corte) {
     // Nox (y quien no tenga gesto propio): respira; saltitos de impaciencia; al tocar, salto.
     return (
-      <span key={reaccion} data-dormido={dormido || undefined} className={`block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
+      <span key={reaccion} data-dormido={dormido || undefined} className={`relative block ${tocado ? 'anim-saltar' : c === 'nox' ? 'anim-impaciente' : ''}`}>
         <img src={src} alt="" draggable={false} className="anim-respirar block w-full" />
+        {/* De noche la llama de la cola de Nox se convierte en ascuas sin iluminar:
+            se oscurece solo esa zona de la ilustración, sin cambiar la cara ni el cuerpo. */}
+        {c === 'nox' && noche && <img aria-hidden src={src} alt="" draggable={false}
+          className="nox-ascuas absolute inset-0 block w-full pointer-events-none" />}
       </span>
     )
   }
