@@ -1,4 +1,5 @@
 import '../estilos/clima.css'
+import '../estilos/vecindades.css'
 import type React from 'react'
 // La casa de un vecino (docs/diseno-vecindario.md). Lo que manda es la escena: fondo, lo construido, las
 // huellas de las historias y el vecino. La interfaz va encima, arriba y abajo, sin tapar el centro.
@@ -44,9 +45,9 @@ import { PideReto } from '../componentes/PideReto'
 import { PropuestaMeta } from '../componentes/PropuestaMeta'
 import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
-import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
-import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from '../logica/jugabilidad'
-import { COMBA_INICIAL, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, tocarComba, type EstadoComba, type JuegoEspecial } from '../logica/juegosObjetos'
+import { EfectoDeObjeto, EfectoVecindad, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
+import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda, type EfectoVecindad } from '../logica/jugabilidad'
+import { COMBA_INICIAL, DESLIZAR_OBJETO, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, RITMO_OBJETO, tocarComba, type EstadoComba, type JuegoEspecial } from '../logica/juegosObjetos'
 import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, puedeSaludar, recordarSaludo, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
 import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
@@ -511,6 +512,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} enUso={usando?.id === o.id} alEncuentro={encuentro && usando?.id === o.id ? responder : undefined} paso={paso} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id} seleccionado={objetoSeleccionado === o.id} noche={noche} enVecindad={enVecindad.has(o.id)}
+          escenas={vecindades.filter((v) => v.a === o.id || v.b === o.id).map((v) => ({ id: v.id, efecto: v.efecto }))}
           onInteraccion={() => { interaccionRealizada.current = true }}
           onJugar={(id, veces, especial) => {
             registrarInteraccion('juguete')
@@ -944,10 +946,11 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
 /** Cuántas veces se ha tocado cada objeto (para ir rotando sus frases). */
 const vecesTocado = new Map<string, number>()
 
-function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, onJugar, onInteraccion, onMover, onSoltar, onCancelar }: {
+function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, enVecindad = false, escenas = [], onJugar, onInteraccion, onMover, onSoltar, onCancelar }: {
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
   ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean; enVecindad?: boolean
+  escenas?: { id: string; efecto: EfectoVecindad }[]
   onJugar?: (id: string, veces: number, especial?: JuegoEspecial) => void
   onInteraccion?: () => void
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
@@ -1095,6 +1098,7 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
           {enUso && o.id === 'cajonera' && paso === 'primero' &&
             <img aria-hidden alt="" className="frente-del-cajon" src={rutaArte('casa/tuerca/objeto/cajonera')} />}
           {gesto && <EfectoDeObjeto gesto={gesto} toques={toques} />}
+          {!ordenando && escenas.map((v) => <EfectoVecindad key={v.id} efecto={v.efecto} toques={toques} />)}
           {extra && <span key={extra.n} aria-hidden="true" className="juego-especial-de-objeto" data-accion={extra.tipo}><i /><i /><i /></span>}
         </div>
       </button>
