@@ -20,3 +20,10 @@
 - Al subir de nivel se suaviza el cambio de sprite con una entrada breve (520 ms), sin repetir el estallido grande del nacimiento.
 - Con «Reducir movimiento» se muestran las imágenes definitivas sin animación; no se añaden pantallas de espera ni recursos artísticos.
 - Transiciones existentes comprobadas en código: barrio ↔ casas (View Transitions con fallback), objetos recién construidos y tintes de amanecer/atardecer/noche. No se duplican.
+
+## Niebla durante la eclosión (PR #21)
+- Desde que el huevo termina de romperse entra una **cortina de tres volutas**. No es un diálogo ni un minijuego.
+- La niebla cubre el paisaje durante 400 ms **antes** de sustituir el fondo exterior por el interior. Queda opaca mientras transcurre el fundido existente (950 ms), y después se disipa durante unos 500 ms.
+- El personaje sale al comenzar la revelación; la ficha aparece solo cuando las volutas se han retirado.
+- Solo se activa en una eclosión aún no presentada, nunca al visitar posteriormente una casa.
+- Se implementa con CSS y elementos decorativos, sin archivos nuevos de arte ni bloquear pulsaciones; se desactiva si el sistema pide movimiento reducido.
