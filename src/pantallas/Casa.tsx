@@ -44,6 +44,7 @@ import { PropuestaMeta } from '../componentes/PropuestaMeta'
 import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
+import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from '../logica/jugabilidad'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -108,6 +109,16 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const globo = useGlobo((st) => st.globo)
   useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
   const [saltos, setSaltos] = useState(0)
+  // Un toque breve habla; mantener o deslizar es acariciar, sin puntos ni premios.
+  const [cariciaActiva, setCariciaActiva] = useState<'agradable' | 'incomoda' | null>(null)
+  const cariciaPendiente = useRef<{ x: number; y: number; incomoda: boolean; activa: boolean; reloj: ReturnType<typeof setTimeout> } | null>(null)
+  const salirCaricia = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const gestoConsumido = useRef(false)
+  const protestaHecha = useRef(false)
+  useEffect(() => () => {
+    if (cariciaPendiente.current) clearTimeout(cariciaPendiente.current.reloj)
+    if (salirCaricia.current) clearTimeout(salirCaricia.current)
+  }, [])
   const [ladoTofu, setLadoTofu] = useState<-1 | 1>(1)
   const [recien, setRecien] = useState<string | null>(null)
   const [destacado] = useState(proyectoInicial)
@@ -297,6 +308,22 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     ...(gregorio === DUENO ? [DUENO === 'tuerca' ? aspiradora : { ...aspiradora, sitio: GREGORIO_EN_NOX }] : []),
   ]
   const maceta = objetos.find((o) => o.id === 'maceta')
+  const vecindades = vecindadesActivas(partida, DUENO)
+  const enVecindad = new Set(vecindades.flatMap((v) => [v.a, v.b]))
+  const porEstrenar = vecindadesNuevas(partida, DUENO)
+  const clavesNuevas = porEstrenar.map((v) => v.id).join('|')
+  useEffect(() => {
+    if (!vivo || ordenando || !clavesNuevas) return
+    const nuevas = vecindadesNuevas(partida, DUENO)
+    if (!nuevas.length) return
+    ajustar((p) => recordarVecindades(p, nuevas.map((v) => v.id)))
+    // Solo una sorpresa por vez, sin una sucesión de cuadros de texto.
+    const reloj = setTimeout(() => {
+      setNota(nuevas[0].texto, 'vecino')
+      sfx.sorpresa()
+    }, 420)
+    return () => clearTimeout(reloj)
+  }, [clavesNuevas, ordenando, vivo, DUENO, ajustar])
   // El baúl también permite escoger o guardar objetos que otro dibujo haya dejado tapados.
   const visiblesMovibles = objetos.filter((o) => movible(o) && o.id !== 'aspiradora')
   const huellas = huellasEn(partida, DUENO)
@@ -325,7 +352,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     setGesto((n) => n + 1)
   }
   const paso = gesto ? (gesto % 2 ? 'primero' : 'segundo') : 'reposo'
-  const cara = comiendo ? 'contento' : encuentro && !gesto && (encuentro === 'nox' || encuentro === 'tofu')
+  const cara = cariciaActiva === 'incomoda' ? 'enfurrunado' : cariciaActiva === 'agradable' ? 'contento' : comiendo ? 'contento' : encuentro && !gesto && (encuentro === 'nox' || encuentro === 'tofu')
     ? 'dormido' : encuentro ? (gesto && gesto % 2 === 0 ? 'contento' : 'base') : expresion
   const margen = (1 - w / ew) * 50 + 13
   const NOX = usando ? {
@@ -354,6 +381,45 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[Math.min(etapaVista, ANCHO_NOX.length - 1)]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
+  const activarCaricia = () => {
+    const intento = cariciaPendiente.current
+    if (!intento || intento.activa) return
+    intento.activa = true
+    gestoConsumido.current = true
+    setCariciaActiva(intento.incomoda ? 'incomoda' : 'agradable')
+    sfx.personaje(DUENO)
+    setSaltos((n) => n + 1)
+    if (intento.incomoda && !protestaHecha.current) {
+      protestaHecha.current = true
+      setHabla({ texto: PROTESTAS_CARICIA[DUENO], n: Date.now() })
+    }
+  }
+  const empezarCaricia = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (conHuevo || !vivo || ordenando || e.button !== 0) return
+    if (salirCaricia.current) clearTimeout(salirCaricia.current)
+    gestoConsumido.current = false
+    const caja = e.currentTarget.getBoundingClientRect()
+    cariciaPendiente.current = {
+      x: e.clientX, y: e.clientY,
+      incomoda: zonaIncomoda(DUENO, (e.clientX - caja.left) / caja.width, (e.clientY - caja.top) / caja.height),
+      activa: false, reloj: setTimeout(activarCaricia, 260),
+    }
+  }
+  const seguirCaricia = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const intento = cariciaPendiente.current
+    if (intento && !intento.activa && Math.hypot(e.clientX - intento.x, e.clientY - intento.y) > 13) {
+      clearTimeout(intento.reloj)
+      activarCaricia()
+    }
+  }
+  const terminarCaricia = () => {
+    const intento = cariciaPendiente.current
+    if (!intento) return
+    clearTimeout(intento.reloj)
+    cariciaPendiente.current = null
+    if (intento.activa) salirCaricia.current = setTimeout(() => setCariciaActiva(null), 550)
+    else setCariciaActiva(null)
+  }
 
   // De noche, el tinte se aclara alrededor del vecino: el fondo sigue oscuro y él conserva sus contornos.
   const centroY = NOX.y - altoNox * 0.45
