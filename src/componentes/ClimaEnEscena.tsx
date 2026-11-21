@@ -1,3 +1,4 @@
+import '../estilos/ambiente-vivo.css'
 import { useState, type CSSProperties } from 'react'
 import type { EstacionBarrio, TiempoBarrio } from '../logica/convivencia'
 import type { FenomenoBarrio } from '../logica/ambiente'
@@ -7,7 +8,7 @@ import { sfx } from '../sonido'
 export function ClimaEnEscena({ tiempo, estacion, fenomeno = null, casa = false }: {
   tiempo: TiempoBarrio; estacion: EstacionBarrio; fenomeno?: FenomenoBarrio | null; casa?: boolean
 }) {
-  const n = tiempo === 'lluvia' ? 17 : tiempo === 'viento' ? 9 : tiempo === 'niebla' ? 4 : 0
+  const n = casa ? 0 : tiempo === 'lluvia' ? 17 : tiempo === 'viento' ? 9 : tiempo === 'niebla' ? 4 : 0
   const adornos = fenomeno ? (casa ? 4 : 8) : 0
   return (
     <div aria-hidden="true" className="clima-del-barrio pointer-events-none absolute inset-0 overflow-hidden"
