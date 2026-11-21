@@ -316,13 +316,10 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     if (!vivo || ordenando || !clavesNuevas) return
     const nuevas = vecindadesNuevas(partida, DUENO)
     if (!nuevas.length) return
+    // Mostrar antes de guardar: la actualización de la partida no debe cancelar la sorpresa.
+    setNota(nuevas[0].texto, 'vecino')
+    sfx.sorpresa()
     ajustar((p) => recordarVecindades(p, nuevas.map((v) => v.id)))
-    // Solo una sorpresa por vez, sin una sucesión de cuadros de texto.
-    const reloj = setTimeout(() => {
-      setNota(nuevas[0].texto, 'vecino')
-      sfx.sorpresa()
-    }, 420)
-    return () => clearTimeout(reloj)
   }, [clavesNuevas, ordenando, vivo, DUENO, ajustar])
   // El baúl también permite escoger o guardar objetos que otro dibujo haya dejado tapados.
   const visiblesMovibles = objetos.filter((o) => movible(o) && o.id !== 'aspiradora')
