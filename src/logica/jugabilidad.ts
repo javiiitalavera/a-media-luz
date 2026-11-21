@@ -3,8 +3,14 @@ import { OBJETOS_CASA, type CompaneroId } from '../contenido'
 import { guardado, sitioDe } from './colocar'
 import type { Partida } from './partida'
 
-/** Cinco objetos que dejan de ser un botón de lectura: responden físicamente a cada toque. */
-export const JUGUETES = ['hoguera', 'comba', 'maceta', 'gramofono', 'telefono'] as const
+/** Objetos con un gesto que el jugador provoca. No conceden materiales ni dan misiones. */
+export const JUGUETES = [
+  'hoguera', 'comba', 'bici',
+  'maquina', 'balanza',
+  'maceta', 'gramofono', 'telescopio', 'globo',
+  'cometa', 'loto',
+  'telefono', 'cesto', 'buzon',
+] as const
 export const esJuguete = (id: string): boolean => JUGUETES.some((j) => j === id)
 
 /** Zonas que provocan una respuesta cómica, nunca penalizaciones. Coordenadas relativas a la figura. */
@@ -26,29 +32,60 @@ export const PROTESTAS_CARICIA: Record<CompaneroId, string> = {
   tuerca: 'Ha tocado el departamento equivocado.',
 }
 
+/** Microescenas ambientales visibles cuando dos objetos están cerca. */
+export type EfectoVecindad =
+  | 'brasas' | 'velocidad' | 'horno'
+  | 'hilo-rojo' | 'papeles' | 'balanza'
+  | 'musica' | 'estrellas' | 'ajedrez'
+  | 'vapor' | 'luciernagas' | 'viento'
+  | 'te' | 'lana' | 'cartas'
+
 export interface Vecindad {
   id: string
   companero: CompaneroId
   a: string
   b: string
-  /** Separación horizontal y vertical máxima, en % de la escena. */
+  /** Distancias máximas de los centros, en % de la escena. */
   dx: number
   dy: number
+  /** El efecto visual sigue a los dos objetos y reacciona al tocarlos. */
+  efecto: EfectoVecindad
+  /** Solo se cuenta al descubrirlo por primera vez. */
   texto: string
 }
 
-/** Unas pocas reglas, no una colección ni una lista de tareas. */
+/** Tres combinaciones por casa. Sin recetas públicas, puntos ni obligaciones. */
 export const VECINDADES: Vecindad[] = [
-  { id: 'nox-fogata', companero: 'nox', a: 'hoguera', b: 'banco', dx: 19, dy: 19,
+  { id: 'nox-fogata', companero: 'nox', a: 'hoguera', b: 'banco', dx: 19, dy: 19, efecto: 'brasas',
     texto: 'Nox ha acercado el banco al fuego. Dice que es por seguridad. Está asando salchichas.' },
-  { id: 'tuerca-expediente', companero: 'tuerca', a: 'corcho', b: 'archivador', dx: 19, dy: 56,
+  { id: 'nox-velocidad', companero: 'nox', a: 'bici', b: 'zapatillas', dx: 20, dy: 20, efecto: 'velocidad',
+    texto: 'Nox ha aparcado la bici junto a las zapatillas. Ahora tiene dos formas de llegar tarde.' },
+  { id: 'nox-horno', companero: 'nox', a: 'horno', b: 'parrilla', dx: 21, dy: 19, efecto: 'horno',
+    texto: 'Horno y parrilla, juntos. Nox lo llama cocina de autor. La alarma opina distinto.' },
+  { id: 'tuerca-expediente', companero: 'tuerca', a: 'corcho', b: 'archivador', dx: 19, dy: 56, efecto: 'hilo-rojo',
     texto: 'Tuerca ha unido el archivador y el corcho con hilo rojo. El sospechoso es Tuerca.' },
-  { id: 'tofu-biblioteca', companero: 'tofu', a: 'gramofono', b: 'libros', dx: 19, dy: 22,
+  { id: 'tuerca-informes', companero: 'tuerca', a: 'maquina', b: 'archivador', dx: 20, dy: 41, efecto: 'papeles',
+    texto: 'La máquina escribe directamente para el archivador. Tuerca está considerando contratarla.' },
+  { id: 'tuerca-pesaje', companero: 'tuerca', a: 'balanza', b: 'cajas', dx: 20, dy: 16, efecto: 'balanza',
+    texto: 'Tuerca pesa las cajas vacías. Ha encontrado una irregularidad: pesan.' },
+  { id: 'tofu-biblioteca', companero: 'tofu', a: 'gramofono', b: 'libros', dx: 19, dy: 22, efecto: 'musica',
     texto: 'Tofu escucha un vals entre los libros. El brote lleva el ritmo. Él lo niega.' },
-  { id: 'bruma-siesta', companero: 'bruma', a: 'tetera', b: 'hamaca', dx: 20, dy: 20,
+  { id: 'tofu-cielo', companero: 'tofu', a: 'telescopio', b: 'globo', dx: 20, dy: 20, efecto: 'estrellas',
+    texto: 'El telescopio apunta al globo. Tofu está buscando una estrella que todavía no haya leído.' },
+  { id: 'tofu-ajedrez', companero: 'tofu', a: 'ajedrez', b: 'atril', dx: 20, dy: 19, efecto: 'ajedrez',
+    texto: 'Tofu ha puesto la estrategia en el atril. Sigue perdiendo contra sí mismo.' },
+  { id: 'bruma-siesta', companero: 'bruma', a: 'tetera', b: 'hamaca', dx: 20, dy: 20, efecto: 'vapor',
     texto: 'Bruma ha organizado una merienda flotante. La tetera ha aceptado sin consultar.' },
-  { id: 'madeja-te', companero: 'madeja', a: 'tetera-rosa', b: 'sofa', dx: 20, dy: 20,
+  { id: 'bruma-luci', companero: 'bruma', a: 'loto', b: 'tarro', dx: 20, dy: 25, efecto: 'luciernagas',
+    texto: 'El loto y las luciérnagas se iluminan por turnos. Bruma arbitra sin mirar.' },
+  { id: 'bruma-viento', companero: 'bruma', a: 'cometa', b: 'campanillas', dx: 20, dy: 10, efecto: 'viento',
+    texto: 'La cometa ha hecho sonar las campanillas. Bruma dice que ha sido el aire. Correcto.' },
+  { id: 'madeja-te', companero: 'madeja', a: 'tetera-rosa', b: 'sofa', dx: 20, dy: 20, efecto: 'te',
     texto: 'Madeja ha declarado oficialmente la hora del té. Nadie ha solicitado una reunión.' },
+  { id: 'madeja-lana', companero: 'madeja', a: 'cesto', b: 'costurero', dx: 20, dy: 20, efecto: 'lana',
+    texto: 'Entre el cesto y el costurero hay una hebra infinita. Madeja la llama organización.' },
+  { id: 'madeja-cartas', companero: 'madeja', a: 'buzon', b: 'album', dx: 20, dy: 20, efecto: 'cartas',
+    texto: 'Madeja archiva las cartas en el álbum. Dice que es historia local. Es cotilleo.' },
 ]
 
 /** Solo cuentan construcciones reales, a la vista y físicamente próximas. */
