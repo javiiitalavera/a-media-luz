@@ -1,3 +1,4 @@
+import '../estilos/clima.css'
 import type React from 'react'
 // La casa de un vecino (docs/diseno-vecindario.md). Lo que manda es la escena: fondo, lo construido, las
 // huellas de las historias y el vecino. La interfaz va encima, arriba y abajo, sin tapar el centro.
@@ -45,6 +46,8 @@ import { propuestaDeMeta } from '../logica/subir'
 import { retoQueFalta } from '../logica/pista'
 import { EfectoDeObjeto, GESTOS_DE_OBJETO, VidaDeCasa } from '../componentes/VidaDeCasa'
 import { esJuguete, PROTESTAS_CARICIA, recordarVecindades, vecindadesActivas, vecindadesNuevas, zonaIncomoda } from '../logica/jugabilidad'
+import { estacionDelDia, GESTOS_DE_AMISTAD, gradoAmistad, registrarTrato, saludoDeLlegada, tiempoDelDia, type TipoTrato } from '../logica/convivencia'
+import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
 import { SONIDO_OBJETO, TOQUES_GREGORIO_EN_NOX, TOQUES_OBJETO } from '../contenido'
 import { rutaArte, rutaCompanero, type Expresion } from '../arte/manifiesto'
 import { useJuego } from '../estado/juego'
@@ -100,6 +103,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const r = esUltimo ? rReal : { ...rReal, fase: 0 as const }
   const momento = momentoDelDia(ahora)
   const noche = momento === 'noche'
+  const tiempo = tiempoDelDia(ahora)
+  const estacion = estacionDelDia(ahora)
   const [habla, setHabla] = useState<{ texto: string; n: number; contento?: boolean } | null>(null)
   // Lo que pasa (narración): sale de quien lo protagoniza (el vecino, la visita o un objeto), no de arriba.
   const [nota, ponerNota] = useState<{ texto: string; de?: Origen } | null>(null)
@@ -109,6 +114,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const globo = useGlobo((st) => st.globo)
   useEffect(() => { if (globo) { setHabla(null); ponerNota(null) } }, [globo])
   const [saltos, setSaltos] = useState(0)
+  const saludoHecho = useRef<CompaneroId | null>(null)
   // Un toque breve habla; mantener o deslizar es acariciar, sin puntos ni premios.
   const [cariciaActiva, setCariciaActiva] = useState<'agradable' | 'incomoda' | null>(null)
   const cariciaPendiente = useRef<{ x: number; y: number; incomoda: boolean; activa: boolean; reloj: ReturnType<typeof setTimeout> } | null>(null)
@@ -205,6 +211,24 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
 
   // El vecino celebra cada nivel una sola vez.
   const pendiente = vivo && nivelSinVer(partida, DUENO, g.nivel)
+  // Un saludo por entrada a la casa, saltable. Nunca interrumpe un nacimiento ni una celebración.
+  useEffect(() => {
+    if (!vivo || pendiente || nacer || abrirDecision || proyectoInicial || saludoHecho.current === DUENO) return
+    const timer = setTimeout(() => {
+      if (saludoHecho.current === DUENO) return
+      saludoHecho.current = DUENO
+      const p = useJuego.getState().partida
+      if (!p) return
+      const resultado = registrarTrato(p, DUENO, 'visita', ahora)
+      if (resultado.partida !== p) ajustar((vigente) => registrarTrato(vigente, DUENO, 'visita', ahora).partida)
+      const texto = resultado.nuevoHito
+        ? GESTOS_DE_AMISTAD[DUENO][resultado.nuevoHito - 1]
+        : saludoDeLlegada(resultado.partida, DUENO, ahora)
+      setHabla((actual) => actual ?? { texto, n: Date.now(), contento: true })
+      setSaltos((n) => n + 1)
+    }, 850)
+    return () => clearTimeout(timer)
+  }, [DUENO, vivo, pendiente, nacer, abrirDecision, proyectoInicial, ajustar])
   useEffect(() => {
     if (!pendiente) return
     const t = setTimeout(() => {
@@ -234,6 +258,19 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const eh = vertical ? h : w / PROPORCION_FONDO
   const escenario: CSSProperties = { width: ew, height: eh, left: (w - ew) / 2, top: (h - eh) / 2 }
 
+  // Confianza invisible: como máximo tres tipos diferentes de trato por semana.
+  const registrarInteraccion = (tipo: TipoTrato) => {
+    const vigente = useJuego.getState().partida
+    if (!vigente || !vivo) return
+    const resultado = registrarTrato(vigente, DUENO, tipo, ahora)
+    if (resultado.partida === vigente) return
+    ajustar((p) => registrarTrato(p, DUENO, tipo, ahora).partida)
+    if (resultado.nuevoHito) {
+      setHabla({ texto: GESTOS_DE_AMISTAD[DUENO][resultado.nuevoHito - 1], n: Date.now(), contento: true })
+      sfx.sorpresa()
+    }
+  }
+
   const merienda = MERIENDAS[DUENO]
   const [bocados, setBocados] = useState(0)
   const [comiendo, setComiendo] = useState(false)
@@ -245,6 +282,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const darMerienda = () => {
     if (comiendo) return
     setComiendo(true)
+    registrarInteraccion('merienda')
     setBocados(bocados + 1)
     setNota(null)
     setHabla(bocados === 2 ? { texto: merienda.frase, n: Date.now(), contento: true } : null)
@@ -386,6 +424,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     setCariciaActiva(intento.incomoda ? 'incomoda' : 'agradable')
     sfx.personaje(DUENO)
     setSaltos((n) => n + 1)
+    if (!intento.incomoda) registrarInteraccion('caricia')
     if (intento.incomoda && !protestaHecha.current) {
       protestaHecha.current = true
       setHabla({ texto: PROTESTAS_CARICIA[DUENO], n: Date.now() })
@@ -398,7 +437,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
     const caja = e.currentTarget.getBoundingClientRect()
     cariciaPendiente.current = {
       x: e.clientX, y: e.clientY,
-      incomoda: zonaIncomoda(DUENO, (e.clientX - caja.left) / caja.width, (e.clientY - caja.top) / caja.height),
+      incomoda: zonaIncomoda(DUENO, (e.clientX - caja.left) / caja.width, (e.clientY - caja.top) / caja.height)
+        && !(DUENO === 'tofu' && gradoAmistad(partida, DUENO) === 2),
       activa: false, reloj: setTimeout(activarCaricia, 260),
     }
   }
@@ -440,6 +480,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_62%,transparent_25%,#2e203055_80%)]" />
           </div>
         )}
+        {!conHuevo && <ClimaEnEscena tiempo={tiempo} estacion={estacion} casa />}
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
         {micro?.visual && !ordenando && <EscenaBreve visual={micro.visual} />}
 
@@ -447,6 +488,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} enUso={usando?.id === o.id} alEncuentro={encuentro && usando?.id === o.id ? responder : undefined} paso={paso} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
           ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id} seleccionado={objetoSeleccionado === o.id} noche={noche} enVecindad={enVecindad.has(o.id)}
           onJugar={(id, veces) => {
+            registrarInteraccion('juguete')
             if (veces % 2 === 1) setSaltos((n) => n + 1)
             if (id === 'telefono' && veces % 3 === 0) {
               const frases = ['¿A quién querías llamar?', 'Centralita del barrio. Tuerca ha cortado la línea.', 'Nox no está. No quiere estar.']
