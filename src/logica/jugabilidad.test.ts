@@ -102,4 +102,23 @@ describe('juego táctil y vecindades', () => {
     expect(vecindadesActivas({ ...junto, construcciones: [] }, 'madeja')).toHaveLength(0)
   })
 
+  it('no da por descubiertas otras vecindades que aún no ha mostrado', () => {
+    const p = {
+      ...base(),
+      construcciones: [
+        ...base().construcciones,
+        { objetoId: 'bici', fecha: '2026-11-20' },
+        { objetoId: 'zapatillas', fecha: '2026-11-20' },
+      ],
+    }
+    // Las dos parejas están físicamente cercanas y sin superponerse por completo.
+    const dos = colocar(colocar(p, 'hoguera', 76, 58), 'zapatillas', 79, 77)
+    expect(vecindadesNuevas(dos, 'nox').map((v) => v.id)).toEqual(['nox-fogata', 'nox-velocidad'])
+    const contado = recordarVecindades(dos, [vecindadesNuevas(dos, 'nox')[0].id])
+    expect(contado.vecindadesVistas).toEqual(['nox-fogata'])
+    expect(vecindadesNuevas(contado, 'nox').map((v) => v.id)).toEqual(['nox-velocidad'])
+    const visitaPosterior = recordarVecindades(contado, [vecindadesNuevas(contado, 'nox')[0].id])
+    expect(vecindadesNuevas(visitaPosterior, 'nox')).toHaveLength(0)
+  })
+
 })
