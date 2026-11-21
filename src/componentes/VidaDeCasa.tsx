@@ -1,5 +1,7 @@
 import type { CompaneroId } from '../contenido'
 import type { EfectoVecindad } from '../logica/jugabilidad'
+import type { ReaccionClimaObjeto } from '../logica/ambiente'
+import type { TiempoBarrio, EstacionBarrio } from '../logica/convivencia'
 import { rutaArte } from '../arte/manifiesto'
 
 const TORNILLO = '/arte/curiosidades/tornillo.webp'
@@ -9,9 +11,12 @@ const CARTA = '/arte/curiosidades/carta.webp'
 const BOTON = '/arte/curiosidades/boton.webp'
 
 /** Pequeñas escenas de fondo. Se dibujan detrás de lo que se puede tocar. */
-export function VidaDeCasa({ vecino }: { vecino: CompaneroId }) {
+export function VidaDeCasa({ vecino, tiempo, estacion }: {
+  vecino: CompaneroId; tiempo?: TiempoBarrio; estacion?: EstacionBarrio
+}) {
   return (
-    <div aria-hidden className="vida-de-casa pointer-events-none absolute inset-0" data-casa={vecino}>
+    <div aria-hidden className="vida-de-casa pointer-events-none absolute inset-0"
+      data-casa={vecino} data-tiempo={tiempo} data-estacion={estacion}>
       {vecino === 'nox' && (
         <span className="ascuas-del-porche"><i /><i /><i /></span>
       )}
@@ -105,4 +110,11 @@ export function EfectoVecindad({ efecto, toques }: { efecto: EfectoVecindad; toq
       <i /><i /><i />
     </span>
   )
+}
+
+/** La construcción responde al clima; no afecta a acciones ni a la partida.
+ * Siempre aparece dentro del propio botón del objeto para acompañar su movimiento. */
+export function EfectoClimaObjeto({ reaccion }: { reaccion: ReaccionClimaObjeto | null }) {
+  if (!reaccion) return null
+  return <span aria-hidden="true" className="clima-objeto" data-reaccion={reaccion}><i /><i /><i /></span>
 }
