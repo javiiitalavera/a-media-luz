@@ -126,6 +126,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const saludoHecho = useRef<CompaneroId | null>(null)
   // Una frase por descubrimiento jugable, no una notificación por cada repetición.
   const juegosNarrados = useRef(new Set<string>())
+  // Si varias vecindades se activan juntas, no declarar vistas las que todavía no hemos contado.
+  const descubrimientoMostrado = useRef(false)
   // Un toque breve habla; mantener o deslizar es acariciar, sin puntos ni premios.
   const [cariciaActiva, setCariciaActiva] = useState<'agradable' | 'incomoda' | null>(null)
   const cariciaPendiente = useRef<{ pointerId: number; x: number; y: number; incomoda: boolean; activa: boolean; reloj: ReturnType<typeof setTimeout> } | null>(null)
@@ -374,13 +376,15 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const porEstrenar = vecindadesNuevas(partida, DUENO)
   const clavesNuevas = porEstrenar.map((v) => v.id).join('|')
   useEffect(() => {
-    if (!vivo || ordenando || !clavesNuevas) return
+    if (!vivo || ordenando || !clavesNuevas || descubrimientoMostrado.current) return
     const nuevas = vecindadesNuevas(partida, DUENO)
     if (!nuevas.length) return
-    // Mostrar antes de guardar: la actualización de la partida no debe cancelar la sorpresa.
+    // Solo una sorpresa por visita. Las demás quedan por descubrir en otra entrada,
+    // en lugar de apuntarlas todas como vistas sin que el jugador las haya visto.
+    descubrimientoMostrado.current = true
     setNota(nuevas[0].texto, 'vecino')
     sfx.sorpresa()
-    ajustar((p) => recordarVecindades(p, nuevas.map((v) => v.id)))
+    ajustar((p) => recordarVecindades(p, [nuevas[0].id]))
   }, [clavesNuevas, ordenando, vivo, DUENO, ajustar])
   // El baúl también permite escoger o guardar objetos que otro dibujo haya dejado tapados.
   const visiblesMovibles = objetos.filter((o) => movible(o) && o.id !== 'aspiradora')
@@ -1096,10 +1100,11 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
         onClick={tocar}
         onKeyDown={(e) => {
           if (ordenando || !e.shiftKey || e.key !== 'Enter') return
-          const especial = MANTENER_OBJETO[o.id] ?? DESLIZAR_OBJETO[o.id] ?? RITMO_OBJETO[o.id]
-          if (!especial) return
           e.preventDefault()
           e.stopPropagation()
+          if (e.repeat) return // Un Enter mantenido no dispara diez veces la misma acción.
+          const especial = MANTENER_OBJETO[o.id] ?? DESLIZAR_OBJETO[o.id] ?? RITMO_OBJETO[o.id]
+          if (!especial) return
           const n = siguienteToque()
           onInteraccion?.()
           sfx.objeto(SONIDO_OBJETO[o.id] ?? 'madera')
