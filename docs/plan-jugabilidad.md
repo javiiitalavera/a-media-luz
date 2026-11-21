@@ -1,42 +1,59 @@
-# Jugabilidad: menos leer, más provocar cosas
+# Hoja de ruta de jugabilidad — A media luz
 
-Decisión de dirección creativa, 21/11/2026. Sobre la auditoría Z.ai (20/11).
+**Decisión vigente: 21/11/2026.** Sustituye la lista de expansión de la auditoría Z.ai y las recomendaciones anteriores de P4 + P7. La dirección creativa queda acotada a **P3, P6 y P9**. No crear nuevas líneas de juego a partir de los demás apartados sin una nueva decisión expresa.
 
-## Regla irrenunciable
+## Filosofía que se conserva
 
-El juego sigue basado en registrar acciones positivas reales. Los hábitos dan materiales para construir; construir abre nuevas formas de jugar. Las interacciones lúdicas NO dan materiales, no son tareas, no tienen rachas ni alertas.
+Registrar hábitos reales permite construir; construir ofrece más posibilidades de jugar con el barrio y sus cinco vecinos. El juego táctil no debe generar materiales, puntuaciones, rachas ni tareas nuevas. Se busca provocar acciones y reacciones, no producir más conversaciones.
 
-**Se conservan las propuestas automáticas voluntarias de aumentar objetivos** (`src/logica/subir.ts`, `PropuestaMeta`). Ayudan a que un reto que ya se hace muy fácil siga motivando. No se eliminan ni se cambian en este plan.
+**Se mantienen intactas las propuestas automáticas y voluntarias de aumentar objetivos cuando un reto se vuelve demasiado fácil** (`src/logica/subir.ts` y `PropuestaMeta`). No confundirlas con misiones de videojuego.
 
-## Orden acordado por impacto jugable
+## Próximos bloques aprobados — solo estos tres
 
-1. **Caricias** (P2): contacto continuo, respuesta física y zonas incómodas diferentes.
-2. **Objetos-juguete** (P3): primero hoguera, comba, maceta, gramófono y teléfono; ampliar después.
-3. **Vecindades de objetos** (P6): experimentar moviendo muebles descubre escenas; sin checklist ni puntos.
-4. **Saludos al llegar** (P1): breves, espontáneos y saltables.
-5. **Amistad sin barras** (P5): se expresa con confianza y respuestas distintas, no con cifras.
-6. **Clima y estaciones** (P9): multiplicador de animaciones y variaciones.
-7. **Encargos espontáneos** (P4) y **ronda del barrio** (P7): probar solo si no se convierten en obligaciones.
-8. **Barquitos y teléfono** (P8) y **cuaderno de patrones** (P10): capa ambiental, siempre subordinada al juego físico.
+### P3 · Completar objetos-juguete
 
-## Este PR: primera iteración verificable
+**Situación:** cinco juguetes con acciones táctiles: hoguera, comba, maceta, gramófono y teléfono (PR #22 y #24).
 
-- Caricia con pulsación sostenida o deslizamiento sobre cada vecino; tocar brevemente sigue hablando.
-- Cinco juguetes que reaccionan físicamente; no generan materiales y no fuerzan bocadillos en cada pulsación.
-- Cinco combinaciones de muebles, una por casa, calculadas sobre las posiciones guardadas; descubrimiento persistente, efectos de ambientación mientras están juntas.
-- Se mantiene la ordenación/baúl y se respeta el modo de movimiento reducido.
-- No se cambia la lógica de las metas, el registro de hábitos ni las consecuencias por descuido.
+**Siguiente iteración:** ampliar la variedad de juguetes interactivos usando, cuando sea posible, construcciones y arte ya existentes. Priorizar acciones que se distingan por lo que hace el jugador y por la reacción del bicho: ritmos, mantener pulsado, arrastrar/colocar, pequeñas transformaciones y usos encadenados. Un objeto no queda «completado» solo porque muestre una frase distinta o sacuda una imagen.
 
-## Criterio de evaluación
+**Criterio:** en cada casa deben existir motivos físicos para tocar y experimentar incluso después de registrar las hazañas. Evitar textos recurrentes y controles que parezcan minijuegos obligatorios.
 
-En una sesión **sin hábitos que registrar**, ¿apetece acariciar, tocar los juguetes y experimentar colocando muebles? Si la respuesta es no, no añadir más lecturas ni sistemas de misiones: mejorar la respuesta táctil y la sorpresa primero.
+### P6 · Completar vecindades de objetos
 
-## Bloque 2 (21/11/2026): llegada, amistad y clima
+**Situación:** cinco parejas de objetos combinables, una por vecino. Las pruebas verifican que son alcanzables dentro de sus superficies de colocación.
 
-- **Saludo de llegada (P1):** una línea como máximo al entrar en una casa ya habitada; no interfiere con la eclosión, las decisiones ni la celebración de niveles. Reutiliza `FRASES.saludo`, y cambia a veces por la confianza y el tiempo.
-- **Amistad (P5):** registramos silenciosamente `visita`, `caricia`, `merienda` y `juguete`. Solo cuentan hasta tres tipos distintos por semana, una vez por tipo; no hay barra, tareas, rachas ni caída de puntos. Dos hitos por vecino con nuevas frases y pequeños cambios de trato. Tofu permite tocarle el brote en el segundo hito.
-- **Clima (P9 inicial):** cada día del calendario del juego produce tiempo ficticio estable (despejado, lluvia, niebla o viento), y las estaciones cambian la paleta. Se ve en el mapa y matiza las casas; una parte de los saludos y las expresiones reacciona. No se consulta el clima real del usuario ni se obliga a visitar el barrio.
-- **Siguientes:** ampliar objetos-juguete y vecindades si la experiencia táctil convence; después evaluar encargos y ronda sin listas, dejando mensajes/barquitos y cuaderno como ambientación secundaria.
-- **Se mantienen sin cambios las propuestas automáticas de subir objetivos.**
+**Siguiente iteración:** ampliar progresivamente hacia **10–15 combinaciones en total**, de preferencia con consecuencias visuales o comportamientos específicos, no solo globos explicativos. Si una combinación requiere piezas que no existen o no se pueden colocar juntas, no incorporarla. Mantener el descubrimiento espontáneo; no añadir lista de recetas, marcadores ni premios por completar.
 
-Validación: abrir una casa y ser recibido sin más paneles; jugar y dar de merendar durante tres semanas ficticias; comprobar que repetir cuarenta caricias no adelanta hitos y que la lluvia cambia el barrio sin hacer más difícil jugar.
+**Criterio:** que cambiar la decoración pueda transformar de manera perceptible lo que sucede en la casa.
+
+### P9 · Completar clima y estaciones
+
+**Situación:** clima ficticio y estable por día (despejado, lluvia, niebla, viento), paletas estacionales y algunas reacciones de personajes (PR #23).
+
+**Siguiente iteración:** añadir **acontecimientos ambientales especiales** puntuales que cambien lo que se ve o puede tocarse: reacción específica de un objeto a la lluvia, detalles de viento o niebla, pequeñas escenas estacionales. Deben ser livianos, coherentes entre barrio y casas y sin exigir entrar en una fecha concreta.
+
+**Criterio:** que el barrio tenga días reconociblemente diferentes sin meter más avisos, lecturas, obligaciones ni dependencia del clima real.
+
+## Descartado como desarrollo futuro
+
+**No ampliar P1 (saludos), P2 (caricias), P4 (encargos espontáneos), P5 (amistad), P7 (rondas del barrio), P8 (barquitos/mensajes) ni P10 (cuaderno de patrones).** Esto no implica borrar la funcionalidad ya implementada; solo se descartan las propuestas de expansión. En particular, no crear el PR de encargos + ronda que se había recomendado anteriormente.
+
+Tampoco iniciar las simplificaciones E2–E5 de la auditoría (informe dominical, cuestionario inicial, gestión de retos y visitantes) como parte de esta hoja de ruta. E1, que planteaba retirar las propuestas de subir metas, **está expresamente rechazado**.
+
+## Más adelante, como proyecto artístico separado
+
+**Mejorar las animaciones y posturas propias de Nox, Tofu, Bruma, Madeja y Tuerca mediante arte nuevo.** Pensar en posturas y expresiones específicas mientras juegan, manipulan objetos, reaccionan al clima o interactúan con su casa. No solicitar más muebles decorativos o ilustraciones genéricas por ahora. Preparar primero la lista de poses que realmente necesita el juego y conservar coherencia de silueta, escala y etapa de cada personaje.
+
+**Este trabajo queda aplazado**, no forma parte de la próxima implementación P3/P6/P9 salvo que se autorice expresamente.
+
+## Validación antes de fusionar futuros PR
+
+Pruebas automáticas de las reglas y de la accesibilidad de las combinaciones; compilación; verificación visual/táctil en móviles pequeños; control de solapamientos y mensajes; respeto a movimiento reducido y a partidas existentes. Cada nueva interacción debe sobrevivir a la prueba: «abro el juego sin hábitos pendientes y quiero seguir jugando».
+
+## Historial ya fusionado
+
+- **PR #22:** caricias, cinco juguetes y cinco vecindades iniciales.
+- **PR #23:** saludos, amistad invisible, clima y estaciones iniciales.
+- **PR #24:** correcciones táctiles y acciones de juguetes (comba rítmica y cuatro pulsaciones largas).
+
+Las mecánicas de estos PR permanecen operativas. Esta hoja de ruta decide **qué se amplía**, no las elimina.
