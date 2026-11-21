@@ -18,6 +18,10 @@ export interface Escena {
   /** Dónde se pueden dejar las cosas al ordenar la casa (los pies): rectángulos en % del fondo. */
   suelo: Zona[]
   mesa?: Zona[]
+  /** Objetos sujetos a una pared: se reubican en esa pared, no en el suelo. */
+  pared?: Zona[]
+  /** Objetos que flotan en el agua. */
+  agua?: Zona[]
 }
 
 /** Una superficie de apoyo: de x[0] a x[1] y de y[0] a y[1] (en % del fondo). */
@@ -27,10 +31,11 @@ export interface Zona { x: [number, number]; y: [number, number] }
 export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
   nox: { proporcion: 941 / 1672, pies: { x: 52, y: 73 }, anchos: [36.4, 35.1, 35.6, 33.8, 33.6],
     luces: [{ x: 18.6, y: 28.7 }, { x: 78, y: 21.5 }], luzPropia: { x: -0.28, y: 0.36, tam: 14, chispas: true },
-    suelo: [{ x: [12, 88], y: [46, 82] }] },
+    suelo: [{ x: [12, 88], y: [46, 82] }], pared: [{ x: [74, 90], y: [30, 44] }] },
   tuerca: { proporcion: 941 / 1672, pies: { x: 50, y: 74 }, anchos: [38, 37.4, 36.5, 34.5, 33.5],
     luces: [{ x: 50, y: 18 }], luzPropia: { x: 0, y: 0.24, tam: 9 },
-    suelo: [{ x: [12, 88], y: [57, 84] }], mesa: [{ x: [48, 84], y: [43.5, 44.5] }] },
+    suelo: [{ x: [12, 88], y: [57, 84] }], mesa: [{ x: [48, 84], y: [43.5, 44.5] }],
+    pared: [{ x: [12, 92], y: [19, 44] }] },
   tofu: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [37.8, 36.9, 34.5, 31.5, 31.3],
     luces: [{ x: 16.5, y: 19 }, { x: 92, y: 34.5 }],
     suelo: [{ x: [12, 88], y: [52, 84] }] },
@@ -38,7 +43,8 @@ export const ESCENAS: Partial<Record<CompaneroId, Escena>> = {
   bruma: { proporcion: 941 / 1672, pies: { x: 50, y: 70 }, anchos: [37.4, 34.2, 36.3, 35.9, 35.7],
     luces: [{ x: 20.5, y: 27 }, { x: 67.5, y: 13 }],
     // La orilla, el embarcadero y los juncos del agua.
-    suelo: [{ x: [10, 32], y: [39, 47] }, { x: [32, 66], y: [37.5, 41.5] }, { x: [68, 90], y: [44, 56] }] },
+    suelo: [{ x: [10, 32], y: [39, 47] }, { x: [32, 66], y: [37.5, 41.5] }, { x: [68, 90], y: [44, 56] }],
+    agua: [{ x: [17, 85], y: [55, 70] }] },
   // La madriguera de lana de Madeja: suelo de madera con alfombra trenzada.
   madeja: { proporcion: 941 / 1672, pies: { x: 50, y: 73 }, anchos: [35.8, 35.4, 35.8, 35, 35],
     luces: [{ x: 22, y: 16.5 }, { x: 61, y: 25 }],
@@ -76,7 +82,7 @@ export interface ObjetoCasa {
   coste: Partial<Record<AreaId, number>>
   /** Lo que pagaban las partidas antes de guardar el coste en cada construcción. */
   costeAnterior?: Partial<Record<AreaId, number>>
-  apoyo?: 'mesa' | 'fijo'
+  apoyo?: 'mesa' | 'pared' | 'agua' | 'fijo'
   /** Dónde va en la escena, en % del fondo: centro horizontal, base (pies) y ancho. */
   sitio: { x: number; y: number; ancho: number; colgado?: boolean }
   /** Alto/ancho de su imagen, para colocar su luz. */
@@ -159,7 +165,7 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'estanteria-tarros', companero: 'tuerca', orden: 6, nombre: 'Estante de tarros', descripcion: 'Tornillos clasificados por tamaño, color y rencor.',
     coste: { orden: 4, vinculos: 2 }, sitio: { x: 14, y: 62, ancho: 17 }, proporcion: 1.05 },
   { id: 'reloj', companero: 'tuerca', orden: 7, nombre: 'Reloj de engranajes', descripcion: 'Va cuatro minutos adelantado. Por si acaso. No sé por si acaso qué.',
-    coste: { orden: 5, mente: 2, calma: 1 }, sitio: { x: 20, y: 24, ancho: 11 }, proporcion: 0.92 },
+    coste: { orden: 5, mente: 2, calma: 1 }, apoyo: 'pared', sitio: { x: 20, y: 24, ancho: 11 }, proporcion: 0.92 },
 
   // Láminas nuevas (20/11/2026): siguen la cadena de proyectos de cada casa.
   { id: 'saco', companero: 'nox', orden: 11, nombre: 'Saco de hojas', descripcion: 'Para golpear algo que no sea el despertador.',
@@ -179,7 +185,7 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'maquina', companero: 'tuerca', orden: 11, nombre: 'Máquina de escribir', descripcion: 'Clac, clac, ding. Escribo formularios por placer.',
     coste: { orden: 6, mente: 2 }, apoyo: 'mesa', sitio: { x: 63, y: 44.2, ancho: 12 }, proporcion: 0.97 },
   { id: 'corcho', companero: 'tuerca', orden: 12, nombre: 'Corcho de pistas', descripcion: 'Hilo rojo entre notas. Aún no sé qué investigo.',
-    coste: { orden: 5, mente: 3 }, sitio: { x: 81, y: 27, ancho: 13 }, proporcion: 0.81 },
+    coste: { orden: 5, mente: 3 }, apoyo: 'pared', sitio: { x: 81, y: 27, ancho: 13 }, proporcion: 0.81 },
   { id: 'balanza', companero: 'tuerca', orden: 13, nombre: 'Balanza', descripcion: 'Lo peso todo. Hasta las decisiones. Sobre todo las decisiones.',
     coste: { orden: 7, calma: 1 }, sitio: { x: 13, y: 82, ancho: 12 }, proporcion: 1.02 },
   { id: 'lampara', companero: 'tuerca', orden: 14, nombre: 'Lámpara de piezas', descripcion: 'Hecha con un brazo que me sobró. Ilumina con ganas.',
@@ -205,7 +211,7 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'cometa', companero: 'bruma', orden: 6, nombre: 'Cometa de nube', descripcion: 'Una nube que vuela atada. Me identifico.',
     coste: { calma: 5, vinculos: 2 }, sitio: { x: 28, y: 4, ancho: 9, colgado: true }, proporcion: 1.38 },
   { id: 'loto', companero: 'bruma', orden: 7, nombre: 'Lámpara de loto', descripcion: 'Flota y alumbra. Lo segundo lo hace mejor que yo.',
-    coste: { calma: 6, mente: 1 }, sitio: { x: 36, y: 63, ancho: 10 }, proporcion: 1.03, luz: { x: 50, y: 40, color: '#ffe6b0' } },
+    coste: { calma: 6, mente: 1 }, apoyo: 'agua', sitio: { x: 36, y: 63, ancho: 10 }, proporcion: 1.03, luz: { x: 50, y: 40, color: '#ffe6b0' } },
   { id: 'manta', companero: 'bruma', orden: 8, nombre: 'Manta en la piedra', descripcion: 'Para que la piedra no tenga frío. Ni tú.',
     coste: { calma: 6, vinculos: 2 }, sitio: { x: 13, y: 46.5, ancho: 10 }, proporcion: 0.81 },
   { id: 'farol-papel', companero: 'bruma', orden: 9, nombre: 'Farolillo de papel', descripcion: 'Lila, como yo. Alumbra bajito, como yo.',
@@ -214,13 +220,13 @@ export const OBJETOS_CASA: ObjetoCasa[] = [
   { id: 'zapatillas', companero: 'nox', orden: 8, nombre: 'Zapatillas de brasa', descripcion: 'Para correr. Las he usado una vez. Fue memorable.',
     coste: { cuerpo: 4, calma: 1 }, sitio: { x: 33, y: 48.5, ancho: 10 }, proporcion: 0.9 },
   { id: 'bufanda', companero: 'nox', orden: 9, nombre: 'Bufanda coral', descripcion: 'Abriga. No es por el frío, es por el estilo.',
-    coste: { cuerpo: 3, vinculos: 3 }, sitio: { x: 86, y: 38, ancho: 11 }, proporcion: 0.9 },
+    coste: { cuerpo: 3, vinculos: 3 }, apoyo: 'pared', sitio: { x: 86, y: 38, ancho: 11 }, proporcion: 0.9 },
   { id: 'farol-luna', companero: 'nox', orden: 10, nombre: 'Farol de luna', descripcion: 'Brilla en las noches tranquilas. No tengo muchas.',
     coste: { cuerpo: 4, calma: 3 }, sitio: { x: 63, y: 3, ancho: 9, colgado: true }, proporcion: 1.32, luz: { x: 45, y: 45, color: '#ffe08a' } },
   { id: 'medalla', companero: 'tuerca', orden: 8, nombre: 'Medalla de engranaje', descripcion: 'Al mérito en la gestión de pendientes. Me la he dado yo. Me la merecía.',
-    coste: { orden: 6, mente: 2 }, sitio: { x: 89, y: 41, ancho: 8 }, proporcion: 1.29 },
+    coste: { orden: 6, mente: 2 }, apoyo: 'pared', sitio: { x: 89, y: 41, ancho: 8 }, proporcion: 1.29 },
   { id: 'tablon', companero: 'tuerca', orden: 2, abre: 'Sugerencias, expedientes y conflictos administrativos.', nombre: 'Tablón de planificación', descripcion: 'Todo planificado. Lo imprevisto, en la columna VARIOS.',
-    coste: { orden: 5 }, costeAnterior: { orden: 4, mente: 2 }, sitio: { x: 33, y: 23.5, ancho: 13 }, proporcion: 0.94 },
+    coste: { orden: 5 }, costeAnterior: { orden: 4, mente: 2 }, apoyo: 'pared', sitio: { x: 33, y: 23.5, ancho: 13 }, proporcion: 0.94 },
   { id: 'tuerquita', companero: 'tuerca', orden: 9, nombre: 'Tuerquita', descripcion: 'Una versión pequeña de mí. Igual de insufrible, la mitad de alta.',
     coste: { orden: 7, vinculos: 2 }, sitio: { x: 39, y: 74, ancho: 9 }, proporcion: 1.13 },
 ]

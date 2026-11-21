@@ -56,6 +56,18 @@ body {
 .animate-entrar { animation: entrar 0.28s ease-out both; }
 @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
 .animate-aparecer { animation: aparecer 0.2s ease-out both; }
+/* Eclosión: el paisaje exterior permanece mientras aparece la nueva casa.
+   Ambas capas comparten exactamente la misma cámara; no hace falta arte adicional. */
+@keyframes disipar-nido {
+  0%, 12% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.anim-disipar-nido { opacity: 0; animation: disipar-nido 950ms ease-in-out both; }
+@keyframes revelar-casa {
+  from { opacity: .9; transform: scale(1.025); }
+  to { opacity: 1; transform: none; }
+}
+.anim-revelar-casa { animation: revelar-casa 950ms ease-out both; transform-origin: 50% 55%; }
 /* Casa: animaciones de la escena (todas por código, sobre el arte quieto). */
 @keyframes respirar { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.99, 1.025); } }
 .anim-respirar { animation: respirar 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
@@ -81,6 +93,13 @@ body {
 .anim-luciernaga { animation: luciernaga var(--t, 6s) ease-in-out infinite; }
 @keyframes brotar { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 80% { transform: scale(0.95); } 100% { transform: scale(1); } }
 .anim-brotar { animation: brotar 0.7s cubic-bezier(.3,.7,.4,1) both; transform-origin: 50% 100%; }
+/* Una evolución de nivel es un cambio de ropa/detalles, no otro nacimiento. */
+@keyframes crecer-vecino {
+  0% { opacity: .55; transform: scale(.96); }
+  65% { opacity: 1; transform: scale(1.025); }
+  100% { opacity: 1; transform: none; }
+}
+.anim-crecer-vecino { animation: crecer-vecino 520ms ease-out both; transform-origin: 50% 100%; }
 @keyframes estallido { 0% { transform: scale(.3); opacity: 0; } 18% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.22); opacity: 0; } }
 .anim-estallido { animation: estallido 0.9s ease-out both; }
 @keyframes balanceo { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
@@ -153,6 +172,14 @@ body {
 .anim-latido { animation: latido 1.6s ease-in-out infinite; }
 /* Ordenar la casa: lo que se puede mover lleva un contorno claro; lo que arrastras, además, se levanta. */
 .objeto-movible { filter: drop-shadow(0 0 1.5px #fff8e8) drop-shadow(0 0 1.5px #fff8e8); cursor: grab; }
+/* Las luces de trabajo y el fuego reposan por la noche. Sin introducir nuevos dibujos. */
+.objeto-apagado-noche { filter: brightness(.46) saturate(.38); }
+/* Solo la llama de la cola, dejando el resto del cachorro como estaba. */
+.nox-ascuas {
+  filter: brightness(.18) saturate(.3);
+  -webkit-mask-image: radial-gradient(ellipse 19% 18% at 21% 61%, black 65%, transparent 98%);
+  mask-image: radial-gradient(ellipse 19% 18% at 21% 61%, black 65%, transparent 98%);
+}
 @keyframes ayuda-ordenar { 0% { opacity: 0; } 8%, 75% { opacity: 1; } 100% { opacity: 0; } }
 .anim-ayuda-ordenar { animation: ayuda-ordenar 4.5s ease-out both; }
 .objeto-arrastrado { filter: drop-shadow(0 0 2px #fff8e8) drop-shadow(0 6px 6px #2e203066); scale: 1.06; cursor: grabbing; }
@@ -441,7 +468,7 @@ body {
   .anim-luz { transform: translate(-50%, -50%); opacity: .7; }
   .anim-luciernaga { opacity: .38; }
   .anim-asoma { animation: gag-quieto 4s linear both; }
-  .animate-entrar, .animate-aparecer { animation: none; }
+  .animate-entrar, .animate-aparecer, .anim-disipar-nido, .anim-revelar-casa, .anim-crecer-vecino { animation: none; }
   .anim-mecer, .anim-temblar, .anim-inquieto, .anim-eclosionar { animation: none; }
   .anim-hoja-cae, .anim-antena, .anim-antena-prisa, .anim-impaciente, .tofu-brote, .tofu-brote-responde, .tofu-responde, .anim-flotar, .anim-esponjar, .sombra-vecino, .luz-hoguera, .anim-engranaje, .anim-engranaje-prisa, .anim-tic, .anim-respingo, .anim-destello, .anim-latido, .anim-aviso, .anim-nuevo, .anim-respirar, .anim-saltar, .anim-luz, .anim-chispa, .anim-luciernaga, .anim-brotar, .anim-estallido, .anim-balanceo, .anim-hoja { animation: none; }
 }

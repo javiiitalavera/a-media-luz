@@ -9,6 +9,7 @@ import { FRASES_VISITA, type Huella } from '../contenido/situaciones'
 import type { Partida } from '../logica/partida'
 import { estadoRincon } from '../logica/reglas'
 import { momentoDelDia } from '../logica/momento'
+import { fondoDeEclosion, type PasoEclosion } from '../logica/fondoDeEclosion'
 import { construido, disponibles, faltan, proyectosDe, proyectosVisibles, puedeConstruir } from '../logica/casa'
 import { dibujoDelNivel, nivelSinVer, nivelVisto, proximaLlegada, progreso } from '../logica/etapas'
 import { estadoDelMes, faltanParaEclosion, mesActual, mesesDe } from '../logica/meses'
@@ -19,6 +20,7 @@ import { BotonPastilla, BotonRedondo, Icono, ICONOS } from '../componentes/Boton
 import { Materiales } from '../componentes/Bolsa'
 import { GREGORIO_EN_NOX, VISITANTES, sitioVisita } from '../contenido/casa'
 import { colocar, encajar, guardado, guardar, movible, ordenOriginal, sacar, sitioDe, sitioSobre } from '../logica/colocar'
+import { objetoAlumbra, objetoApagadoDeNoche } from '../logica/luces'
 import { globoEn, useGlobo } from '../estado/globo'
 import { Aviso, Punto } from '../componentes/Aviso'
 import { azarConSemilla } from '../logica/azar'
@@ -114,6 +116,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const [arrastre, setArrastre] = useState<{ id: string; x: number; y: number } | null>(null)
   const baul = useRef<HTMLButtonElement>(null)
   const [verBaul, setVerBaul] = useState(false)
+  const [objetoSeleccionado, setObjetoSeleccionado] = useState<string | null>(null)
   const enBaul = OBJETOS_CASA.filter((o) => o.companero === DUENO && guardado(partida, o.id))
   const verNivel = useJuego((s) => s.verNivel)
   const g = progreso(partida, DUENO, ahora)
@@ -124,7 +127,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const vivo = estado === 'vivo'
   const faltaHuevo = faltanParaEclosion(partida, ahora)
   const [toques, setToques] = useState(0)
-  const [nacer, setNacer] = useState<'rompiendo' | 'salio' | 'ficha' | null>(null)
+  const [nacer, setNacer] = useState<PasoEclosion>(null)
   const [toquesSit, setToquesSit] = useState(0)
   const [preguntaHuevo, setPreguntaHuevo] = useState(false)
   useEffect(() => {
@@ -289,8 +292,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
       .map((o) => ({ ...o, sitio: sitioDe(partida, o, arrastre?.id === o.id ? arrastre : undefined) })),
     ...(gregorio === DUENO ? [DUENO === 'tuerca' ? aspiradora : { ...aspiradora, sitio: GREGORIO_EN_NOX }] : []),
   ]
-  const hoguera = objetos.find((o) => o.id === 'hoguera')
   const maceta = objetos.find((o) => o.id === 'maceta')
+  // El baúl también permite escoger o guardar objetos que otro dibujo haya dejado tapados.
+  const visiblesMovibles = objetos.filter((o) => movible(o) && o.id !== 'aspiradora')
   const huellas = huellasEn(partida, DUENO)
   const decision = decisionPendiente(partida, DUENO)
   const preguntaAbierta = decision?.situacion === decisionAbierta
@@ -341,7 +345,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   // Mientras no ha salido, en su sitio está el huevo.
   const pista = retoQueFalta(partida, ahora, DUENO)
   const propuesta = propuestaDeMeta(partida, ahora)
-  const conHuevo = estado === 'huevo' || (estado === 'naciendo' && (nacer === null || nacer === 'rompiendo'))
+  const { conHuevo, mostrarNido, revelandoCasa } = fondoDeEclosion(estado, nacer)
   const anchoNox = conHuevo ? ANCHO_HUEVO : ANCHO_NOX[Math.min(etapaVista, ANCHO_NOX.length - 1)]
   const parcela = PARCELAS[Math.max(0, mesesDe(partida).findIndex((m) => m.companero === DUENO))] ?? PARCELAS[0]
   const altoNox = alto(anchoNox, 1)
@@ -351,31 +355,29 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const radio = anchoNox * 0.75
   const gradiente = `radial-gradient(circle at ${NOX.x}% ${centroY}%, rgba(0,0,0,0.35) 0, rgba(0,0,0,0.35) ${radio * 0.55}%, black ${radio * 1.15}%)`
   const mascaraNoche: CSSProperties = { WebkitMaskImage: gradiente, maskImage: gradiente }
-  const luzHoguera = noche && hoguera?.luz ? {
-    x: hoguera.sitio.x + ((hoguera.luz.x - 50) / 100) * hoguera.sitio.ancho,
-    y: hoguera.sitio.y - (1 - hoguera.luz.y / 100) * alto(hoguera.sitio.ancho, hoguera.proporcion),
-  } : null
   const ladoMaceta = maceta ? (maceta.sitio.x < NOX.x ? -1 : 1) : undefined
 
   return (
     <main ref={ref} className="escena-vecindario relative mx-auto h-dvh max-w-[430px] overflow-hidden select-none bg-[#c9bf7f]">
       <div className="absolute" style={escenario} onClick={() => setHabla(null)}>
-        {/* Mientras está en el huevo no hay casa todavía: se ve su parcela del barrio, con la hierba. Al nacer, aparece la casa. */}
-        {conHuevo ? (
-          <div aria-hidden className="absolute inset-0 overflow-hidden">
+        {/* La casa aparece debajo del paisaje exterior. El paisaje se desvanece DESPUÉS de romperse
+            el huevo: así no hay corte entre la parcela del barrio y el interior de la casa. */}
+        {/* Precarga de la casa desde que hay huevo: el fundido no espera a descargar el dibujo. */}
+        <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" draggable={false}
+          className={`absolute inset-0 h-full w-full ${conHuevo ? 'opacity-0' : revelandoCasa ? 'anim-revelar-casa' : ''}`} />
+        {mostrarNido && (
+          <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${revelandoCasa ? 'anim-disipar-nido' : ''}`}>
             <img src={rutaArte('barrio/mapa')} alt="" draggable={false} className="absolute max-w-none"
               style={{ width: `${ANCHO_NIDO}%`, left: `${50 - (parcela.x / 100) * ANCHO_NIDO}%`, top: `${NOX.y - 8 - ((parcela.y / 100) * ANCHO_NIDO * ew) / PROPORCION_BARRIO / eh}%` }} />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_62%,transparent_25%,#2e203055_80%)]" />
           </div>
-        ) : (
-          <img key="fondo" src={rutaArte(`casa/${DUENO}/fondo`)} alt="" className={`absolute inset-0 h-full w-full ${nacer ? 'animate-aparecer' : ''}`} draggable={false} />
         )}
         {vivo && !ordenando && <VidaDeCasa vecino={DUENO} />}
         {micro?.visual && !ordenando && <EscenaBreve visual={micro.visual} />}
 
         {!conHuevo && huellas.map((hu) => <HuellaEnEscena quieta={ordenando} key={hu.id} h={hu} ew={ew} nueva={huellaNueva(partida, hu.id, ahora)} onTocar={(e) => { if (hu.toque) globoEn(e, hu.toque); ajustar((p) => verHuella(p, hu.id)) }} />)}
         {capas.filter(({ o }) => !conHuevo || !o).map(({ o }) => o ? <Objeto key={o.id} o={o} enUso={usando?.id === o.id} alEncuentro={encuentro && usando?.id === o.id ? responder : undefined} paso={paso} nuevo={recien === o.id} ew={ew} eh={eh} frases={o.id === 'aspiradora' && DUENO === 'nox' ? TOQUES_GREGORIO_EN_NOX : (() => { const h = toqueHeredado(partida, o.id); return h ? [h] : TOQUES_OBJETO[o.id] ?? [o.descripcion] })()}
-          ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id}
+          ordenando={ordenando} movible={movible(o)} arrastrando={arrastre?.id === o.id} seleccionado={objetoSeleccionado === o.id} noche={noche}
           onMover={(x, y) => setArrastre({ id: o.id, ...encajar(o, x, y) })}
           onSoltar={(x, y, punto) => {
             setArrastre(null)
@@ -407,8 +409,8 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
                     className={`block w-full ${nacer === 'rompiendo' ? 'anim-eclosionar' : estado === 'naciendo' ? 'anim-inquieto' : 'anim-mecer'}`} />
                 </span>
               ) : (
-                <span key={`${etapaVista}-${gesto}`} data-encuentro={encuentro} data-paso={paso} data-merendando={comiendo || undefined} data-usando={usando?.id} className={`block ${celebra ? 'anim-brotar' : ''}`}>
-                  <FiguraVecino c={DUENO} etapa={etapaVista} expresion={cara} reaccion={saltos} ladoToque={ladoTofu} ladoMaceta={ladoMaceta} />
+                <span key={`${etapaVista}-${gesto}`} data-encuentro={encuentro} data-paso={paso} data-merendando={comiendo || undefined} data-usando={usando?.id} className={`block ${celebra ? nacer ? 'anim-brotar' : 'anim-crecer-vecino' : ''}`}>
+                  <FiguraVecino c={DUENO} etapa={etapaVista} expresion={cara} reaccion={saltos} ladoToque={ladoTofu} ladoMaceta={ladoMaceta} noche={noche} />
                   {encuentro === 'madeja' && gesto > 0 && <img aria-hidden alt="" className="hallazgo-del-cesto" src={gesto % 2 ? '/arte/curiosidades/calcetin.webp' : '/arte/curiosidades/ovillo.webp'} />}
 
                 </span>
@@ -441,17 +443,13 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
         )}
 
         {/* Luz del momento del día: tiñe el dibujo, sin cambiarlo. */}
-        <div aria-hidden style={luzHoguera ? {
-          background: `radial-gradient(ellipse at ${luzHoguera.x}% ${luzHoguera.y}%, transparent 3%, #65517066 28%, #3b2c63 67%)`,
-        } : noche && !conHuevo ? mascaraNoche : undefined} className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
-          luzHoguera ? 'opacity-80' : noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
-        {luzHoguera && <div aria-hidden className="luz-hoguera pointer-events-none absolute inset-0 z-20 mix-blend-screen"
-          style={{ background: `radial-gradient(ellipse 54% 20% at ${luzHoguera.x}% ${luzHoguera.y + 3}%, #ffa14775 0%, #f7a24b35 46%, transparent 100%)` }} />}
+        <div aria-hidden style={noche && !conHuevo ? mascaraNoche : undefined} className={`pointer-events-none absolute inset-0 z-20 mix-blend-multiply transition-opacity duration-1000 ${
+          noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
 
         {/* Luces que laten (por encima del tinte, para que de noche brillen). */}
         <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-screen">
           {!conHuevo && LUCES_FONDO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 34 : 22} color="#ffcf73" retraso={i * 0.7} />)}
-          {objetos.filter((o) => o.luz).map((o) => {
+          {objetos.filter((o) => objetoAlumbra(o, noche)).map((o) => {
             const a = alto(o.sitio.ancho, o.proporcion)
             const x = o.sitio.x + ((o.luz!.x - 50) / 100) * o.sitio.ancho
             const y = o.sitio.colgado ? o.sitio.y + (o.luz!.y / 100) * a : o.sitio.y - (1 - o.luz!.y / 100) * a
@@ -460,9 +458,9 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
           {/* La llama de la cola de Nox */}
           {conHuevo
             ? <Luz x={NOX.x} y={NOX.y - altoNox * 0.5} tam={(noche ? 34 : 26) + (faltaHuevo <= 1 ? 10 : 0)} color="#ffb347" retraso={0} />
-            : esc.luzPropia && <Luz x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * esc.luzPropia.y} tam={esc.luzPropia.tam * (noche ? 1.6 : 1)} color="#ffb347" retraso={0} />}
+            : esc.luzPropia && !(noche && DUENO === 'nox') && <Luz x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * esc.luzPropia.y} tam={esc.luzPropia.tam * (noche ? 1.6 : 1)} color="#ffb347" retraso={0} />}
         </div>
-        {!conHuevo && esc.luzPropia?.chispas && <Chispas x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * (esc.luzPropia.y + 0.09)} />}
+        {!conHuevo && esc.luzPropia?.chispas && !noche && <Chispas x={NOX.x + anchoNox * esc.luzPropia.x} y={NOX.y - altoNox * (esc.luzPropia.y + 0.09)} />}
         <Luciernagas cuantas={noche ? 14 : 7} />
         {celebra && (
           <>
@@ -601,7 +599,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
       )}
 
       {hoja && <Catalogo preferido={destacado} dueno={DUENO} partida={partida} ahora={ahora} onCerrar={() => setHoja(false)} onConstruir={alConstruir}
-        onOrdenar={objetos.some(movible) || enBaul.length > 0 ? () => { setHoja(false); setHabla(null); setNota(null); setOrdenando(true) } : undefined} />}
+        onOrdenar={objetos.some(movible) || enBaul.length > 0 ? () => { setHoja(false); setHabla(null); setNota(null); setObjetoSeleccionado(null); setOrdenando(true) } : undefined} />}
       {/* Ordenar: la ayuda se va sola (arriba cuelgan cosas) y los botones van en las esquinas de abajo. */}
       {ordenando && (
         <>
@@ -616,18 +614,25 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
               <img src={`/arte/baul/${arrastre ? 'abierto' : 'cerrado'}.webp`} alt="" draggable={false} className="block w-full drop-shadow-lg" />
               {enBaul.length > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#a8424c] px-1 text-[12px] font-bold text-white">{enBaul.length}</span>}
             </button>
-            <button type="button" onClick={() => { sfx.elegir(); setOrdenando(false) }}
+            <button type="button" onClick={() => { sfx.elegir(); setObjetoSeleccionado(null); setOrdenando(false) }}
               className="flex h-12 items-center rounded-full bg-ambar px-6 text-[16px] font-bold text-tinta shadow-lg ring-2 ring-tarjeta active:scale-95">{UI.casa.listo}</button>
           </div>
         </>
       )}
-      {verBaul && <HojaBaul objetos={enBaul} onSacar={(id) => { sfx.construir(); ajustar((p) => sacar(p, id)) }} onCerrar={() => setVerBaul(false)} />}
+      {verBaul && <HojaBaul objetos={enBaul} visibles={visiblesMovibles}
+        onSacar={(id) => { sfx.construir(); ajustar((p) => sacar(p, id)) }}
+        onGuardar={(id) => { sfx.construir(); ajustar((p) => guardar(p, id)); if (objetoSeleccionado === id) setObjetoSeleccionado(null) }}
+        onSeleccionar={(id) => { sfx.toque(); setObjetoSeleccionado(id); setVerBaul(false) }}
+        onCerrar={() => setVerBaul(false)} />}
     </main>
   )
 }
 
 /** Lo guardado en el baúl de esta casa: se saca con un toque (vuelve a su sitio). */
-function HojaBaul({ objetos, onSacar, onCerrar }: { objetos: ObjetoCasa[]; onSacar: (id: string) => void; onCerrar: () => void }) {
+function HojaBaul({ objetos, visibles, onSacar, onGuardar, onSeleccionar, onCerrar }: {
+  objetos: ObjetoCasa[]; visibles: ObjetoCasa[]
+  onSacar: (id: string) => void; onGuardar: (id: string) => void; onSeleccionar: (id: string) => void; onCerrar: () => void
+}) {
   return createPortal(
     <div className="fixed inset-0 z-[45] mx-auto flex max-w-[430px] touch-none flex-col justify-end bg-[#2e2030]/45" onClick={onCerrar}>
       <section role="dialog" aria-label={UI.casa.baulTitulo} onClick={(e) => e.stopPropagation()}
@@ -637,7 +642,8 @@ function HojaBaul({ objetos, onSacar, onCerrar }: { objetos: ObjetoCasa[]; onSac
           <h2 className="text-[22px] font-bold">{UI.casa.baulTitulo}</h2>
           <button type="button" onClick={onCerrar} className="min-h-11 px-2 font-semibold text-texto-3">{UI.casa.cerrar}</button>
         </div>
-        {objetos.length === 0 ? <p className="mt-2 text-[15px] text-texto-3">{UI.casa.baulVacio}</p> : (
+        {objetos.length === 0 && visibles.length === 0 ? <p className="mt-2 text-[15px] text-texto-3">{UI.casa.baulVacio}</p> : null}
+        {objetos.length > 0 && (
           <ul className="mt-3 grid grid-cols-3 gap-2">
             {objetos.map((o) => (
               <li key={o.id}>
@@ -650,6 +656,21 @@ function HojaBaul({ objetos, onSacar, onCerrar }: { objetos: ObjetoCasa[]; onSac
               </li>
             ))}
           </ul>
+        )}
+        {visibles.length > 0 && (
+          <>
+            <p className="mt-5 mb-2 text-[14px] font-semibold text-texto-2">{UI.casa.objetosEnCasa}</p>
+            <ul className="flex flex-col gap-2">
+              {visibles.map((o) => (
+                <li key={o.id} className="flex items-center gap-2 rounded-2xl bg-tarjeta p-2">
+                  <img src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false} className="h-12 w-12 shrink-0 object-contain" />
+                  <span className="min-w-0 flex-1 text-[13px] font-semibold">{o.nombre}</span>
+                  <button type="button" onClick={() => onSeleccionar(o.id)} className="min-h-11 rounded-xl border border-borde px-2 text-[12px] font-bold">{UI.casa.traerDelante}</button>
+                  <button type="button" onClick={() => onGuardar(o.id)} className="min-h-11 rounded-xl bg-ambar px-2 text-[12px] font-bold text-tinta">{UI.casa.guardarEnBaul}</button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
     </div>,
@@ -757,10 +778,10 @@ export function Luciernagas({ cuantas }: { cuantas: number }) {
 /** Cuántas veces se ha tocado cada objeto (para ir rotando sus frases). */
 const vecesTocado = new Map<string, number>()
 
-function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, onMover, onSoltar }: {
+function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando = false, movible: sePuedeMover = false, arrastrando = false, seleccionado = false, noche = false, onMover, onSoltar }: {
   o: ObjetoCasa; enUso: boolean; alEncuentro?: () => void; paso: string; nuevo: boolean; ew: number; eh: number; frases: string[]
   /** Modo «Ordenar la casa»: se arrastra en vez de hablar. */
-  ordenando?: boolean; movible?: boolean; arrastrando?: boolean
+  ordenando?: boolean; movible?: boolean; arrastrando?: boolean; seleccionado?: boolean; noche?: boolean
   onMover?: (x: number, y: number) => void; onSoltar?: (x: number, y: number, punto: { x: number; y: number }) => void
 }) {
   const [toques, setToques] = useState(0)
@@ -810,12 +831,12 @@ function Objeto({ o, enUso, alEncuentro, paso, nuevo, ew, eh, frases, ordenando 
     <>
       {s.colgado && <span aria-hidden className="absolute top-0 w-[2px] bg-[#6b3f36]" style={{ left: `${s.x}%`, height: `${s.y + 1}%` }} />}
       <button type="button" aria-label={arrastrar ? UI.casa.moverObjeto(o.nombre) : o.nombre} onClick={tocar} {...eventosArrastre}
-        className={`absolute ${ordenando ? (arrastrar ? `objeto-movible ${arrastrando ? 'objeto-arrastrado z-30' : ''}` : 'opacity-60') : 'active:brightness-110'}`}
+        className={`absolute ${ordenando ? (arrastrar ? `objeto-movible ${arrastrando ? 'objeto-arrastrado z-30' : seleccionado ? 'z-[22]' : 'z-[12]'}` : 'opacity-60') : 'active:brightness-110'}`}
         style={{ ...estilo, touchAction: arrastrar ? 'none' : undefined }}>
         <div data-mueble-en-uso={enUso ? o.id : undefined} data-paso={paso} className={s.colgado && !ordenando ? 'anim-balanceo' : ''}>
           <span className={`block ${nuevo ? 'anim-colocar' : ''}`}>
             <img key={toques} src={rutaArte(`casa/${o.companero}/objeto/${o.id}`)} alt="" draggable={false}
-              className={`block w-full ${toques && !ordenando ? (gesto ? 'anim-gesto-de-objeto' : 'anim-palpar') : ''}`} data-gesto={gesto} />
+              className={`block w-full ${objetoApagadoDeNoche(o.id, noche) ? 'objeto-apagado-noche' : ''} ${toques && !ordenando ? (gesto ? 'anim-gesto-de-objeto' : 'anim-palpar') : ''}`} data-gesto={gesto} />
           </span>
           {enUso && o.id === 'cajonera' && paso === 'primero' &&
             <img aria-hidden alt="" className="frente-del-cajon" src={rutaArte('casa/tuerca/objeto/cajonera')} />}

@@ -1,7 +1,8 @@
 // Ordenar la casa: cada objeto se mueve por sus superficies de apoyo o se guarda en el baúl.
 // Cada objeto tiene su sitio de siempre (contenido/casa.ts); si lo mueves, la partida guarda dónde.
 // Al llevarlo al fondo se hace un poco más pequeño y al acercarlo, más grande. Los colgados solo se
-// mueven de lado. Gregorio y las huellas de las historias no se mueven: las historias cuentan con su sitio.
+// mueven de lado. Los de pared permanecen en la pared y el loto flota en el estanque.
+// Gregorio y las huellas de las historias no se mueven: las historias cuentan con su sitio.
 import { ESCENAS, OBJETOS_CASA, type CompaneroId, type ObjetoCasa } from '../contenido'
 import type { Zona } from '../contenido/casa'
 import type { Partida } from './partida'
@@ -17,15 +18,18 @@ const limitar = (v: number, [a, b]: [number, number]) => Math.min(Math.max(v, a)
 
 function superficies(o: ObjetoCasa): Zona[] {
   const escena = ESCENAS[o.companero]
-  return (o.apoyo === 'mesa' ? escena?.mesa : escena?.suelo) ?? []
+  if (o.apoyo === 'mesa') return escena?.mesa ?? []
+  if (o.apoyo === 'pared') return escena?.pared ?? []
+  if (o.apoyo === 'agua') return escena?.agua ?? []
+  return escena?.suelo ?? []
 }
 
-/** Los colgados se mueven lateralmente y los demás se apoyan en el suelo o en un mueble. */
+/** Se puede mover cualquier construcción con una superficie válida; Gregorio es autónomo. */
 export function movible(o: ObjetoCasa): boolean {
   if (o.apoyo === 'fijo') return false
   if (o.sitio.colgado) return true
   const zonas = superficies(o)
-  return o.apoyo === 'mesa' ? zonas.length > 0 : zonas.some((z) => dentro(z, o.sitio.x, o.sitio.y))
+  return zonas.some((z) => dentro(z, o.sitio.x, o.sitio.y))
 }
 
 /** El apoyo compatible más cercano a (x, y). Los colgados conservan su altura. */
