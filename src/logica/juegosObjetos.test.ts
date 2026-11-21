@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { COMBA_INICIAL, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, tocarComba } from './juegosObjetos'
+import { COMBA_INICIAL, DESLIZAR_OBJETO, FRASE_JUEGO_ESPECIAL, MANTENER_OBJETO, RITMO_OBJETO, tocarComba } from './juegosObjetos'
+import { JUGUETES } from './jugabilidad'
 
 describe('objetos para jugar, sin nuevas obligaciones', () => {
   it('tres toques a ritmo activan el salto y permiten volver a jugar', () => {
@@ -28,9 +29,20 @@ describe('objetos para jugar, sin nuevas obligaciones', () => {
     expect(tocarComba(p, Number.NaN)).toEqual({ especial: false, estado: COMBA_INICIAL })
   })
 
-  it('los cuatro gestos largos son distintos y solo corresponden a juguetes', () => {
-    expect(MANTENER_OBJETO).toEqual({ hoguera: 'avivar', maceta: 'regar', gramofono: 'dar-cuerda', telefono: 'llamada' })
+  it('los gestos largos, de deslizamiento y rítmicos son exclusivos y alcanzables', () => {
+    expect(Object.entries(MANTENER_OBJETO)).toHaveLength(10)
+    expect(DESLIZAR_OBJETO).toEqual({ globo: 'girar', cometa: 'elevar' })
+    expect(RITMO_OBJETO).toEqual({ comba: 'salto', bici: 'pedalear' })
+    const activadores = [
+      ...Object.keys(MANTENER_OBJETO),
+      ...Object.keys(DESLIZAR_OBJETO),
+      ...Object.keys(RITMO_OBJETO),
+    ]
+    expect(activadores).toHaveLength(14)
+    expect(new Set(activadores).size).toBe(14)
+    expect(activadores.sort()).toEqual([...JUGUETES].sort())
+    expect(new Set(Object.values({ ...MANTENER_OBJETO, ...DESLIZAR_OBJETO, ...RITMO_OBJETO })).size).toBe(14)
+    expect(Object.values(FRASE_JUEGO_ESPECIAL)).toHaveLength(14)
     expect(MANTENER_OBJETO.banco).toBeUndefined()
-    expect(Object.values(FRASE_JUEGO_ESPECIAL)).toHaveLength(5)
   })
 })
