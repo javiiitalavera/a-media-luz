@@ -1,5 +1,6 @@
 // La partida guardada en el móvil.
 import type { Mes } from './meses'
+import type { RelacionVecino } from './convivencia'
 import type { MomentoAlbum } from './momentos'
 import type { Nivel } from './etapas'
 import type { Perfil } from '../contenido/cuestionario'
@@ -52,6 +53,10 @@ export interface Partida {
   guardados?: string[]
   /** Parejas de muebles descubiertas al experimentar con la decoración; sin marcador visible. */
   vecindadesVistas?: string[]
+  /** Confianza nacida del trato voluntario, sin barras ni castigos por ausencia. */
+  relaciones?: Partial<Record<CompaneroId, RelacionVecino>>
+  /** Último saludo espontáneo por vecino: entrar y salir del mapa no crea ruido. */
+  saludosVistos?: Partial<Record<CompaneroId, string>>
   vistos?: { gags?: Partial<Record<string, string>>; pina?: 'guardada' | 'aqui'; album?: string; albumSec?: Partial<Record<SeccionAlbum, string>>; hazanas?: string; micros?: Partial<Record<CompaneroId, string>>; huellas?: string[]; cronicas?: Record<string, string>; momentos?: Record<string, string>; curiosidades?: Record<string, string>; proyectosCasa?: Partial<Record<CompaneroId, string[]>>; proyectosBarrio?: string[]; pideReto?: Partial<Record<CompaneroId, string>> }
   /** 2: hazañas concretas (18/11/2026). Sin él, la partida tiene las acciones genéricas de antes. */
   hazanas?: 2 | 3 | 4

@@ -1,4 +1,5 @@
 import '../estilos/claro-del-barrio.css'
+import '../estilos/clima.css'
 // El barrio (docs/diseno-vecindario.md): el mapa con la casita de cada vecino en su parcela, lo construido
 // en común (el puente) y las huellas de las historias. Es la pantalla principal cuando hay dos vecinos.
 // El mapa ocupa toda la pantalla, como la casa: se ajusta al alto (sin cortar arriba ni abajo) y se recortan
@@ -16,6 +17,8 @@ import { progreso } from '../logica/etapas'
 import { BotonRedondo, Icono, ICONOS } from '../componentes/BotonFlotante'
 import { useJuego } from '../estado/juego'
 import { momentoDelDia } from '../logica/momento'
+import { estacionDelDia, tiempoDelDia } from '../logica/convivencia'
+import { ClimaEnEscena } from '../componentes/ClimaEnEscena'
 import { Luciernagas, Luz } from './Casa'
 import { sfx } from '../sonido'
 import { BotonConstruir } from '../componentes/BotonConstruir'
@@ -71,6 +74,8 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
   useEffect(() => { ajustar((p) => visitarLugar(p, 'barrio')) }, [ajustar, ultimaNoticia])
   const sinLeer = pendientesDelSobre(partida, ahora)
   const momento = momentoDelDia(ahora)
+  const tiempo = tiempoDelDia(ahora)
+  const estacion = estacionDelDia(ahora)
   const noche = momento === 'noche'
   const vecinos = mesesDe(partida)
   const estadoUltimo = estadoDelMes(partida, ahora)
@@ -162,11 +167,12 @@ export function Barrio({ partida, ahora, onCasa, volverA, onVolver, onNovedades 
           <VecinoDePaseo key={companero} vecino={companero} etapa={progreso(partida, companero, ahora).etapa}
             ancho={ancho} alto={alto} puente={puente} ahora={ahora} />
         ))}
-        <HojasAlViento />
+        {tiempo === 'viento' && <HojasAlViento />}
 
         {/* Luz del momento del día (igual que en las casas): tiñe el mapa sin cambiarlo. */}
         <div aria-hidden className={`pointer-events-none absolute inset-0 mix-blend-multiply transition-opacity duration-1000 ${
           noche ? 'bg-[#3b2c63] opacity-75' : momento === 'atardecer' ? 'bg-[#ff9f7a] opacity-35' : momento === 'amanecer' ? 'bg-[#ffcfb8] opacity-40' : 'opacity-0'}`} />
+        <ClimaEnEscena tiempo={tiempo} estacion={estacion} />
         <div aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen">
           {LUCES_BARRIO.map((l, i) => <Luz key={i} x={l.x} y={l.y} tam={noche ? 16 : 9} color="#ffcf73" retraso={i * 0.5} />)}
           <Luz x={PLAZA.farol.x} y={PLAZA.farol.y - 1} tam={noche ? 10 : 5} color="#ffcf73" retraso={1.1} />
