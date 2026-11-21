@@ -13,7 +13,7 @@ El juego sigue basado en registrar acciones positivas reales. Los hábitos dan m
 1. **Caricias** (P2): contacto continuo, respuesta física y zonas incómodas diferentes.
 2. **Objetos-juguete** (P3): primero hoguera, comba, maceta, gramófono y teléfono; ampliar después.
 3. **Vecindades de objetos** (P6): experimentar moviendo muebles descubre escenas; sin checklist ni puntos.
-4. **Saludos al llegar** (P1): breves, espontáneos y saltabes.
+4. **Saludos al llegar** (P1): breves, espontáneos y saltables.
 5. **Amistad sin barras** (P5): se expresa con confianza y respuestas distintas, no con cifras.
 6. **Clima y estaciones** (P9): multiplicador de animaciones y variaciones.
 7. **Encargos espontáneos** (P4) y **ronda del barrio** (P7): probar solo si no se convierten en obligaciones.
