@@ -128,6 +128,7 @@ export function Casa({ partida, ahora, dueno, proyectoInicial, visita = false, o
   const juegosNarrados = useRef(new Set<string>())
   // Si varias vecindades se activan juntas, no declarar vistas las que todavía no hemos contado.
   const descubrimientoMostrado = useRef(false)
+  useEffect(() => { descubrimientoMostrado.current = false }, [DUENO])
   // Un toque breve habla; mantener o deslizar es acariciar, sin puntos ni premios.
   const [cariciaActiva, setCariciaActiva] = useState<'agradable' | 'incomoda' | null>(null)
   const cariciaPendiente = useRef<{ pointerId: number; x: number; y: number; incomoda: boolean; activa: boolean; reloj: ReturnType<typeof setTimeout> } | null>(null)
